@@ -208,7 +208,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "311"
             endingLineNumber = "311"
-            landmarkName = "addMoreCards(_:plantSet:)"
+            landmarkName = "partialSetSelected()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -224,7 +224,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "307"
             endingLineNumber = "307"
-            landmarkName = "addMoreCards(_:plantSet:)"
+            landmarkName = "partialSetSelected()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -272,7 +272,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "253"
             endingLineNumber = "253"
-            landmarkName = "partialSetSelected()"
+            landmarkName = "unselectCards(_:set:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -304,7 +304,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "308"
             endingLineNumber = "308"
-            landmarkName = "addMoreCards(_:plantSet:)"
+            landmarkName = "partialSetSelected()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -320,7 +320,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "178"
             endingLineNumber = "178"
-            landmarkName = "selectOneRandomSet()"
+            landmarkName = "checkForSet()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -418,6 +418,118 @@
             endingLineNumber = "40"
             landmarkName = "previews"
             landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B78886BE-F1F0-47FD-8905-027C1909F2AD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SetGame/Model/Table.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "165"
+            endingLineNumber = "165"
+            landmarkName = "checkForSet()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4FB06750-E23F-4C0F-9556-691CDA25F173"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SetGame/Model/Table.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "163"
+            endingLineNumber = "163"
+            landmarkName = "checkForSet()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "77AFAAC7-EDFD-4E1B-A893-653F8843E7AA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SetGame/Model/Table.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "162"
+            endingLineNumber = "162"
+            landmarkName = "checkForSet()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "47C111FC-E552-40A4-964C-AAC74C2E690D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SetGame/Model/CardArrayExtension.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
+            landmarkName = "takeRandomCards(_:plantSet:existingCards:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FD7655B6-9AE7-4D28-A679-CF29DDF8250A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SetGame/Model/CardArrayExtension.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "207"
+            endingLineNumber = "207"
+            landmarkName = "takeRandomCards(_:plantSet:existingCards:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "309A4313-C5EE-4C72-BE63-A6AB85A2C340"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SetGame/Model/CardArrayExtension.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "209"
+            endingLineNumber = "209"
+            landmarkName = "Array"
+            landmarkType = "21">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A5106E53-7D13-4F4A-BA33-BF152E223217"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SetGame/Model/CardArrayExtension.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "204"
+            endingLineNumber = "204"
+            landmarkName = "takeRandomCards(_:plantSet:existingCards:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

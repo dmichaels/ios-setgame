@@ -52,6 +52,7 @@ class Table<TC : TableCard> : ObservableObject {
         var setLastFound                  : [TC] = [TC]();
         var showingCardsWhichArePartOfSet : Bool = false;
         var showingOneRandomSet           : Bool = false;
+        var showingOneRandomSetLast       : Int? = nil;
     }
 
                       private      var deck     : Deck<TC>;
@@ -126,7 +127,7 @@ class Table<TC : TableCard> : ObservableObject {
     ///
     func checkForSet() {
 
-        let selectedCards = self.selectedCards();
+        let selectedCards: [TC] = self.selectedCards();
 
         // See if we have a SET selected now.
 
@@ -144,9 +145,54 @@ class Table<TC : TableCard> : ObservableObject {
                 self.state.setsFoundCount += 1;
                 self.state.setJustFound = true;
                 self.state.setLastFound = selectedCards;
-                self.unselectCards(selectedCards, set: true);
-                self.cards.remove(selectedCards);
-                self.fillTable();
+                if (false) {
+                    //
+                    // 2025-12-06
+                    // Olde code which did not simply replace existing set cards in place;
+                    // so it was re-ordering the cards on the table when not necessary.
+                    //
+                    self.unselectCards(selectedCards, set: true);
+                    self.cards.remove(selectedCards);
+                    self.fillTable();
+                }
+                else {
+                    //
+                    // 2025-12-06
+                    // Newer code which replaces SET cards without re-ordering.
+                    // N.B. But this does NOT respect the plantSet option; do we really even want that.
+                    //
+                    let extraCardsShowingCount: Int = max(self.cards.count - self.settings.preferredDisplayCardCount, 0)
+                    let newCards: [TC] = self.deck.takeRandomCards(
+                        3 - max(self.cards.count - self.settings.preferredDisplayCardCount, 0),
+                        plantSet: self.settings.plantSet,
+                        existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
+                    );
+                    var newCardIndex: Int = 0
+                    var cardIndex: Int = 0
+                    var deletedCardIndices: [Int] = []
+                    for card in self.cards {
+                        if (card.selected) {
+                            if (newCardIndex < newCards.count) {
+                                self.cards[cardIndex] = newCards[newCardIndex]
+                                newCardIndex += 1
+                            }
+                            else {
+                                deletedCardIndices.append(cardIndex)
+                            }
+                        }
+                        cardIndex += 1
+                    }
+                    if (deletedCardIndices.count > 0) {
+                        for i in stride(from: deletedCardIndices.count - 1, through: 0, by: -1) {
+                            self.cards.remove(at: deletedCardIndices[i])
+                        }
+                    }
+                    //
+                    // Fill just in case we have fewer cards than what is normally desired.
+                    //
+                    self.unselectCards()
+                    self.fillTable();
+                }
             }
             else {
                 //
@@ -161,7 +207,7 @@ class Table<TC : TableCard> : ObservableObject {
 
     func selectAllCardsWhichArePartOfSet() {
         self.unselectCards();
-        let sets : [[TC]] = self.enumerateSets();
+        let sets: [[TC]] = self.enumerateSets();
         for set in sets {
             for card in set {
                 card.selected = true;
@@ -171,12 +217,24 @@ class Table<TC : TableCard> : ObservableObject {
 
     func selectOneRandomSet() {
         self.unselectCards();
-        let sets : [[TC]] = self.enumerateSets();
+        let sets: [[TC]] = self.enumerateSets();
         if (sets.count > 0) {
-            let set = sets[Int.random(in: 0..<sets.count)];
+            if (self.state.showingOneRandomSetLast == nil) {
+                self.state.showingOneRandomSetLast = Int.random(in: 0..<sets.count);
+            }
+            else if (self.state.showingOneRandomSetLast! < (sets.count - 1)) {
+                self.state.showingOneRandomSetLast = self.state.showingOneRandomSetLast! + 1
+            }
+            else {
+                self.state.showingOneRandomSetLast = 0
+            }
+            let set: [TC] = sets[self.state.showingOneRandomSetLast!];
             for card in set {
                 card.selected = true;
             }
+        }
+        else {
+            self.state.showingOneRandomSetLast = nil
         }
     }
 
@@ -192,7 +250,7 @@ class Table<TC : TableCard> : ObservableObject {
     private func unselectCards(_ cards    : [TC],
                                  set      : Bool = false) {
         cards.forEach {
-            let card : TC = $0;
+            let card: TC = $0;
             card.selected = false;
             if (set) {
                 card.set = true;
@@ -242,10 +300,10 @@ class Table<TC : TableCard> : ObservableObject {
     /// Returns true iff the currently selected cards form a partial SET.
     ///
     func partialSetSelected() -> Bool {
-        let selectedCards = self.selectedCards();
+        let selectedCards: [TC] = self.selectedCards();
         if (selectedCards.count == 1) {
-            let cardA = selectedCards[0];
-            let sets = self.enumerateSets();
+            let cardA: TC = selectedCards[0];
+            let sets: [[TC]] = self.enumerateSets();
             for set in sets {
                 if (set.contains(cardA)) {
                     return true;
@@ -253,9 +311,9 @@ class Table<TC : TableCard> : ObservableObject {
             }
         }
         else if (selectedCards.count == 2) {
-            let cardA = selectedCards[0];
-            let cardB = selectedCards[1];
-            let sets = self.enumerateSets();
+            let cardA: TC = selectedCards[0];
+            let cardB: TC = selectedCards[1];
+            let sets: [[TC]] = self.enumerateSets();
             for set in sets {
                 if (set.contains(cardA) && set.contains(cardB)) {
                     return true;
@@ -276,7 +334,7 @@ class Table<TC : TableCard> : ObservableObject {
     ///
     func addMoreCards(_ ncards : Int, plantSet : Bool? = nil) {
         guard (ncards > 0) && (self.deck.count > 0) else { return; }
-        let plantSet : Bool = (plantSet == nil) ? self.settings.plantSet : plantSet!;
+        let plantSet: Bool = (plantSet == nil) ? self.settings.plantSet : plantSet!;
         if (plantSet && !self.containsSet() && (self.cards.count + min(self.deck.count, ncards)) >= 3) {
             //
             // If we want a SET planted, and only if there are not already any
@@ -300,9 +358,9 @@ class Table<TC : TableCard> : ObservableObject {
                 //
                 for i in 0..<(self.cards.count - 1) {
                     for j in (i + 1)..<(self.cards.count) {
-                        let a : TC = self.cards[i];
-                        let b : TC = self.cards[j];
-                        let c : TC = TC(Card.matchingSetValue(a, b));
+                        let a: TC = self.cards[i];
+                        let b: TC = self.cards[j];
+                        let c: TC = TC(Card.matchingSetValue(a, b));
                         if let c = self.deck.takeCard(c) {
                             self.cards.add(c);
                             self.addMoreCards(ncards - 1, plantSet: false);
@@ -319,7 +377,7 @@ class Table<TC : TableCard> : ObservableObject {
         }
     }
 
-    /// Populate the table cards from the deck up to the preferredDisplayCardCount.
+   /// Populate the table cards from the deck up to the preferredDisplayCardCount.
     /// If the moreCardsIfNoSet flag is set then if we don't have a SET on
     /// the table, then add up to 3 more cards.
     ///

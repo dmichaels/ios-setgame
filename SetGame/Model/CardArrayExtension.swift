@@ -67,12 +67,12 @@ extension Array where Element : Card {
     /// If the plantSet argument is true then the returned array will, if possible,
     /// contain (at least) one SET, randomly distributed in the returned cards array.
     ///
-    mutating func takeRandomCards(_ n : Int, plantSet: Bool = false) -> [Element] {
-        var n = n < 0 ? 0 : n;
-        var cards : [Element] = [Element]();
-        var plantedSet : [Element]? = nil;
+    mutating func old_takeRandomCards(_ n : Int, plantSet: Bool = false) -> [Element] {
+        var n: Int = n < 0 ? 0 : n;
+        var cards: [Element] = [Element]();
+        var plantedSet: [Element]? = nil;
         if (plantSet && (n >= 3)) {
-            let set : [[Element]] = self.enumerateSets(limit: 1);
+            let set: [[Element]] = self.enumerateSets(limit: 1);
             if (set.count == 1) {
                 plantedSet = set[0];
                 self.remove(plantedSet!);
@@ -81,12 +81,12 @@ extension Array where Element : Card {
                 }
             }
         }
-        if let plantedSet = plantedSet {
+        if let plantedSet: [Element] = plantedSet {
             cards.add(plantedSet);
             n -= plantedSet.count;
         }
         for _ in 0..<n {
-            if let card = self.takeRandomCard() {
+            if let card: Element = self.takeRandomCard() {
                 cards.add(card);
             }
             else {
@@ -97,6 +97,113 @@ extension Array where Element : Card {
             cards.shuffle();
         }
         return cards;
+    }
+
+    mutating func takeRandomCards(_ n : Int) -> [Element] {
+        guard (n > 0) && (self.count > 0) else { return [] }
+        var randomCards: [Element] = [Element]();
+        for _ in 0..<n {
+            if let randomCard: Element = self.takeRandomCard() {
+                randomCards.add(randomCard)
+            }
+            else {
+                break
+            }
+        }
+        return randomCards;
+    }
+
+    /// Removes, at most, the specified number of random cards from this array, and returns these
+    /// in a new array; if fewer cards are in this array than the number requested, then so be it,
+    /// just that many will be returned (and then this array will end up being empty in this case).
+    ///
+    /// IF the plantSet argument is true THEN we will ensure, IF POSSIBLE, that the returned set of
+    /// cards (taken from this array) contains at least one SET. BUT IF the existingCards argument is
+    /// ALSO not empty, THEN instead we will ensure, IF POSSIBLE, that the given set of existing cards
+    /// TOGETHER with the set of cards to be returned (taken from this array) contains at least one SET.
+    ///
+    /// The order of the returned cards (if any) will arbitrary/randomized.
+    ///
+    mutating func takeRandomCards(_ n : Int, plantSet: Bool, existingCards: [Element] = []) -> [Element] {
+        guard (n > 0) && (self.count > 0) else { return [] }
+        var randomCards: [Element] = [Element]();
+        if (plantSet) {
+            //
+            // Here, we want to ensure, IF POSSIBLE, that the returned set of
+            // cards (taken from this array of cards), TOGETHER (unioned with)
+            // the given set of existing cards contains at least one SET.
+            //
+            if (existingCards.count > 0) {
+                //
+                // Here, there are given existing cards, which, TOGETHER with
+                // the set of cards to be returned (taken from this array),
+                // should (IF POSSIBLE) contains at least one SET.
+                //
+                let sets: [[Element]] = existingCards.enumerateSets(limit: 1)
+                if (sets.count > 0) {
+                    //
+                    // Here, there is already (at least) one SET in the given set of existing cards;
+                    // so simply take and return a random set of cards from this array of cards.
+                    //
+                    randomCards = self.takeRandomCards(n)
+                }
+                else {
+                    //
+                    // Here, there are no SETs in the given set of existing cards;
+                    // try to ensure, IF POSSIBLE, that the given set of existing
+                    // cards, TOGETHER with (unioned with) the set of cards to be
+                    // returned (taken from this array) contains at least one SET.
+                    //
+                    for card in self {
+                        let sets: [[Element]] = ([card] + existingCards).enumerateSets(limit: 1)
+                        if (sets.count > 0) {
+                            randomCards.append(card)
+                            break
+                        }
+                    }
+                    randomCards.add(self.takeRandomCards(n - randomCards.count))
+                }
+            }
+            else if ((n >= 3) && (self.count >= 3)) {
+                ///
+                // Here, we want to take at least 3 cards from this array of cards,
+                // and there are at least 3 cars in this array of cards.
+                ///
+                let sets: [[Element]] = self.enumerateSets(limit: 1);
+                if (sets.count > 0) {
+                    //
+                    // Here, there is (at least) one SET in this array of cards;
+                    // so simply take and return this one SET.
+                    //
+                    // let plantedSet: [Element] = sets[0];
+                    // randomCards = plantedSet
+                    // self.remove(plantedSet);
+                    randomCards = sets[0];
+                    self.remove(randomCards);
+                    if (n > 3) {
+                        randomCards.add(self.takeRandomCards(n - 3))
+                    }
+                    randomCards.shuffle()
+                }
+                else {
+                    //
+                    // Here, there are no SETs in this array of cards.
+                    //
+                    randomCards = self.takeRandomCards(n)
+                }
+            }
+            else {
+                randomCards = self.takeRandomCards(n)
+            }
+        }
+        else {
+            //
+            // Here, the simplest case of not wanting to plant any SETs; simply return
+            // the specified number (IF POSSIBLE) of random cards from this array of cards. 
+            //
+            randomCards = self.takeRandomCards(n)
+        }
+        return randomCards;
     }
 
     /// Returns (without removal), a random card from this array,
@@ -121,7 +228,7 @@ extension Array where Element : Card {
     /// Returns true iff there exists at least one SET in this array.
     ///
     func containsSet() -> Bool {
-        var nsets : Int = 0;
+        var nsets: Int = 0;
         self.enumerateSets(limit: 1) { _ in nsets += 1; }
         return nsets > 0;
     }
@@ -129,7 +236,7 @@ extension Array where Element : Card {
     /// Returns the number of unique SETs in this array.
     ///
     func numberOfSets() -> Int {
-        var nsets : Int = 0;
+        var nsets: Int = 0;
         self.enumerateSets() { _ in nsets += 1; }
         return nsets;
     }
@@ -139,18 +246,18 @@ extension Array where Element : Card {
     /// within this array. If no SETs exist then returns an empty array.
     ///
     func enumerateSets(limit: Int = 0) -> [[Element]] {
-        var sets : [[Element]] = [[Element]]();
+        var sets: [[Element]] = [[Element]]();
         self.enumerateSets(limit: limit) { sets.append($0); }
         return sets;
     }
 
     func enumerateSets(limit: Int = 0, _ handler : ([Element]) -> Void) {
-        var nsets : Int = 0;
+        var nsets: Int = 0;
         if (self.count > 2) {
             for i in 0..<(self.count - 2) {
                 for j in (i + 1)..<(self.count - 1) {
                     for k in (j + 1)..<(self.count) {
-                        let a : Element = self[i], b : Element = self[j], c : Element = self[k];
+                        let a: Element = self[i], b : Element = self[j], c : Element = self[k];
                         if (a.formsSetWith(b, c)) {
                             handler([a, b, c]);
                             nsets += 1;
@@ -168,10 +275,10 @@ extension Array where Element : Card {
     /// one of them (the SET of three cards) to the front of this array.
     ///
     mutating func moveAnyExistingSetToFront() -> Bool {
-        let sets : [[Element]] = self.enumerateSets(limit: 1);
+        let sets: [[Element]] = self.enumerateSets(limit: 1);
         if (sets.count == 1) {
             for card in sets[0] {
-                if let index = self.firstIndex(where: {$0 == card}) {
+                if let index: Int = self.firstIndex(where: {$0 == card}) {
                     self.remove(at: index);
                     self.insert(card, at: 0);
                 }
@@ -194,9 +301,9 @@ extension Array where Element : Card {
     /// If no parsable card formats, then returns an empty array.
     ///
     static func from(_ values : [String]) -> [Element] {
-        var cards = [Element]();
+        var cards: [Element] = [Element]();
         for value in values {
-            if let card = Element(value) {
+            if let card: Element = Element(value) {
                 cards.add(card);
             }
         }

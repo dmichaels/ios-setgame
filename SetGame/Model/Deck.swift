@@ -63,7 +63,7 @@ class Deck<T : Card> {
     }
 
     func takeCard(_ card : Card) -> Card? {
-        if (self.contains(card)){
+        if (self.contains(card)) {
             self.cards.remove(T(card));
             return card;
         }
@@ -76,8 +76,8 @@ class Deck<T : Card> {
         return self.readonly ? nil : self.cards.takeRandomCard();
     }
 
-    func takeRandomCards(_ n : Int, plantSet: Bool = false) -> [T] {
-        return self.readonly ? [T]() : self.cards.takeRandomCards(n, plantSet: plantSet);
+    func takeRandomCards(_ n : Int, plantSet: Bool = false, existingCards: [T] = []) -> [T] {
+        return self.readonly ? [T]() : self.cards.takeRandomCards(n, plantSet: plantSet, existingCards: existingCards);
     }
 
     /// Returns true iff there exists at least one SET in this deck.
