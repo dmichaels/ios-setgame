@@ -12,7 +12,7 @@ struct SetGameApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(Table(preferredDisplayCardCount: 12, plantSet: false))
+                .environmentObject(Table(preferredDisplayCardCount: 12, plantSet: true))
         }
     }
 }

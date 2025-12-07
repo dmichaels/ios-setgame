@@ -16,7 +16,7 @@ class Deck<T : Card> {
     init(simple: Bool = false, ncards: Int = 0, readonly: Bool = false) {
         self.readonly = readonly;
         self.cards = [T]();
-        let fillings : [CardFilling] = simple ? [CardFilling.Solid] : CardFilling.allCases;
+        let fillings: [CardFilling] = simple ? [CardFilling.Solid] : CardFilling.allCases;
         for color in CardColor.allCases {
             for shape in CardShape.allCases {
                 for filling in fillings {
@@ -27,7 +27,7 @@ class Deck<T : Card> {
             }
         }
         if ((ncards > 0) && (ncards < cards.count)) {
-            let nremove = cards.count - ncards;
+            let nremove: Int = cards.count - ncards;
             for _ in 0..<nremove {
                 _ = cards.takeRandomCard();
             }
@@ -126,8 +126,8 @@ class Deck<T : Card> {
         }
         var totalSets = 0;
         for _ in 1...iterations {
-            let deck = Deck();
-            let cards = deck.takeRandomCards(ncards);
+            let deck: Deck = Deck();
+            let cards: [T] = deck.takeRandomCards(ncards);
             totalSets += cards.numberOfSets();
         }
         return Float(totalSets) / Float(iterations);

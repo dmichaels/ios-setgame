@@ -496,7 +496,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "207"
             endingLineNumber = "207"
-            landmarkName = "takeRandomCards(_:plantSet:existingCards:)"
+            landmarkName = "numberOfSets()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -528,7 +528,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "204"
             endingLineNumber = "204"
-            landmarkName = "takeRandomCards(_:plantSet:existingCards:)"
+            landmarkName = "numberOfSets()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

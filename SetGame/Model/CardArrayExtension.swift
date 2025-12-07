@@ -88,6 +88,9 @@ extension Array where Element : Card {
     ///
     /// The order of the returned cards (if any) will arbitrary/randomized.
     ///
+    /// N.B. Keep in mind that (normally) when the comments here say "this array" we
+    ///      are talking about the deck of cards, not the cards that are on the table.
+    ///
     mutating func takeRandomCards(_ n : Int, plantSet: Bool, existingCards: [Element] = []) -> [Element] {
         guard (n > 0) && (self.count > 0) else { return [] }
         var randomCards: [Element] = [Element]();
@@ -121,7 +124,8 @@ extension Array where Element : Card {
                     for card in self {
                         let sets: [[Element]] = ([card] + existingCards).enumerateSets(limit: 1)
                         if (sets.count > 0) {
-                            randomCards.append(card)
+                            randomCards = [card]
+                            self.remove(card);
                             break
                         }
                     }

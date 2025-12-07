@@ -11,40 +11,27 @@ struct SettingsView: View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack {
                 VStack {
-                    Toggle(isOn: $table.settings.useSimpleDeck) {
-                        Text("Use simplified deck (restarts!): ")
-                    }
-                    HStack() {
-                        Text("Limit deck size (n cards):")
-                            .frame(alignment: .leading)
-                        Spacer()
-                        Picker("\(table.settings.limitDeckSize) \u{25BC}", selection: $table.settings.limitDeckSize) {
-                            ForEach(limitDeckSizeChoices, id: \.self) {
-                                Text(String($0))
-                            }
-                        }.pickerStyle(MenuPickerStyle())
-                    }
                     Divider()
                     Toggle(isOn: $table.settings.showNumberOfSetsPresent) {
-                        Text("Show SETs displayed count: ")
+                        Text("Show Available SETs Count: ")
                     }
                     Toggle(isOn: $table.settings.plantSet) {
-                        Text("Try planting at least one SET: ")
+                        Text("Plant SET If Possible: ")
                     }
                     Toggle(isOn: $table.settings.moreCardsIfNoSet) {
-                        Text("Deal more cards if no SETs: ")
+                        Text("Deal More Cards If No SETs: ")
                     }
                     Divider()
                     Toggle(isOn: $table.settings.showPartialSetSelectedIndicator) {
-                        Text("Show partial SET selection hint: ")
+                        Text("Show Partial SET Select Hint: ")
                     }
                     Toggle(isOn: $table.settings.moveAnyExistingSetToFront) {
-                        Text("Move any existing SET to front: ")
+                        Text("Move Existing SET To Front: ")
                     }
                 }
                 Divider()
                 HStack() {
-                    Text("Preferred displayed card count:")
+                    Text("Display Card Count:")
                         .frame(alignment: .leading)
                     Spacer()
                     Picker("\(table.settings.preferredDisplayCardCount) \u{25BC}", selection: $table.settings.preferredDisplayCardCount) {
@@ -54,7 +41,7 @@ struct SettingsView: View {
                     }.pickerStyle(MenuPickerStyle())
                 }
                 HStack() {
-                    Text("Cards per row:")
+                    Text("Cards Per Row:")
                         .frame(alignment: .leading)
                     Spacer()
                     Picker("\(table.settings.cardsPerRow) \u{25BC}", selection: $table.settings.cardsPerRow) {
@@ -62,6 +49,24 @@ struct SettingsView: View {
                             Text(String($0))
                         }
                     }.pickerStyle(MenuPickerStyle())
+                }
+                Divider()
+                VStack {
+                    Toggle(isOn: $table.settings.useSimpleDeck) {
+                        Text("Use Simplified Deck ↻ Restarts!")
+                    }
+                    /*
+                    HStack() {
+                        Text("Deck Size:")
+                            .frame(alignment: .leading)
+                        Spacer()
+                        Picker("\(table.settings.limitDeckSize) \u{25BC}", selection: $table.settings.limitDeckSize) {
+                            ForEach(limitDeckSizeChoices, id: \.self) {
+                                Text(String($0))
+                            }
+                        }.pickerStyle(MenuPickerStyle())
+                    }
+                    */
                 }
                 Divider()
                 HStack () {
