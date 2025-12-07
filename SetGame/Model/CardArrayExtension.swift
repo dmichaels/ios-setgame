@@ -59,46 +59,10 @@ extension Array where Element : Card {
         return (self.count > 0) ? self.remove(at: Int.random(in: 0..<self.count)) : nil;
     }
 
-    /// Removes and returns, at most, the specified number of random cards
-    /// from this array, in a new array; if fewer cards are in this array
-    /// than the number requested, then so be it, just that many will
-    /// be returned, and then this array will end up being empty.
+    /// Removes, at most, the specified number of random cards from this array, and returns these
+    /// in a new array; if fewer cards are in this array than the number requested, then so be it,
+    /// just that many will be returned (and then this array will end up being empty in this case).
     ///
-    /// If the plantSet argument is true then the returned array will, if possible,
-    /// contain (at least) one SET, randomly distributed in the returned cards array.
-    ///
-    mutating func old_takeRandomCards(_ n : Int, plantSet: Bool = false) -> [Element] {
-        var n: Int = n < 0 ? 0 : n;
-        var cards: [Element] = [Element]();
-        var plantedSet: [Element]? = nil;
-        if (plantSet && (n >= 3)) {
-            let set: [[Element]] = self.enumerateSets(limit: 1);
-            if (set.count == 1) {
-                plantedSet = set[0];
-                self.remove(plantedSet!);
-                if (n == 3) {
-                    return plantedSet!
-                }
-            }
-        }
-        if let plantedSet: [Element] = plantedSet {
-            cards.add(plantedSet);
-            n -= plantedSet.count;
-        }
-        for _ in 0..<n {
-            if let card: Element = self.takeRandomCard() {
-                cards.add(card);
-            }
-            else {
-                break;
-            }
-        }
-        if (plantedSet != nil) {
-            cards.shuffle();
-        }
-        return cards;
-    }
-
     mutating func takeRandomCards(_ n : Int) -> [Element] {
         guard (n > 0) && (self.count > 0) else { return [] }
         var randomCards: [Element] = [Element]();
@@ -175,9 +139,6 @@ extension Array where Element : Card {
                     // Here, there is (at least) one SET in this array of cards;
                     // so simply take and return this one SET.
                     //
-                    // let plantedSet: [Element] = sets[0];
-                    // randomCards = plantedSet
-                    // self.remove(plantedSet);
                     randomCards = sets[0];
                     self.remove(randomCards);
                     if (n > 3) {
