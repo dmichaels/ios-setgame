@@ -23,6 +23,7 @@
 		9811914A25ED5ACF0083606B /* TableCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811914025ED5ACF0083606B /* TableCard.swift */; };
 		9811914B25ED5ACF0083606B /* CardShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811914125ED5ACF0083606B /* CardShape.swift */; };
 		9811915125ED5D0E0083606B /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811915025ED5D0E0083606B /* CardView.swift */; };
+		989D93692EE8B01D00BE461B /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D93682EE8B01D00BE461B /* Stats.swift */; };
 		989FF8FA25EF3708002AE44A /* StandardDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989FF8F825EF3708002AE44A /* StandardDeck.swift */; };
 		989FF8FB25EF3708002AE44A /* CardArrayExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989FF8F925EF3708002AE44A /* CardArrayExtension.swift */; };
 		989FF92125F10BA7002AE44A /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989FF92025F10BA7002AE44A /* TableView.swift */; };
@@ -72,6 +73,7 @@
 		9811914025ED5ACF0083606B /* TableCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableCard.swift; sourceTree = "<group>"; };
 		9811914125ED5ACF0083606B /* CardShape.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardShape.swift; sourceTree = "<group>"; };
 		9811915025ED5D0E0083606B /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
+		989D93682EE8B01D00BE461B /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		989FF8F825EF3708002AE44A /* StandardDeck.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardDeck.swift; sourceTree = "<group>"; };
 		989FF8F925EF3708002AE44A /* CardArrayExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardArrayExtension.swift; sourceTree = "<group>"; };
 		989FF92025F10BA7002AE44A /* TableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 		9811911D25ED5A0C0083606B /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				989D93682EE8B01D00BE461B /* Stats.swift */,
 				989FF8F925EF3708002AE44A /* CardArrayExtension.swift */,
 				989FF8F825EF3708002AE44A /* StandardDeck.swift */,
 				9811913A25ED5ACF0083606B /* Card.swift */,
@@ -333,6 +336,7 @@
 				981190F225ED59CC0083606B /* ContentView.swift in Sources */,
 				9811914925ED5ACF0083606B /* String.swift in Sources */,
 				9811914425ED5ACF0083606B /* Card.swift in Sources */,
+				989D93692EE8B01D00BE461B /* Stats.swift in Sources */,
 				9811914825ED5ACF0083606B /* CardNumber.swift in Sources */,
 				9811914525ED5ACF0083606B /* CardFilling.swift in Sources */,
 				98C2CA8225F3C1E40050ACDC /* StatsView.swift in Sources */,

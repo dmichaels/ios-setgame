@@ -91,7 +91,10 @@ class Table<TC : TableCard> : ObservableObject {
             // or 5; if cards-per-row is 3 it already falls out to look good automatically.
             //
             let preferredDisplayCardCountSave: Int = self.settings.preferredDisplayCardCount
-            if ((self.settings.cardsPerRow == 5) && (self.settings.preferredDisplayCardCount < 13)) {
+            if ((self.settings.cardsPerRow == 4) && (self.settings.preferredDisplayCardCount < 11)) {
+                self.settings.preferredDisplayCardCount = 11
+            }
+            else if ((self.settings.cardsPerRow == 5) && (self.settings.preferredDisplayCardCount < 13)) {
                 self.settings.preferredDisplayCardCount = 13
             }
             self.fillTable(frontSet: false);
@@ -118,10 +121,13 @@ class Table<TC : TableCard> : ObservableObject {
                 self.cards[11] = TC(magicSquareCards[7])
                 self.cards[12] = TC(magicSquareCards[8])
             }
+            else if (self.settings.cardsPerRow == 6) {
+            }
         }
         else {
             self.fillTable();
         }
+        print(Deck.probabilityOfAtLeastOneSet(for: self.settings.preferredDisplayCardCount))
     }
 
     private func findTableDuplicates() {
@@ -210,7 +216,7 @@ class Table<TC : TableCard> : ObservableObject {
                 if (false) {
                     //
                     // 2025-12-06
-                    // Olde code which did not simply replace existing set cards in place;
+                    // Old code which did not simply replace existing set cards in place;
                     // so it was re-ordering the cards on the table when not necessary.
                     //
                     self.unselectCards(selectedCards, set: true);

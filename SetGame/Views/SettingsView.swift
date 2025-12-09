@@ -80,7 +80,7 @@ struct SettingsView: View {
                 Divider()
                 HStack () {
                     NavigationLink(destination: StatsView()) {
-                        Text("Stats")
+                        Text("SET Game Stats")
                     }
                     Spacer()
                 }.frame(alignment: .leading)

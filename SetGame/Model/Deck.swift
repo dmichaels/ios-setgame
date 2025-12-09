@@ -133,19 +133,4 @@ class Deck<T : Card> {
         magic.append(Card.matchingSetValue(magic[0], magic[5])); // [8] from [0] and [5]
         return [magic[0], magic[1], magic[3], magic[2], magic[5], magic[6], magic[4], magic[7], magic[8]]
     }
-
-    /// Returns the average number of SETs in a deal of the given number of cards.
-    ///
-    static func averageNumberOfSets(_ ncards: Int, iterations: Int = 100) -> Float {
-        if (ncards < 3) {
-            return 0;
-        }
-        var totalSets = 0;
-        for _ in 1...iterations {
-            let deck: Deck = Deck();
-            let cards: [T] = deck.takeRandomCards(ncards);
-            totalSets += cards.numberOfSets();
-        }
-        return Float(totalSets) / Float(iterations);
-    }
 }
