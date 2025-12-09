@@ -84,6 +84,7 @@ class Table<TC : TableCard> : ObservableObject {
             let magicSquareCards: [Card] = Deck.randomMagicSquare()
             for card in magicSquareCards {
                 self.cards.add(TC(card))
+                _ = self.deck.takeCard(TC(card))
             }
             //
             // Only bother making it look good if the cards-per-row is 4 (the default)
@@ -120,6 +121,19 @@ class Table<TC : TableCard> : ObservableObject {
         }
         else {
             self.fillTable();
+        }
+    }
+
+    private func findTableDuplicates() {
+        for i in 0..<(self.cards.count - 1) {
+            for j in (i + 1)..<(self.cards.count) {
+                let a: TC = self.cards[i];
+                let b: TC = self.cards[j];
+                if (a == b) {
+                    print("DUPLICATE!")
+                    print(a)
+                }
+            }
         }
     }
 
@@ -422,6 +436,7 @@ class Table<TC : TableCard> : ObservableObject {
         if (frontSet) {
             self.moveAnyExistingSetToFront();
         }
+        // findTableDuplicates()
     }
 
    /// Populate the table cards from the deck up to the preferredDisplayCardCount.
