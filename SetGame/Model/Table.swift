@@ -441,7 +441,7 @@ class Table<TC : TableCard> : ObservableObject {
         }
     }
 
-   /// Populate the table cards from the deck up to the preferredDisplayCardCount.
+    /// Populate the table cards from the deck up to the preferredDisplayCardCount.
     /// If the moreCardsIfNoSet flag is set then if we don't have a SET on
     /// the table, then add up to 3 more cards.
     ///
