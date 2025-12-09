@@ -63,6 +63,6 @@ struct StatsView: View  {
 struct StatsView_Previews: PreviewProvider {
     static var previews: some View {
         StatsView()
-            .environmentObject(Table(preferredDisplayCardCount: 12, plantSet: true))
+            .environmentObject(Table(displayCardCount: 12, plantSet: true))
     }
 }

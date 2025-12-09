@@ -16,7 +16,7 @@ class Table<TC : TableCard> : ObservableObject {
         // not the same instance, or the same copy it ? Guess not. A thinker.
         //
         var table                           : Table?;
-        var preferredDisplayCardCount       : Int  = 12;
+        var displayCardCount       : Int  = 12;
         var limitDeckSize                   : Int  = Deck().count;
         var cardsPerRow                     : Int  = 4;
         var useSimpleDeck                   : Bool = false {
@@ -65,12 +65,12 @@ class Table<TC : TableCard> : ObservableObject {
     @Published                     var state    : State;
     @Published                     var settings : Settings;
 
-    init(preferredDisplayCardCount : Int = 9, plantSet : Bool = false) {
+    init(displayCardCount : Int = 9, plantSet : Bool = false) {
         self.deck                        = Deck();
         self.cards                       = [TC]();
         self.state                       = State();
         self.settings                    = Settings();
-        self.settings.preferredDisplayCardCount = preferredDisplayCardCount;
+        self.settings.displayCardCount = displayCardCount;
         self.settings.plantSet           = plantSet;
         self.settings.table              = self;
         self.fillTable();
@@ -80,7 +80,7 @@ class Table<TC : TableCard> : ObservableObject {
         self.deck  = Deck(simple: self.settings.useSimpleDeck, ncards: self.settings.limitDeckSize);
         self.cards = [TC]();
         self.state = State();
-        if (self.settings.plantInitialMagicSquare && (self.settings.preferredDisplayCardCount >= 9)) {
+        if (self.settings.plantInitialMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.settings.useSimpleDeck)
             for card in magicSquareCards {
                 self.cards.add(TC(card))
@@ -90,15 +90,15 @@ class Table<TC : TableCard> : ObservableObject {
             // Only bother making it look good if the cards-per-row is 4 (the default)
             // or 5; if cards-per-row is 3 it already falls out to look good automatically.
             //
-            let preferredDisplayCardCountSave: Int = self.settings.preferredDisplayCardCount
-            if ((self.settings.cardsPerRow == 4) && (self.settings.preferredDisplayCardCount < 11)) {
-                self.settings.preferredDisplayCardCount = 11
+            let preferredDisplayCardCountSave: Int = self.settings.displayCardCount
+            if ((self.settings.cardsPerRow == 4) && (self.settings.displayCardCount < 11)) {
+                self.settings.displayCardCount = 11
             }
-            else if ((self.settings.cardsPerRow == 5) && (self.settings.preferredDisplayCardCount < 13)) {
-                self.settings.preferredDisplayCardCount = 13
+            else if ((self.settings.cardsPerRow == 5) && (self.settings.displayCardCount < 13)) {
+                self.settings.displayCardCount = 13
             }
             self.fillTable(frontSet: false);
-            self.settings.preferredDisplayCardCount = preferredDisplayCardCountSave
+            self.settings.displayCardCount = preferredDisplayCardCountSave
             if (self.settings.cardsPerRow == 4) {
                 self.cards[3]  = self.cards[9]
                 self.cards[7]  = self.cards[10]
@@ -127,7 +127,7 @@ class Table<TC : TableCard> : ObservableObject {
         else {
             self.fillTable();
         }
-        print(Deck.probabilityOfAtLeastOneSet(for: self.settings.preferredDisplayCardCount))
+        print(Deck.probabilityOfAtLeastOneSet(for: self.settings.displayCardCount))
     }
 
     private func findTableDuplicates() {
@@ -228,9 +228,9 @@ class Table<TC : TableCard> : ObservableObject {
                     // 2025-12-06
                     // Newer code which replaces SET cards without re-ordering.
                     //
-                    let extraCardsShowingCount: Int = max(self.cards.count - self.settings.preferredDisplayCardCount, 0)
+                    let extraCardsShowingCount: Int = max(self.cards.count - self.settings.displayCardCount, 0)
                     let newCards: [TC] = self.deck.takeRandomCards(
-                        3 - max(self.cards.count - self.settings.preferredDisplayCardCount, 0),
+                        3 - max(self.cards.count - self.settings.displayCardCount, 0),
                         plantSet: self.settings.plantSet,
                         existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
                     );
@@ -446,12 +446,12 @@ class Table<TC : TableCard> : ObservableObject {
         }
     }
 
-    /// Populate the table cards from the deck up to the preferredDisplayCardCount.
+    /// Populate the table cards from the deck up to the displayCardCount.
     /// If the moreCardsIfNoSet flag is set then if we don't have a SET on
     /// the table, then add up to 3 more cards.
     ///
     private func fillTable(frontSet: Bool? = nil) {
-        self.addMoreCards(self.settings.preferredDisplayCardCount - self.cards.count, frontSet: frontSet);
+        self.addMoreCards(self.settings.displayCardCount - self.cards.count, frontSet: frontSet);
         if (self.settings.moreCardsIfNoSet) {
             while (!self.containsSet()) {
                 if (self.deck.cards.count == 0) {

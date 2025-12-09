@@ -38,7 +38,7 @@ struct SettingsView: View {
                     Text("Display Card Count:")
                         .frame(alignment: .leading)
                     Spacer()
-                    Picker("\(table.settings.preferredDisplayCardCount) \u{25BC}", selection: $table.settings.preferredDisplayCardCount) {
+                    Picker("\(table.settings.displayCardCount) \u{25BC}", selection: $table.settings.displayCardCount) {
                         ForEach(preferredDisplayCountCardChoices, id: \.self) {
                             Text(String($0))
                         }
@@ -93,6 +93,6 @@ struct SettingsView: View {
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
-            .environmentObject(Table(preferredDisplayCardCount: 12, plantSet: true))
+            .environmentObject(Table(displayCardCount: 12, plantSet: true))
     }
 }

@@ -68,6 +68,6 @@ struct TableView: View {
 struct TableView_Previews: PreviewProvider {
     static var previews: some View {
         TableView()
-            .environmentObject(Table(preferredDisplayCardCount: 12, plantSet: true))
+            .environmentObject(Table(displayCardCount: 12, plantSet: true))
     }
 }
