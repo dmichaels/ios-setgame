@@ -13,23 +13,24 @@ struct SettingsView: View {
                 VStack {
                     Divider()
                     Toggle(isOn: $table.settings.showPartialSetSelectedIndicator) {
-                        Text("Show Partial SET Select Hint: ")
+                        Text("Partial SET Select Hint: ")
                     }
                     Toggle(isOn: $table.settings.showNumberOfSetsPresent) {
-                        Text("Show Available SETs Count: ")
+                        Text("Present SETs Count: ")
                     }
                     Toggle(isOn: $table.settings.moreCardsIfNoSet) {
-                        Text("Deal More Cards If No SETs: ")
+                        Text("More Cards On No SET: ")
                     }
                     Divider()
                     Toggle(isOn: $table.settings.plantSet) {
-                        Text("Plant SET If Possible: ")
+                        Text("Plant SET: ")
                     }
                     Toggle(isOn: $table.settings.moveAnyExistingSetToFront) {
-                        Text("Move Existing SET To Front: ")
+                        Text("Move SET To Front: ")
                     }
+                    Divider()
                     Toggle(isOn: $table.settings.plantInitialMagicSquare) {
-                        Text("Initial Magic Square: ")
+                        Text("Plant Magic Square: ")
                     }
                 }
                 Divider()

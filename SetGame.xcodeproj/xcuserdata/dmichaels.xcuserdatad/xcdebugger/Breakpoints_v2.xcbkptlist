@@ -562,36 +562,6 @@
             endingLineNumber = "85"
             landmarkName = "startNewGame()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "C17D756B-F356-4290-B245-5C5A88E66B51 - 8cda5da0980e03f9"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "SetGame.Table.startNewGame() -&gt; ()"
-                  moduleName = "SetGame.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dmichaels/repos/ios-setgame/SetGame/Model/Table.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "85"
-                  endingLineNumber = "85">
-               </Location>
-               <Location
-                  uuid = "C17D756B-F356-4290-B245-5C5A88E66B51 - 8cda5da0980e03f9"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "SetGame.Table.startNewGame() -&gt; ()"
-                  moduleName = "SetGame.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dmichaels/repos/ios-setgame/SetGame/Model/Table.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "85"
-                  endingLineNumber = "85">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
