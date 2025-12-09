@@ -81,7 +81,7 @@ class Table<TC : TableCard> : ObservableObject {
         self.cards = [TC]();
         self.state = State();
         if (self.settings.plantInitialMagicSquare && (self.settings.preferredDisplayCardCount >= 9)) {
-            let magicSquareCards: [Card] = Deck.randomMagicSquare()
+            let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.settings.useSimpleDeck)
             for card in magicSquareCards {
                 self.cards.add(TC(card))
                 _ = self.deck.takeCard(TC(card))

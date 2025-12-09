@@ -21,15 +21,15 @@ class Deck<T : Card> {
             for shape in CardShape.allCases {
                 for filling in fillings {
                     for number in CardNumber.allCases {
-                        cards.add(T(color: color, shape: shape, filling: filling, number: number));
+                        self.cards.add(T(color: color, shape: shape, filling: filling, number: number));
                     }
                 }
             }
         }
-        if ((ncards > 0) && (ncards < cards.count)) {
-            let nremove: Int = cards.count - ncards;
+        if ((ncards > 0) && (ncards < self.cards.count)) {
+            let nremove: Int = self.cards.count - ncards;
             for _ in 0..<nremove {
-                _ = cards.takeRandomCard();
+                _ = self.cards.takeRandomCard();
             }
         }
         self.cards.shuffle();
@@ -122,8 +122,8 @@ class Deck<T : Card> {
     /// Returns (WITHOUT removal) a random magic SET square from a standard deck.
     /// N.B. In progress and only (currently) for the purpose of constructing a magic square.
     ///
-    static func randomMagicSquare() -> [Card] {
-        let deck: [Card] = StandardDeck.instance.cards;
+    static func randomMagicSquare(simple: Bool = false) -> [Card] {
+        let deck: [Card] = simple ? StandardDeck.instanceSimple.cards : StandardDeck.instance.cards;
         var magic: [Card] = deck.randomNonSetCards();
         magic.append(Card.matchingSetValue(magic[0], magic[1])); // [3] from [0] and [1]
         magic.append(Card.matchingSetValue(magic[0], magic[2])); // [4] from [0] and [2]

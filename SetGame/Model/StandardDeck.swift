@@ -1,10 +1,15 @@
 class StandardDeck : Deck<Card> {
 
-    static let instance : StandardDeck = StandardDeck();
-    static let size     : Int          = instance.count;
+    static let instance       : StandardDeck = StandardDeck();
+    static let instanceSimple : StandardDeck = StandardDeck(simple: true);
+    static let size           : Int          = instance.count;
 
     private init() {
         super.init(readonly: true);
+    }
+
+    private init(simple: Bool) {
+        super.init(simple: simple, readonly: true);
     }
 
     /// Returns (without removal) a random card from a standard deck.
