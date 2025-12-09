@@ -224,8 +224,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "307"
             endingLineNumber = "307"
-            landmarkName = "numberOfSets()"
-            landmarkType = "7">
+            landmarkName = "Table"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -272,7 +272,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "253"
             endingLineNumber = "253"
-            landmarkName = "selectOneRandomSet()"
+            landmarkName = "selectAllCardsWhichArePartOfSet()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -304,8 +304,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "308"
             endingLineNumber = "308"
-            landmarkName = "Table"
-            landmarkType = "3">
+            landmarkName = "selectedCards()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -432,7 +432,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "165"
             endingLineNumber = "165"
-            landmarkName = "checkForSet()"
+            landmarkName = "touchCard(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -448,7 +448,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "163"
             endingLineNumber = "163"
-            landmarkName = "checkForSet()"
+            landmarkName = "touchCard(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -464,7 +464,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "162"
             endingLineNumber = "162"
-            landmarkName = "checkForSet()"
+            landmarkName = "touchCard(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
