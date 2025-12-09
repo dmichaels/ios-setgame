@@ -227,7 +227,6 @@ class Table<TC : TableCard> : ObservableObject {
                     //
                     // 2025-12-06
                     // Newer code which replaces SET cards without re-ordering.
-                    // N.B. But this does NOT respect the plantSet option; do we really even want that.
                     //
                     let extraCardsShowingCount: Int = max(self.cards.count - self.settings.preferredDisplayCardCount, 0)
                     let newCards: [TC] = self.deck.takeRandomCards(
