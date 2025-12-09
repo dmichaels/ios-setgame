@@ -125,6 +125,9 @@ class Table<TC : TableCard> : ObservableObject {
     }
 
     private func findTableDuplicates() {
+        //
+        // FOR DEBUGGING ONLY!
+        //
         for i in 0..<(self.cards.count - 1) {
             for j in (i + 1)..<(self.cards.count) {
                 let a: TC = self.cards[i];
@@ -436,7 +439,6 @@ class Table<TC : TableCard> : ObservableObject {
         if (frontSet) {
             self.moveAnyExistingSetToFront();
         }
-        // findTableDuplicates()
     }
 
    /// Populate the table cards from the deck up to the preferredDisplayCardCount.
