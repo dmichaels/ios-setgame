@@ -21,10 +21,15 @@ class Table<TC : TableCard> : ObservableObject {
         var cardsPerRow                     : Int  = 4;
         var useSimpleDeck                   : Bool = false {
             didSet {
-                self.table?.startNewGame();
+                //
+                // 2025-12-08
+                // No longer automatically restart when requesting simplifed deck in settings.
+                //
+                // self.table?.startNewGame();
             }
         }
         var plantSet                        : Bool = false;
+        var plantInitialMagicSquare         : Bool = false
         var moreCardsIfNoSet                : Bool = false {
             didSet {
                 if (self.moreCardsIfNoSet) {
@@ -75,7 +80,26 @@ class Table<TC : TableCard> : ObservableObject {
         self.deck  = Deck(simple: self.settings.useSimpleDeck, ncards: self.settings.limitDeckSize);
         self.cards = [TC]();
         self.state = State();
-        self.fillTable();
+        if (self.settings.plantInitialMagicSquare && (self.settings.preferredDisplayCardCount >= 9)) {
+            let magicSquareCards: [Card] = Deck.randomMagicSquare()
+            for card in magicSquareCards {
+                self.cards.add(TC(card))
+            }
+            self.fillTable();
+            if (self.settings.cardsPerRow == 4) {
+                self.cards[3]  = self.cards[9]
+                self.cards[7]  = self.cards[10]
+                self.cards[4]  = TC(magicSquareCards[3])
+                self.cards[5]  = TC(magicSquareCards[4])
+                self.cards[6]  = TC(magicSquareCards[5])
+                self.cards[8]  = TC(magicSquareCards[6])
+                self.cards[9]  = TC(magicSquareCards[7])
+                self.cards[10] = TC(magicSquareCards[8])
+            }
+        }
+        else {
+            self.fillTable();
+        }
     }
 
     /// Touch the given card; selects or unselects as appropriate.

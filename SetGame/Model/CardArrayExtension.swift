@@ -59,9 +59,9 @@ extension Array where Element : Card {
         return (self.count > 0) ? self.remove(at: Int.random(in: 0..<self.count)) : nil;
     }
 
-    /// Removes, at most, the specified number of random cards from this array, and returns these
-    /// in a new array; if fewer cards are in this array than the number requested, then so be it,
-    /// just that many will be returned (and then this array will end up being empty in this case).
+    /// Removes, at most, the specified number of random cards from this array, and returns these in
+    /// a new array; if fewer cards are in this array than the number requested, then so be it, just
+    /// that many will be returned (and then this array will end up being empty in this case).
     ///
     mutating func takeRandomCards(_ n : Int) -> [Element] {
         guard (n > 0) && (self.count > 0) else { return [] }
@@ -88,8 +88,8 @@ extension Array where Element : Card {
     ///
     /// The order of the returned cards (if any) will arbitrary/randomized.
     ///
-    /// N.B. Keep in mind that (normally) when the comments here say "this array" we
-    ///      are talking about the deck of cards, not the cards that are on the table.
+    /// N.B. Please keep in mind that (normally) when our comments say "this array" here,
+    /// we are talking about the deck of cards, and not the cards that are on the table.
     ///
     mutating func takeRandomCards(_ n : Int, plantSet: Bool, existingCards: [Element] = []) -> [Element] {
         guard (n > 0) && (self.count > 0) else { return [] }
@@ -171,11 +171,73 @@ extension Array where Element : Card {
         return randomCards;
     }
 
+    /// Returns (WITH removal) 3 random cards (in a new array) from this array of cards,
+    /// ENSURING that, IF POSSIBLE, there NO SETs in the returned cards. If this is NOT
+    /// POSSIBLE (either because there are not enough cards in this array of cards, or if
+    /// they do not contain a non-SET of 3), then returns and empty list (nothing removed).
+    /// Guaranteed: Return either an array of 3 cards which are a SET, or an empty array;
+    /// and if the former, then these 3 cards will be removed from this array of cards.
+    ///
+    /// N.B. Only (currently) used for the purpose of constructing a magic square.
+    ///
+    mutating func takeRandomNonSetCards() -> [Element] {
+        let cards: [Element] = self.randomNonSetCards();
+        guard cards.count == 3 else { return [] }
+        self.remove(cards);
+        return cards;
+    }
+
     /// Returns (without removal), a random card from this array,
     /// or nil if this array is empty.
     ///
     func randomCard() -> Element? {
         return (self.count > 0) ? self[Int.random(in: 0..<self.count)] : nil;
+    }
+
+    /// Returns (WITHOUT removal), at most, the specified number of random cards from this
+    /// array, in a new array; if fewer cards are in this array than the that requested,
+    /// then so be it, just that many will be returned, UNLESS the given strict argument
+    /// is true, in which case an empty array will be returned in this case.
+    ///
+    /// N.B. Only (currently) used for the purpose of constructing a magic square.
+    ///
+    func randomCards(_ n: Int, strict: Bool = false) -> [Element] {
+        guard (n > 0) else { return [] }
+        var randomCards: [Element] = []
+        for i in 0..<n {
+            if let card: Element = self.randomCard() {
+                randomCards.append(card);
+            }
+            else if (strict) {
+                return [];
+            }
+            else {
+                break;
+            }
+        }
+        return randomCards;
+    }
+
+    /// Returns (without removal) 3 random cards from this deck, and returns these cards in
+    /// a new array; but we ensure, IF POSSIBLE, there are NOT any SETs in the returned cards.
+    /// If this is NOT POSSIBLE, either because there are not enough cards in this array of
+    /// cards, or if they do not contain a non-SET of 3, then an empty list is returned.
+    /// Guaranteed: Return either an array of 3 cards which are a SET, or an empty array.
+    ///
+    /// N.B. Only (currently) used for the purpose of constructing a magic square.
+    ///
+    func randomNonSetCards() -> [Element] {
+        guard self.count >= 3 else { return [] }
+        var randomNonSetCards: [Element] = self.randomCards(2);
+        let matchingSetCard = Card.matchingSetValue(randomNonSetCards[0], randomNonSetCards[1]);
+        for randomIndex in Array<Int>(0..<self.count).shuffled() {
+            let card: Element = self[randomIndex];
+            if (!randomNonSetCards.contains(card) && (card != matchingSetCard)) {
+                randomNonSetCards.append(card);
+                return randomNonSetCards;
+            }
+        }
+        return [];
     }
 
     func isSet() -> Bool {

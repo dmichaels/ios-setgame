@@ -12,21 +12,24 @@ struct SettingsView: View {
             VStack {
                 VStack {
                     Divider()
+                    Toggle(isOn: $table.settings.showPartialSetSelectedIndicator) {
+                        Text("Show Partial SET Select Hint: ")
+                    }
                     Toggle(isOn: $table.settings.showNumberOfSetsPresent) {
                         Text("Show Available SETs Count: ")
-                    }
-                    Toggle(isOn: $table.settings.plantSet) {
-                        Text("Plant SET If Possible: ")
                     }
                     Toggle(isOn: $table.settings.moreCardsIfNoSet) {
                         Text("Deal More Cards If No SETs: ")
                     }
                     Divider()
-                    Toggle(isOn: $table.settings.showPartialSetSelectedIndicator) {
-                        Text("Show Partial SET Select Hint: ")
+                    Toggle(isOn: $table.settings.plantSet) {
+                        Text("Plant SET If Possible: ")
                     }
                     Toggle(isOn: $table.settings.moveAnyExistingSetToFront) {
                         Text("Move Existing SET To Front: ")
+                    }
+                    Toggle(isOn: $table.settings.plantInitialMagicSquare) {
+                        Text("Initial Magic Square: ")
                     }
                 }
                 Divider()
@@ -53,7 +56,12 @@ struct SettingsView: View {
                 Divider()
                 VStack {
                     Toggle(isOn: $table.settings.useSimpleDeck) {
-                        Text("Use Simplified Deck ↻ Restarts!")
+                        //
+                        // 2025-12-08
+                        // No longer automatically restart when requesting simplifed deck in settings.
+                        // Text("Use Simplified Deck ↻ Restarts!")
+                        //
+                        Text("Use Simplified Deck")
                     }
                     /*
                     HStack() {

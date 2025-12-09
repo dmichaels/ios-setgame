@@ -3,6 +3,17 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "static Deck.randomMagicSquare():Deck.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "print(card)">
+            </PersistentString>
+            <PersistentString
+               value = "print(nonSetCards)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "Table.startNewGame():Table.swift">
          <PersistentStrings>
             <PersistentString
@@ -14,32 +25,23 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "Table.selectOneRandomSet():Table.swift">
+         contextName = "Table.addMoreCards(_:plantSet:):Table.swift">
          <PersistentStrings>
             <PersistentString
-               value = "sets.count">
+               value = "self.settings.moveAnyExistingSetToFront">
             </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Table.moveAnyExistingSetToFront():Table.swift">
+         <PersistentStrings>
             <PersistentString
-               value = "Int.random(in: 0..&lt;sets.count)">
+               value = "self.settings">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "Array&lt;A&gt;.moveAnyExistingSetToFront():CardArrayExtension.swift">
-      </ContextState>
-      <ContextState
-         contextName = "Table.Settings.moveAnyExistingSetToFront.didset:Table.swift">
-      </ContextState>
-      <ContextState
-         contextName = "Table.Settings.useSimpleDeck.didset:Table.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "self.useSimpleDeck">
-            </PersistentString>
-            <PersistentString
-               value = "self.table!.settings.useSimpleDeck">
-            </PersistentString>
-         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "Table.fillTable():Table.swift">
@@ -50,18 +52,13 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "Table.addMoreCards(_:):Table.swift">
+         contextName = "Table.Settings.useSimpleDeck.didset:Table.swift">
          <PersistentStrings>
             <PersistentString
-               value = "self.settings.moveAnyExistingSetToFront">
+               value = "self.useSimpleDeck">
             </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "Table.addMoreCards(_:plantSet:):Table.swift">
-         <PersistentStrings>
             <PersistentString
-               value = "self.settings.moveAnyExistingSetToFront">
+               value = "self.table!.settings.useSimpleDeck">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -77,10 +74,27 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "Table.moveAnyExistingSetToFront():Table.swift">
+         contextName = "Table.Settings.moveAnyExistingSetToFront.didset:Table.swift">
+      </ContextState>
+      <ContextState
+         contextName = "Table.checkForSet():Table.swift">
+      </ContextState>
+      <ContextState
+         contextName = "Table.addMoreCards(_:):Table.swift">
          <PersistentStrings>
             <PersistentString
-               value = "self.settings">
+               value = "self.settings.moveAnyExistingSetToFront">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Table.selectOneRandomSet():Table.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "sets.count">
+            </PersistentString>
+            <PersistentString
+               value = "Int.random(in: 0..&lt;sets.count)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

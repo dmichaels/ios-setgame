@@ -208,8 +208,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "311"
             endingLineNumber = "311"
-            landmarkName = "partialSetSelected()"
-            landmarkType = "7">
+            landmarkName = "Table"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -224,7 +224,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "307"
             endingLineNumber = "307"
-            landmarkName = "partialSetSelected()"
+            landmarkName = "numberOfSets()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -256,8 +256,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "31"
             endingLineNumber = "31"
-            landmarkName = "moreCardsIfNoSet"
-            landmarkType = "24">
+            landmarkName = "Settings"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -272,7 +272,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "253"
             endingLineNumber = "253"
-            landmarkName = "unselectCards(_:set:)"
+            landmarkName = "selectOneRandomSet()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -288,7 +288,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "39"
             endingLineNumber = "39"
-            landmarkName = "moveAnyExistingSetToFront"
+            landmarkName = "moreCardsIfNoSet"
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
@@ -304,8 +304,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "308"
             endingLineNumber = "308"
-            landmarkName = "partialSetSelected()"
-            landmarkType = "7">
+            landmarkName = "Table"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -336,8 +336,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "124"
             endingLineNumber = "124"
-            landmarkName = "averageNumberOfSets(_:iterations:)"
-            landmarkType = "7">
+            landmarkName = "Deck"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -352,7 +352,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "133"
             endingLineNumber = "133"
-            landmarkName = "averageNumberOfSets(_:iterations:)"
+            landmarkName = "randomMagicSquare()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -496,7 +496,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "207"
             endingLineNumber = "207"
-            landmarkName = "numberOfSets()"
+            landmarkName = "randomCards(_:strict:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -512,8 +512,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "209"
             endingLineNumber = "209"
-            landmarkName = "Array"
-            landmarkType = "21">
+            landmarkName = "randomCards(_:strict:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -528,7 +528,85 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "204"
             endingLineNumber = "204"
-            landmarkName = "numberOfSets()"
+            landmarkName = "randomCards(_:strict:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B9F06561-F024-48B7-B70A-08A2047FA5C5"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SetGame/Model/Deck.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "137"
+            endingLineNumber = "137"
+            landmarkName = "Deck"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C17D756B-F356-4290-B245-5C5A88E66B51"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SetGame/Model/Table.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "85"
+            endingLineNumber = "85"
+            landmarkName = "startNewGame()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "C17D756B-F356-4290-B245-5C5A88E66B51 - 8cda5da0980e03f9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SetGame.Table.startNewGame() -&gt; ()"
+                  moduleName = "SetGame.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dmichaels/repos/ios-setgame/SetGame/Model/Table.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "85"
+                  endingLineNumber = "85">
+               </Location>
+               <Location
+                  uuid = "C17D756B-F356-4290-B245-5C5A88E66B51 - 8cda5da0980e03f9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SetGame.Table.startNewGame() -&gt; ()"
+                  moduleName = "SetGame.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dmichaels/repos/ios-setgame/SetGame/Model/Table.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "85"
+                  endingLineNumber = "85">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "91591549-FC87-4DEE-B832-AA2C9E73A2CB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SetGame/Model/Table.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "84"
+            endingLineNumber = "84"
+            landmarkName = "startNewGame()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
