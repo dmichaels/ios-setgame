@@ -6,10 +6,13 @@
          contextName = "static Deck.randomMagicSquare():Deck.swift">
          <PersistentStrings>
             <PersistentString
+               value = "print([magic[0], magic[1], magic[3], magic[2], magic[5], magic[6], magic[4], magic[7], magic[8]])">
+            </PersistentString>
+            <PersistentString
                value = "print(card)">
             </PersistentString>
             <PersistentString
-               value = "print(nonSetCards)">
+               value = "print(magic)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -21,6 +24,14 @@
             </PersistentString>
             <PersistentString
                value = "self.settings.useSimpleDeck">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Array&lt;SetGame.Card&gt;.randomNonSetCards():CardArrayExtension.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "print(randomNonSetCards)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

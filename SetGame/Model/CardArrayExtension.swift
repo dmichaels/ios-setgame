@@ -203,10 +203,11 @@ extension Array where Element : Card {
     ///
     func randomCards(_ n: Int, strict: Bool = false) -> [Element] {
         guard (n > 0) && (self.count > 0) else { return [] }
-        let n: Int = Swift.min(n, self.count)
-        var randomCards: [Element] = []
-        for i in Array<Int>(0..<n).shuffled().prefix(n) {
-            randomCards.append(self[i])
+        let n: Int = Swift.min(n, self.count);
+        let randomIndices = Array<Int>(0..<self.count).shuffled().prefix(n);
+        var randomCards: [Element] = [];
+        for i in randomIndices {
+            randomCards.append(self[i]);
         }
         return randomCards;
     }
