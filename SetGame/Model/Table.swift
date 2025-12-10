@@ -16,7 +16,7 @@ class Table<TC : TableCard> : ObservableObject {
         // not the same instance, or the same copy it ? Guess not. A thinker.
         //
         var table                           : Table?;
-        var displayCardCount       : Int  = 12;
+        var displayCardCount                : Int  = 12;
         var limitDeckSize                   : Int  = Deck().count;
         var cardsPerRow                     : Int  = 4;
         var useSimpleDeck                   : Bool = false {
@@ -66,13 +66,13 @@ class Table<TC : TableCard> : ObservableObject {
     @Published                     var settings : Settings;
 
     init(displayCardCount : Int = 9, plantSet : Bool = false) {
-        self.deck                        = Deck();
-        self.cards                       = [TC]();
-        self.state                       = State();
-        self.settings                    = Settings();
+        self.deck                      = Deck();
+        self.cards                     = [TC]();
+        self.state                     = State();
+        self.settings                  = Settings();
         self.settings.displayCardCount = displayCardCount;
-        self.settings.plantSet           = plantSet;
-        self.settings.table              = self;
+        self.settings.plantSet         = plantSet;
+        self.settings.table            = self;
         self.fillTable();
     }
 
@@ -90,7 +90,7 @@ class Table<TC : TableCard> : ObservableObject {
             // Only bother making it look good if the cards-per-row is 4 (the default)
             // or 5; if cards-per-row is 3 it already falls out to look good automatically.
             //
-            let preferredDisplayCardCountSave: Int = self.settings.displayCardCount
+            let displayCardCountSave: Int = self.settings.displayCardCount
             if ((self.settings.cardsPerRow == 4) && (self.settings.displayCardCount < 11)) {
                 self.settings.displayCardCount = 11
             }
@@ -98,7 +98,7 @@ class Table<TC : TableCard> : ObservableObject {
                 self.settings.displayCardCount = 13
             }
             self.fillTable(frontSet: false);
-            self.settings.displayCardCount = preferredDisplayCardCountSave
+            self.settings.displayCardCount = displayCardCountSave
             if (self.settings.cardsPerRow == 4) {
                 self.cards[3]  = self.cards[9]
                 self.cards[7]  = self.cards[10]
@@ -263,7 +263,7 @@ class Table<TC : TableCard> : ObservableObject {
             }
             else {
                 //
-                // Dummy :-(
+                // Dummy :-( Not a SET!
                 //
                 self.state.setJustFoundNot = true;
                 self.state.incorrectGuessCount += 1;
