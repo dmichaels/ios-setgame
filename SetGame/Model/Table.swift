@@ -263,8 +263,8 @@ class Table<TC : TableCard> : ObservableObject {
                         plantSet: self.settings.plantSet,
                         existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
                     );
-                    print("NEW-CARDS")
-                    print(newCards)
+                    // print("NEW-CARDS")
+                    // print(newCards)
                     var newCardIndex: Int = 0
                     var cardIndex: Int = 0
                     var deletedCardIndices: [Int] = []
@@ -328,7 +328,7 @@ class Table<TC : TableCard> : ObservableObject {
                     let extraTableCardsTotal: Int = max(self.cards.count - self.settings.displayCardCount, 0);
                     let newDeckCardsCount: Int = 3 - min(extraTableCardsTotal, 3);
                     let extraTableCardsCount: Int = 3 - newDeckCardsCount;
-                    print("CC: \(self.cards.count) | ECT: \(extraTableCardsTotal) | NDC: \(newDeckCardsCount) | ECC: \(extraTableCardsCount)")
+                    // print("CC: \(self.cards.count) | ECT: \(extraTableCardsTotal) | NDC: \(newDeckCardsCount) | ECC: \(extraTableCardsCount)")
                     let newDeckCards: [TC] = newDeckCardsCount <= 0 ? [] : (
                         self.deck.takeRandomCards(
                             newDeckCardsCount,
@@ -340,13 +340,13 @@ class Table<TC : TableCard> : ObservableObject {
                         self.cards.filter { !$0.selected }.suffix(extraTableCardsCount)
                     );
                     var replacementCards: [TC] = extraTableCards.reversed() + newDeckCards;
-                    print("NC: \(newDeckCards)")
-                    print("EC: \(extraTableCards)")
-                    print("RC: \(replacementCards)")
+                    // print("NC: \(newDeckCards)")
+                    // print("EC: \(extraTableCards)")
+                    // print("RC: \(replacementCards)")
                     for i in 0..<self.cards.count {
                         if (self.cards[i].selected) {
                             if (replacementCards.count > 0) {
-                                print("REPLACE: \(self.cards[i]) <-- \(replacementCards[0])")
+                                // print("REPLACE: \(self.cards[i]) <-- \(replacementCards[0])")
                                 self.cards[i] = replacementCards[0];
                                 replacementCards.remove(at: 0);
                             }
@@ -370,7 +370,7 @@ class Table<TC : TableCard> : ObservableObject {
                 self.unselectCards();
             }
         }
-        findTableDuplicates();
+        // findTableDuplicates();
     }
 
     func selectAllCardsWhichArePartOfSet() {
