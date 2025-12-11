@@ -43,7 +43,7 @@ enum CardShape : Int, CaseIterable {
     /// returns its CardShape instance; returns nil if unparsable.
     ///
     static func from(_ value: String) -> CardShape? {
-        let value = value.filter{!$0.isWhitespace}.lowercased();
+        let value = value.filter{ !$0.isWhitespace }.lowercased();
         switch value {
             case "d",
                  "diamond",

@@ -22,8 +22,12 @@ class StandardDeck : Deck<Card> {
     ///
     func randomSet() -> [Card] {
         let deck = StandardDeck();
+        let a = deck.randomCard();
+        let b = deck.randomCard();
+        /*
         let a = deck.takeRandomCard()!;
         let b = deck.takeRandomCard()!;
+        */
         let c = Card.matchingSetValue(a, b);
         return [a, b, c];
     }

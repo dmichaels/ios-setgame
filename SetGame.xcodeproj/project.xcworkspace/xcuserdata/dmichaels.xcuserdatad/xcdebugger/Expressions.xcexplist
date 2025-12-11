@@ -20,10 +20,7 @@
          contextName = "Table.startNewGame():Table.swift">
          <PersistentStrings>
             <PersistentString
-               value = "self.cards">
-            </PersistentString>
-            <PersistentString
-               value = "self.settings.useSimpleDeck">
+               value = "TC(Card.from(&quot;GOH3&quot;)!)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -53,6 +50,14 @@
       </ContextState>
       <ContextState
          contextName = "Array&lt;A&gt;.moveAnyExistingSetToFront():CardArrayExtension.swift">
+      </ContextState>
+      <ContextState
+         contextName = "StandardDeck.randomSet():StandardDeck.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "deck.randomCard()">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "Table.fillTable():Table.swift">
@@ -95,6 +100,22 @@
          <PersistentStrings>
             <PersistentString
                value = "self.settings.moveAnyExistingSetToFront">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "static Deck.randomSet():Deck.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "StandardDeck.instance">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Deck.takeRandomCard():Deck.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.readonly">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

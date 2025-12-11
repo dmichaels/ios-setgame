@@ -24,7 +24,6 @@ class Table<TC : TableCard> : ObservableObject {
                 //
                 // 2025-12-08
                 // No longer automatically restart when requesting simplifed deck in settings.
-                //
                 // self.table?.startNewGame();
             }
         }
@@ -46,6 +45,7 @@ class Table<TC : TableCard> : ObservableObject {
                 }
             }
         }
+        var testing: Bool = false
     }
 
     struct State {
@@ -80,6 +80,29 @@ class Table<TC : TableCard> : ObservableObject {
         self.deck  = Deck(simple: self.settings.useSimpleDeck, ncards: self.settings.limitDeckSize);
         self.cards = [TC]();
         self.state = State();
+        if self.settings.testing {
+            self.settings.cardsPerRow = 4
+            /*
+            self.settings.displayCardCount = 12
+            let cards = self.deck.takeCards(
+                "3GQT", "3RQH", "2PDS", "3RDT",
+                "2GOH", "3RQT", "2ROS", "3GDT",
+                "1ROS", "2GDS", "2RDS", "3GQS",
+                "3ROT", "2PDH"
+                */
+            self.settings.displayCardCount = 14
+            let cards = self.deck.takeCards(
+                "GOH1", "GOH2", "GOH3", "GDH1",
+                "GDH2", "GDH3", "GQH1", "S",
+                "POH1", "POH2", "POH3", "S",
+                "GOT1", "GOT2", "GOT3", "GDT1",
+                "S",    "POT1", "POT2", "POT3",
+            )
+            for card in cards {
+                self.cards.append(TC(card))
+            }
+            return
+        }
         if (self.settings.plantInitialMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.settings.useSimpleDeck)
             for card in magicSquareCards {
@@ -122,27 +145,33 @@ class Table<TC : TableCard> : ObservableObject {
                 self.cards[12] = TC(magicSquareCards[8])
             }
             else if (self.settings.cardsPerRow == 6) {
+                //
+                // TODO
+                //
             }
         }
         else {
             self.fillTable();
         }
-        print(Deck.probabilityOfAtLeastOneSet(for: self.settings.displayCardCount))
     }
 
     private func findTableDuplicates() {
         //
         // FOR DEBUGGING ONLY!
         //
+        var dups: Bool = false;
         for i in 0..<(self.cards.count - 1) {
             for j in (i + 1)..<(self.cards.count) {
                 let a: TC = self.cards[i];
                 let b: TC = self.cards[j];
                 if (a == b) {
-                    print("DUPLICATE!")
-                    print(a)
+                    print("DUPLICATE! [\(i),\(j)]: \(a)");
+                    dups = true;
                 }
             }
+        }
+        if (!dups) {
+            print("NO-DUPLICATES")
         }
     }
 
@@ -223,7 +252,7 @@ class Table<TC : TableCard> : ObservableObject {
                     self.cards.remove(selectedCards);
                     self.fillTable();
                 }
-                else {
+                else if (false) {
                     //
                     // 2025-12-06
                     // Newer code which replaces SET cards without re-ordering.
@@ -234,6 +263,8 @@ class Table<TC : TableCard> : ObservableObject {
                         plantSet: self.settings.plantSet,
                         existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
                     );
+                    print("NEW-CARDS")
+                    print(newCards)
                     var newCardIndex: Int = 0
                     var cardIndex: Int = 0
                     var deletedCardIndices: [Int] = []
@@ -250,8 +281,30 @@ class Table<TC : TableCard> : ObservableObject {
                         cardIndex += 1
                     }
                     if (deletedCardIndices.count > 0) {
-                        for i in stride(from: deletedCardIndices.count - 1, through: 0, by: -1) {
-                            self.cards.remove(at: deletedCardIndices[i])
+                        if (false) {
+                            for i in stride(from: deletedCardIndices.count - 1, through: 0, by: -1) {
+                                self.cards.remove(at: deletedCardIndices[i])
+                            }
+                        }
+                        else {
+                            //
+                            // This is actually a litte tricky; backfilling the
+                            // selected (to-be-deleted) SET from any extra (above/beyond
+                            // display-card-count)
+                            //
+                            if (extraCardsShowingCount > 0) {
+                                var extraCardIndex: Int = self.settings.displayCardCount
+                                var secondaryDeletedCardIndices: [Int] = []
+                                for deletedCardIndex in deletedCardIndices {
+                                    self.cards[deletedCardIndex] = self.cards[extraCardIndex]
+                                    secondaryDeletedCardIndices.append(extraCardIndex)
+                                    extraCardIndex += 1
+                                }
+                                deletedCardIndices = secondaryDeletedCardIndices
+                            }
+                            for i in stride(from: deletedCardIndices.count - 1, through: 0, by: -1) {
+                                self.cards.remove(at: deletedCardIndices[i])
+                            }
                         }
                     }
                     //
@@ -260,16 +313,64 @@ class Table<TC : TableCard> : ObservableObject {
                     self.unselectCards()
                     self.fillTable();
                 }
+                else {
+                    //
+                    // 2025-12-09
+                    // Better code which replaces SET cards without re-ordering.
+                    //
+                    // 1. Get the list (possibly empty) of replacement cards from the extra, trailing table cards.
+                    // 2. Take a list (possibly empty) of replacement/new (random) cards from the deck.
+                    // 3. Replace the selected (SET) table cards to be replenished first from #1 then #2.
+                    // 4. Remove this many extra, trailing cards from the table cards:
+                    //    min(table-card-count - display-card-count, 3)
+                    // 5. Add any necessary cards to the end of the table cards.
+                    //
+                    let extraTableCardsTotal: Int = max(self.cards.count - self.settings.displayCardCount, 0);
+                    let newDeckCardsCount: Int = 3 - min(extraTableCardsTotal, 3);
+                    let extraTableCardsCount: Int = 3 - newDeckCardsCount;
+                    print("CC: \(self.cards.count) | ECT: \(extraTableCardsTotal) | NDC: \(newDeckCardsCount) | ECC: \(extraTableCardsCount)")
+                    let newDeckCards: [TC] = newDeckCardsCount <= 0 ? [] : (
+                        self.deck.takeRandomCards(
+                            newDeckCardsCount,
+                            plantSet: self.settings.plantSet,
+                            existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
+                        )
+                    );
+                    let extraTableCards: [TC] = extraTableCardsCount <= 0 ? [] : (
+                        self.cards.filter { !$0.selected }.suffix(extraTableCardsCount)
+                    );
+                    var replacementCards: [TC] = extraTableCards.reversed() + newDeckCards;
+                    print("NC: \(newDeckCards)")
+                    print("EC: \(extraTableCards)")
+                    print("RC: \(replacementCards)")
+                    for i in 0..<self.cards.count {
+                        if (self.cards[i].selected) {
+                            if (replacementCards.count > 0) {
+                                print("REPLACE: \(self.cards[i]) <-- \(replacementCards[0])")
+                                self.cards[i] = replacementCards[0];
+                                replacementCards.remove(at: 0);
+                            }
+                        }
+                    }
+                    self.cards.removeLast(extraTableCardsCount);
+                    //
+                    // Fill just in case we have fewer cards than
+                    // what is normally desired; and unselect all.
+                    //
+                    self.unselectCards()
+                    self.fillTable();
+                }
             }
             else {
                 //
-                // Dummy :-( Not a SET!
+                // Not a SET! :-(
                 //
                 self.state.setJustFoundNot = true;
                 self.state.incorrectGuessCount += 1;
                 self.unselectCards();
             }
         }
+        findTableDuplicates();
     }
 
     func selectAllCardsWhichArePartOfSet() {

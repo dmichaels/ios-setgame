@@ -43,7 +43,7 @@ enum CardFilling : Int, CaseIterable {
     /// returns its CardFilling instance; returns nil if unparsable.
     ///
     static func from(_ value: String) -> CardFilling? {
-        let value = value.filter{!$0.isWhitespace}.lowercased();
+        let value = value.filter{ !$0.isWhitespace }.lowercased();
         switch value {
             case "h",
                  "hollow":   return Hollow;

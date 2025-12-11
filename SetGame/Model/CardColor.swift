@@ -43,7 +43,7 @@ enum CardColor : Int, CaseIterable {
     /// returns its CardColor instance; returns nil if unparsable.
     ///
     static func from(_ value: String) -> CardColor? {
-        let value = value.filter{!$0.isWhitespace}.lowercased();
+        let value = value.filter{ !$0.isWhitespace }.lowercased();
         switch value {
             case "g",
                  "green":  return Green;

@@ -34,11 +34,17 @@ extension Array where Element : Card {
     ///
     mutating func remove(_ card : Element, _ cards  : Element...) {
         self.removeAll(where: {$0 == card});
-        cards.forEach { let card = $0; self.removeAll(where: {$0 == card}); }
+        cards.forEach {
+            let card = $0;
+            self.removeAll(where: {$0 == card});
+        }
     }
 
     mutating func remove(_ cards : [Element]) {
-        cards.forEach { self.remove($0); }
+        cards.forEach {
+            let card = $0;
+            self.removeAll(where: {$0 == card});
+        }
     }
 
     mutating func clear() {
@@ -50,6 +56,64 @@ extension Array where Element : Card {
     ///
     mutating func takeCard() -> Element? {
         return self.count > 0 ? self.remove(at: 0) : nil;
+    }
+
+    /// Removes the (first instance of the) card matching the given card
+    /// from this array and, if present and removed, returns the card,
+    /// otherwise returns nil.
+    ///
+    mutating func takeCard(_ card: Element) -> Element? {
+        if let index: Int = firstIndex(of: card) {
+            self.remove(at: index);
+            return card;
+        }
+        return nil;
+    }
+
+    /// FOR DEBUG/DEV ONLY!
+    /// Returns (WITH removal) a set of cards from this array of cards, for the given
+    /// list of SET card representations, if they are in this array; if not then just
+    /// ignore/skip. Card representations of "S" are assigned a member of a SET,
+    /// consecutively/iteratively, if possible; if possible then just ignore/skip.
+    //
+    mutating func takeCards(_ values: [String]) -> [Element] {
+        var cards: [Element] = [];
+        var sindices: [Int] = [];
+        for i in 0..<values.count {
+            if (values[i].uppercased() == "S") {
+                cards.append(Element())
+                sindices.append(i)
+            }
+            else if let card: Element = Self.from(values[i]) {
+                if let card = self.takeCard(card) {
+                    cards.append(card)
+                }
+            }
+        }
+        if (sindices.count > 0) {
+            var set: [Element] = []
+            var deletes: [Int] = []
+            for i in sindices {
+                if (set.count == 0) {
+                    set = self.randomSetCards()
+                }
+                if (set.count > 0) {
+                    cards[i] = set[0]
+                    set.remove(at: 0)
+                }
+                else {
+                    deletes.append(i)
+                }
+            }
+            for i in deletes {
+                cards.remove(at: i)
+            }
+        }
+        return cards;
+    }
+
+    mutating func takeCards(_ values: String...) -> [Element] {
+        return self.takeCards(values)
     }
 
     /// Removes and returns a random card from this array;
@@ -212,8 +276,28 @@ extension Array where Element : Card {
         return randomCards;
     }
 
-    /// Returns (without removal) 3 random cards from this deck, and returns these cards in
-    /// a new array; but we ensure, IF POSSIBLE, there are NOT any SETs in the returned cards.
+    /// Returns (WITHOUT removal) 3 random cards from this array which form a SET.
+    /// If no such thing can be found then returns an empty array.
+    ///
+    func randomSetCards() -> [Element] {
+        let randomIndices = Array<Int>(0..<self.count).shuffled();
+        for i in 0..<(randomIndices.count - 2) {
+            for j in (i + 1)..<(randomIndices.count - 1) {
+                let ri: Int = randomIndices[i];
+                let rj: Int = randomIndices[j];
+                let rci: Element = self[ri];
+                let rcj: Element = self[rj];
+                let rcm: Element = Element(Card.matchingSetValue(rci, rcj))
+                if (self.contains(rcm)) {
+                    return [rci, rcj, rcm];
+                }
+            }
+        }
+        return [];
+    }
+
+    /// Returns (without removal) 3 random cards from this array of cards, and returns these cards
+    /// in a new array; but we ensure, IF POSSIBLE, there are NOT any SETs in the returned cards.
     /// If this is NOT POSSIBLE, either because there are not enough cards in this array of
     /// cards, or if they do not contain a non-SET of 3, then an empty list is returned.
     /// Guaranteed: Return either an array of 3 cards which are a SET, or an empty array.
@@ -311,15 +395,21 @@ extension Array where Element : Card {
 
     /// Parses and returns a card array representing given comma-separated list of
     /// string representations of SET cards. See Card.from for details of format.
-    /// If no parsable card formats, then returns an empty array.
+    /// Unparsable items in the list are ignored; if no parsable card formats
+    /// are found, then returns an empty array.
     ///
     static func from(_ values : String) -> [Element] {
-        return Self.from(values.filter{!$0.isWhitespace}.split(){$0 == ","}.map{String($0)});
+        return Self.from(
+            values.filter  { !$0.isWhitespace }
+                  .split() { $0 == "," }
+                  .map     { String($0) }
+        );
     }
 
     /// Parses and returns a card array representing given array of of string
     /// representations of SET cards. See Card.from for details of format.
-    /// If no parsable card formats, then returns an empty array.
+    /// Unparsable items in the list are ignored; if no parsable card formats
+    /// are found, then returns an empty array.
     ///
     static func from(_ values : [String]) -> [Element] {
         var cards: [Element] = [Element]();
@@ -329,5 +419,12 @@ extension Array where Element : Card {
             }
         }
         return cards;
+    }
+
+    /// Parses and returns a card representing the given string
+    /// representation of a SET card; If unparsable then returns nil.
+    //
+    static func from(_ value : String) -> Element? {
+        return Element(value);
     }
 }

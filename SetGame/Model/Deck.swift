@@ -70,6 +70,20 @@ class Deck<T : Card> {
         return nil;
     }
 
+    /// FOR DEBUG/DEV ONLY!
+    /// See CardArrayExtension.takeCards([String]).
+    ///
+    func takeCards(_ values: [String]) -> [Card] {
+        return self.cards.takeCards(values);
+    }
+
+    /// FOR DEBUG/DEV ONLY!
+    /// See CardArrayExtension.takeCards(String...).
+    ///
+    func takeCards(_ values: String...) -> [Card] {
+        return self.cards.takeCards(values);
+    }
+
     /// Removes and returns a random card from this deck;
     /// returns nil if no more cards in the deck.
     //
