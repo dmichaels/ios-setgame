@@ -263,9 +263,9 @@ class Table<TC : TableCard> : ObservableObject {
                 self.state.setLastFound = selectedCards;
                 //
                 // 2025-12-12
-                // Better code which replaces selected SET cards without re-ordering, and
-                // with reversion back to the preferred number of display cards as we go.
-                // Slightly tricky to get just right.
+                // Better code which replaces selected SET cards minimum reordering,
+                // and with reversion toward the preferred number of display cards.
+                // Slightly tricky to get just right; be careful.
                 //
                 let extraTableCardsTotalCount: Int = max(self.cards.count - self.settings.displayCardCount, 0);
                 let extraTableCardsUnselected: [TC] = self.cards.suffix(extraTableCardsTotalCount).filter { !$0.selected };
