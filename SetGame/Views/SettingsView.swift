@@ -78,14 +78,14 @@ struct SettingsView: View {
                     */
                 }
                 Divider()
-                // debug
+                /* DEBUG ...
                 VStack {
                     Toggle(isOn: $table.settings.testing) {
                         Text("TESTING")
                     }
                 }
                 Divider()
-                // end debug
+                ... DEBUG END */
                 HStack () {
                     NavigationLink(destination: StatsView()) {
                         Text("SET Game Stats")

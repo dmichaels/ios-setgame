@@ -45,7 +45,7 @@ class Table<TC : TableCard> : ObservableObject {
                 }
             }
         }
-        var testing: Bool = true
+        var testing: Bool = false
     }
 
     struct State {
@@ -108,14 +108,20 @@ class Table<TC : TableCard> : ObservableObject {
                 "PQT3"
             )
 */
-/**/
+/*
             let cards = self.deck.takeCards(
                 "PDT2", "ROS2", "POH3", "PQT1",
                 "RDT3", "ROH3", "GQT3", "GDS3",
                 "PQT3", "GOS1", "RQS3", "RDH3",
                 "GOT1"
             )
-/**/
+*/
+            let cards = self.deck.takeCards(
+                "1ROT", "1GQS", "2ROT", "1RQS",
+                "2PQT", "3RDT", "1GDT", "1PQH",
+                "2PDS", "1GOH", "3GDH", "1PDH",
+                "1ROH", "1GQH", "2RQT", "2POS"
+            )
             for card in cards {
                 self.cards.append(TC(card))
             }
@@ -264,7 +270,7 @@ class Table<TC : TableCard> : ObservableObject {
                 let extraTableCardsTotalCount: Int = max(self.cards.count - self.settings.displayCardCount, 0);
                 let extraTableCardsUnselected: [TC] = self.cards.suffix(extraTableCardsTotalCount).filter { !$0.selected };
                 let extraTableCardsCount: Int = min(extraTableCardsUnselected.count, 3);
-                let extraTableCards: [TC] = extraTableCardsUnselected.suffix(extraTableCardsCount);
+                let extraTableCards: [TC] = extraTableCardsUnselected.suffix(extraTableCardsCount).reversed();
                 let newDeckCardsCount: Int = 3 - min(extraTableCardsTotalCount, 3);
                 let newDeckCards: [TC] = newDeckCardsCount <= 0 ? [] : (
                     self.deck.takeRandomCards(
@@ -299,7 +305,7 @@ class Table<TC : TableCard> : ObservableObject {
                 self.unselectCards();
             }
         }
-        findTableDuplicates();
+        // findTableDuplicates();
     }
 
     func selectAllCardsWhichArePartOfSet() {
