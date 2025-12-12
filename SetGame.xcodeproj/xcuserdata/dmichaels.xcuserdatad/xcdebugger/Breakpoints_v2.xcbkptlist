@@ -208,7 +208,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "311"
             endingLineNumber = "311"
-            landmarkName = "checkForSet()"
+            landmarkName = "selectAllCardsWhichArePartOfSet()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -224,7 +224,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "307"
             endingLineNumber = "307"
-            landmarkName = "checkForSet()"
+            landmarkName = "selectAllCardsWhichArePartOfSet()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -304,7 +304,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "308"
             endingLineNumber = "308"
-            landmarkName = "checkForSet()"
+            landmarkName = "selectAllCardsWhichArePartOfSet()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

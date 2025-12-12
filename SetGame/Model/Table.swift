@@ -177,19 +177,14 @@ class Table<TC : TableCard> : ObservableObject {
         //
         // FOR DEBUGGING ONLY!
         //
-        var dups: Bool = false;
         for i in 0..<(self.cards.count - 1) {
             for j in (i + 1)..<(self.cards.count) {
                 let a: TC = self.cards[i];
                 let b: TC = self.cards[j];
                 if (a == b) {
                     print("DUPLICATE!!! [\(i),\(j)]: \(a)");
-                    dups = true;
                 }
             }
-        }
-        if (!dups) {
-            print("NO-DUPLICATES")
         }
     }
 
@@ -271,9 +266,6 @@ class Table<TC : TableCard> : ObservableObject {
                 let extraTableCardsCount: Int = min(extraTableCardsUnselected.count, 3);
                 let extraTableCards: [TC] = extraTableCardsUnselected.suffix(extraTableCardsCount);
                 let newDeckCardsCount: Int = 3 - min(extraTableCardsTotalCount, 3);
-                print("C: \(self.cards)| CC: \(self.cards.count) | DC: \(self.deck.cards.count)");
-                print("ETC: \(extraTableCardsTotalCount) | EU: \(extraTableCardsUnselected)");
-                print("ECC: \(extraTableCardsCount) | EC: \(extraTableCards)");
                 let newDeckCards: [TC] = newDeckCardsCount <= 0 ? [] : (
                     self.deck.takeRandomCards(
                         newDeckCardsCount,
@@ -282,8 +274,6 @@ class Table<TC : TableCard> : ObservableObject {
                     )
                 );
                 var replacementCards: [TC] = extraTableCards + newDeckCards;
-                print("NCC: \(newDeckCardsCount) | NC: \(newDeckCards)");
-                print("RC: \(replacementCards)");
                 for i in 0..<self.cards.count {
                     if (self.cards[i].selected) {
                         if (replacementCards.count > 0) {
