@@ -267,19 +267,19 @@ class Table<TC : TableCard> : ObservableObject {
                 // and with reversion toward the preferred number of display cards.
                 // Slightly tricky to get just right; be careful.
                 //
-                let extraTableCardsTotalCount: Int = max(self.cards.count - self.settings.displayCardCount, 0);
-                let extraTableCardsUnselected: [TC] = self.cards.suffix(extraTableCardsTotalCount).filter { !$0.selected };
-                let extraTableCardsCount: Int = min(extraTableCardsUnselected.count, 3);
-                let extraTableCards: [TC] = extraTableCardsUnselected.suffix(extraTableCardsCount).reversed();
-                let newDeckCardsCount: Int = 3 - min(extraTableCardsTotalCount, 3);
-                let newDeckCards: [TC] = newDeckCardsCount <= 0 ? [] : (
+                let extraCardsTotal: Int = max(self.cards.count - self.settings.displayCardCount, 0);
+                let extraCardsUnsel: [TC] = self.cards.suffix(extraCardsTotal).filter { !$0.selected };
+                let extraCardsCount: Int = min(extraCardsUnsel.count, 3);
+                let extraCards: [TC] = extraCardsUnsel.suffix(extraCardsCount).reversed();
+                let newCardsCount: Int = 3 - min(extraCardsTotal, 3);
+                let newCards: [TC] = newCardsCount <= 0 ? [] : (
                     self.deck.takeRandomCards(
-                        newDeckCardsCount,
+                        newCardsCount,
                         plantSet: self.settings.plantSet,
                         existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
                     )
                 );
-                var replacementCards: [TC] = extraTableCards + newDeckCards;
+                var replacementCards: [TC] = extraCards + newCards;
                 for i in 0..<self.cards.count {
                     if (self.cards[i].selected) {
                         if (replacementCards.count > 0) {
@@ -288,7 +288,7 @@ class Table<TC : TableCard> : ObservableObject {
                         }
                     }
                 }
-                self.cards.removeLast(3 - newDeckCardsCount);
+                self.cards.removeLast(3 - newCardsCount);
                 //
                 // Fill just in case we have fewer cards than
                 // what is normally desired; and unselect all.
