@@ -260,164 +260,45 @@ class Table<TC : TableCard> : ObservableObject {
                 self.state.setsFoundCount += 1;
                 self.state.setJustFound = true;
                 self.state.setLastFound = selectedCards;
-                if (false) {
-                    //
-                    // 2025-12-06
-                    // Old code which did not simply replace existing set cards in place;
-                    // so it was re-ordering the cards on the table when not necessary.
-                    //
-                    self.unselectCards(selectedCards, set: true);
-                    self.cards.remove(selectedCards);
-                    self.fillTable();
-                }
-                else if (false) {
-                    //
-                    // 2025-12-06
-                    // Newer code which replaces SET cards without re-ordering.
-                    //
-                    let extraCardsShowingCount: Int = max(self.cards.count - self.settings.displayCardCount, 0)
-                    let newCards: [TC] = self.deck.takeRandomCards(
-                        3 - max(self.cards.count - self.settings.displayCardCount, 0),
+                //
+                // 2025-12-12
+                // Better code which replaces selected SET cards without re-ordering, and
+                // with reversion back to the preferred number of display cards as we go.
+                // Slightly tricky to get just right.
+                //
+                let extraTableCardsTotalCount: Int = max(self.cards.count - self.settings.displayCardCount, 0);
+                let extraTableCardsUnselected: [TC] = self.cards.suffix(extraTableCardsTotalCount).filter { !$0.selected };
+                let extraTableCardsCount: Int = min(extraTableCardsUnselected.count, 3);
+                let extraTableCards: [TC] = extraTableCardsUnselected.suffix(extraTableCardsCount);
+                let newDeckCardsCount: Int = 3 - min(extraTableCardsTotalCount, 3);
+                print("C: \(self.cards)| CC: \(self.cards.count) | DC: \(self.deck.cards.count)");
+                print("ETC: \(extraTableCardsTotalCount) | EU: \(extraTableCardsUnselected)");
+                print("ECC: \(extraTableCardsCount) | EC: \(extraTableCards)");
+                let newDeckCards: [TC] = newDeckCardsCount <= 0 ? [] : (
+                    self.deck.takeRandomCards(
+                        newDeckCardsCount,
                         plantSet: self.settings.plantSet,
                         existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
-                    );
-                    var newCardIndex: Int = 0
-                    var cardIndex: Int = 0
-                    var deletedCardIndices: [Int] = []
-                    for card in self.cards {
-                        if (card.selected) {
-                            if (newCardIndex < newCards.count) {
-                                self.cards[cardIndex] = newCards[newCardIndex]
-                                newCardIndex += 1
-                            }
-                            else {
-                                deletedCardIndices.append(cardIndex)
-                            }
-                        }
-                        cardIndex += 1
-                    }
-                    if (deletedCardIndices.count > 0) {
-                        if (false) {
-                            for i in stride(from: deletedCardIndices.count - 1, through: 0, by: -1) {
-                                self.cards.remove(at: deletedCardIndices[i])
-                            }
-                        }
-                        else {
-                            //
-                            // This is actually a litte tricky; backfilling the
-                            // selected (to-be-deleted) SET from any extra (above/beyond
-                            // display-card-count)
-                            //
-                            if (extraCardsShowingCount > 0) {
-                                var extraCardIndex: Int = self.settings.displayCardCount
-                                var secondaryDeletedCardIndices: [Int] = []
-                                for deletedCardIndex in deletedCardIndices {
-                                    self.cards[deletedCardIndex] = self.cards[extraCardIndex]
-                                    secondaryDeletedCardIndices.append(extraCardIndex)
-                                    extraCardIndex += 1
-                                }
-                                deletedCardIndices = secondaryDeletedCardIndices
-                            }
-                            for i in stride(from: deletedCardIndices.count - 1, through: 0, by: -1) {
-                                self.cards.remove(at: deletedCardIndices[i])
-                            }
+                    )
+                );
+                var replacementCards: [TC] = extraTableCards + newDeckCards;
+                print("NCC: \(newDeckCardsCount) | NC: \(newDeckCards)");
+                print("RC: \(replacementCards)");
+                for i in 0..<self.cards.count {
+                    if (self.cards[i].selected) {
+                        if (replacementCards.count > 0) {
+                            self.cards[i] = replacementCards[0];
+                            replacementCards.remove(at: 0);
                         }
                     }
-                    //
-                    // Fill just in case we have fewer cards than what is normally desired.
-                    //
-                    self.unselectCards()
-                    self.fillTable();
                 }
-                else if (false) {
-                    //
-                    // 2025-12-09
-                    // Better code which replaces SET cards without re-ordering.
-                    //
-                    // 1. Get the list (possibly empty) of replacement cards from the extra, trailing table cards.
-                    // 2. Take a list (possibly empty) of replacement/new (random) cards from the deck.
-                    // 3. Replace the selected (SET) table cards to be replenished first from #1 then #2.
-                    // 4. Remove this many extra, trailing cards from the table cards:
-                    //    min(table-card-count - display-card-count, 3)
-                    // 5. Add any necessary cards to the end of the table cards.
-                    //
-                    let extraTableCardsTotal: Int = max(self.cards.count - self.settings.displayCardCount, 0); // >= 0
-                    let newDeckCardsCount: Int = 3 - min(extraTableCardsTotal, 3);
-                    let extraTableCardsCount: Int = 3 - newDeckCardsCount;
-                    print("C: \(self.cards)")
-                    print("CC: \(self.cards.count) | DC: \(self.deck.cards.count) | ECT: \(extraTableCardsTotal) | NDC: \(newDeckCardsCount) | ECC: \(extraTableCardsCount)")
-                    let newDeckCards: [TC] = newDeckCardsCount <= 0 ? [] : (
-                        self.deck.takeRandomCards(
-                            newDeckCardsCount,
-                            plantSet: self.settings.plantSet,
-                            existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
-                        )
-                    );
-                    let extraTableCards: [TC] = extraTableCardsCount <= 0 ? [] : (
-                        self.cards.filter { !$0.selected }.suffix(extraTableCardsCount)
-                    );
-                    var replacementCards: [TC] = extraTableCards.reversed() + newDeckCards;
-                    print("NC: \(newDeckCards)")
-                    print("EC: \(extraTableCards)")
-                    print("RC: \(replacementCards)")
-                    for i in 0..<self.cards.count {
-                        if (self.cards[i].selected) {
-                            if (replacementCards.count > 0) {
-                                print("REPLACE: \(self.cards[i]) <-- \(replacementCards[0])")
-                                self.cards[i] = replacementCards[0];
-                                replacementCards.remove(at: 0);
-                            }
-                        }
-                    }
-                    self.cards.removeLast(extraTableCardsCount);
-                    //
-                    // Fill just in case we have fewer cards than
-                    // what is normally desired; and unselect all.
-                    //
-                    self.unselectCards()
-                    self.fillTable();
-                }
-                else {
-                    //
-                    // 2025-12-12
-                    // Better code which replaces selected SET cards without re-ordering,
-                    // and with reverting back to the preferred number of display cards as we go.
-                    // Slightly tricky to get just right.
-                    //
-                    let extraTableCardsTotalCount: Int = max(self.cards.count - self.settings.displayCardCount, 0);
-                    let extraTableCardsUnselected: [TC] = self.cards.suffix(extraTableCardsTotalCount).filter { !$0.selected }
-                    let extraTableCardsCount: Int = min(extraTableCardsUnselected.count, 3)
-                    let extraTableCards: [TC] = extraTableCardsUnselected.suffix(extraTableCardsCount).reversed()
-                    let newDeckCardsCount: Int = 3 - min(extraTableCardsTotalCount, 3);
-                  print("C: \(self.cards)| CC: \(self.cards.count) | DC: \(self.deck.cards.count)")
-                  print("ETC: \(extraTableCardsTotalCount) | EU: \(extraTableCardsUnselected)")
-                  print("ECC: \(extraTableCardsCount) | EC: \(extraTableCards)")
-                    let newDeckCards: [TC] = newDeckCardsCount <= 0 ? [] : (
-                        self.deck.takeRandomCards(
-                            newDeckCardsCount,
-                            plantSet: self.settings.plantSet,
-                            existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
-                        )
-                    );
-                    var replacementCards: [TC] = extraTableCards + newDeckCards;
-                  print("NCC: \(newDeckCardsCount) | NC: \(newDeckCards)")
-                  print("RC: \(replacementCards)")
-                    for i in 0..<self.cards.count {
-                        if (self.cards[i].selected) {
-                            if (replacementCards.count > 0) {
-                                self.cards[i] = replacementCards[0];
-                                replacementCards.remove(at: 0);
-                            }
-                        }
-                    }
-                    self.cards.removeLast(3 - newDeckCardsCount);
-                    //
-                    // Fill just in case we have fewer cards than
-                    // what is normally desired; and unselect all.
-                    //
-                    self.unselectCards()
-                    self.fillTable();
-                }
+                self.cards.removeLast(3 - newDeckCardsCount);
+                //
+                // Fill just in case we have fewer cards than
+                // what is normally desired; and unselect all.
+                //
+                self.unselectCards()
+                self.fillTable();
             }
             else {
                 //
