@@ -20,11 +20,12 @@ struct CardView : View {
             Image(card.codename)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .rotation3DEffect(card.selected ? Angle(degrees: 720) : (card.selected ? Angle(degrees: 360) : Angle(degrees: 0)), axis: (x: CGFloat(0), y: CGFloat(card.selected ? 0 : 1), z: CGFloat(card.selected ? 1 : 0)))
+                .rotation3DEffect(card.selected ? Angle(degrees: 720) : (card.selected ? Angle(degrees: 360) : Angle(degrees: 0)),
+                                  axis: (x: CGFloat(0), y: CGFloat(card.selected ? 0 : 1), z: CGFloat(card.selected ? 1 : 0)))
             .animation(Animation.linear(duration: 0.3))
             .cornerRadius(8)
                 .overlay(RoundedRectangle(cornerRadius:card.selected ? 10 : 6)
-                            .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1))
+                         .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1))
                 .shadow(color: card.selected ? Color.green : Color.blue, radius: card.selected ? 3 : 1)
                 .padding(1)
                 .onTapGesture {

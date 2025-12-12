@@ -45,7 +45,7 @@ class Table<TC : TableCard> : ObservableObject {
                 }
             }
         }
-        var testing: Bool = false
+        var testing: Bool = true
     }
 
     struct State {
@@ -82,14 +82,15 @@ class Table<TC : TableCard> : ObservableObject {
         self.state = State();
         if self.settings.testing {
             self.settings.cardsPerRow = 4
-            /*
+/*
             self.settings.displayCardCount = 12
             let cards = self.deck.takeCards(
                 "3GQT", "3RQH", "2PDS", "3RDT",
                 "2GOH", "3RQT", "2ROS", "3GDT",
                 "1ROS", "2GDS", "2RDS", "3GQS",
                 "3ROT", "2PDH"
-                */
+*/
+/*
             self.settings.displayCardCount = 14
             let cards = self.deck.takeCards(
                 "GOH1", "GOH2", "GOH3", "GDH1",
@@ -98,6 +99,23 @@ class Table<TC : TableCard> : ObservableObject {
                 "GOT1", "GOT2", "GOT3", "GDT1",
                 "S",    "POT1", "POT2", "POT3",
             )
+*/
+/*
+            let cards = self.deck.takeCards(
+                "PDT2", "ROS2", "POH3", "PQT1",
+                "RDT3", "ROH3", "GQT3", "GDS3",
+                "GOT1", "GOS1", "RQS3", "RDH3",
+                "PQT3"
+            )
+*/
+/**/
+            let cards = self.deck.takeCards(
+                "PDT2", "ROS2", "POH3", "PQT1",
+                "RDT3", "ROH3", "GQT3", "GDS3",
+                "PQT3", "GOS1", "RQS3", "RDH3",
+                "GOT1"
+            )
+/**/
             for card in cards {
                 self.cards.append(TC(card))
             }
@@ -165,7 +183,7 @@ class Table<TC : TableCard> : ObservableObject {
                 let a: TC = self.cards[i];
                 let b: TC = self.cards[j];
                 if (a == b) {
-                    print("DUPLICATE! [\(i),\(j)]: \(a)");
+                    print("DUPLICATE!!! [\(i),\(j)]: \(a)");
                     dups = true;
                 }
             }
@@ -263,8 +281,6 @@ class Table<TC : TableCard> : ObservableObject {
                         plantSet: self.settings.plantSet,
                         existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
                     );
-                    // print("NEW-CARDS")
-                    // print(newCards)
                     var newCardIndex: Int = 0
                     var cardIndex: Int = 0
                     var deletedCardIndices: [Int] = []
@@ -313,7 +329,7 @@ class Table<TC : TableCard> : ObservableObject {
                     self.unselectCards()
                     self.fillTable();
                 }
-                else {
+                else if (false) {
                     //
                     // 2025-12-09
                     // Better code which replaces SET cards without re-ordering.
@@ -325,10 +341,11 @@ class Table<TC : TableCard> : ObservableObject {
                     //    min(table-card-count - display-card-count, 3)
                     // 5. Add any necessary cards to the end of the table cards.
                     //
-                    let extraTableCardsTotal: Int = max(self.cards.count - self.settings.displayCardCount, 0);
+                    let extraTableCardsTotal: Int = max(self.cards.count - self.settings.displayCardCount, 0); // >= 0
                     let newDeckCardsCount: Int = 3 - min(extraTableCardsTotal, 3);
                     let extraTableCardsCount: Int = 3 - newDeckCardsCount;
-                    // print("CC: \(self.cards.count) | ECT: \(extraTableCardsTotal) | NDC: \(newDeckCardsCount) | ECC: \(extraTableCardsCount)")
+                    print("C: \(self.cards)")
+                    print("CC: \(self.cards.count) | DC: \(self.deck.cards.count) | ECT: \(extraTableCardsTotal) | NDC: \(newDeckCardsCount) | ECC: \(extraTableCardsCount)")
                     let newDeckCards: [TC] = newDeckCardsCount <= 0 ? [] : (
                         self.deck.takeRandomCards(
                             newDeckCardsCount,
@@ -340,19 +357,60 @@ class Table<TC : TableCard> : ObservableObject {
                         self.cards.filter { !$0.selected }.suffix(extraTableCardsCount)
                     );
                     var replacementCards: [TC] = extraTableCards.reversed() + newDeckCards;
-                    // print("NC: \(newDeckCards)")
-                    // print("EC: \(extraTableCards)")
-                    // print("RC: \(replacementCards)")
+                    print("NC: \(newDeckCards)")
+                    print("EC: \(extraTableCards)")
+                    print("RC: \(replacementCards)")
                     for i in 0..<self.cards.count {
                         if (self.cards[i].selected) {
                             if (replacementCards.count > 0) {
-                                // print("REPLACE: \(self.cards[i]) <-- \(replacementCards[0])")
+                                print("REPLACE: \(self.cards[i]) <-- \(replacementCards[0])")
                                 self.cards[i] = replacementCards[0];
                                 replacementCards.remove(at: 0);
                             }
                         }
                     }
                     self.cards.removeLast(extraTableCardsCount);
+                    //
+                    // Fill just in case we have fewer cards than
+                    // what is normally desired; and unselect all.
+                    //
+                    self.unselectCards()
+                    self.fillTable();
+                }
+                else {
+                    //
+                    // 2025-12-12
+                    // Better code which replaces selected SET cards without re-ordering,
+                    // and with reverting back to the preferred number of display cards as we go.
+                    // Slightly tricky to get just right.
+                    //
+                    let extraTableCardsTotalCount: Int = max(self.cards.count - self.settings.displayCardCount, 0);
+                    let extraTableCardsUnselected: [TC] = self.cards.suffix(extraTableCardsTotalCount).filter { !$0.selected }
+                    let extraTableCardsCount: Int = min(extraTableCardsUnselected.count, 3)
+                    let extraTableCards: [TC] = extraTableCardsUnselected.suffix(extraTableCardsCount).reversed()
+                    let newDeckCardsCount: Int = 3 - min(extraTableCardsTotalCount, 3);
+                  print("C: \(self.cards)| CC: \(self.cards.count) | DC: \(self.deck.cards.count)")
+                  print("ETC: \(extraTableCardsTotalCount) | EU: \(extraTableCardsUnselected)")
+                  print("ECC: \(extraTableCardsCount) | EC: \(extraTableCards)")
+                    let newDeckCards: [TC] = newDeckCardsCount <= 0 ? [] : (
+                        self.deck.takeRandomCards(
+                            newDeckCardsCount,
+                            plantSet: self.settings.plantSet,
+                            existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
+                        )
+                    );
+                    var replacementCards: [TC] = extraTableCards + newDeckCards;
+                  print("NCC: \(newDeckCardsCount) | NC: \(newDeckCards)")
+                  print("RC: \(replacementCards)")
+                    for i in 0..<self.cards.count {
+                        if (self.cards[i].selected) {
+                            if (replacementCards.count > 0) {
+                                self.cards[i] = replacementCards[0];
+                                replacementCards.remove(at: 0);
+                            }
+                        }
+                    }
+                    self.cards.removeLast(3 - newDeckCardsCount);
                     //
                     // Fill just in case we have fewer cards than
                     // what is normally desired; and unselect all.
@@ -370,7 +428,7 @@ class Table<TC : TableCard> : ObservableObject {
                 self.unselectCards();
             }
         }
-        // findTableDuplicates();
+        findTableDuplicates();
     }
 
     func selectAllCardsWhichArePartOfSet() {
