@@ -55,7 +55,6 @@ class Table<TC : TableCard> : ObservableObject {
         var setsFoundCount                : Int  = 0;
         var setJustFound                  : Bool = false;
         var setJustFoundNot               : Bool = false;
-        // var setLastFound                  : [TC] = [];
         var setsLastFound                 : [[TC]] = [];
         var showingCardsWhichArePartOfSet : Bool = false;
         var showingOneRandomSet           : Bool = false;
@@ -222,7 +221,6 @@ class Table<TC : TableCard> : ObservableObject {
                 //
                 self.state.setsFoundCount += 1;
                 self.state.setJustFound = true;
-                // self.state.setLastFound = selectedCards;
                 //
                 // 2025-12-12
                 // Better code which replaces selected SET cards minimum reordering,
@@ -242,15 +240,28 @@ class Table<TC : TableCard> : ObservableObject {
                     )
                 );
                 var replacementCards: [TC] = extraCards + newCards;
+                var deletionIndices: [Int] = []
+                print("ECT: \(extraCardsTotal)")
+                print("ECU: \(extraCardsUnsel)")
+                print("ECC: \(extraCardsCount)")
+                print("NCC: \(newCardsCount)")
+                print("NC: \(newCards)")
+                print("RC: \(replacementCards)")
                 for i in 0..<self.cards.count {
                     if (self.cards[i].selected) {
                         if (replacementCards.count > 0) {
                             self.cards[i] = replacementCards[0];
                             replacementCards.remove(at: 0);
                         }
+                        else {
+                            deletionIndices.append(i);
+                        }
                     }
                 }
                 self.cards.removeLast(3 - newCardsCount);
+                for deletionIndex in deletionIndices.reversed() {
+                    self.cards.remove(at: deletionIndex);
+                }
                 //
                 // Fill just in case we have fewer cards than
                 // what is normally desired; and unselect all.

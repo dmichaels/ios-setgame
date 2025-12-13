@@ -54,9 +54,7 @@ struct TableView: View {
         //
         table.touchCard(card);
         delayQuick() {
-            if (table.checkForSet().count == 3) {
-                print("LAST-SETs: \(table.state.setsLastFound)")
-            }
+            _ = table.checkForSet()
         }
     }
 

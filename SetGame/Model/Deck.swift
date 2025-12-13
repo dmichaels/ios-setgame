@@ -26,6 +26,7 @@ class Deck<T : Card> {
                 }
             }
         }
+        let ncards: Int = 12; // xyzzy/debugging
         if ((ncards > 0) && (ncards < self.cards.count)) {
             let nremove: Int = self.cards.count - ncards;
             for _ in 0..<nremove {

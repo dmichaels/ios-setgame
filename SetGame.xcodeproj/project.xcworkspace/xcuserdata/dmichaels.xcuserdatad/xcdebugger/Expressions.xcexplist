@@ -3,16 +3,43 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "static Deck.randomMagicSquare():Deck.swift">
+         contextName = "Table.addMoreCards(_:plantSet:):Table.swift">
          <PersistentStrings>
             <PersistentString
-               value = "print([magic[0], magic[1], magic[3], magic[2], magic[5], magic[6], magic[4], magic[7], magic[8]])">
+               value = "self.settings.moveAnyExistingSetToFront">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Array&lt;A&gt;.moveAnyExistingSetToFront():CardArrayExtension.swift">
+      </ContextState>
+      <ContextState
+         contextName = "Table.addMoreCards(_:):Table.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.settings.moveAnyExistingSetToFront">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Deck.takeRandomCard():Deck.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.readonly">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Table.Settings.moveAnyExistingSetToFront.didset:Table.swift">
+      </ContextState>
+      <ContextState
+         contextName = "Table.selectOneRandomSet():Table.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "sets.count">
             </PersistentString>
             <PersistentString
-               value = "print(card)">
-            </PersistentString>
-            <PersistentString
-               value = "print(magic)">
+               value = "Int.random(in: 0..&lt;sets.count)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -34,10 +61,37 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "Array&lt;SetGame.Card&gt;.randomNonSetCards():CardArrayExtension.swift">
+         contextName = "Table.moveAnyExistingSetToFront():Table.swift">
          <PersistentStrings>
             <PersistentString
-               value = "print(randomNonSetCards)">
+               value = "self.settings">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Table.Settings.useSimpleDeck.didset:Table.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.useSimpleDeck">
+            </PersistentString>
+            <PersistentString
+               value = "self.table!.settings.useSimpleDeck">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "StandardDeck.randomSet():StandardDeck.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "deck.randomCard()">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Deck.init(simple:ncards:readonly:):Deck.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "Card.from(&quot;DUMMY&quot;)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -59,44 +113,6 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #1 in closure #1 in closure #1 in closure #6 in closure #1 in closure #1 in TableView.body.getter:TableView.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "print(even[i].sorted())">
-            </PersistentString>
-            <PersistentString
-               value = "print(even[i])">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "Table.addMoreCards(_:plantSet:):Table.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "self.settings.moveAnyExistingSetToFront">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "Table.moveAnyExistingSetToFront():Table.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "self.settings">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "Array&lt;A&gt;.moveAnyExistingSetToFront():CardArrayExtension.swift">
-      </ContextState>
-      <ContextState
-         contextName = "StandardDeck.randomSet():StandardDeck.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "deck.randomCard()">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "Table.fillTable():Table.swift">
          <PersistentStrings>
             <PersistentString
@@ -105,13 +121,27 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "Table.Settings.useSimpleDeck.didset:Table.swift">
+         contextName = "static Deck.randomMagicSquare():Deck.swift">
          <PersistentStrings>
             <PersistentString
-               value = "self.useSimpleDeck">
+               value = "print([magic[0], magic[1], magic[3], magic[2], magic[5], magic[6], magic[4], magic[7], magic[8]])">
             </PersistentString>
             <PersistentString
-               value = "self.table!.settings.useSimpleDeck">
+               value = "print(card)">
+            </PersistentString>
+            <PersistentString
+               value = "print(magic)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in closure #1 in closure #6 in closure #1 in closure #1 in TableView.body.getter:TableView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "print(even[i].sorted())">
+            </PersistentString>
+            <PersistentString
+               value = "print(even[i])">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -127,32 +157,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "Table.Settings.moveAnyExistingSetToFront.didset:Table.swift">
-      </ContextState>
-      <ContextState
          contextName = "Table.checkForSet():Table.swift">
-      </ContextState>
-      <ContextState
-         contextName = "Table.addMoreCards(_:):Table.swift">
          <PersistentStrings>
             <PersistentString
-               value = "self.settings.moveAnyExistingSetToFront">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "static Deck.randomSet():Deck.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "StandardDeck.instance">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "Deck.takeRandomCard():Deck.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "self.readonly">
+               value = "print(self.cards)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -168,13 +176,18 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "Table.selectOneRandomSet():Table.swift">
+         contextName = "static Deck.randomSet():Deck.swift">
          <PersistentStrings>
             <PersistentString
-               value = "sets.count">
+               value = "StandardDeck.instance">
             </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Array&lt;SetGame.Card&gt;.randomNonSetCards():CardArrayExtension.swift">
+         <PersistentStrings>
             <PersistentString
-               value = "Int.random(in: 0..&lt;sets.count)">
+               value = "print(randomNonSetCards)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
