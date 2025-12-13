@@ -15,7 +15,7 @@ struct TableView: View {
                             if (index < table.cards.count) {
                                 CardView(card: table.cards[index]) {
                                     cardTouched($0)
-                                }
+                                }.slightlyRotated(self.table.settings.cardsAskew)
                             }
                             else {
                                 Image("dummy").resizable()
@@ -26,6 +26,11 @@ struct TableView: View {
                 Divider()
                 StatusBarView()
                 Divider()
+                if (self.table.settings.showFoundSets) {
+                    FoundSetsView(
+                        setsLastFound: table.state.setsLastFound,
+                        cardsAskew: table.settings.cardsAskew)
+                }
             }.padding()
         }
     }
@@ -49,7 +54,9 @@ struct TableView: View {
         //
         table.touchCard(card);
         delayQuick() {
-            table.checkForSet();
+            if (table.checkForSet().count == 3) {
+                print("LAST-SETs: \(table.state.setsLastFound)")
+            }
         }
     }
 
@@ -62,6 +69,20 @@ struct TableView: View {
                 callback();
             }
         }
+    }
+
+    private func pairCardsListForDisplay(_ cardsList: [[TableCard]]) -> [[TableCard]] {
+        var result: [[TableCard]] = []
+        var i: Int = 0
+        while (i < cardsList.count) {
+            if ((i + 1) < cardsList.count) {
+                result.append(cardsList[i].sorted() + cardsList[i + 1].sorted())
+            } else {
+                result.append(cardsList[i].sorted())
+            }
+            i += 2
+        }
+        return result
     }
 }
 

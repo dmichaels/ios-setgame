@@ -20,6 +20,15 @@
          contextName = "Table.startNewGame():Table.swift">
          <PersistentStrings>
             <PersistentString
+               value = "print([a, b, c].sorted())">
+            </PersistentString>
+            <PersistentString
+               value = "[a, b, c].sorted()">
+            </PersistentString>
+            <PersistentString
+               value = "print([a,b,c])">
+            </PersistentString>
+            <PersistentString
                value = "TC(Card.from(&quot;GOH3&quot;)!)">
             </PersistentString>
          </PersistentStrings>
@@ -29,6 +38,34 @@
          <PersistentStrings>
             <PersistentString
                value = "print(randomNonSetCards)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "static Card.&lt; infix(_:_:):Card.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "print(rhs)">
+            </PersistentString>
+            <PersistentString
+               value = "rhs.color.rawValue">
+            </PersistentString>
+            <PersistentString
+               value = "lhs.color.rawValue">
+            </PersistentString>
+            <PersistentString
+               value = "print(lhs)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in closure #1 in closure #6 in closure #1 in closure #1 in TableView.body.getter:TableView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "print(even[i].sorted())">
+            </PersistentString>
+            <PersistentString
+               value = "print(even[i])">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -116,6 +153,17 @@
          <PersistentStrings>
             <PersistentString
                value = "self.readonly">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in TableView.body.getter:TableView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "Card.from(&quot;dummy&quot;)">
+            </PersistentString>
+            <PersistentString
+               value = "print(cards)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

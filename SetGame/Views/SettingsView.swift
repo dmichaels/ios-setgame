@@ -16,7 +16,7 @@ struct SettingsView: View {
                         Text("Partial SET Select Hint: ")
                     }
                     Toggle(isOn: $table.settings.showNumberOfSetsPresent) {
-                        Text("Present SETs Count: ")
+                        Text("Available SETs Count: ")
                     }
                     Toggle(isOn: $table.settings.moreCardsIfNoSet) {
                         Text("More Cards On No SET: ")
@@ -26,11 +26,15 @@ struct SettingsView: View {
                         Text("Plant SET: ")
                     }
                     Toggle(isOn: $table.settings.moveAnyExistingSetToFront) {
-                        Text("Move SET To Front: ")
+                        Text("Move SET Front: ")
                     }
                     Divider()
                     Toggle(isOn: $table.settings.plantInitialMagicSquare) {
                         Text("Plant Magic Square: ")
+                    }
+                    Divider()
+                    Toggle(isOn: $table.settings.showFoundSets) {
+                        Text("Show Found SETs: ")
                     }
                 }
                 Divider()
@@ -53,6 +57,9 @@ struct SettingsView: View {
                             Text(String($0))
                         }
                     }.pickerStyle(MenuPickerStyle())
+                }
+                Toggle(isOn: $table.settings.cardsAskew) {
+                    Text("Cards Askew")
                 }
                 Divider()
                 VStack {
@@ -78,14 +85,6 @@ struct SettingsView: View {
                     */
                 }
                 Divider()
-                /* DEBUG ...
-                VStack {
-                    Toggle(isOn: $table.settings.testing) {
-                        Text("TESTING")
-                    }
-                }
-                Divider()
-                ... DEBUG END */
                 HStack () {
                     NavigationLink(destination: StatsView()) {
                         Text("SET Game Stats")

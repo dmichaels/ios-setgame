@@ -3,16 +3,16 @@
 enum CardFilling : Int, CaseIterable {
 
     case Hollow;
-    case Solid;
     case Stripped;
+    case Solid;
 
     /// Returns the single  'codename' character/string for this attribute.
     ///
     var codename : String {
         switch self {
             case .Hollow:   return "H";
-            case .Solid:    return "S";
             case .Stripped: return "T";
+            case .Solid:    return "S";
         }
     }
 

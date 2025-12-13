@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct CardView : View {
+public struct CardView : View {
     
     @ObservedObject var card : TableCard;
     var touchedCallback : (TableCard) -> Void = dummyTouchedCallback;
     static func dummyTouchedCallback(_ card : TableCard) {
         //card.selected.toggle();
     }
-    var body : some View {
+    public var body : some View {
         VStack {
             Button(action: {touchedCallback(card)}) {
             Image(card.codename)
@@ -36,6 +36,21 @@ struct CardView : View {
     }
 }
 
+extension View {
+    func slightlyRotated(_ enabled: Bool = true) -> some View {
+        Group { if enabled { self.modifier(SlightRandomRotation()) } else { self } }
+    }
+}
+
+public struct SlightRandomRotation: ViewModifier {
+    // @State private var angle: Double = Double(Int.random(in: -3...3))
+    @State private var angle: Double = Double(Int.random(in: -2...2))
+    public func body(content: Content) -> some View {
+        content.rotationEffect(.degrees(angle));
+    }
+}
+
+/*
 struct CardView_Previews: PreviewProvider {
     static func touchedCallback(_ card : TableCard) {
         card.selected.toggle();
@@ -45,3 +60,4 @@ struct CardView_Previews: PreviewProvider {
         CardView(card: TableCard(), touchedCallback: touchedCallback);
     }
 }
+*/

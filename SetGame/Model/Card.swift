@@ -154,7 +154,7 @@ public class Card {
 
 /// Card extensions to conform to sundry protocols.
 ///
-extension Card : Identifiable, Equatable, CustomStringConvertible {
+extension Card : Identifiable, Equatable, Comparable, CustomStringConvertible {
 
     public var id : String { self.codename; }
 
@@ -163,6 +163,36 @@ extension Card : Identifiable, Equatable, CustomStringConvertible {
                (lhs.shape   == rhs.shape)   &&
                (lhs.filling == rhs.filling) &&
                (lhs.number  == rhs.number);
+    }
+
+    public static func < (lhs: Card, rhs: Card) -> Bool {
+        if (lhs.number.rawValue < rhs.number.rawValue) {
+            return true;
+        }
+        else if (lhs.number.rawValue > rhs.number.rawValue) {
+            return false;
+        }
+        else if (lhs.color.rawValue < rhs.color.rawValue) {
+            return true;
+        }
+        else if (lhs.color.rawValue > rhs.color.rawValue) {
+            return false;
+        }
+        else if (lhs.shape.rawValue < rhs.shape.rawValue) {
+            return true;
+        }
+        else if (lhs.shape.rawValue > rhs.shape.rawValue) {
+            return false;
+        }
+        else if (lhs.filling.rawValue < rhs.filling.rawValue) {
+            return true;
+        }
+        else if (lhs.filling.rawValue > rhs.filling.rawValue) {
+            return false;
+        }
+        else {
+            return false;
+        }
     }
 
     public var description : String {

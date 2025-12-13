@@ -2,17 +2,17 @@
 ///
 enum CardColor : Int, CaseIterable {
 
-    case Green;
-    case Purple;
     case Red;
+    case Purple;
+    case Green;
 
     /// Returns the single  'codename' character/string for this attribute.
     ///
     var codename : String {
         switch self {
-            case .Green:  return "G";
-            case .Purple: return "P";
             case .Red:    return "R";
+            case .Purple: return "P";
+            case .Green:  return "G";
         }
     }
 

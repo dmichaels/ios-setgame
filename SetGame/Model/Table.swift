@@ -45,7 +45,8 @@ class Table<TC : TableCard> : ObservableObject {
                 }
             }
         }
-        var testing: Bool = false
+        var showFoundSets: Bool = true
+        var cardsAskew: Bool = true
     }
 
     struct State {
@@ -54,7 +55,8 @@ class Table<TC : TableCard> : ObservableObject {
         var setsFoundCount                : Int  = 0;
         var setJustFound                  : Bool = false;
         var setJustFoundNot               : Bool = false;
-        var setLastFound                  : [TC] = [TC]();
+        // var setLastFound                  : [TC] = [];
+        var setsLastFound                 : [[TC]] = [];
         var showingCardsWhichArePartOfSet : Bool = false;
         var showingOneRandomSet           : Bool = false;
         var showingOneRandomSetLast       : Int? = nil;
@@ -80,53 +82,13 @@ class Table<TC : TableCard> : ObservableObject {
         self.deck  = Deck(simple: self.settings.useSimpleDeck, ncards: self.settings.limitDeckSize);
         self.cards = [TC]();
         self.state = State();
-        if self.settings.testing {
-            self.settings.cardsPerRow = 4
-/*
-            self.settings.displayCardCount = 12
-            let cards = self.deck.takeCards(
-                "3GQT", "3RQH", "2PDS", "3RDT",
-                "2GOH", "3RQT", "2ROS", "3GDT",
-                "1ROS", "2GDS", "2RDS", "3GQS",
-                "3ROT", "2PDH"
-*/
-/*
-            self.settings.displayCardCount = 14
-            let cards = self.deck.takeCards(
-                "GOH1", "GOH2", "GOH3", "GDH1",
-                "GDH2", "GDH3", "GQH1", "S",
-                "POH1", "POH2", "POH3", "S",
-                "GOT1", "GOT2", "GOT3", "GDT1",
-                "S",    "POT1", "POT2", "POT3",
-            )
-*/
-/*
-            let cards = self.deck.takeCards(
-                "PDT2", "ROS2", "POH3", "PQT1",
-                "RDT3", "ROH3", "GQT3", "GDS3",
-                "GOT1", "GOS1", "RQS3", "RDH3",
-                "PQT3"
-            )
-*/
-/*
-            let cards = self.deck.takeCards(
-                "PDT2", "ROS2", "POH3", "PQT1",
-                "RDT3", "ROH3", "GQT3", "GDS3",
-                "PQT3", "GOS1", "RQS3", "RDH3",
-                "GOT1"
-            )
-*/
-            let cards = self.deck.takeCards(
-                "1ROT", "1GQS", "2ROT", "1RQS",
-                "2PQT", "3RDT", "1GDT", "1PQH",
-                "2PDS", "1GOH", "3GDH", "1PDH",
-                "1ROH", "1GQH", "2RQT", "2POS"
-            )
-            for card in cards {
-                self.cards.append(TC(card))
-            }
-            return
-        }
+        ///
+        // [GQS3:false, GQT1:false, GQH2:false]
+        let a: Card = Card.from("GQS3")!
+        let b: Card = Card.from("GQT1")!
+        let c: Card = Card.from("GQH2")!
+        print([a, b, c].sorted())
+        ///
         if (self.settings.plantInitialMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.settings.useSimpleDeck)
             for card in magicSquareCards {
@@ -241,7 +203,7 @@ class Table<TC : TableCard> : ObservableObject {
     /// If a non-SET is selected (i.e. three cards selected but which do
     /// not form SET), then these cards will simply be unselected.
     ///
-    func checkForSet() {
+    func checkForSet() -> [Card] {
 
         let selectedCards: [TC] = self.selectedCards();
 
@@ -260,7 +222,7 @@ class Table<TC : TableCard> : ObservableObject {
                 //
                 self.state.setsFoundCount += 1;
                 self.state.setJustFound = true;
-                self.state.setLastFound = selectedCards;
+                // self.state.setLastFound = selectedCards;
                 //
                 // 2025-12-12
                 // Better code which replaces selected SET cards minimum reordering,
@@ -295,6 +257,9 @@ class Table<TC : TableCard> : ObservableObject {
                 //
                 self.unselectCards()
                 self.fillTable();
+                self.state.setsLastFound.append(selectedCards);
+                self.state.setsLastFound.flatMap { $0 }.forEach { $0.selected = false };
+                return selectedCards;
             }
             else {
                 //
@@ -306,6 +271,7 @@ class Table<TC : TableCard> : ObservableObject {
             }
         }
         // findTableDuplicates();
+        return [];
     }
 
     func selectAllCardsWhichArePartOfSet() {

@@ -2,16 +2,16 @@
 ///
 enum CardShape : Int, CaseIterable {
 
-    case Diamond;
     case Oval;
+    case Diamond;
     case Squiggle;
 
     /// Returns the single  'codename' character/string for this attribute.
     ///
     var codename : String {
         switch self {
-            case .Diamond:  return "D";
             case .Oval:     return "O";
+            case .Diamond:  return "D";
             case .Squiggle: return "Q";
         }
     }
