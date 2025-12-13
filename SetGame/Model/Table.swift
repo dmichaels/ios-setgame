@@ -234,6 +234,7 @@ class Table<TC : TableCard> : ObservableObject {
                 );
                 var replacementCards: [TC] = extraCards + newCards;
                 var deletionIndices: [Int] = []
+                // print("CC: \(self.cards.count)")
                 // print("ECT: \(extraCardsTotal)")
                 // print("ECU: \(extraCardsUnsel)")
                 // print("ECC: \(extraCardsCount)")
@@ -243,18 +244,24 @@ class Table<TC : TableCard> : ObservableObject {
                 for i in 0..<self.cards.count {
                     if (self.cards[i].selected) {
                         if (replacementCards.count > 0) {
+                            // print("R[\(i)]: \(self.cards[i]) <-- \(replacementCards[0])")
                             self.cards[i] = replacementCards[0];
                             replacementCards.remove(at: 0);
                         }
                         else {
+                            // print("D: \(i)")
                             deletionIndices.append(i);
                         }
                     }
                 }
                 self.cards.removeLast(3 - newCardsCount);
+                // print("DEL: \(deletionIndices) | CC: \(self.cards.count)")
                 for deletionIndex in deletionIndices.reversed() {
-                    self.cards.remove(at: deletionIndex);
+                    if (deletionIndex < self.cards.count) {
+                        self.cards.remove(at: deletionIndex);
+                    }
                 }
+                // print("CC: \(self.cards.count)")
                 //
                 // Fill just in case we have fewer cards than
                 // what is normally desired; and unselect all.
