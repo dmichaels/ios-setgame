@@ -9,7 +9,7 @@ struct FoundSetsView: View {
     private let cardWidth: CGFloat = 52;
 
     var body: some View {
-        let rows: [[TableCard]] = pairCardsListForDisplay(setsLastFound);
+        let rows: [[TableCard]] = pairCardsListForDisplay(setsLastFound.reversed());
         Spacer()
         VStack(alignment: .leading, spacing: 8) {
             ForEach(rows.indices, id: \.self) { i in

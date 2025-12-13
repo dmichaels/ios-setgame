@@ -81,13 +81,6 @@ class Table<TC : TableCard> : ObservableObject {
         self.deck  = Deck(simple: self.settings.useSimpleDeck, ncards: self.settings.limitDeckSize);
         self.cards = [TC]();
         self.state = State();
-        ///
-        // [GQS3:false, GQT1:false, GQH2:false]
-        let a: Card = Card.from("GQS3")!
-        let b: Card = Card.from("GQT1")!
-        let c: Card = Card.from("GQH2")!
-        print([a, b, c].sorted())
-        ///
         if (self.settings.plantInitialMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.settings.useSimpleDeck)
             for card in magicSquareCards {
@@ -241,12 +234,12 @@ class Table<TC : TableCard> : ObservableObject {
                 );
                 var replacementCards: [TC] = extraCards + newCards;
                 var deletionIndices: [Int] = []
-                print("ECT: \(extraCardsTotal)")
-                print("ECU: \(extraCardsUnsel)")
-                print("ECC: \(extraCardsCount)")
-                print("NCC: \(newCardsCount)")
-                print("NC: \(newCards)")
-                print("RC: \(replacementCards)")
+                // print("ECT: \(extraCardsTotal)")
+                // print("ECU: \(extraCardsUnsel)")
+                // print("ECC: \(extraCardsCount)")
+                // print("NCC: \(newCardsCount)")
+                // print("NC: \(newCards)")
+                // print("RC: \(replacementCards)")
                 for i in 0..<self.cards.count {
                     if (self.cards[i].selected) {
                         if (replacementCards.count > 0) {
