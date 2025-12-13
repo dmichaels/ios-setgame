@@ -1,22 +1,14 @@
-//
-//  CardView.swift
-//  SetGame2
-//
-//  Created by David Michaels on 3/1/21.
-//
-
 import SwiftUI
 
 public struct CardView : View {
     
     @ObservedObject var card : TableCard;
-    var touchedCallback : (TableCard) -> Void = dummyTouchedCallback;
-    static func dummyTouchedCallback(_ card : TableCard) {
-        //card.selected.toggle();
-    }
+
+    var touchedCallback : ((TableCard) -> Void)?
+
     public var body : some View {
         VStack {
-            Button(action: {touchedCallback(card)}) {
+            Button(action: {touchedCallback?(card)}) {
             Image(card.codename)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -29,7 +21,7 @@ public struct CardView : View {
                 .shadow(color: card.selected ? Color.green : Color.blue, radius: card.selected ? 3 : 1)
                 .padding(1)
                 .onTapGesture {
-                    touchedCallback(card);
+                    touchedCallback?(card);
                 }
             }
         }
@@ -43,7 +35,6 @@ extension View {
 }
 
 public struct SlightRandomRotation: ViewModifier {
-    // @State private var angle: Double = Double(Int.random(in: -3...3))
     @State private var angle: Double = Double(Int.random(in: -2...2))
     public func body(content: Content) -> some View {
         content.rotationEffect(.degrees(angle));
