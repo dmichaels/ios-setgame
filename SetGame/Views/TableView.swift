@@ -54,7 +54,7 @@ struct TableView: View {
         //
         table.touchCard(card);
         delayQuick() {
-            _ = table.checkForSet()
+            _ = table.checkForSet();
         }
     }
 

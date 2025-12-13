@@ -195,7 +195,7 @@ class Table<TC : TableCard> : ObservableObject {
     /// If a non-SET is selected (i.e. three cards selected but which do
     /// not form SET), then these cards will simply be unselected.
     ///
-    func checkForSet() -> [Card] {
+    func checkForSet(readonly: Bool = false) -> [Card] {
 
         let selectedCards: [TC] = self.selectedCards();
 
@@ -206,6 +206,9 @@ class Table<TC : TableCard> : ObservableObject {
             // Here we either have a SET selected or a wrong guess.
             //
             if (selectedCards.isSet()) {
+                if (readonly) {
+                    return selectedCards;
+                }
                 //
                 // SET!
                 // Unselect the SET cards, calling the given callback if any,
@@ -234,34 +237,23 @@ class Table<TC : TableCard> : ObservableObject {
                 );
                 var replacementCards: [TC] = extraCards + newCards;
                 var deletionIndices: [Int] = []
-                // print("CC: \(self.cards.count)")
-                // print("ECT: \(extraCardsTotal)")
-                // print("ECU: \(extraCardsUnsel)")
-                // print("ECC: \(extraCardsCount)")
-                // print("NCC: \(newCardsCount)")
-                // print("NC: \(newCards)")
-                // print("RC: \(replacementCards)")
                 for i in 0..<self.cards.count {
                     if (self.cards[i].selected) {
                         if (replacementCards.count > 0) {
-                            // print("R[\(i)]: \(self.cards[i]) <-- \(replacementCards[0])")
                             self.cards[i] = replacementCards[0];
                             replacementCards.remove(at: 0);
                         }
                         else {
-                            // print("D: \(i)")
                             deletionIndices.append(i);
                         }
                     }
                 }
                 self.cards.removeLast(3 - newCardsCount);
-                // print("DEL: \(deletionIndices) | CC: \(self.cards.count)")
                 for deletionIndex in deletionIndices.reversed() {
                     if (deletionIndex < self.cards.count) {
                         self.cards.remove(at: deletionIndex);
                     }
                 }
-                // print("CC: \(self.cards.count)")
                 //
                 // Fill just in case we have fewer cards than
                 // what is normally desired; and unselect all.
@@ -281,6 +273,7 @@ class Table<TC : TableCard> : ObservableObject {
                 self.unselectCards();
             }
         }
+
         // findTableDuplicates();
         return [];
     }

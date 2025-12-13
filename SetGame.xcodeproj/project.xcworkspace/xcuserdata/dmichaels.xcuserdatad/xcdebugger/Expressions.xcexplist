@@ -61,6 +61,22 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "closure #1 in TableView.cardTouched(_:):TableView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.table.selectedCards()">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "TableView.cardTouched(_:):TableView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.table.cards.count">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "Table.moveAnyExistingSetToFront():Table.swift">
          <PersistentStrings>
             <PersistentString
