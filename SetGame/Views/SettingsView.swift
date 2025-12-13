@@ -59,7 +59,7 @@ struct SettingsView: View {
                     }.pickerStyle(MenuPickerStyle())
                 }
                 Toggle(isOn: $table.settings.cardsAskew) {
-                    Text("Cards Askew")
+                    Text("Skew Cards")
                 }
                 Divider()
                 VStack {
