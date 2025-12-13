@@ -173,7 +173,6 @@
 		9811911D25ED5A0C0083606B /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				989D93682EE8B01D00BE461B /* Stats.swift */,
 				989FF8F925EF3708002AE44A /* CardArrayExtension.swift */,
 				989FF8F825EF3708002AE44A /* StandardDeck.swift */,
 				9811913A25ED5ACF0083606B /* Card.swift */,
@@ -182,6 +181,7 @@
 				9811913E25ED5ACF0083606B /* CardNumber.swift */,
 				9811914125ED5ACF0083606B /* CardShape.swift */,
 				9811913825ED5ACF0083606B /* Deck.swift */,
+				989D93682EE8B01D00BE461B /* Stats.swift */,
 				9811913F25ED5ACF0083606B /* String.swift */,
 				9811913D25ED5ACF0083606B /* Table.swift */,
 				9811914025ED5ACF0083606B /* TableCard.swift */,
