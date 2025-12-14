@@ -2,17 +2,17 @@
 ///
 enum CardColor : Int, CaseIterable {
 
-    case Green;
-    case Purple;
     case Red;
+    case Purple;
+    case Green;
 
     /// Returns the single  'codename' character/string for this attribute.
     ///
     var codename : String {
         switch self {
-            case .Green:  return "G";
-            case .Purple: return "P";
             case .Red:    return "R";
+            case .Purple: return "P";
+            case .Green:  return "G";
         }
     }
 
@@ -43,7 +43,7 @@ enum CardColor : Int, CaseIterable {
     /// returns its CardColor instance; returns nil if unparsable.
     ///
     static func from(_ value: String) -> CardColor? {
-        let value = value.filter{!$0.isWhitespace}.lowercased();
+        let value = value.filter{ !$0.isWhitespace }.lowercased();
         switch value {
             case "g",
                  "green":  return Green;

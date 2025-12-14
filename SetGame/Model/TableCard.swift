@@ -7,6 +7,8 @@ class TableCard : Card, ObservableObject {
 
     @Published var selected : Bool = false;
     @Published var set      : Bool = false;
+    @Published var blinking : Bool = false;
+    @Published var blink    : Bool = false;
 
     required init() {
         super.init(color: .random, shape: .random, filling: .random, number: .random);

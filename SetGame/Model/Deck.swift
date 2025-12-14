@@ -16,20 +16,20 @@ class Deck<T : Card> {
     init(simple: Bool = false, ncards: Int = 0, readonly: Bool = false) {
         self.readonly = readonly;
         self.cards = [T]();
-        let fillings : [CardFilling] = simple ? [CardFilling.Solid] : CardFilling.allCases;
+        let fillings: [CardFilling] = simple ? [CardFilling.Solid] : CardFilling.allCases;
         for color in CardColor.allCases {
             for shape in CardShape.allCases {
                 for filling in fillings {
                     for number in CardNumber.allCases {
-                        cards.add(T(color: color, shape: shape, filling: filling, number: number));
+                        self.cards.add(T(color: color, shape: shape, filling: filling, number: number));
                     }
                 }
             }
         }
-        if ((ncards > 0) && (ncards < cards.count)) {
-            let nremove = cards.count - ncards;
+        if ((ncards > 0) && (ncards < self.cards.count)) {
+            let nremove: Int = self.cards.count - ncards;
             for _ in 0..<nremove {
-                _ = cards.takeRandomCard();
+                _ = self.cards.takeRandomCard();
             }
         }
         self.cards.shuffle();
@@ -63,12 +63,27 @@ class Deck<T : Card> {
     }
 
     func takeCard(_ card : Card) -> Card? {
-        if (self.contains(card)){
+        if (self.contains(card)) {
             self.cards.remove(T(card));
             return card;
         }
         return nil;
     }
+
+    /// FOR DEBUG/DEV ONLY!
+    /// See CardArrayExtension.takeCards([String]).
+    ///
+    func takeCards(_ values: [String]) -> [Card] {
+        return self.cards.takeCards(values);
+    }
+
+    /// FOR DEBUG/DEV ONLY!
+    /// See CardArrayExtension.takeCards(String...).
+    ///
+    func takeCards(_ values: String...) -> [Card] {
+        return self.cards.takeCards(values);
+    }
+
     /// Removes and returns a random card from this deck;
     /// returns nil if no more cards in the deck.
     //
@@ -76,8 +91,8 @@ class Deck<T : Card> {
         return self.readonly ? nil : self.cards.takeRandomCard();
     }
 
-    func takeRandomCards(_ n : Int, plantSet: Bool = false) -> [T] {
-        return self.readonly ? [T]() : self.cards.takeRandomCards(n, plantSet: plantSet);
+    func takeRandomCards(_ n : Int, plantSet: Bool = false, existingCards: [T] = []) -> [T] {
+        return self.readonly ? [T]() : self.cards.takeRandomCards(n, plantSet: plantSet, existingCards: existingCards);
     }
 
     /// Returns true iff there exists at least one SET in this deck.
@@ -118,18 +133,18 @@ class Deck<T : Card> {
         return StandardDeck.instance.randomSet().map { T($0) };
     }
 
-    /// Returns the average number of SETs in a deal of the given number of cards.
+    /// Returns (WITHOUT removal) a random magic SET square from a standard deck.
+    /// N.B. In progress and only (currently) for the purpose of constructing a magic square.
     ///
-    static func averageNumberOfSets(_ ncards: Int, iterations: Int = 100) -> Float {
-        if (ncards < 3) {
-            return 0;
-        }
-        var totalSets = 0;
-        for _ in 1...iterations {
-            let deck = Deck();
-            let cards = deck.takeRandomCards(ncards);
-            totalSets += cards.numberOfSets();
-        }
-        return Float(totalSets) / Float(iterations);
+    static func randomMagicSquare(simple: Bool = false) -> [Card] {
+        let deck: [Card] = simple ? StandardDeck.instanceSimple.cards : StandardDeck.instance.cards;
+        var magic: [Card] = deck.randomNonSetCards();
+        magic.append(Card.matchingSetValue(magic[0], magic[1])); // [3] from [0] and [1]
+        magic.append(Card.matchingSetValue(magic[0], magic[2])); // [4] from [0] and [2]
+        magic.append(Card.matchingSetValue(magic[3], magic[4])); // [5] from [3] and [4]
+        magic.append(Card.matchingSetValue(magic[2], magic[5])); // [6] from [2] and [5]
+        magic.append(Card.matchingSetValue(magic[1], magic[5])); // [7] from [1] and [5)
+        magic.append(Card.matchingSetValue(magic[0], magic[5])); // [8] from [0] and [5]
+        return [magic[0], magic[1], magic[3], magic[2], magic[5], magic[6], magic[4], magic[7], magic[8]]
     }
 }

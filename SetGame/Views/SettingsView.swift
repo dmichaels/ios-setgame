@@ -11,50 +11,45 @@ struct SettingsView: View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack {
                 VStack {
-                    Toggle(isOn: $table.settings.useSimpleDeck) {
-                        Text("Use simplified deck (restarts!): ")
-                    }
-                    HStack() {
-                        Text("Limit deck size (n cards):")
-                            .frame(alignment: .leading)
-                        Spacer()
-                        Picker("\(table.settings.limitDeckSize) \u{25BC}", selection: $table.settings.limitDeckSize) {
-                            ForEach(limitDeckSizeChoices, id: \.self) {
-                                Text(String($0))
-                            }
-                        }.pickerStyle(MenuPickerStyle())
-                    }
-                    Divider()
-                    Toggle(isOn: $table.settings.showNumberOfSetsPresent) {
-                        Text("Show SETs displayed count: ")
-                    }
-                    Toggle(isOn: $table.settings.plantSet) {
-                        Text("Try planting at least one SET: ")
-                    }
-                    Toggle(isOn: $table.settings.moreCardsIfNoSet) {
-                        Text("Deal more cards if no SETs: ")
-                    }
                     Divider()
                     Toggle(isOn: $table.settings.showPartialSetSelectedIndicator) {
-                        Text("Show partial SET selection hint: ")
+                        Text("Partial SET Select Hint: ")
+                    }
+                    Toggle(isOn: $table.settings.showNumberOfSetsPresent) {
+                        Text("Available SETs Count: ")
+                    }
+                    Toggle(isOn: $table.settings.moreCardsIfNoSet) {
+                        Text("More Cards On No SET: ")
+                    }
+                    Divider()
+                    Toggle(isOn: $table.settings.plantSet) {
+                        Text("Plant SET: ")
                     }
                     Toggle(isOn: $table.settings.moveAnyExistingSetToFront) {
-                        Text("Move any existing SET to front: ")
+                        Text("Move SET Front: ")
+                    }
+                    Divider()
+                    Toggle(isOn: $table.settings.plantInitialMagicSquare) {
+                        Text("Plant Magic Square: ")
+                    }
+                    Divider()
+                    Toggle(isOn: $table.settings.showFoundSets) {
+                        Text("Show Found SETs: ")
                     }
                 }
                 Divider()
                 HStack() {
-                    Text("Preferred displayed card count:")
+                    Text("Display Card Count:")
                         .frame(alignment: .leading)
                     Spacer()
-                    Picker("\(table.settings.preferredDisplayCardCount) \u{25BC}", selection: $table.settings.preferredDisplayCardCount) {
+                    Picker("\(table.settings.displayCardCount) \u{25BC}", selection: $table.settings.displayCardCount) {
                         ForEach(preferredDisplayCountCardChoices, id: \.self) {
                             Text(String($0))
                         }
                     }.pickerStyle(MenuPickerStyle())
                 }
                 HStack() {
-                    Text("Cards per row:")
+                    Text("Cards Per Row:")
                         .frame(alignment: .leading)
                     Spacer()
                     Picker("\(table.settings.cardsPerRow) \u{25BC}", selection: $table.settings.cardsPerRow) {
@@ -63,10 +58,36 @@ struct SettingsView: View {
                         }
                     }.pickerStyle(MenuPickerStyle())
                 }
+                Toggle(isOn: $table.settings.cardsAskew) {
+                    Text("Skew Cards")
+                }
+                Divider()
+                VStack {
+                    Toggle(isOn: $table.settings.useSimpleDeck) {
+                        //
+                        // 2025-12-08
+                        // No longer automatically restart when requesting simplifed deck in settings.
+                        // Text("Use Simplified Deck ↻ Restarts!")
+                        //
+                        Text("Use Simplified Deck")
+                    }
+                    /*
+                    HStack() {
+                        Text("Deck Size:")
+                            .frame(alignment: .leading)
+                        Spacer()
+                        Picker("\(table.settings.limitDeckSize) \u{25BC}", selection: $table.settings.limitDeckSize) {
+                            ForEach(limitDeckSizeChoices, id: \.self) {
+                                Text(String($0))
+                            }
+                        }.pickerStyle(MenuPickerStyle())
+                    }
+                    */
+                }
                 Divider()
                 HStack () {
                     NavigationLink(destination: StatsView()) {
-                        Text("Stats")
+                        Text("SET Game Stats")
                     }
                     Spacer()
                 }.frame(alignment: .leading)
@@ -76,9 +97,11 @@ struct SettingsView: View {
     }
 }
 
+/*
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
-            .environmentObject(Table(preferredDisplayCardCount: 12, plantSet: true))
+            .environmentObject(Table(displayCardCount: 12, plantSet: true))
     }
 }
+*/

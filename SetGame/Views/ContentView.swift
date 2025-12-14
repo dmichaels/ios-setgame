@@ -38,6 +38,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-            .environmentObject(Table(preferredDisplayCardCount: 12, plantSet: true))
+            .environmentObject(Table(displayCardCount: 12, plantSet: true))
     }
 }

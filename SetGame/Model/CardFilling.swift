@@ -3,16 +3,16 @@
 enum CardFilling : Int, CaseIterable {
 
     case Hollow;
-    case Solid;
     case Stripped;
+    case Solid;
 
     /// Returns the single  'codename' character/string for this attribute.
     ///
     var codename : String {
         switch self {
             case .Hollow:   return "H";
-            case .Solid:    return "S";
             case .Stripped: return "T";
+            case .Solid:    return "S";
         }
     }
 
@@ -43,7 +43,7 @@ enum CardFilling : Int, CaseIterable {
     /// returns its CardFilling instance; returns nil if unparsable.
     ///
     static func from(_ value: String) -> CardFilling? {
-        let value = value.filter{!$0.isWhitespace}.lowercased();
+        let value = value.filter{ !$0.isWhitespace }.lowercased();
         switch value {
             case "h",
                  "hollow":   return Hollow;

@@ -118,7 +118,7 @@ public class Card {
     /// attributes being in the above order, i.e. color, shape, filling, number.
     ///
     class func from(_ value: String) -> Card? {
-        var value = value.filter{!$0.isWhitespace}.lowercased();
+        var value = value.filter{ !$0.isWhitespace }.lowercased();
         if (value.count == 4) {
             value = String(value[0]) + "-" +
                     String(value[1]) + "-" +
@@ -127,7 +127,7 @@ public class Card {
         }
         let components = value.split(){($0 == "-") || ($0 == ":")};
         if (components.count == 4) {
-            var components = components.map {String($0)};
+            var components = components.map { String($0) };
             if let (color, index) = CardColor.from(components)  {
                 components.remove(at: index);
                 if let (shape, index) = CardShape.from(components)  {
@@ -154,7 +154,7 @@ public class Card {
 
 /// Card extensions to conform to sundry protocols.
 ///
-extension Card : Identifiable, Equatable, CustomStringConvertible {
+extension Card : Identifiable, Equatable, Comparable, CustomStringConvertible {
 
     public var id : String { self.codename; }
 
@@ -163,6 +163,36 @@ extension Card : Identifiable, Equatable, CustomStringConvertible {
                (lhs.shape   == rhs.shape)   &&
                (lhs.filling == rhs.filling) &&
                (lhs.number  == rhs.number);
+    }
+
+    public static func < (lhs: Card, rhs: Card) -> Bool {
+        if (lhs.number.rawValue < rhs.number.rawValue) {
+            return true;
+        }
+        else if (lhs.number.rawValue > rhs.number.rawValue) {
+            return false;
+        }
+        else if (lhs.color.rawValue < rhs.color.rawValue) {
+            return true;
+        }
+        else if (lhs.color.rawValue > rhs.color.rawValue) {
+            return false;
+        }
+        else if (lhs.shape.rawValue < rhs.shape.rawValue) {
+            return true;
+        }
+        else if (lhs.shape.rawValue > rhs.shape.rawValue) {
+            return false;
+        }
+        else if (lhs.filling.rawValue < rhs.filling.rawValue) {
+            return true;
+        }
+        else if (lhs.filling.rawValue > rhs.filling.rawValue) {
+            return false;
+        }
+        else {
+            return false;
+        }
     }
 
     public var description : String {

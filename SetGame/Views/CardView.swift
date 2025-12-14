@@ -1,40 +1,54 @@
-//
-//  CardView.swift
-//  SetGame2
-//
-//  Created by David Michaels on 3/1/21.
-//
-
 import SwiftUI
 
-struct CardView : View {
+public struct CardView : View {
     
     @ObservedObject var card : TableCard;
-    var touchedCallback : (TableCard) -> Void = dummyTouchedCallback;
-    static func dummyTouchedCallback(_ card : TableCard) {
-        //card.selected.toggle();
-    }
-    var body : some View {
+
+    var touchedCallback : ((TableCard) -> Void)?
+
+    public var body : some View {
         VStack {
-            Button(action: {touchedCallback(card)}) {
+            Button(action: {touchedCallback?(card)}) {
             Image(card.codename)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .rotation3DEffect(card.selected ? Angle(degrees: 720) : (card.selected ? Angle(degrees: 360) : Angle(degrees: 0)), axis: (x: CGFloat(0), y: CGFloat(card.selected ? 0 : 1), z: CGFloat(card.selected ? 1 : 0)))
-            .animation(Animation.linear(duration: 0.3))
+                .rotation3DEffect(card.selected && !card.blinking
+                                  ? Angle(degrees: 720)
+                                  : (card.selected
+                                     ? Angle(degrees: 360)
+                                     : Angle(degrees: 0)),
+                                  axis: (x: CGFloat(0),
+                                         y: CGFloat(card.selected && !card.blinking ? 0 : 1),
+                                         z: CGFloat(card.selected && !card.blinking ? 1 : 0)))
+                .opacity(card.blink ? 0.0 : 1.0)
+                .animation(card.blinking ? nil : Animation.linear(duration: 0.35))
             .cornerRadius(8)
                 .overlay(RoundedRectangle(cornerRadius:card.selected ? 10 : 6)
-                            .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1))
+                         .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1))
                 .shadow(color: card.selected ? Color.green : Color.blue, radius: card.selected ? 3 : 1)
                 .padding(1)
                 .onTapGesture {
-                    touchedCallback(card);
+                    touchedCallback?(card);
                 }
             }
         }
     }
 }
 
+extension View {
+    func slightlyRotated(_ enabled: Bool = true) -> some View {
+        Group { if enabled { self.modifier(SlightRandomRotation()) } else { self } }
+    }
+}
+
+public struct SlightRandomRotation: ViewModifier {
+    @State private var angle: Double = Double(Int.random(in: -2...2))
+    public func body(content: Content) -> some View {
+        content.rotationEffect(.degrees(angle));
+    }
+}
+
+/*
 struct CardView_Previews: PreviewProvider {
     static func touchedCallback(_ card : TableCard) {
         card.selected.toggle();
@@ -44,3 +58,4 @@ struct CardView_Previews: PreviewProvider {
         CardView(card: TableCard(), touchedCallback: touchedCallback);
     }
 }
+*/

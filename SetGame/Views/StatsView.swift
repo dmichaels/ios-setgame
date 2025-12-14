@@ -11,11 +11,15 @@ struct StatsView: View  {
                 ForEach(3...21, id: \.self) { index in
                     if (index == 3) {
                         HStack {
-                            Text("# of Cards")
+                            Text("\nNumber\nof Cards")
                                 .font(.system(size: 14, design: .monospaced))
                                 .frame(alignment: .leading)
                             Spacer()
-                            Text("Average # of SETs")
+                            Text("\n\nP(SET)")
+                                .font(.system(size: 14, design: .monospaced))
+                                .frame(alignment: .trailing)
+                            Spacer()
+                            Text("Average\n Number\nof SETs")
                                 .font(.system(size: 14, design: .monospaced))
                                 .frame(alignment: .trailing)
                         }
@@ -23,15 +27,24 @@ struct StatsView: View  {
                     }
                     HStack {
                         if (self.isViewDisplayed) {
-                        let number = Deck.averageNumberOfSets(index);
-                        let string = String(format: "%-0.1f", number);
-                        Text("\(index)")
-                            .font(.system(size: 14, design: .monospaced))
-                            .frame(alignment: .leading)
-                        Spacer()
-                        Text("\(string)")
-                            .font(.system(size: 14, design: .monospaced))
-                            .frame(alignment: .trailing)
+                            let average = Deck.averageNumberOfSets(index);
+                            let p = Deck.probabilityOfAtLeastOneSet(for: index) * 100.0
+                            //
+                            // Truncate probability to one decimal place so
+                            // that we don't show 100.0% for (say) 99.9996%.
+                            ///
+                            let probability = Double(Int(p * 10)) / 10.0
+                            Text("\(String(format: "%2d", index))")
+                                .font(.system(size: 14, design: .monospaced))
+                                .frame(alignment: .leading)
+                            Spacer()
+                            Text("\(String(format: "%6.1f%%", probability))")
+                                .font(.system(size: 14, design: .monospaced))
+                                .frame(alignment: .trailing)
+                            Spacer()
+                            Text("\(String(format: "%4.1f", average))")
+                                .font(.system(size: 14, design: .monospaced))
+                                .frame(alignment: .trailing)
                         }
                     }
                 }
@@ -47,9 +60,11 @@ struct StatsView: View  {
     }
 }
 
+/*
 struct StatsView_Previews: PreviewProvider {
     static var previews: some View {
         StatsView()
-            .environmentObject(Table(preferredDisplayCardCount: 12, plantSet: true))
+            .environmentObject(Table(displayCardCount: 12, plantSet: true))
     }
 }
+*/

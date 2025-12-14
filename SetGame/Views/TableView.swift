@@ -15,7 +15,7 @@ struct TableView: View {
                             if (index < table.cards.count) {
                                 CardView(card: table.cards[index]) {
                                     cardTouched($0)
-                                }
+                                }.slightlyRotated(self.table.settings.cardsAskew)
                             }
                             else {
                                 Image("dummy").resizable()
@@ -26,8 +26,12 @@ struct TableView: View {
                 Divider()
                 StatusBarView()
                 Divider()
+                if (self.table.settings.showFoundSets) {
+                    FoundSetsView(setsLastFound: table.state.setsLastFound,
+                                  cardsAskew: table.settings.cardsAskew)
+                }
             }.padding()
-        }
+        }.allowsHitTesting(!self.table.state.blinking)
     }
 
     private func cardTouched(_ card : TableCard) {
@@ -47,9 +51,17 @@ struct TableView: View {
         // No idea right now if this is the right/Swift-y way
         // to handle such a situation; but it does work for now.
         //
-        table.touchCard(card);
+        self.table.touchCard(card);
         delayQuick() {
-            table.checkForSet();
+            let setCards: [Card] = self.table.checkForSet(readonly: true)
+            if (setCards.count == 3) {
+                let setTableCards: [TableCard] = setCards.compactMap { $0 as? TableCard }
+                self.table.state.blinking = true;
+                TableView.blinkCards(setTableCards, times: 4) {
+                    self.table.checkForSet();
+                    self.table.state.blinking = false;
+                }
+            }
         }
     }
 
@@ -63,11 +75,58 @@ struct TableView: View {
             }
         }
     }
+
+    private func pairCardsListForDisplay(_ cardsList: [[TableCard]]) -> [[TableCard]] {
+        var result: [[TableCard]] = []
+        var i: Int = 0
+        while (i < cardsList.count) {
+            if ((i + 1) < cardsList.count) {
+                result.append(cardsList[i].sorted() + cardsList[i + 1].sorted())
+            } else {
+                result.append(cardsList[i].sorted())
+            }
+            i += 2
+        }
+        return result
+    }
+
+    // N.B. ChatGPT helped here.
+    //
+    public static func blinkCards(_ cards: [TableCard], times: Int = 3, interval: Double = 0.10,
+                                    completion: @escaping () -> Void = {}) {
+
+        guard times > 0 else { completion(); return }
+
+        func setBlinking(_ on: Bool) { for card in cards { card.blinking = on; card.blink = on; } }
+        func setBlink   (_ on: Bool) { for card in cards { card.blink = on; } }
+        func toggleBlink()           { for card in cards { card.blink = !card.blink; } }
+
+        var togglesRemaining = times * 2; // times two because counting on/off
+
+        setBlinking(true);
+        func tick() {
+            togglesRemaining -= 1;
+            if (togglesRemaining <= 0) {
+                setBlinking(false);
+                completion();
+                return;
+            }
+            toggleBlink();
+            DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
+                tick();
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
+            tick();
+        }
+    }
 }
 
+/*
 struct TableView_Previews: PreviewProvider {
     static var previews: some View {
         TableView()
-            .environmentObject(Table(preferredDisplayCardCount: 12, plantSet: true))
+            .environmentObject(Table(displayCardCount: 12, plantSet: true))
     }
 }
+*/
