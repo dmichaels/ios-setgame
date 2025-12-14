@@ -12,9 +12,16 @@ public struct CardView : View {
             Image(card.codename)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .rotation3DEffect(card.selected ? Angle(degrees: 720) : (card.selected ? Angle(degrees: 360) : Angle(degrees: 0)),
-                                  axis: (x: CGFloat(0), y: CGFloat(card.selected ? 0 : 1), z: CGFloat(card.selected ? 1 : 0)))
-            .animation(Animation.linear(duration: 0.3))
+                .rotation3DEffect(card.selected && !card.blinking
+                                  ? Angle(degrees: 720)
+                                  : (card.selected
+                                     ? Angle(degrees: 360)
+                                     : Angle(degrees: 0)),
+                                  axis: (x: CGFloat(0),
+                                         y: CGFloat(card.selected && !card.blinking ? 0 : 1),
+                                         z: CGFloat(card.selected && !card.blinking ? 1 : 0)))
+                .opacity(card.blink ? 0.0 : 1.0)
+                .animation(card.blinking ? nil : Animation.linear(duration: 0.35))
             .cornerRadius(8)
                 .overlay(RoundedRectangle(cornerRadius:card.selected ? 10 : 6)
                          .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1))

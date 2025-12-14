@@ -59,6 +59,7 @@ class Table<TC : TableCard> : ObservableObject {
         var showingCardsWhichArePartOfSet : Bool = false;
         var showingOneRandomSet           : Bool = false;
         var showingOneRandomSetLast       : Int? = nil;
+        var blinking                      : Bool = false;
     }
 
                       private      var deck     : Deck<TC>;

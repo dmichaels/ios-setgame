@@ -98,9 +98,11 @@ struct StatusBarView: View {
     }
 }
 
+/*
 struct StatusBarView_Previews: PreviewProvider {
     static var previews: some View {
         StatusBarView()
             .environmentObject(Table(displayCardCount: 12, plantSet: true))
     }
 }
+*/

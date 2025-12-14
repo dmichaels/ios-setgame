@@ -97,9 +97,11 @@ struct SettingsView: View {
     }
 }
 
+/*
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
             .environmentObject(Table(displayCardCount: 12, plantSet: true))
     }
 }
+*/

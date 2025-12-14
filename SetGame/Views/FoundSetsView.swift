@@ -27,6 +27,14 @@ struct FoundSetsView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
+        .onChange(of: self.setsLastFound) { setsLastFound in
+            if (setsLastFound.count > 0) {
+                let setsLastFound: [TableCard] = setsLastFound[setsLastFound.count - 1];
+                if (setsLastFound.count == 3){
+                    TableView.blinkCards(Array(setsLastFound.prefix(3)), times: 3)
+                }
+            }
+        }
     }
 
     @ViewBuilder
