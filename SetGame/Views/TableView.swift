@@ -97,7 +97,7 @@ struct TableView: View {
 
         guard times > 0 else { completion(); return }
 
-        func setBlinking(_ on: Bool) { for card in cards { card.blinking = on; card.blink = on; } }
+        func setBlinking(_ on: Bool) { for card in cards { card.blink = on; card.blinking = on;  } }
         func setBlink   (_ on: Bool) { for card in cards { card.blink = on; } }
         func toggleBlink()           { for card in cards { card.blink = !card.blink; } }
 
