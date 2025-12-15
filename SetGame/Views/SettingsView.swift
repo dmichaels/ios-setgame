@@ -100,7 +100,7 @@ struct SettingsView: View {
                 }.frame(alignment: .leading)
             }.padding()
         }
-        .navigationTitle("SET Game® Settings")
+        .navigationTitle("SET Settings")
     }
 
     private func version() -> String {
