@@ -85,6 +85,13 @@ struct SettingsView: View {
                     */
                 }
                 Divider()
+                HStack {
+                    Text("Version:")
+                        .frame(alignment: .leading)
+                    Spacer()
+                    Text(self.version())
+                }
+                Divider()
                 HStack () {
                     NavigationLink(destination: StatsView()) {
                         Text("SET Game Stats")
@@ -94,6 +101,12 @@ struct SettingsView: View {
             }.padding()
         }
         .navigationTitle("SET Game® Settings")
+    }
+
+    private func version() -> String {
+        let version: String? = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        let build: String? = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+        return (version ?? "version") + (build ?? "build")
     }
 }
 
