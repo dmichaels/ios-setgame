@@ -57,7 +57,7 @@ struct TableView: View {
             if (setCards.count == 3) {
                 let setTableCards: [TableCard] = setCards.compactMap { $0 as? TableCard }
                 self.table.state.blinking = true;
-                TableView.blinkCards(setTableCards, times: 4) {
+                TableView.blinkCards(setTableCards, times: 5) {
                     self.table.checkForSet();
                     self.table.state.blinking = false;
                 }

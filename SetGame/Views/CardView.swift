@@ -21,7 +21,7 @@ public struct CardView : View {
                                          y: CGFloat(card.selected && !card.blinking ? 0 : 1),
                                          z: CGFloat(card.selected && !card.blinking ? 1 : 0)))
                 .opacity(card.blink ? 0.0 : 1.0)
-                .animation(card.blinking ? nil : Animation.linear(duration: 0.35))
+                .animation(card.blinking ? nil : Animation.linear(duration: 0.3))
             .cornerRadius(8)
                 .overlay(RoundedRectangle(cornerRadius:card.selected ? 10 : 6)
                          .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1))
