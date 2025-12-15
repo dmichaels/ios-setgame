@@ -271,7 +271,15 @@ class Table<TC : TableCard> : ObservableObject {
                 //
                 self.state.setJustFoundNot = true;
                 self.state.incorrectGuessCount += 1;
-                self.unselectCards();
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    //
+                    // Unselecting the (non-SET) cards inside this dispatch block allows the
+                    // UI to actually show the 3 cards as selected before they get visually
+                    // unselected; otherwise (without the dispatch block) it happens so quick
+                    // you don't really see all 3 (especially the last one) selected at once.
+                    //
+                    self.unselectCards()
+                }
             }
         }
 
