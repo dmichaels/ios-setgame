@@ -59,6 +59,10 @@ class Table<TC : TableCard> : ObservableObject {
         var showingCardsWhichArePartOfSet : Bool = false;
         var showingOneRandomSet           : Bool = false;
         var showingOneRandomSetLast       : Int? = nil;
+        //
+        // This blinking flag is ONLY used to disable input while blinking the cards after
+        // a SET is found (see allowsHitTesting in TableView); there should be a better way.
+        ///
         var blinking                      : Bool = false;
     }
 
@@ -278,7 +282,7 @@ class Table<TC : TableCard> : ObservableObject {
                     // unselected; otherwise (without the dispatch block) it happens so quick
                     // you don't really see all 3 (especially the last one) selected at once.
                     //
-                    self.unselectCards()
+                    self.unselectCards();
                 }
             }
         }

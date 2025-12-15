@@ -55,6 +55,12 @@ struct TableView: View {
         delayQuick() {
             let setCards: [Card] = self.table.checkForSet(readonly: true)
             if (setCards.count == 3) {
+                //
+                // SET found!
+                // Blink the 3 cards found a few times.
+                // Note that the table.state.blinking flag is
+                // used ONLY to disable input during this blinking.
+                //
                 let setTableCards: [TableCard] = setCards.compactMap { $0 as? TableCard }
                 self.table.state.blinking = true;
                 TableView.blinkCards(setTableCards, times: 5) {
@@ -97,7 +103,7 @@ struct TableView: View {
 
         guard times > 0 else { completion(); return }
 
-        func setBlinking(_ on: Bool) { for card in cards { card.blink = on; card.blinking = on;  } }
+        func setBlinking(_ on: Bool) { for card in cards { card.blink = on; card.blinking = on; } }
         func setBlink   (_ on: Bool) { for card in cards { card.blink = on; } }
         func toggleBlink()           { for card in cards { card.blink = !card.blink; } }
 

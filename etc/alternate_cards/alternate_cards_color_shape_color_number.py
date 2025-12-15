@@ -1,6 +1,10 @@
 import math
 from PIL import Image, ImageDraw, ImageFont
 
+CARD_WIDTH    = 200
+CARD_HEIGHT   = 300
+FIGURE_RADIUS = 80
+
 background_colors  = ["white", "#606A60", "black"]
 shapes             = ["circle", "square", "diamond"]
 foreground_colors  = ["red", "blue", "green"]
@@ -182,56 +186,6 @@ def draw_diamond(image, x, y, radius, color,
     # paste centered at (x, y)
     image.paste(tmp, (x - out_w // 2, y - out_h // 2), tmp)
 
-def old_draw_diamond(image, x, y, radius, color,
-                 border=0, border_color=None,
-                 aa=4, stretch_y=1.25):
-    """
-    Draw an antialiased diamond (rotated square), slightly taller than wide.
-
-    (x, y) is center.
-    radius controls half-width (left/right distance from center).
-    stretch_y > 1 makes it taller than wide.
-
-    Optional border is drawn INSIDE (outer size unchanged).
-    """
-
-    r_hi = radius * aa
-    size = r_hi * 2
-
-    tmp = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    d = ImageDraw.Draw(tmp)
-
-    cx = cy = r_hi
-    half_w = r_hi
-    half_h = r_hi * stretch_y
-
-    def diamond_points(hw, hh):
-        return [
-            (cx,      cy - hh),  # top
-            (cx + hw, cy),       # right
-            (cx,      cy + hh),  # bottom
-            (cx - hw, cy)        # left
-        ]
-
-    if border > 0 and border_color is not None:
-        # outer in border color
-        d.polygon(diamond_points(half_w, half_h), fill=border_color)
-
-        # inner (shrunk inward)
-        inner_hw = half_w - border * aa
-        inner_hh = half_h - border * aa
-        if inner_hw > 0 and inner_hh > 0:
-            d.polygon(diamond_points(inner_hw, inner_hh), fill=color)
-    else:
-        d.polygon(diamond_points(half_w, half_h), fill=color)
-
-    # Downsample for antialiasing
-    tmp = tmp.resize((radius * 2, radius * 2), resample=Image.LANCZOS)
-
-    # Paste with alpha
-    image.paste(tmp, (x - radius, y - radius), tmp)
-
-
 def draw_number(image, x, y, radius, color, number):
     """
     Draw a bold number centered inside the circle of radius `radius`
@@ -308,48 +262,51 @@ def draw_number(image, x, y, radius, color, number):
     )
 
 def draw_figure_circle(bg, fg_outer, number):
-    width, height = 200, 300
-    x, y = width // 2, height // 2
-    radius = 80
-    image = Image.new("RGB", (width, height), bg)
-    draw_circle(image, x, y, radius -  2,  fg_outer,  border=2, border_color=bg)
-    draw_number(image, x, y, radius -  50, "yellow", number)
+    x, y = CARD_WIDTH // 2, CARD_HEIGHT // 2
+    image = Image.new("RGB", (CARD_WIDTH, CARD_HEIGHT), bg)
+    draw_circle(image, x, y, FIGURE_RADIUS -  2,  fg_outer,  border=2, border_color=bg)
+    draw_number(image, x, y, FIGURE_RADIUS -  50, "yellow", number)
     return image
 
 def draw_figure_square(bg, fg_outer, number):
-    width, height = 200, 300
-    x, y = width // 2, height // 2
-    radius = 80
-    image = Image.new("RGB", (width, height), bg)
-    draw_square(image, x, y, radius -  2,  fg_outer,  border=2, border_color=bg)
-    draw_number(image, x, y, radius -  50, "yellow", number)
+    x, y = CARD_WIDTH // 2, CARD_HEIGHT // 2
+    image = Image.new("RGB", (CARD_WIDTH, CARD_HEIGHT), bg)
+    draw_square(image, x, y, FIGURE_RADIUS -  2,  fg_outer,  border=2, border_color=bg)
+    draw_number(image, x, y, FIGURE_RADIUS -  50, "yellow", number)
     return image
 
 def draw_figure_triangle(bg, fg_outer, number):
-    width, height = 200, 300
-    x, y = width // 2, height // 2
-    radius = 80
-    image = Image.new("RGB", (width, height), bg)
-    draw_triangle(image, x, y, radius -  2,  fg_outer,  border=2, border_color=bg)
-    draw_number(image, x, y, radius -  50, "yellow", number)
+    x, y = CARD_WIDTH // 2, CARD_HEIGHT // 2
+    image = Image.new("RGB", (CARD_WIDTH, CARD_HEIGHT), bg)
+    draw_triangle(image, x, y, FIGURE_RADIUS -  2,  fg_outer,  border=2, border_color=bg)
+    draw_number(image, x, y, FIGURE_RADIUS -  50, "yellow", number)
     return image
 
 def draw_figure_diamond(bg, fg_outer, number):
-    width, height = 200, 300
-    x, y = width // 2, height // 2
-    radius = 80
-    image = Image.new("RGB", (width, height), bg)
-    draw_diamond(image, x, y, radius -  2,  fg_outer,  border=2, border_color=bg)
-    draw_number(image, x, y, radius -  50, "yellow", number)
+    x, y = CARD_WIDTH // 2, CARD_HEIGHT // 2
+    image = Image.new("RGB", (CARD_WIDTH, CARD_HEIGHT), bg)
+    draw_diamond(image, x, y, FIGURE_RADIUS -  2,  fg_outer,  border=2, border_color=bg)
+    draw_number(image, x, y, FIGURE_RADIUS -  50, "yellow", number)
     return image
+
+def draw_function(shape):
+        if shape == "circle":
+            return draw_figure_circle
+        elif shape == "square":
+            return draw_figure_square
+        elif shape == "triangle":
+            return draw_figure_triangle
+        elif shape == "diamond":
+            return draw_figure_diamond
+        else:
+            return draw_figure_circle
 
 for ibg, bg in enumerate(background_colors):
     for ishape, shape in enumerate(shapes):
-        draw = draw_figure_circle if shape == "circle" else (draw_figure_square if shape == "square" else (draw_figure_triangle if shape == "triangle" else draw_figure_diamond))
         for ifg, fg in enumerate(foreground_colors):
             for inumber, number in enumerate(numbers):
                 code = f"{ibg}{ishape}{ifg}{inumber}"
                 file = f"/tmp/{code}.png"
-                image = draw(bg, fg, number)
+                image = draw_function(shape)(bg, fg, number)
                 image.save(file)
                 print(code)

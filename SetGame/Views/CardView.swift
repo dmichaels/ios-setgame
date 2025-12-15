@@ -7,28 +7,56 @@ public struct CardView : View {
     var touchedCallback : ((TableCard) -> Void)?
 
     public var body : some View {
-        VStack {
-            Button(action: {touchedCallback?(card)}) {
-            Image(card.codename)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .rotation3DEffect((card.selected && !card.blinking)
-                                  ? Angle(degrees: 720)
-                                  : (card.selected
-                                     ? Angle(degrees: 360)
-                                     : Angle(degrees: 0)),
-                                  axis: (x: CGFloat(0),
-                                         y: CGFloat((card.selected && !card.blinking) ? 0 : 1),
-                                         z: CGFloat((card.selected && !card.blinking) ? 1 : 0)))
-                .opacity(card.blink ? 0.0 : 1.0)
-                .animation(card.blinking ? nil : Animation.linear(duration: 0.3))
-            .cornerRadius(8)
-                .overlay(RoundedRectangle(cornerRadius:card.selected ? 10 : 6)
-                         .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1))
-                .shadow(color: card.selected ? Color.green : Color.blue, radius: card.selected ? 3 : 1)
-                .padding(1)
-                .onTapGesture {
-                    touchedCallback?(card);
+        if (card.blinking) {
+            //
+            // ODDITY:
+            // Had to duplicate this whole thing here, WITHOUT the rotation3DEffect animation
+            // modifiers, for the blinking state; i.e. where we have found a SET and we want to
+            // blink the 3 SET cards on/off a few times; without this we will see the rotation
+            // and flipping thing as a part of the blinking (only on the last SET card selected
+            // actually for some reason), even if we conditionally choose non-rotation/flipping
+            // values for the rotation3DEffect based on card.blinking.
+            //
+            VStack {
+                Button(action: {touchedCallback?(card)}) {
+                Image(card.codename)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .opacity(card.blink ? 0.0 : 1.0)
+                    .cornerRadius(8)
+                    .overlay(RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
+                            .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1))
+                    .shadow(color: card.selected ? Color.green : Color.blue, radius: card.selected ? 3 : 1)
+                    .padding(1)
+                    .onTapGesture {
+                        touchedCallback?(card);
+                    }
+                }
+            }
+        }
+        else {
+            VStack {
+                Button(action: {touchedCallback?(card)}) {
+                Image(card.codename)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .rotation3DEffect(card.selected ? Angle(degrees: 720) : Angle(degrees: 0),
+                                    axis: (x: CGFloat(0),
+                                            y: CGFloat(card.selected ? 0 : 1),
+                                            z: CGFloat(card.selected ? 1 : 0)))
+                    .animation(Animation.linear(duration: 0.3))
+                    .cornerRadius(8)
+                    .overlay(RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
+                            .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1))
+                    .shadow(color: card.selected ? Color.green : Color.blue, radius: card.selected ? 3 : 1)
+                    .padding(1)
+                    //
+                    // FYI: Move the rotation3DEffect and animation here to get a more robust effect;
+                    // where it looks like the whole card including border is spinning around.
+                    //
+                    .onTapGesture {
+                        touchedCallback?(card);
+                    }
                 }
             }
         }
@@ -41,7 +69,7 @@ extension View {
     }
 }
 
-public struct SlightRandomRotation: ViewModifier {
+private struct SlightRandomRotation: ViewModifier {
     @State private var angle: Double = Double(Int.random(in: -2...2))
     public func body(content: Content) -> some View {
         content.rotationEffect(.degrees(angle));
