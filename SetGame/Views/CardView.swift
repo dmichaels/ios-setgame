@@ -3,6 +3,7 @@ import SwiftUI
 public struct CardView : View {
     
     @ObservedObject var card : TableCard;
+    @EnvironmentObject var table: Table
 
     var touchedCallback : ((TableCard) -> Void)?
 
@@ -19,7 +20,7 @@ public struct CardView : View {
             //
             VStack {
                 Button(action: {touchedCallback?(card)}) {
-                Image(card.codename)
+                Image(table.settings.alternateCardImages ? "ALTA_" + card.codename : card.codename)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .opacity(card.blink ? 0.0 : 1.0)
@@ -37,7 +38,7 @@ public struct CardView : View {
         else {
             VStack {
                 Button(action: {touchedCallback?(card)}) {
-                Image(card.codename)
+                Image(table.settings.alternateCardImages ? "ALTA_" + card.codename : card.codename)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .rotation3DEffect(card.selected ? Angle(degrees: 720) : Angle(degrees: 0),

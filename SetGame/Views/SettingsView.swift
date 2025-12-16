@@ -61,6 +61,9 @@ struct SettingsView: View {
                 Toggle(isOn: $table.settings.cardsAskew) {
                     Text("Skew Cards")
                 }
+                Toggle(isOn: $table.settings.alternateCardImages) {
+                    Text("Alternate Cards")
+                }
                 Divider()
                 VStack {
                     Toggle(isOn: $table.settings.useSimpleDeck) {

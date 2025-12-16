@@ -14,6 +14,7 @@ class TableCard : Card, ObservableObject {
     //
     @Published var blink    : Bool = false;
     @Published var blinking : Bool = false;
+    @Published var alternateCardImages : Bool = false;
 
     required init() {
         super.init(color: .random, shape: .random, filling: .random, number: .random);

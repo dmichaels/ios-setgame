@@ -45,8 +45,9 @@ class Table<TC : TableCard> : ObservableObject {
                 }
             }
         }
-        var showFoundSets: Bool = true
-        var cardsAskew: Bool = true
+        var showFoundSets: Bool = true;
+        var cardsAskew: Bool = true;
+        var alternateCardImages: Bool = false;
     }
 
     struct State {
