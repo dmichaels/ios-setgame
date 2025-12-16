@@ -301,12 +301,55 @@ def draw_function(shape):
         else:
             return draw_figure_circle
 
+def normalize_code(code):
+
+    if len(code) != 4:
+        return code
+
+    normalized_code = "ALTB_"
+
+    if code[0] == "0":
+        normalized_code += "R"
+    elif code[0] == "1":
+        normalized_code += "P"
+    elif code[0] == "2":
+        normalized_code += "G"
+
+    if code[1] == "0":
+        normalized_code += "O"
+    elif code[1] == "1":
+        normalized_code += "D"
+    elif code[1] == "2":
+        normalized_code += "Q"
+
+    if code[2] == "0":
+        normalized_code += "H"
+    elif code[2] == "1":
+        normalized_code += "T"
+    elif code[2] == "2":
+        normalized_code += "S"
+
+    if code[3] == "0":
+        normalized_code += "1"
+    elif code[3] == "1":
+        normalized_code += "2"
+    elif code[3] == "2":
+        normalized_code += "3"
+
+    return normalized_code
+
+def filepath(code):
+    # directory = "/Users/dmichaels/repos/ios-setgame/SetGame/Assets.xcassets"
+    # return f"{directory}/{code}.imageset/{code}.png"
+    directory = "/tmp/setb"
+    return f"{directory}/{code}.png"
+
 for ibg, bg in enumerate(background_colors):
     for ishape, shape in enumerate(shapes):
         for ifg, fg in enumerate(foreground_colors):
             for inumber, number in enumerate(numbers):
-                code = f"{ibg}{ishape}{ifg}{inumber}"
-                file = f"/tmp/{code}.png"
                 image = draw_function(shape)(bg, fg, number)
+                code = normalize_code(f"{ibg}{ishape}{ifg}{inumber}")
+                file = filepath(code)
                 image.save(file)
                 print(code)

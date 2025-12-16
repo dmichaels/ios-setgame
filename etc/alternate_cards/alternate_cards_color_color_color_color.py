@@ -264,9 +264,9 @@ def draw_number(image, x, y, radius, color, number):
 def draw_figure(background_color, outer_color, middle_color, inner_color):
     x, y = CARD_WIDTH // 2, CARD_HEIGHT // 2
     image = Image.new("RGB", (CARD_WIDTH, CARD_HEIGHT), background_color)
-    draw_circle(image, x, y, FIGURE_RADIUS -  2,  outer_color,  border=4, border_color=background_color)
-    draw_circle(image, x, y, FIGURE_RADIUS -  30,  middle_color, border=4, border_color=background_color)
-    draw_circle(image, x, y, FIGURE_RADIUS -  60,  inner_color, border=4, border_color=background_color)
+    draw_circle(image, x, y, FIGURE_RADIUS -  2,  outer_color,  border=12, border_color=background_color)
+    draw_circle(image, x, y, FIGURE_RADIUS -  30, middle_color, border=12, border_color=background_color)
+    draw_circle(image, x, y, FIGURE_RADIUS -  60, inner_color, border=12,  border_color=background_color)
     return image
 
 def normalize_code(code):
@@ -306,12 +306,16 @@ def normalize_code(code):
 
     return normalized_code
 
+def filepath(code):
+    directory = "/Users/dmichaels/repos/ios-setgame/SetGame/Assets.xcassets"
+    return f"{directory}/{code}.imageset/{code}.png"
+
 for ibackground_color, background_color in enumerate(background_colors):
     for iouter_color, outer_color in enumerate(outer_colors):
         for imiddle_color, middle_color in enumerate(middle_colors):
             for iinner_color, inner_color in enumerate(inner_colors):
-                code = normalize_code(f"{ibackground_color}{iouter_color}{imiddle_color}{iinner_color}")
-                file = f"/tmp/set/{code}.png"
                 image = draw_figure(background_color, outer_color, middle_color, inner_color)
+                code = normalize_code(f"{ibackground_color}{iouter_color}{imiddle_color}{iinner_color}")
+                file = filepath(code)
                 image.save(file)
-                print(code)
+                print(file)
