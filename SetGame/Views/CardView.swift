@@ -42,9 +42,9 @@ public struct CardView : View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .rotation3DEffect(card.selected ? Angle(degrees: 720) : Angle(degrees: 0),
-                                    axis: (x: CGFloat(0),
-                                            y: CGFloat(card.selected ? 0 : 1),
-                                            z: CGFloat(card.selected ? 1 : 0)))
+                                      axis: (x: CGFloat(0),
+                                             y: CGFloat(card.selected ? 0 : 1),
+                                             z: CGFloat(card.selected ? 1 : 0)))
                     .animation(Animation.linear(duration: 0.3))
                     .cornerRadius(8)
                     .overlay(RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
