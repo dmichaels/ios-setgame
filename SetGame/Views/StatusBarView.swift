@@ -9,6 +9,7 @@ struct StatusBarView: View {
     let NEUTRAL_FACE_SYMBOL : String = "\u{1F610}";
     let HAPPY_FACE_SYMBOL   : String = "\u{1F642}";
     let SAD_FACE_SYMBOL     : String = "\u{1F641}";
+    let CHECK_MARK_SYMBOL   : String = "✅";
 
     func partialSetSelectedOne() -> Bool { self.table.state.partialSetSelected && table.cards.count == 1; }
     func partialSetSelectedTwo() -> Bool { self.table.state.partialSetSelected && table.cards.count == 2; }
@@ -29,7 +30,12 @@ struct StatusBarView: View {
                 .font(.subheadline)
                 .frame(alignment: .leading)
             if (self.table.settings.showPartialSetSelectedIndicator) {
-                if (self.table.state.partialSetSelected) {
+                if (self.table.state.blinking) {
+                        Text(HAPPY_FACE_SYMBOL)
+                            .font(.subheadline)
+                            .frame(alignment: .leading)
+                }
+                else if (self.table.state.partialSetSelected) {
                     if (self.table.selectedCardCount() == 1) {
                         Text(OK_SYMBOL)
                             .font(.subheadline)
@@ -46,6 +52,11 @@ struct StatusBarView: View {
                             .frame(alignment: .leading)
                     }
                 }
+                else if ((self.table.deck.count == 0) && !self.table.containsSet()) {
+                    Text(CHECK_MARK_SYMBOL)
+                        .font(.subheadline)
+                        .frame(alignment: .leading)
+                }
                 else if (self.table.state.setJustFound) {
                     Text(HAPPY_FACE_SYMBOL)
                         .font(.subheadline)
@@ -61,6 +72,11 @@ struct StatusBarView: View {
                         .font(.subheadline)
                         .frame(alignment: .leading)
                 }
+            }
+            else if ((self.table.deck.count == 0) && !self.table.containsSet()) {
+                Text(CHECK_MARK_SYMBOL)
+                    .font(.subheadline)
+                    .frame(alignment: .leading)
             }
             Spacer()
             Button(action: {

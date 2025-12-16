@@ -67,7 +67,7 @@ class Table<TC : TableCard> : ObservableObject {
         var blinking                      : Bool = false;
     }
 
-                      private      var deck     : Deck<TC>;
+                      public       var deck     : Deck<TC>;
     @Published public private(set) var cards    : [TC];
     @Published                     var state    : State;
     @Published                     var settings : Settings;
