@@ -35,7 +35,7 @@ public struct CardView : View {
                 }
             }
         }
-        else {
+        else if (false) {
             VStack {
                 Button(action: {touchedCallback?(card)}) {
                 Image(table.settings.alternateCardImages ? "ALTB_" + card.codename : card.codename)
@@ -55,6 +55,32 @@ public struct CardView : View {
                     // FYI: Move the rotation3DEffect and animation here to get a more robust effect;
                     // where it looks like the whole card including border is spinning around.
                     //
+                    .onTapGesture {
+                        touchedCallback?(card);
+                    }
+                }
+            }
+        }
+        else {
+            VStack {
+                Button(action: {touchedCallback?(card)}) {
+                Image(table.settings.alternateCardImages ? "ALTB_" + card.codename : card.codename)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    //
+                    // FYI: Move the rotation3DEffect and animation here to get a less robust effect;
+                    // where it looks like the just the inner parf of the card is spinning around.
+                    //
+                    .cornerRadius(8)
+                    .overlay(RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
+                            .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1))
+                    .shadow(color: card.selected ? Color.green : Color.blue, radius: card.selected ? 3 : 1)
+                    .padding(1)
+                    .rotation3DEffect(card.selected ? Angle(degrees: 360) : Angle(degrees: 0),
+                                      axis: (x: CGFloat(card.selected ? 0 : 1),
+                                             y: CGFloat(card.selected ? 0 : 1),
+                                             z: CGFloat(card.selected ? 1 : 0)))
+                    .animation(Animation.linear(duration: 0.20))
                     .onTapGesture {
                         touchedCallback?(card);
                     }

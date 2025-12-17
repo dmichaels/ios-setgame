@@ -13,6 +13,7 @@ struct SetGameApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(Table(displayCardCount: 12, plantSet: true))
+                .environmentObject(Settings())
         }
     }
 }

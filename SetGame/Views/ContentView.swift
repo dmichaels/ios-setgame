@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     
     @EnvironmentObject var table : Table;
+    @EnvironmentObject var settings : Settings;
 
     var body: some View {
         NavigationView {
@@ -31,6 +32,11 @@ struct ContentView: View {
                         }
                     }
                 }
+                .onChange(of: settings.version) { _ in
+                    Task {
+                        await table.demoCheck();
+                    }
+                }
         }.padding(.top, 6)
     }
 }
@@ -39,5 +45,6 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
             .environmentObject(Table(displayCardCount: 12, plantSet: true))
+            .environmentObject(Settings())
     }
 }

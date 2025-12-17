@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     
     @EnvironmentObject var table : Table;
+    @EnvironmentObject var settings : Settings;
     let cardsPerRowChoices = [ 1, 2, 3, 4, 5, 6 ];
     let preferredDisplayCountCardChoices = [ 3, 4, 6, 9, 12, 15, 16, 20 ];
     let limitDeckSizeChoices = [ 18, 27, 36, 45, 54, 63, 72, 81 ];
@@ -64,6 +65,9 @@ struct SettingsView: View {
                 Toggle(isOn: $table.settings.alternateCardImages) {
                     Text("Alternate Cards")
                 }
+                Toggle(isOn: $table.settings.demoMode) {
+                    Text("Demo Mode")
+                }
                 Divider()
                 VStack {
                     Toggle(isOn: $table.settings.useSimpleDeck) {
@@ -104,6 +108,9 @@ struct SettingsView: View {
             }.padding()
         }
         .navigationTitle("SET Settings")
+        .onDisappear {
+            self.settings.version += 1
+        }
     }
 
     private func version() -> String {

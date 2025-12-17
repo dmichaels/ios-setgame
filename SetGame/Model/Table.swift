@@ -48,6 +48,7 @@ class Table<TC : TableCard> : ObservableObject {
         var showFoundSets: Bool = true;
         var cardsAskew: Bool = true;
         var alternateCardImages: Bool = false;
+        var demoMode: Bool = false;
     }
 
     struct State {
@@ -71,6 +72,8 @@ class Table<TC : TableCard> : ObservableObject {
     @Published public private(set) var cards    : [TC];
     @Published                     var state    : State;
     @Published                     var settings : Settings;
+
+    var demoTimer: Timer? = nil;
 
     init(displayCardCount : Int = 9, plantSet : Bool = false) {
         self.deck                      = Deck();
@@ -201,7 +204,7 @@ class Table<TC : TableCard> : ObservableObject {
     /// If a non-SET is selected (i.e. three cards selected but which do
     /// not form SET), then these cards will simply be unselected.
     ///
-    func checkForSet(readonly: Bool = false) -> [Card] {
+    func checkForSet(readonly: Bool = false) -> [TC] {
 
         let selectedCards: [TC] = self.selectedCards();
 
@@ -449,7 +452,7 @@ class Table<TC : TableCard> : ObservableObject {
                     for j in (i + 1)..<(self.cards.count) {
                         let a: TC = self.cards[i];
                         let b: TC = self.cards[j];
-                        let c: TC = TC(Card.matchingSetValue(a, b));
+                        let c: TC = TC(TC.matchingSetValue(a, b));
                         if let c = self.deck.takeCard(c) {
                             self.cards.add(c);
                             self.addMoreCards(ncards - 1, plantSet: false, frontSet: frontSet);
@@ -478,6 +481,138 @@ class Table<TC : TableCard> : ObservableObject {
                     break;
                 }
                 self.addMoreCards(1, frontSet: frontSet);
+            }
+        }
+    }
+
+    public func cardTouched(_ card : TC, nblinks: Int = 5, xxxalready: Bool = false) {
+        //
+        // First we notify the table model that the card has been touched,
+        // i.e. selected/unselected toggle, then we ask the table check to
+        // check if a 3 card SET has been selected, in which case it would
+        // remove the SET cards and replace them with new ones from the deck,
+        // or if no SET, but 3 cards selected, then it would unselect the cards.
+        //
+        // Done in two steps because the CardView needs a breather to do its
+        // visual flipping. This breather is manifested as a delay on the SET
+        // check action. Without this delay, when the third card was selected,
+        // we wouldn't see its flipping before it either got replaced by a new
+        // card, if a SET; or got immediatly unselected, if no SET.
+        //
+        // No idea right now if this is the right/Swift-y way
+        // to handle such a situation; but it does work for now.
+        //
+        if (!xxxalready) {
+        self.touchCard(card);
+        }
+
+        func delayQuick(_ seconds : Float = 0.0, _ callback: @escaping () -> Void) {
+            if (seconds < 0) {
+                callback();
+            }
+            else {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    callback();
+                }
+            }
+        }
+
+
+        delayQuick() {
+            let setCards: [TC] = self.checkForSet(readonly: true)
+            if (setCards.count == 3) {
+                //
+                // SET found!
+                // Blink the 3 cards found a few times.
+                // Note that the table.state.blinking flag is
+                // used ONLY to disable input during this blinking.
+                //
+                let setTableCards: [TC] = setCards.compactMap { $0 as? TC }
+                self.state.blinking = true;
+                TableView.blinkCards(setTableCards, times: nblinks) {
+                    self.checkForSet();
+                    self.state.blinking = false;
+                }
+            }
+        }
+    }
+
+//@MainActor
+    public func demoCheck() async {
+        if (self.settings.demoMode) {
+            if (self.demoTimer == nil) {
+                await self.demoStart();
+            }
+        }
+        else if (self.demoTimer != nil) {
+            self.demoStop();
+        }
+    }
+
+    /*
+    @MainActor
+    public func xxxxdemoStart() async {
+        self.demoStop();
+        self.demoTimer = Timer.scheduledTimer(withTimeInterval: 1.3, repeats: true) { _ in
+            await self.demoStep();
+        }
+    }
+
+    // @MainActor
+    public func xxxdemoStart() {
+        demoStop()
+        demoTimer = Timer.scheduledTimer(withTimeInterval: 5.3, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            await self.demoStep();
+            /*
+                Task { @MainActor in
+                    await self.demoStep()
+                }
+            */
+        }
+    }
+    */
+
+    public func demoStart() async {
+        while (self.settings.demoMode) {
+            await self.demoStep();
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+        }
+    }
+
+    private func demoStop() {
+        self.demoTimer?.invalidate();
+        self.demoTimer = nil;
+    }
+
+    private func xxxdemoStep() {
+        if (self.cards.count > 0) {
+            let sets: [[TC]] = self.enumerateSets(limit: 1);
+            if (sets.count > 0) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    let set: [TC] = sets[0];
+                    for card in set {
+                        self.cardTouched(card, nblinks: 6);
+                    }
+                }
+            }
+        }
+    }
+
+    private func demoStep() async {
+        if (self.cards.count > 0) {
+            let sets: [[TC]] = self.enumerateSets(limit: 1);
+            if (sets.count > 0) {
+                let set: [TC] = sets[0];
+                for card in set {
+                    self.touchCard(card);
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+                }
+                for card in set {
+                    self.cardTouched(card, xxxalready: true);
+                }
+                // self.checkForSet();
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
             }
         }
     }

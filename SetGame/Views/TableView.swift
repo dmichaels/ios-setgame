@@ -14,7 +14,7 @@ struct TableView: View {
                             let index = row * table.settings.cardsPerRow + column;
                             if (index < table.cards.count) {
                                 CardView(card: table.cards[index]) {
-                                    cardTouched($0)
+                                    self.table.cardTouched($0)
                                 }.slightlyRotated(self.table.settings.cardsAskew)
                             }
                             else {
@@ -31,10 +31,10 @@ struct TableView: View {
                                   cardsAskew: table.settings.cardsAskew)
                 }
             }.padding()
-        }.allowsHitTesting(!self.table.state.blinking)
+        }.allowsHitTesting(!self.table.state.blinking && !self.table.settings.demoMode)
     }
 
-    private func cardTouched(_ card : TableCard) {
+    private func xcardTouched(_ card : TableCard) {
         //
         // First we notify the table model that the card has been touched,
         // i.e. selected/unselected toggle, then we ask the table check to
@@ -52,7 +52,7 @@ struct TableView: View {
         // to handle such a situation; but it does work for now.
         //
         self.table.touchCard(card);
-        delayQuick() {
+        xdelayQuick() {
             let setCards: [Card] = self.table.checkForSet(readonly: true)
             if (setCards.count == 3) {
                 //
@@ -71,7 +71,7 @@ struct TableView: View {
         }
     }
 
-    private func delayQuick(_ seconds : Float = 0.0, _ callback: @escaping () -> Void) {
+    private func xdelayQuick(_ seconds : Float = 0.0, _ callback: @escaping () -> Void) {
         if (seconds < 0) {
             callback();
         }
@@ -98,7 +98,7 @@ struct TableView: View {
 
     // N.B. ChatGPT helped here.
     //
-    public static func blinkCards(_ cards: [TableCard], times: Int = 3, interval: Double = 0.10,
+    public static func blinkCards(_ cards: [TableCard], times: Int = 3, interval: Double = 0.1,
                                     completion: @escaping () -> Void = {}) {
 
         guard times > 0 else { completion(); return }
