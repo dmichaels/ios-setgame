@@ -56,7 +56,7 @@ struct StatsView: View  {
                 self.isViewDisplayed = false
             }
             
-        }.navigationTitle("SET Game® Stats")
+        }.navigationTitle("SET Stats")
     }
 }
 

@@ -105,6 +105,13 @@ struct SettingsView: View {
                     }
                     Spacer()
                 }.frame(alignment: .leading)
+                Divider()
+                HStack () {
+                    NavigationLink(destination: DeckView(cards: StandardDeck.instance.cards)) {
+                        Text("SET Game Cards")
+                    }
+                    Spacer()
+                }.frame(alignment: .leading)
             }.padding()
         }
         .navigationTitle("SET Settings")
