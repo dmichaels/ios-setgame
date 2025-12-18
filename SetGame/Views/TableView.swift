@@ -34,77 +34,23 @@ struct TableView: View {
         }.allowsHitTesting(!self.table.state.blinking && !self.table.settings.demoMode)
     }
 
-    private func xcardTouched(_ card : TableCard) {
-        //
-        // First we notify the table model that the card has been touched,
-        // i.e. selected/unselected toggle, then we ask the table check to
-        // check if a 3 card SET has been selected, in which case it would
-        // remove the SET cards and replace them with new ones from the deck,
-        // or if no SET, but 3 cards selected, then it would unselect the cards.
-        //
-        // Done in two steps because the CardView needs a breather to do its
-        // visual flipping. This breather is manifested as a delay on the SET
-        // check action. Without this delay, when the third card was selected,
-        // we wouldn't see its flipping before it either got replaced by a new
-        // card, if a SET; or got immediatly unselected, if no SET.
-        //
-        // No idea right now if this is the right/Swift-y way
-        // to handle such a situation; but it does work for now.
-        //
-        self.table.touchCard(card);
-        xdelayQuick() {
-            let setCards: [Card] = self.table.checkForSet(readonly: true)
-            if (setCards.count == 3) {
-                //
-                // SET found!
-                // Blink the 3 cards found a few times.
-                // Note that the table.state.blinking flag is
-                // used ONLY to disable input during this blinking.
-                //
-                let setTableCards: [TableCard] = setCards.compactMap { $0 as? TableCard }
-                self.table.state.blinking = true;
-                TableView.blinkCards(setTableCards, times: 5) {
-                    self.table.checkForSet();
-                    self.table.state.blinking = false;
-                }
-            }
-        }
-    }
-
-    private func xdelayQuick(_ seconds : Float = 0.0, _ callback: @escaping () -> Void) {
-        if (seconds < 0) {
-            callback();
-        }
-        else {
-            DispatchQueue.main.asyncAfter(deadline: .now()) {
-                callback();
-            }
-        }
-    }
-
-    private func pairCardsListForDisplay(_ cardsList: [[TableCard]]) -> [[TableCard]] {
-        var result: [[TableCard]] = []
-        var i: Int = 0
-        while (i < cardsList.count) {
-            if ((i + 1) < cardsList.count) {
-                result.append(cardsList[i].sorted() + cardsList[i + 1].sorted())
-            } else {
-                result.append(cardsList[i].sorted())
-            }
-            i += 2
-        }
-        return result
-    }
-
     // N.B. ChatGPT helped here.
     //
-    public static func blinkCards(_ cards: [TableCard], times: Int = 3, interval: Double = 0.1,
+    public static func blinkCards(_ cards: [TableCard], times: Int = 3, interval: Double = 0.15,
                                     completion: @escaping () -> Void = {}) {
 
-        guard times > 0 else { completion(); return }
+        for card in cards {
+            if card.blinking {
+                return;
+            }
+        }
+
+        guard times > 0 else {
+            completion();
+            return
+        }
 
         func setBlinking(_ on: Bool) { for card in cards { card.blink = on; card.blinking = on; } }
-        func setBlink   (_ on: Bool) { for card in cards { card.blink = on; } }
         func toggleBlink()           { for card in cards { card.blink = !card.blink; } }
 
         var togglesRemaining = times * 2; // times two because counting on/off

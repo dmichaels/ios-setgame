@@ -28,8 +28,8 @@ class Table<TC : TableCard> : ObservableObject {
             }
         }
         var plantSet                        : Bool = false;
-        var plantInitialMagicSquare         : Bool = false
-        var moreCardsIfNoSet                : Bool = false {
+        var plantInitialMagicSquare         : Bool = false;
+        var moreCardsIfNoSet                : Bool = true {
             didSet {
                 if (self.moreCardsIfNoSet) {
                     self.table?.fillTable();
@@ -174,13 +174,22 @@ class Table<TC : TableCard> : ObservableObject {
 
         if (self.state.showingCardsWhichArePartOfSet || self.state.showingOneRandomSet) {
             //
-            // Three or more cards selected; presumably
-            // due to selectAllCardsWhichArePartOfSet;
-            // unselect all.
+            // Three or more cards are already selected, due to selectAllCardsWhichArePartOfSet
+            // showingOneRandomSet, as a result of calling selectAllCardsWhichArePartOfSet or
+            // selectOneRandomSet; unselect all in this case.
             //
             self.unselectCards();
             self.state.showingCardsWhichArePartOfSet = false;
             self.state.showingOneRandomSet = false;
+        }
+
+        if (self.selectedCards().count >= 3) {
+            //
+            // NEVER allowed to have more than 3 cards selected; EXCEPT for the above special
+            // case of showingCardsWhichArePartOfSet or showingOneRandomSet, as a result of
+            // calling selectAllCardsWhichArePartOfSet or selectOneRandomSet.
+            //
+            return;
         }
 
         if (card.selected) {
@@ -284,7 +293,8 @@ class Table<TC : TableCard> : ObservableObject {
                     // Unselecting the (non-SET) cards inside this dispatch block allows the
                     // UI to actually show the 3 cards as selected before they get visually
                     // unselected; otherwise (without the dispatch block) it happens so quick
-                    // you don't really see all 3 (especially the last one) selected at once.
+                    // you don't really see all 3 (especially the last one) selected at once,
+                    // before they're unselected here.
                     //
                     self.unselectCards();
                 }
@@ -292,6 +302,7 @@ class Table<TC : TableCard> : ObservableObject {
         }
 
         // findTableDuplicates();
+
         return [];
     }
 
@@ -485,7 +496,7 @@ class Table<TC : TableCard> : ObservableObject {
         }
     }
 
-    public func cardTouched(_ card : TC, nblinks: Int = 5, xxxalready: Bool = false) {
+    public func cardTouched(_ card : TC, nblinks: Int = 5, already: Bool = false) {
         //
         // First we notify the table model that the card has been touched,
         // i.e. selected/unselected toggle, then we ask the table check to
@@ -502,8 +513,8 @@ class Table<TC : TableCard> : ObservableObject {
         // No idea right now if this is the right/Swift-y way
         // to handle such a situation; but it does work for now.
         //
-        if (!xxxalready) {
-        self.touchCard(card);
+        if (!already) {
+            self.touchCard(card);
         }
 
         func delayQuick(_ seconds : Float = 0.0, _ callback: @escaping () -> Void) {
@@ -537,7 +548,6 @@ class Table<TC : TableCard> : ObservableObject {
         }
     }
 
-//@MainActor
     public func demoCheck() async {
         if (self.settings.demoMode) {
             if (self.demoTimer == nil) {
@@ -548,30 +558,6 @@ class Table<TC : TableCard> : ObservableObject {
             self.demoStop();
         }
     }
-
-    /*
-    @MainActor
-    public func xxxxdemoStart() async {
-        self.demoStop();
-        self.demoTimer = Timer.scheduledTimer(withTimeInterval: 1.3, repeats: true) { _ in
-            await self.demoStep();
-        }
-    }
-
-    // @MainActor
-    public func xxxdemoStart() {
-        demoStop()
-        demoTimer = Timer.scheduledTimer(withTimeInterval: 5.3, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            await self.demoStep();
-            /*
-                Task { @MainActor in
-                    await self.demoStep()
-                }
-            */
-        }
-    }
-    */
 
     public func demoStart() async {
         while (self.settings.demoMode) {
@@ -585,20 +571,6 @@ class Table<TC : TableCard> : ObservableObject {
         self.demoTimer = nil;
     }
 
-    private func xxxdemoStep() {
-        if (self.cards.count > 0) {
-            let sets: [[TC]] = self.enumerateSets(limit: 1);
-            if (sets.count > 0) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    let set: [TC] = sets[0];
-                    for card in set {
-                        self.cardTouched(card, nblinks: 6);
-                    }
-                }
-            }
-        }
-    }
-
     private func demoStep() async {
         if (self.cards.count > 0) {
             let sets: [[TC]] = self.enumerateSets(limit: 1);
@@ -609,7 +581,7 @@ class Table<TC : TableCard> : ObservableObject {
                     try? await Task.sleep(nanoseconds: 500_000_000)
                 }
                 for card in set {
-                    self.cardTouched(card, xxxalready: true);
+                    self.cardTouched(card, already: true);
                 }
                 // self.checkForSet();
                 try? await Task.sleep(nanoseconds: 1_500_000_000)

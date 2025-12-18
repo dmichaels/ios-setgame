@@ -8,7 +8,7 @@ public struct CardView : View {
     var touchedCallback : ((TableCard) -> Void)?
 
     public var body : some View {
-        if (card.blinking) {
+        if (table.state.blinking /*card.blinking*/) {
             //
             // ODDITY:
             // Had to duplicate this whole thing here, WITHOUT the rotation3DEffect animation

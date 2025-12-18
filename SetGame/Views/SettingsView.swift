@@ -4,8 +4,8 @@ struct SettingsView: View {
     
     @EnvironmentObject var table : Table;
     @EnvironmentObject var settings : Settings;
-    let cardsPerRowChoices = [ 1, 2, 3, 4, 5, 6 ];
-    let preferredDisplayCountCardChoices = [ 3, 4, 6, 9, 12, 15, 16, 20 ];
+    let cardsPerRowChoices = [ 2, 3, 4, 5, 6 ];
+    let preferredDisplayCountCardChoices = [ 3, 4, 6, 9, 12, 15, 16, 18, 20 ];
     let limitDeckSizeChoices = [ 18, 27, 36, 45, 54, 63, 72, 81 ];
     
     var body: some View {
