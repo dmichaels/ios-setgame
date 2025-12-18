@@ -20,16 +20,16 @@ struct SettingsView: View {
                 }
                 Divider()
                 Toggle(isOn: $table.settings.moreCardsIfNoSet) {
-                    // Text("More Cards if no SET ")
-                    // Text("No SETs ⊃ More Cards")
                     Text("No SETs → More Cards")
                 }
                 Toggle(isOn: $table.settings.plantSet) {
                     Text("Plant SET ")
                 }
+/*
                 Toggle(isOn: $table.settings.moveAnyExistingSetToFront) {
                     Text("Move SET Front ")
                 }
+*/
                 Divider()
                 Toggle(isOn: $table.settings.plantInitialMagicSquare) {
                     Text("Plant Magic Square ")
@@ -61,9 +61,11 @@ struct SettingsView: View {
                 Toggle(isOn: $table.settings.cardsAskew) {
                     Text("Skew Cards")
                 }
+/*
                 Toggle(isOn: $table.settings.alternateCardImages) {
                     Text("Alternate Cards")
                 }
+*/
 /*
                 Toggle(isOn: $table.settings.demoMode) {
                     Text("Demo Mode")
