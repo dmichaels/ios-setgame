@@ -116,10 +116,12 @@ struct StatusBarView: View {
                     .foregroundColor(self.table.remainingCardCount() > 0 ? Color.blue : Color.gray)
                     .offset(y: 2)
             }
+/*
             Button(action: { self.table.startNewGame() }) {
                 Image(systemName: "arrow.clockwise.circle")
                     .offset(y: 2)
             }
+*/
         }
     }
 }
