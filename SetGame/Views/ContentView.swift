@@ -18,7 +18,7 @@ struct ContentView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        Text("SET Game®")
+                        Text("SET Game") // Text("SET Game®")
                             .foregroundColor(Color(UIColor.black))
                             .font(.title)
                             .fontWeight(.bold)
