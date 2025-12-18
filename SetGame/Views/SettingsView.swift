@@ -11,36 +11,35 @@ struct SettingsView: View {
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack {
-                VStack {
-                    Divider()
-                    Toggle(isOn: $table.settings.showPartialSetSelectedIndicator) {
-                        Text("Partial SET Select Hint: ")
-                    }
-                    Toggle(isOn: $table.settings.showNumberOfSetsPresent) {
-                        Text("Available SETs Count: ")
-                    }
-                    Toggle(isOn: $table.settings.moreCardsIfNoSet) {
-                        Text("More Cards On No SET: ")
-                    }
-                    Divider()
-                    Toggle(isOn: $table.settings.plantSet) {
-                        Text("Plant SET: ")
-                    }
-                    Toggle(isOn: $table.settings.moveAnyExistingSetToFront) {
-                        Text("Move SET Front: ")
-                    }
-                    Divider()
-                    Toggle(isOn: $table.settings.plantInitialMagicSquare) {
-                        Text("Plant Magic Square: ")
-                    }
-                    Divider()
-                    Toggle(isOn: $table.settings.showFoundSets) {
-                        Text("Show Found SETs: ")
-                    }
+                Divider()
+                Toggle(isOn: $table.settings.showPartialSetSelectedIndicator) {
+                    Text("Partial SET Hint ")
+                }
+                Toggle(isOn: $table.settings.showNumberOfSetsPresent) {
+                    Text("Available SETs Count ")
                 }
                 Divider()
+                Toggle(isOn: $table.settings.moreCardsIfNoSet) {
+                    // Text("More Cards if no SET ")
+                    // Text("No SETs ⊃ More Cards")
+                    Text("No SETs → More Cards")
+                }
+                Toggle(isOn: $table.settings.plantSet) {
+                    Text("Plant SET ")
+                }
+                Toggle(isOn: $table.settings.moveAnyExistingSetToFront) {
+                    Text("Move SET Front ")
+                }
+                Divider()
+                Toggle(isOn: $table.settings.plantInitialMagicSquare) {
+                    Text("Plant Magic Square ")
+                }
+                Divider()
+                Toggle(isOn: $table.settings.showFoundSets) {
+                    Text("Show Found SETs ")
+                }
                 HStack() {
-                    Text("Display Card Count:")
+                    Text("Display Card Count")
                         .frame(alignment: .leading)
                     Spacer()
                     Picker("\(table.settings.displayCardCount) \u{25BC}", selection: $table.settings.displayCardCount) {
@@ -50,7 +49,7 @@ struct SettingsView: View {
                     }.pickerStyle(MenuPickerStyle())
                 }
                 HStack() {
-                    Text("Cards Per Row:")
+                    Text("Cards Per Row")
                         .frame(alignment: .leading)
                     Spacer()
                     Picker("\(table.settings.cardsPerRow) \u{25BC}", selection: $table.settings.cardsPerRow) {
@@ -82,7 +81,7 @@ struct SettingsView: View {
                     }
                     /*
                     HStack() {
-                        Text("Deck Size:")
+                        Text("Deck Size")
                             .frame(alignment: .leading)
                         Spacer()
                         Picker("\(table.settings.limitDeckSize) \u{25BC}", selection: $table.settings.limitDeckSize) {
@@ -96,10 +95,10 @@ struct SettingsView: View {
                 Divider()
                 navigationRow("SET Stats", destination: StatsView())
                 Divider()
-                navigationRow("SET Cards", destination: DeckView(cards: StandardDeck.instance.cards))
+                navigationRow("SET Cards", destination: DeckView(cards: table.settings.useSimpleDeck ? StandardDeck.instanceSimple.cards : StandardDeck.instance.cards))
                 Divider()
                 HStack {
-                    Text("Version:").frame(alignment: .leading).font(.footnote)
+                    Text("Version").frame(alignment: .leading).font(.footnote)
                     Spacer()
                     Text(self.version()).font(.footnote)
                 }

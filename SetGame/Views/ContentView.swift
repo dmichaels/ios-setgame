@@ -21,23 +21,17 @@ var body: some View {
 
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Menu {
-                            Button {
-                                self.table.startNewGame()
-                            } label: {
+                            Button { self.table.startNewGame() } label: {
                                 Label("New Game" , systemImage: "arrow.counterclockwise")
-                                // Text("↺   New Game")
                             }
-
+                            Button { self.table.addMoreCards(1) } label: {
+                                Label("Add Card" , systemImage: "plus.rectangle")
+                            }
                             Toggle(isOn: $table.settings.demoMode) {
                                 Label("Demo Mode", systemImage: "play.circle")
-                                // Text("▶︎   Demo Mode")
                             }
-
-                            // Divider()
-
                             Button { self.showSettingsView = true } label: {
                                 Label("Settings ...", systemImage: "gearshape")
-                                // Text("⚙️  Settings ...")
                             }
                         } label: {
                             Image(systemName: "gearshape.fill")
@@ -45,34 +39,31 @@ var body: some View {
                         }
                     }
                 }
-                    .onChange(of: settings.version) { _ in
-                        Task { @MainActor in
-                            await table.demoCheck()
-                        }
+                .onChange(of: settings.version) { _ in
+                    Task { @MainActor in
+                        await table.demoCheck()
                     }
-                    .onChange(of: table.settings.demoMode) { _ in
-                        Task { @MainActor in
-                            await table.demoCheck()
-                        }
+                }
+                .onChange(of: table.settings.demoMode) { _ in
+                    Task { @MainActor in
+                        await table.demoCheck()
                     }
-
+                }
             NavigationLink(destination: SettingsView()
                             .environmentObject(table)
                             .environmentObject(settings),
                            isActive: $showSettingsView) {
                 EmptyView()
-            }
-            .hidden()
+            }.hidden()
         }
-    }
-    .padding(.top, 6)
+    }.padding(.top, 4)
 }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-            .environmentObject(Table(displayCardCount: 12, plantSet: true))
+            .environmentObject(Table(displayCardCount: 12))
             .environmentObject(Settings())
     }
 }
