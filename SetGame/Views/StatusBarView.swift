@@ -60,8 +60,8 @@ struct StatusBarView: View {
                                 .frame(alignment: .leading)
                         }
                     }
-                    else if (self.gameDone()) {
-                        Text(CHECK_MARK_SYMBOL)
+                    else if ((self.table.selectedCardCount() == 1) || (self.table.selectedCardCount() == 2)) {
+                        Text(SAD_FACE_SYMBOL)
                             .font(.subheadline)
                             .frame(alignment: .leading)
                     }
@@ -92,10 +92,11 @@ struct StatusBarView: View {
                     self.table.unselectCards();
                 }
             }) {
-                Image(systemName: "target")
+                Image(systemName: "eye")
                     .foregroundColor(self.table.containsSet() ? Color.blue : Color.gray)
                     .offset(y: 2)
             }
+/*
             Button(action: {
                 self.table.state.showingCardsWhichArePartOfSet.toggle();
                 if (self.table.state.showingCardsWhichArePartOfSet) {
@@ -105,10 +106,11 @@ struct StatusBarView: View {
                     self.table.unselectCards();
                 }
             }) {
-                Image(systemName: "eye")
+                Image(systemName: "target")
                     .foregroundColor(self.table.containsSet() ? Color.blue : Color.gray)
                     .offset(y: 2)
             }
+*/
             Button(action: { self.table.addMoreCards(1) }) {
                 Image(systemName: "plus.app")
                     .foregroundColor(self.table.remainingCardCount() > 0 ? Color.blue : Color.gray)

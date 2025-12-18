@@ -1,44 +1,72 @@
-//
-//  ContentView.swift
-//  SetGame2
-//
-//  Created by David Michaels on 3/1/21.
-//
-
 import SwiftUI
 
 struct ContentView: View {
     
     @EnvironmentObject var table : Table;
     @EnvironmentObject var settings : Settings;
+    @State private var showSettingsView = false;
 
-    var body: some View {
-        NavigationView {
+var body: some View {
+    NavigationView {
+        ZStack {
             TableView()
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        Text("SET Game") // Text("SET Game®")
-                            .foregroundColor(Color(UIColor.black))
-                            .font(.title)
-                            .fontWeight(.bold)
+                        Text("SET Game")
+                            .font(.title).fontWeight(.bold)
                             .padding(.top, 6)
                             .padding(.bottom, 2)
                     }
+
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        NavigationLink(destination: SettingsView()) {
+                        Menu {
+                            Button {
+                                self.table.startNewGame()
+                            } label: {
+                                Label("New Game" , systemImage: "arrow.counterclockwise")
+                                // Text("↺   New Game")
+                            }
+
+                            Toggle(isOn: $table.settings.demoMode) {
+                                Label("Demo Mode", systemImage: "play.circle")
+                                // Text("▶︎   Demo Mode")
+                            }
+
+                            // Divider()
+
+                            Button { self.showSettingsView = true } label: {
+                                Label("Settings ...", systemImage: "gearshape")
+                                // Text("⚙️  Settings ...")
+                            }
+                        } label: {
                             Image(systemName: "gearshape.fill")
                                 .foregroundColor(Color(UIColor.darkGray))
                         }
                     }
                 }
-                .onChange(of: settings.version) { _ in
-                    Task {
-                        await table.demoCheck();
+                    .onChange(of: settings.version) { _ in
+                        Task { @MainActor in
+                            await table.demoCheck()
+                        }
                     }
-                }
-        }.padding(.top, 6)
+                    .onChange(of: table.settings.demoMode) { _ in
+                        Task { @MainActor in
+                            await table.demoCheck()
+                        }
+                    }
+
+            NavigationLink(destination: SettingsView()
+                            .environmentObject(table)
+                            .environmentObject(settings),
+                           isActive: $showSettingsView) {
+                EmptyView()
+            }
+            .hidden()
+        }
     }
+    .padding(.top, 6)
+}
 }
 
 struct ContentView_Previews: PreviewProvider {

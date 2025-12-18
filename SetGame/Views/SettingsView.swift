@@ -65,9 +65,11 @@ struct SettingsView: View {
                 Toggle(isOn: $table.settings.alternateCardImages) {
                     Text("Alternate Cards")
                 }
+/*
                 Toggle(isOn: $table.settings.demoMode) {
                     Text("Demo Mode")
                 }
+*/
                 Divider()
                 VStack {
                     Toggle(isOn: $table.settings.useSimpleDeck) {
@@ -76,7 +78,7 @@ struct SettingsView: View {
                         // No longer automatically restart when requesting simplifed deck in settings.
                         // Text("Use Simplified Deck ↻ Restarts!")
                         //
-                        Text("Use Simplified Deck")
+                        Text("Simplified Deck")
                     }
                     /*
                     HStack() {
@@ -92,31 +94,32 @@ struct SettingsView: View {
                     */
                 }
                 Divider()
+                navigationRow("SET Stats", destination: StatsView())
+                Divider()
+                navigationRow("SET Cards", destination: DeckView(cards: StandardDeck.instance.cards))
+                Divider()
                 HStack {
-                    Text("Version:")
-                        .frame(alignment: .leading)
+                    Text("Version:").frame(alignment: .leading).font(.footnote)
                     Spacer()
-                    Text(self.version())
+                    Text(self.version()).font(.footnote)
                 }
-                Divider()
-                HStack () {
-                    NavigationLink(destination: StatsView()) {
-                        Text("SET Game Stats")
-                    }
-                    Spacer()
-                }.frame(alignment: .leading)
-                Divider()
-                HStack () {
-                    NavigationLink(destination: DeckView(cards: StandardDeck.instance.cards)) {
-                        Text("SET Game Cards")
-                    }
-                    Spacer()
-                }.frame(alignment: .leading)
             }.padding()
         }
         .navigationTitle("SET Settings")
         .onDisappear {
             self.settings.version += 1
+        }
+    }
+
+    private func navigationRow<Destination: View>(_ title: String, destination: Destination) -> some View {
+        NavigationLink(destination: destination) {
+            HStack {
+                Text(title).foregroundColor(.primary)
+                Spacer()
+                Image(systemName: "chevron.right").foregroundColor(.secondary)
+            }
+            .contentShape(Rectangle()) // makes whole row tap-able
+            .padding(.vertical, 8)
         }
     }
 
