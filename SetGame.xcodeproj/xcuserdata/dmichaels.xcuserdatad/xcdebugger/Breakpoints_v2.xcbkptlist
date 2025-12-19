@@ -240,8 +240,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "534"
             endingLineNumber = "534"
-            landmarkName = "cardTouched(_:nblinks:already:)"
-            landmarkType = "7">
+            landmarkName = "delayQuick(_:_:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -256,8 +256,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "535"
             endingLineNumber = "535"
-            landmarkName = "cardTouched(_:nblinks:already:)"
-            landmarkType = "7">
+            landmarkName = "delayQuick(_:_:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -350,7 +350,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "568"
             endingLineNumber = "568"
-            landmarkName = "demoStart()"
+            landmarkName = "demoCheck()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

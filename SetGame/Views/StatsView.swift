@@ -8,6 +8,20 @@ struct StatsView: View  {
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading) {
+                HStack {
+                    Text(self.table.settings.useSimpleDeck
+                         ? "Simplified SET Deck: 27 cards"
+                         : "Standard SET Deck: 81 cards") // .font(.footnote).italic()
+                    Spacer()
+                }
+                /*
+                Divider()
+                HStack {
+                    Text("Possible SETs: \(String(Deck.numberOfDistinctSets(simple: self.table.settings.useSimpleDeck)))").font(.footnote)
+                    Spacer()
+                }
+                */
+                Rectangle().fill(Color.black).frame(height: 2)
                 ForEach(3...Deck.setlessCount(simple: self.table.settings.useSimpleDeck) , id: \.self) { index in
                     if (index == 3) {
                         HStack {
@@ -48,12 +62,104 @@ struct StatsView: View  {
                         }
                     }
                 }
-                Divider()
-                HStack {
-                    Text(self.table.settings.useSimpleDeck
-                         ? "Simplified SET Deck: 27 cards"
-                         : "Standard SET Deck: 81 cards").font(.footnote).italic()
-                    Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Rectangle().fill(Color.black).frame(height: 2)
+                VStack {
+                    let distinctSetsDifferencesAny:   Int = Deck.numberOfDistinctSets(simple: self.table.settings.useSimpleDeck);
+                    let distinctSetsDifferencesOne:   Int = Deck.numberOfDistinctSets(simple: self.table.settings.useSimpleDeck, ndifferences: 1);
+                    let distinctSetsDifferencesTwo:   Int = Deck.numberOfDistinctSets(simple: self.table.settings.useSimpleDeck, ndifferences: 2);
+                    let distinctSetsDifferencesThree: Int = Deck.numberOfDistinctSets(simple: self.table.settings.useSimpleDeck, ndifferences: 3);
+                    let distinctSetsDifferencesFour:  Int = Deck.numberOfDistinctSets(simple: self.table.settings.useSimpleDeck, ndifferences: 4);
+                    let percentSetsDifferencesAny:    Float = (Float(distinctSetsDifferencesAny)   / Float(distinctSetsDifferencesAny)) * 100.0;
+                    let percentSetsDifferencesOne:    Float = (Float(distinctSetsDifferencesOne)   / Float(distinctSetsDifferencesAny)) * 100.0;
+                    let percentSetsDifferencesTwo:    Float = (Float(distinctSetsDifferencesTwo)   / Float(distinctSetsDifferencesAny)) * 100.0;
+                    let percentSetsDifferencesThree:  Float = (Float(distinctSetsDifferencesThree) / Float(distinctSetsDifferencesAny)) * 100.0;
+                    let percentSetsDifferencesFour:   Float = (Float(distinctSetsDifferencesFour)  / Float(distinctSetsDifferencesAny)) * 100.0;
+                    HStack {
+                        Text("SET\nAttribute\nDifferences")
+                            .font(.system(size: 14, design: .monospaced))
+                            .frame(alignment: .leading)
+                        Spacer()
+                        Text("\n\nSETs")
+                            .font(.system(size: 14, design: .monospaced))
+                            .frame(alignment: .trailing)
+                        Spacer()
+                        Text("\n\nPercentage")
+                            .font(.system(size: 14, design: .monospaced))
+                            .frame(alignment: .trailing)
+                    }
+                    Divider()
+                    HStack {
+                        Text("One")
+                            .font(.system(size: 14, design: .monospaced))
+                            .frame(alignment: .leading)
+                        Spacer()
+                        Text("\(String(format: "%6d", distinctSetsDifferencesOne))")
+                            .font(.system(size: 14, design: .monospaced))
+                            .frame(alignment: .trailing)
+                        Spacer()
+                        Text("\(String(format: "%3.0f", percentSetsDifferencesOne))%")
+                            .font(.system(size: 14, design: .monospaced))
+                            .frame(alignment: .trailing)
+                    }
+                    HStack {
+                        Text("Two")
+                            .font(.system(size: 14, design: .monospaced))
+                            .frame(alignment: .leading)
+                        Spacer()
+                        Text("\(String(format: "%6d", distinctSetsDifferencesTwo))")
+                            .font(.system(size: 14, design: .monospaced))
+                            .frame(alignment: .trailing)
+                        Spacer()
+                        Text("\(String(format: "%3.0f", percentSetsDifferencesTwo))%")
+                            .font(.system(size: 14, design: .monospaced))
+                            .frame(alignment: .trailing)
+                    }
+                    HStack {
+                        Text("Three")
+                            .font(.system(size: 14, design: .monospaced))
+                            .frame(alignment: .leading)
+                        Spacer()
+                        Text("\(String(format: "%4d", distinctSetsDifferencesThree))")
+                            .font(.system(size: 14, design: .monospaced))
+                            .frame(alignment: .trailing)
+                        Spacer()
+                        Text("\(String(format: "%3.0f", percentSetsDifferencesThree))%")
+                            .font(.system(size: 14, design: .monospaced))
+                            .frame(alignment: .trailing)
+                    }
+                    if (!self.table.settings.useSimpleDeck) {
+                        HStack {
+                            Text("Four")
+                                .font(.system(size: 14, design: .monospaced))
+                                .frame(alignment: .leading)
+                            Spacer()
+                            Text("\(String(format: "%5d", distinctSetsDifferencesFour))")
+                                .font(.system(size: 14, design: .monospaced))
+                                .frame(alignment: .trailing)
+                            Spacer()
+                            Text("\(String(format: "%3.0f", percentSetsDifferencesFour))%")
+                                .font(.system(size: 14, design: .monospaced))
+                                .frame(alignment: .trailing)
+                        }
+                    }
+                    Divider()
+                    HStack {
+                        Text("Any")
+                            .font(.system(size: 14, design: .monospaced))
+                            .frame(alignment: .leading)
+                        Spacer()
+                        Text("\(String(format: "%6d", distinctSetsDifferencesAny))")
+                            .font(.system(size: 14, design: .monospaced)).bold()
+                            .frame(alignment: .trailing)
+                        Spacer()
+                        Text("\(String(format: "%3.0f", percentSetsDifferencesAny))%")
+                            .font(.system(size: 14, design: .monospaced))
+                            .frame(alignment: .trailing)
+                    }
+                    Divider()
                 }
             }.padding(30)
             .onAppear {

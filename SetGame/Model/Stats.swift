@@ -46,6 +46,10 @@ private let _setlessCountsSimple: [Int: UInt64] = [
 
 extension Deck {
 
+    public static func ncards(simple: Bool = false) -> Int {
+        return simple ? 27 : 81;
+    }
+
     public static func setlessCount(simple: Bool = false) -> Int {
         return simple ? 10 : 21;
     }
@@ -78,14 +82,34 @@ extension Deck {
     /// N.B. ChatGPT generated.
     ///
     public static func probabilityOfAtLeastOneSet(for ncards: Int, simple: Bool = false) -> Double {
-        guard (ncards >= 3) && (ncards <= 81) else { return 0.0 }
+        guard (ncards >= 3) && (ncards <= self.ncards(simple: simple)) else { return 0.0 }
         guard (ncards < Deck.setlessCount(simple: simple)) else { return 1.0 } // Max no-SET ncards is 20
         guard let setless = Deck.setlessCounts(simple: simple)[ncards] else {
             fatalError("Missing setless count for ncards = \(ncards)")
         }
-        let totalHands = binomial(81, ncards)
+        let totalHands = binomial(self.ncards(simple: simple), ncards)
         let pNoSet = Double(setless) / totalHands
         return 1.0 - pNoSet
+    }
+
+    public static func numberOfDistinctSets(simple: Bool = false, ndifferences: Int = 0) -> Int
+    {
+        let nattributes: Int = simple ? 3 : 4
+        let ncards: Int = self.ncards(simple: simple)
+        let ndifferences: Int = min(max(ndifferences, 0), nattributes)
+
+        if (ndifferences == 0) {
+            //
+            // Special case of ndifferences of zero means ANY differences;
+            // i.e. effectively the sum of all of the defined cases.
+            //
+            return (ncards * (ncards - 1)) / 6;
+        }
+
+        return (
+            Math.power(3, nattributes - 1) *
+            Math.combinations(nattributes, ndifferences) * Math.power(2, ndifferences - 1)
+        )
     }
 
     /// Compute "n choose k" as a Double, using a stable multiplicative formula.
