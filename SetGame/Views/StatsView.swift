@@ -50,7 +50,9 @@ struct StatsView: View  {
                 }
                 Divider()
                 HStack {
-                    Text(self.table.settings.useSimpleDeck ? "Simplified SET Deck: 27 cards" : "Standard SET Deck: 81 cards").font(.footnote) // .frame(alignment: .leading)
+                    Text(self.table.settings.useSimpleDeck
+                         ? "Simplified SET Deck: 27 cards"
+                         : "Standard SET Deck: 81 cards").font(.footnote).italic() // .frame(alignment: .leading)
                     Spacer()
                 }
             }.padding(30)
