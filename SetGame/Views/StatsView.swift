@@ -10,8 +10,8 @@ struct StatsView: View  {
             VStack(alignment: .leading) {
                 HStack {
                     Text(self.table.settings.useSimpleDeck
-                         ? "Simplified SET Deck: 27 cards"
-                         : "Standard SET Deck: 81 cards") // .font(.footnote).italic()
+                         ? "Simplified SET Deck: 27 Cards"
+                         : "Standard SET Deck: 81 Cards") // .font(.footnote).italic()
                     Spacer()
                 }
                 /*
@@ -82,7 +82,7 @@ struct StatsView: View  {
                             .font(.system(size: 14, design: .monospaced))
                             .frame(alignment: .leading)
                         Spacer()
-                        Text("\n\n   SETs")
+                        Text("\n\n    SETs")
                             .font(.system(size: 14, design: .monospaced))
                             .frame(alignment: .trailing)
                         Spacer()
@@ -96,7 +96,7 @@ struct StatsView: View  {
                             .font(.system(size: 14, design: .monospaced))
                             .frame(alignment: .leading)
                         Spacer()
-                        Text("\(String(format: "%9d", distinctSetsDifferencesOne))")
+                        Text("\(String(format: "%10d", distinctSetsDifferencesOne))")
                             .font(.system(size: 14, design: .monospaced))
                             .frame(alignment: .trailing)
                         Spacer()
@@ -109,7 +109,7 @@ struct StatsView: View  {
                             .font(.system(size: 14, design: .monospaced))
                             .frame(alignment: .leading)
                         Spacer()
-                        Text("\(String(format: "%9d", distinctSetsDifferencesTwo))")
+                        Text("\(String(format: "%10d", distinctSetsDifferencesTwo))")
                             .font(.system(size: 14, design: .monospaced))
                             .frame(alignment: .trailing)
                         Spacer()
@@ -122,7 +122,7 @@ struct StatsView: View  {
                             .font(.system(size: 14, design: .monospaced))
                             .frame(alignment: .leading)
                         Spacer()
-                        Text("\(String(format: "%7d", distinctSetsDifferencesThree))")
+                        Text("\(String(format: "%8d", distinctSetsDifferencesThree))")
                             .font(.system(size: 14, design: .monospaced))
                             .frame(alignment: .trailing)
                         Spacer()
@@ -136,7 +136,7 @@ struct StatsView: View  {
                                 .font(.system(size: 14, design: .monospaced))
                                 .frame(alignment: .leading)
                             Spacer()
-                            Text("\(String(format: "%8d", distinctSetsDifferencesFour))")
+                            Text("\(String(format: "%9d", distinctSetsDifferencesFour))")
                                 .font(.system(size: 14, design: .monospaced))
                                 .frame(alignment: .trailing)
                             Spacer()
@@ -151,7 +151,7 @@ struct StatsView: View  {
                             .font(.system(size: 14, design: .monospaced))
                             .frame(alignment: .leading)
                         Spacer()
-                        Text("\(String(format: "%d", distinctSetsDifferencesAny))")
+                        Text("\(String(format: "%4d", distinctSetsDifferencesAny))")
                             .font(.system(size: 14, design: .monospaced)).bold()
                             .frame(alignment: .trailing)
                         Spacer()
