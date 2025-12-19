@@ -19,7 +19,7 @@ class Table<TC : TableCard> : ObservableObject {
         var displayCardCount                : Int  = 12;
         var limitDeckSize                   : Int  = Deck().count;
         var cardsPerRow                     : Int  = 4;
-        var useSimpleDeck                   : Bool = false {
+        var useSimpleDeck                   : Bool = true {
             didSet {
                 //
                 // 2025-12-08
@@ -564,11 +564,15 @@ class Table<TC : TableCard> : ObservableObject {
     }
 
     public func demoStart() async {
+        if (self.selectedCards().count > 0) {
+            self.unselectCards();
+            try? await Task.sleep(nanoseconds: 500_000_000)
+        }
         while (self.settings.demoMode) {
             if (self.gameDone()) {
+                try? await Task.sleep(nanoseconds: 4_000_000_000)
                 self.startNewGame();
             }
-            self.unselectCards();
             await self.demoStep();
             try? await Task.sleep(nanoseconds: 1_000_000_000)
         }
