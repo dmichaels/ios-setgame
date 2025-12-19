@@ -18,6 +18,9 @@ struct SettingsView: View {
                     Toggle(isOn: $table.settings.showNumberOfSetsPresent) {
                         Text("Available SETs Count ")
                     }
+                    Toggle(isOn: $settings.showPeekButton) {
+                        Text("Peek Button")
+                    }
                 }
                 Section(header: Text("Behavioral")) {
                     Toggle(isOn: $table.settings.moreCardsIfNoSet) {

@@ -3,6 +3,7 @@ import SwiftUI
 struct StatusBarView: View {
     
     @EnvironmentObject var table : Table;
+    @EnvironmentObject var settings : Settings;
 
     let OK_SYMBOL           : String = "\u{1F44C}";
     let THUMBSUP_SYMBOL     : String = "\u{1F44D}";
@@ -83,18 +84,20 @@ struct StatusBarView: View {
                 }
             }
             Spacer()
-            Button(action: {
-                self.table.state.showingOneRandomSet.toggle();
-                if (self.table.state.showingOneRandomSet) {
-                    self.table.selectOneRandomSet();
+            if (settings.showPeekButton) {
+                Button(action: {
+                    self.table.state.showingOneRandomSet.toggle();
+                    if (self.table.state.showingOneRandomSet) {
+                        self.table.selectOneRandomSet();
+                    }
+                    else {
+                        self.table.unselectCards();
+                    }
+                }) {
+                    Image(systemName: "eye")
+                        .foregroundColor(self.table.containsSet() ? Color.blue : Color.gray)
+                        .offset(y: 1)
                 }
-                else {
-                    self.table.unselectCards();
-                }
-            }) {
-                Image(systemName: "eye")
-                    .foregroundColor(self.table.containsSet() ? Color.blue : Color.gray)
-                    .offset(y: 1)
             }
 /*
             Button(action: {
