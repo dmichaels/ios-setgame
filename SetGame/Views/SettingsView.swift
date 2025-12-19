@@ -9,15 +9,95 @@ struct SettingsView: View {
     let limitDeckSizeChoices = [ 18, 27, 36, 45, 54, 63, 72, 81 ];
     
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack {
-                Divider()
+        // ScrollView(.vertical, showsIndicators: false) {
+            Form {
+                Section(header: Text("Informational")) {
+                    Toggle(isOn: $table.settings.showPartialSetSelectedIndicator) {
+                        Text("Partial SET Hint ")
+                    }
+                    Toggle(isOn: $table.settings.showNumberOfSetsPresent) {
+                        Text("Available SETs Count ")
+                    }
+                }
+                Section(header: Text("Behavioral")) {
+                    Toggle(isOn: $table.settings.moreCardsIfNoSet) {
+                        Text("No SETs → More Cards")
+                    }
+                    Toggle(isOn: $table.settings.plantSet) {
+                        Text("Plant SET ")
+                    }
+                    if (false) {
+                        Toggle(isOn: $table.settings.moveAnyExistingSetToFront) {
+                            Text("Move SET Front ")
+                        }
+                    }
+                    Toggle(isOn: $table.settings.plantInitialMagicSquare) {
+                        Text("Plant Magic Square ")
+                    }
+                }
+                Section(header: Text("Visual")) {
+                    Toggle(isOn: $table.settings.showFoundSets) {
+                        Text("Show Found SETs ")
+                    }
+                    HStack() {
+                        Text("Display Cards")
+                        Spacer()
+                        Picker("", selection: $table.settings.displayCardCount) {
+                            ForEach(preferredDisplayCountCardChoices, id: \.self) {
+                                Text(String($0))
+                            }
+                        }.pickerStyle(MenuPickerStyle())
+                    }
+                    HStack() {
+                        Text("Cards Per Row")
+                        Spacer()
+                        Picker("", selection: $table.settings.cardsPerRow) {
+                            ForEach(cardsPerRowChoices, id: \.self) {
+                                Text(String($0))
+                            }
+                        }.pickerStyle(MenuPickerStyle())
+                    }
+                    Toggle(isOn: $table.settings.cardsAskew) {
+                        Text("Skew Cards")
+                    }
+                    if (false) {
+                        Toggle(isOn: $table.settings.alternateCardImages) {
+                            Text("Alternate Cards")
+                        }
+                    }
+                }
+                Section(header: Text("MULTIMEDIA")) {
+                    Toggle(isOn: $settings.sounds) {
+                        Text("Sounds")
+                    }
+                    Toggle(isOn: $settings.haptics) {
+                        Text("Haptics")
+                    }
+                }
+                Section(header: Text("Game")) {
+                    Toggle(isOn: $table.settings.useSimpleDeck) {
+                        Text("Simplified Deck")
+                    }
+                    if (false) {
+                        Toggle(isOn: $table.settings.demoMode) {
+                            Text("Demo Mode")
+                        }
+                    }
+                    navigationRow("SET Stats", destination: StatsView())
+                    navigationRow("SET Cards", destination: DeckView(cards: table.settings.useSimpleDeck ? StandardDeck.instanceSimple.cards : StandardDeck.instance.cards))
+                }
+            }
+/*
+            Form {
+                // Divider()
+                Section() {
                 Toggle(isOn: $table.settings.showPartialSetSelectedIndicator) {
                     Text("Partial SET Hint ")
                 }
                 Toggle(isOn: $table.settings.showNumberOfSetsPresent) {
                     Text("Available SETs Count ")
                 }
+}
                 Divider()
                 Toggle(isOn: $table.settings.moreCardsIfNoSet) {
                     Text("No SETs → More Cards")
@@ -30,11 +110,11 @@ struct SettingsView: View {
                     Text("Move SET Front ")
                 }
 */
-                Divider()
+                // Divider()
                 Toggle(isOn: $table.settings.plantInitialMagicSquare) {
                     Text("Plant Magic Square ")
                 }
-                Divider()
+                // Divider()
                 Toggle(isOn: $table.settings.showFoundSets) {
                     Text("Show Found SETs ")
                 }
@@ -71,7 +151,7 @@ struct SettingsView: View {
                     Text("Demo Mode")
                 }
 */
-                Divider()
+                // Divider()
                 VStack {
                     Toggle(isOn: $table.settings.useSimpleDeck) {
                         //
@@ -94,18 +174,19 @@ struct SettingsView: View {
                     }
                     */
                 }
-                Divider()
+                // Divider()
                 navigationRow("SET Stats", destination: StatsView())
-                Divider()
+                // Divider()
                 navigationRow("SET Cards", destination: DeckView(cards: table.settings.useSimpleDeck ? StandardDeck.instanceSimple.cards : StandardDeck.instance.cards))
-                Divider()
+                // Divider()
                 HStack {
                     Text("Version").frame(alignment: .leading).font(.footnote)
                     Spacer()
                     Text(self.version()).font(.footnote)
                 }
-            }.padding()
-        }
+            } // .padding()
+*/
+        // }
         .navigationTitle("SET Settings")
         .onDisappear {
             self.settings.version += 1
@@ -116,11 +197,8 @@ struct SettingsView: View {
         NavigationLink(destination: destination) {
             HStack {
                 Text(title).foregroundColor(.primary)
-                Spacer()
-                Image(systemName: "chevron.right").foregroundColor(.secondary)
             }
             .contentShape(Rectangle()) // makes whole row tap-able
-            .padding(.vertical, 8)
         }
     }
 

@@ -14,6 +14,7 @@ struct SetGameApp: App {
             ContentView()
                 .environmentObject(Table(displayCardCount: 12))
                 .environmentObject(Settings())
+                .environmentObject(Feedback(sounds: Defaults.sounds, haptics: Defaults.haptics))
         }
     }
 }

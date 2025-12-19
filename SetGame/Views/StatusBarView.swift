@@ -94,7 +94,7 @@ struct StatusBarView: View {
             }) {
                 Image(systemName: "eye")
                     .foregroundColor(self.table.containsSet() ? Color.blue : Color.gray)
-                    .offset(y: 2)
+                    .offset(y: 1)
             }
 /*
             Button(action: {
@@ -125,6 +125,8 @@ struct StatusBarView: View {
             }
 */
         }
+        .offset(y: 2)
+        .allowsHitTesting(!self.table.state.blinking && !self.table.settings.demoMode)
     }
 }
 

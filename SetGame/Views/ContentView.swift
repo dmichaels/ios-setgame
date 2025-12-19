@@ -4,7 +4,11 @@ struct ContentView: View {
     
     @EnvironmentObject var table : Table;
     @EnvironmentObject var settings : Settings;
+    @EnvironmentObject var feedback : Feedback;
     @State private var showSettingsView = false;
+//    @State private var feedback: Feedback = Feedback(sounds: Defaults.sounds,
+ //                                                    haptics: Defaults.haptics)
+
 
 var body: some View {
     NavigationView {
@@ -21,18 +25,18 @@ var body: some View {
 
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Menu {
-                            Button { self.table.startNewGame() } label: {
+                            Button { self.table.startNewGame(); feedback.trigger(); } label: {
                                 Label("New Game" , systemImage: "arrow.counterclockwise")
-                            }
+                            }.disabled(self.table.state.blinking || self.table.settings.demoMode)
                             Button { self.table.addMoreCards(1) } label: {
                                 Label("Add Card" , systemImage: "plus.rectangle")
-                            }
+                            }.disabled(self.table.state.blinking || self.table.settings.demoMode)
                             Toggle(isOn: $table.settings.demoMode) {
                                 Label("Demo Mode", systemImage: "play.circle")
                             }
                             Button { self.showSettingsView = true } label: {
                                 Label("Settings ...", systemImage: "gearshape")
-                            }
+                            }.disabled(self.table.state.blinking || self.table.settings.demoMode)
                         } label: {
                             Image(systemName: "gearshape.fill")
                                 .foregroundColor(Color(UIColor.darkGray))
@@ -43,6 +47,8 @@ var body: some View {
                     Task { @MainActor in
                         await table.demoCheck()
                     }
+                    feedback.soundsEnabled = settings.sounds;
+                    feedback.hapticsEnabled = settings.haptics;
                 }
                 .onChange(of: table.settings.demoMode) { _ in
                     Task { @MainActor in

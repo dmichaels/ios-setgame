@@ -3,6 +3,8 @@ import SwiftUI
 struct TableView: View {
 
     @EnvironmentObject var table : Table;
+    @EnvironmentObject var settings : Settings;
+    @EnvironmentObject var feedback : Feedback;
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -14,8 +16,11 @@ struct TableView: View {
                             let index = row * table.settings.cardsPerRow + column;
                             if (index < table.cards.count) {
                                 CardView(card: table.cards[index]) {
-                                    self.table.cardTouched($0)
-                                }.slightlyRotated(self.table.settings.cardsAskew)
+                                    self.table.cardTouched($0);
+                                    self.feedback.trigger();
+                                }
+                                .slightlyRotated(self.table.settings.cardsAskew)
+                                .allowsHitTesting(!self.table.state.blinking && !self.table.settings.demoMode)
                             }
                             else {
                                 Image("dummy").resizable()
@@ -33,7 +38,7 @@ struct TableView: View {
                     }
                 }.offset(y: 4)
             }.padding()
-        }.allowsHitTesting(!self.table.state.blinking && !self.table.settings.demoMode)
+        } // .allowsHitTesting(!self.table.state.blinking && !self.table.settings.demoMode)
     }
 
     // N.B. ChatGPT helped here.
