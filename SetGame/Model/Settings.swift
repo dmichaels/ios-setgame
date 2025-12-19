@@ -5,8 +5,8 @@ import SwiftUI
 // Eventually more Table.Settings here.
 //
 class Defaults {
-    public static let sounds: Bool = true;
-    public static let haptics: Bool = true;
+    public static let sounds: Bool = false;
+    public static let haptics: Bool = false;
 }
 
 class Settings: ObservableObject {
