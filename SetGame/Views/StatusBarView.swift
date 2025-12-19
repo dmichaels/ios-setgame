@@ -39,7 +39,7 @@ struct StatusBarView: View {
                     .font(.subheadline)
                     .frame(alignment: .leading)
                 if (self.table.settings.showPartialSetSelectedIndicator) {
-                    if (self.table.state.blinking) {
+                    if (self.table.state.blinking || self.table.selectedCards().isSet()) {
                             Text(HAPPY_FACE_SYMBOL)
                                 .font(.subheadline)
                                 .frame(alignment: .leading)
@@ -66,7 +66,7 @@ struct StatusBarView: View {
                             .font(.subheadline)
                             .frame(alignment: .leading)
                     }
-                    else if (self.table.state.setJustFound) {
+                    else if (self.table.state.setJustFound || self.table.selectedCards().isSet()) {
                         Text(HAPPY_FACE_SYMBOL)
                             .font(.subheadline)
                             .frame(alignment: .leading)

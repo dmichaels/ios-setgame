@@ -548,6 +548,10 @@ class Table<TC : TableCard> : ObservableObject {
         }
     }
 
+    private func gameDone() -> Bool {
+        return (self.deck.count == 0) && !self.containsSet();
+    }
+
     public func demoCheck() async {
         if (self.settings.demoMode) {
             if (self.demoTimer == nil) {
@@ -561,6 +565,10 @@ class Table<TC : TableCard> : ObservableObject {
 
     public func demoStart() async {
         while (self.settings.demoMode) {
+            if (self.gameDone()) {
+                self.startNewGame();
+            }
+            self.unselectCards();
             await self.demoStep();
             try? await Task.sleep(nanoseconds: 1_000_000_000)
         }
@@ -583,7 +591,6 @@ class Table<TC : TableCard> : ObservableObject {
                 for card in set {
                     self.cardTouched(card, already: true);
                 }
-                // self.checkForSet();
                 try? await Task.sleep(nanoseconds: 1_500_000_000)
             }
         }
