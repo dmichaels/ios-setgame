@@ -19,7 +19,7 @@ class Table<TC : TableCard> : ObservableObject {
         var displayCardCount                : Int  = 12;
         var limitDeckSize                   : Int  = Deck().count;
         var cardsPerRow                     : Int  = 4;
-        var useSimpleDeck                   : Bool = true {
+        var useSimpleDeck                   : Bool = false {
             didSet {
                 //
                 // 2025-12-08
