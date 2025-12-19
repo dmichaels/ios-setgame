@@ -8,7 +8,7 @@ struct StatsView: View  {
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading) {
-                ForEach(3...21, id: \.self) { index in
+                ForEach(3...Deck.setlessCount(simple: self.table.settings.useSimpleDeck) , id: \.self) { index in
                     if (index == 3) {
                         HStack {
                             Text("\nNumber\nof Cards")
@@ -27,8 +27,8 @@ struct StatsView: View  {
                     }
                     HStack {
                         if (self.isViewDisplayed) {
-                            let average = Deck.averageNumberOfSets(index);
-                            let p = Deck.probabilityOfAtLeastOneSet(for: index) * 100.0
+                            let average = Deck.averageNumberOfSets(index, simple: self.table.settings.useSimpleDeck);
+                            let p = Deck.probabilityOfAtLeastOneSet(for: index, simple: self.table.settings.useSimpleDeck) * 100.0
                             //
                             // Truncate probability to one decimal place so
                             // that we don't show 100.0% for (say) 99.9996%.
@@ -47,6 +47,11 @@ struct StatsView: View  {
                                 .frame(alignment: .trailing)
                         }
                     }
+                }
+                Divider()
+                HStack {
+                    Text(self.table.settings.useSimpleDeck ? "Simplified SET Deck: 27 cards" : "Standard SET Deck: 81 cards").font(.footnote) // .frame(alignment: .leading)
+                    Spacer()
                 }
             }.padding(30)
             .onAppear {
