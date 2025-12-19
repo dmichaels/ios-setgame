@@ -17,7 +17,7 @@ var body: some View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        Text("SET Game")
+                        Text(self.table.settings.demoMode ? "SET Game Demo →" : "SET Game")
                             .font(.title).fontWeight(.bold)
                             .padding(.top, 6)
                             .padding(.bottom, 2)
