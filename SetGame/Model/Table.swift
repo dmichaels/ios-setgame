@@ -87,12 +87,6 @@ class Table<TC : TableCard> : ObservableObject {
     }
 
     func startNewGame() {
-        print("NC")
-        print("ND(*): \(Deck.numberOfDistinctSets(simple: self.settings.useSimpleDeck))");
-        print("ND(4): \(Deck.numberOfDistinctSets(simple: self.settings.useSimpleDeck, ndifferences: 4))");
-        print("ND(3): \(Deck.numberOfDistinctSets(simple: self.settings.useSimpleDeck, ndifferences: 3))");
-        print("ND(2): \(Deck.numberOfDistinctSets(simple: self.settings.useSimpleDeck, ndifferences: 2))");
-        print("ND(1): \(Deck.numberOfDistinctSets(simple: self.settings.useSimpleDeck, ndifferences: 1))");
         self.deck  = Deck(simple: self.settings.useSimpleDeck, ncards: self.settings.limitDeckSize);
         self.cards = [TC]();
         self.state = State();
