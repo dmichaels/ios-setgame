@@ -5,6 +5,7 @@ class Deck<T : Card> {
 
     public private(set) var cards    : [T];
     public              let readonly : Bool;
+    public              let simple   : Bool;
 
     /// Creates a new shuffled SET Game® card deck.
     /// - Can be a "simple" deck in which case the only filling is solid; this,
@@ -16,6 +17,7 @@ class Deck<T : Card> {
     init(simple: Bool = false, ncards: Int = 0, readonly: Bool = false) {
         self.readonly = readonly;
         self.cards = [T]();
+        self.simple = simple;
         let fillings: [CardFilling] = simple ? [CardFilling.Solid] : CardFilling.allCases;
         for color in CardColor.allCases {
             for shape in CardShape.allCases {

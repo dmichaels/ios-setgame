@@ -41,7 +41,8 @@ struct StatsView: View  {
                     }
                     HStack {
                         if (self.isViewDisplayed) {
-                            let average = Deck.averageNumberOfSets(index, simple: self.table.settings.useSimpleDeck);
+                            // let average = Deck.averageNumberOfSets(index, simple: self.table.settings.useSimpleDeck);
+                            let average = self.table.deck.xaverageNumberOfSets(index);
                             let p = Deck.probabilityOfAtLeastOneSet(for: index, simple: self.table.settings.useSimpleDeck) * 100.0
                             //
                             // Truncate probability to one decimal place so

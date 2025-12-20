@@ -46,6 +46,19 @@ private let _setlessCountsSimple: [Int: UInt64] = [
 
 extension Deck {
 
+    public func xaverageNumberOfSets(_ ncards: Int, iterations: Int = 200) -> Float {
+        if (ncards < 3) {
+            return 0;
+        }
+        var totalSets = 0;
+        for _ in 1...iterations {
+            let deck: Deck = Deck(simple: self.simple);
+            let cards: [T] = deck.takeRandomCards(ncards);
+            totalSets += cards.numberOfSets();
+        }
+        return Float(totalSets) / Float(iterations);
+    }
+
     public static func ncards(simple: Bool = false) -> Int {
         return simple ? 27 : 81;
     }
@@ -87,7 +100,7 @@ extension Deck {
         guard let setless = Deck.setlessCounts(simple: simple)[ncards] else {
             fatalError("Missing setless count for ncards = \(ncards)")
         }
-        let totalHands = binomial(self.ncards(simple: simple), ncards)
+        let totalHands = Math.binomial(self.ncards(simple: simple), ncards)
         let pNoSet = Double(setless) / totalHands
         return 1.0 - pNoSet
     }
@@ -110,20 +123,5 @@ extension Deck {
             Math.power(3, nattributes - 1) *
             Math.combinations(nattributes, ndifferences) * Math.power(2, ndifferences - 1)
         )
-    }
-
-    /// Compute "n choose k" as a Double, using a stable multiplicative formula.
-    /// N.B. ChatGPT generated.
-    ///
-    private static func binomial(_ n: Int, _ k: Int) -> Double {
-        precondition(n >= 0 && k >= 0 && k <= n, "Invalid n, k for binomial")
-        if k == 0 || k == n { return 1.0 }
-        let k = min(k, n - k)  // exploit symmetry
-        var result = 1.0
-        for i in 1...k {
-            result *= Double(n - k + i)
-            result /= Double(i)
-        }
-        return result
     }
 }
