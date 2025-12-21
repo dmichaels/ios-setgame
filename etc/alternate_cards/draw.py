@@ -187,7 +187,139 @@ def _draw_rectangle(image, x, y, width, height, color,
     tmp = tmp.resize((width, height), resample=Image.LANCZOS)
     image.paste(tmp, (int(x - width // 2), int(y - height // 2)), tmp)
 
-def _draw_diamond(image, x, y, radius, color, border=0, border_color=None, aa=4, stretch_y=1.25):
+def _draw_diamond(
+    image,
+    x,
+    y,
+    width,
+    height,
+    color,
+    border=0,
+    border_color=None,
+    aa=4
+):
+    """
+    Draw an antialiased diamond.
+
+    - (x, y): center in output image coordinates
+    - width, height: final diamond bounding box in pixels
+    - color: fill color (RGB/RGBA/hex)
+    - border: thickness of border in FINAL pixels (int or float)
+    - border_color: color of border (if None, no border)
+    - aa: antialiasing factor
+    """
+
+    if width <= 0 or height <= 0:
+        return
+
+    # Final size
+    out_w = int(round(width))
+    out_h = int(round(height))
+
+    # Hi-res size
+    hi_w = out_w * aa
+    hi_h = out_h * aa
+
+    tmp = Image.new("RGBA", (hi_w, hi_h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(tmp)
+
+    cx = hi_w / 2.0
+    cy = hi_h / 2.0
+
+    hw = hi_w / 2.0
+    hh = hi_h / 2.0
+
+    def diamond_points(_hw, _hh):
+        return [
+            (cx,        cy - _hh),  # top
+            (cx + _hw,  cy),        # right
+            (cx,        cy + _hh),  # bottom
+            (cx - _hw,  cy)         # left
+        ]
+
+    # Draw border first (full size)
+    if border > 0 and border_color is not None:
+        d.polygon(diamond_points(hw, hh), fill=border_color)
+
+        shrink = border * aa
+        inner_hw = hw - shrink
+        inner_hh = hh - shrink
+
+        if inner_hw > 0 and inner_hh > 0:
+            d.polygon(
+                diamond_points(inner_hw, inner_hh),
+                fill=color
+            )
+    else:
+        d.polygon(diamond_points(hw, hh), fill=color)
+
+    # Downsample for antialiasing
+    tmp = tmp.resize((out_w, out_h), resample=Image.LANCZOS)
+
+    # Paste centered
+    image.paste(
+        tmp,
+        (int(x - out_w // 2), int(y - out_h // 2)),
+        tmp
+    )
+
+def _old_draw_diamond(image, x, y, width, height, color, border=0, border_color=None, aa=4):
+    """
+    Antialiased diamond.
+
+    - (x, y) is center (in output image coords).
+    - width/height are the final diamond bounding box size (in pixels).
+      (Diamond touches left/right/top/bottom of that box.)
+    - Border is drawn INSIDE (in output pixels).
+    """
+
+    out_w = int(round(width))
+    out_h = int(round(height))
+    if out_w <= 0 or out_h <= 0:
+        return
+
+    hi_w = out_w * aa
+    hi_h = out_h * aa
+
+    tmp = Image.new("RGBA", (hi_w, hi_h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(tmp)
+
+    cx = hi_w / 2.0
+    cy = hi_h / 2.0
+
+    # half-width/half-height in hi-res coords
+    hw = (out_w / 2.0) * aa
+    hh = (out_h / 2.0) * aa
+
+    def pts(_hw, _hh):
+        return [
+            (cx,       cy - _hh),  # top
+            (cx + _hw, cy),        # right
+            (cx,       cy + _hh),  # bottom
+            (cx - _hw, cy)         # left
+        ]
+
+    if border > 0 and border_color is not None:
+        # Draw full diamond in border color
+        d.polygon(pts(hw, hh), fill=border_color)
+
+        # Shrink inward by border (in output px), scaled to hi-res
+        shrink = border * aa
+        inner_hw = hw - shrink
+        inner_hh = hh - shrink
+
+        if inner_hw > 0 and inner_hh > 0:
+            d.polygon(pts(inner_hw, inner_hh), fill=color)
+    else:
+        d.polygon(pts(hw, hh), fill=color)
+
+    # Downsample for antialiasing
+    tmp = tmp.resize((out_w, out_h), resample=Image.LANCZOS)
+
+    # Paste centered at (x, y)
+    image.paste(tmp, (int(x - out_w // 2), int(y - out_h // 2)), tmp)
+
+def _older_draw_diamond(image, x, y, radius, color, border=0, border_color=None, aa=4, stretch_y=1.25):
     """
     Antialiased diamond, taller than wide.
 

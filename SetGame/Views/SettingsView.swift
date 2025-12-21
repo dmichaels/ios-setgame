@@ -63,7 +63,7 @@ struct SettingsView: View {
                     Toggle(isOn: $table.settings.cardsAskew) {
                         Text("Skew Cards")
                     }
-                    if (false) {
+                    if (true) {
                         Toggle(isOn: $table.settings.alternateCardImages) {
                             Text("Alternate Cards")
                         }
