@@ -8,13 +8,11 @@ CARD_BORDER_COLOR     = "red"
 CARD_VERTICAL_OFFSETS = [ [ 0 ], [-45, 45 ], [ -80, 0, 80 ] ]
 
 NUMBERS               = [ 0, 1, 2 ]
-#COLORS                = [ "red", "purple", "green" ]
-#COLORS                = [ _lighten_color("#9C3327"), _lighten_color("#2D34A1"), _lighten_color("#4E824E") ]
 COLORS                = [ "#9C3327", "#2D34A1", "#4E824E" ]
 SHAPES                = [ "oval", "diamond", "squiggle" ]
 FILLINGS              = [ "hollow", "stripe", "solid" ]
 
-BORDER_THICKNESS      = 8
+BORDER_THICKNESS      = 4
 
 def create_card_image():
     cx, cy = CARD_WIDTH // 2, CARD_HEIGHT // 2
@@ -36,21 +34,21 @@ def get_draw_function(shape, filling):
         elif filling == "solid":
             return draw_oval_solid
         elif filling == "stripe":
-            return draw_oval_solid # TODO
+            return draw_oval_stripe
     elif shape in ["diamond", "rectangle"]:
         if filling == "hollow":
             return draw_rectangle_hollow
         elif filling == "solid":
             return draw_rectangle_solid
         elif filling == "stripe":
-            return draw_rectangle_solid # TODO
+            return draw_rectangle_stripe
     elif shape in ["squiggle", "barbell"]:
         if filling == "hollow":
             return draw_squiggle_hollow
         elif filling == "solid":
             return draw_squiggle_solid
         elif filling == "stripe":
-            return draw_squiggle_stripe # TODO
+            return draw_squiggle_stripe
 
 def draw_rectangle(image, y, color, border_thickness=0, border_color=""):
 
@@ -67,6 +65,9 @@ def draw_rectangle_hollow(image, y, color):
 def draw_rectangle_solid(image, y, color):
     return draw_rectangle(image, y, color, border_thickness=BORDER_THICKNESS, border_color=color) # TODO
 
+def draw_rectangle_stripe(image, y, color):
+    return draw_rectangle(image, y, _lighten_color(color), border_thickness=BORDER_THICKNESS, border_color=color) # TODO
+
 def draw_oval(image, y, color, border_thickness=0, border_color=""):
 
     card_width = _get_image_width(image)
@@ -81,6 +82,9 @@ def draw_oval_hollow(image, y, color):
 
 def draw_oval_solid(image, y, color):
     draw_oval(image, y, color)
+
+def draw_oval_stripe(image, y, color):
+    draw_oval(image, y, _lighten_color(color), border_thickness=BORDER_THICKNESS, border_color=color)
 
 def draw_squiggle(image, y, color, border_thickness=0, border_color=""):
 

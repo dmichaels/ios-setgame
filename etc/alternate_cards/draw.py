@@ -310,7 +310,7 @@ def _draw_number(image, x, y, radius, color, number):
         font=font
     )
 
-def _lighten_color(hex_color, amount=0.5):
+def _lighten_color(hex_color, amount=0.6):
     """
     Lighten a hex color by blending it toward white.
 
@@ -334,7 +334,7 @@ def _normalize_code(code):
     if len(code) != 4:
         return code
 
-    normalized_code = "ALTB_"
+    normalized_code = "ALT_"
 
     if code[0] == "0":
         normalized_code += "R"
