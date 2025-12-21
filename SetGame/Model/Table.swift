@@ -47,7 +47,7 @@ class Table<TC : TableCard> : ObservableObject {
         }
         var showFoundSets: Bool = true;
         var cardsAskew: Bool = true;
-        var alternateCardImages: Bool = false;
+        var alternateCardImages: Bool = true;
         var demoMode: Bool = false;
     }
 

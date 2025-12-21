@@ -2,7 +2,7 @@ from PIL import Image, ImageDraw, ImageFont
 from draw import _get_image_width, _get_image_height, _draw_rectangle, _draw_diamond, _lighten_color, _normalize_code
 
 CARD_WIDTH              = 200
-CARD_HEIGHT             = 300
+CARD_HEIGHT             = 290
 CARD_BACKGROUND_COLOR   = "white"
 CARD_BORDER_COLOR       = "red"
 CARD_VERTICAL_OFFSETS   = [ [ 0 ], [-45, 45 ], [ -80, 0, 80 ] ]
@@ -10,8 +10,8 @@ NUMBERS                 = [ 0, 1, 2 ]
 COLORS                  = [ "#9C3327", "#2D34A1", "#4E824E" ]
 SHAPES                  = [ "oval", "diamond", "squiggle" ]
 FILLINGS                = [ "hollow", "stripe", "solid" ]
-BORDER_THICKNESS        = 6
-BORDER_THICKNESS_STRIPE = 4
+BORDER_THICKNESS_HOLLOW = 10
+BORDER_THICKNESS_STRIPE = 5
 SQUIGGLE_IS_DIAMOND     = True
 
 def create_card_image():
@@ -67,34 +67,34 @@ def draw_rectangle(image, y, color, border_thickness=0, border_color=""):
     card_height = _get_image_height(image)
     cx, cy = card_width // 2, card_height // 2 + y
     sw = 142
-    sh = 55
+    sh = 53
     _draw_rectangle(image, cx,  cy, sw, sh,  color, rounding=0.2, border=border_thickness, border_color=border_color)
 
 def draw_rectangle_hollow(image, y, color):
-    return draw_rectangle(image, y, CARD_BACKGROUND_COLOR, border_thickness=BORDER_THICKNESS, border_color=color)
-
-def draw_rectangle_solid(image, y, color):
-    return draw_rectangle(image, y, color)
+    return draw_rectangle(image, y, CARD_BACKGROUND_COLOR, border_thickness=BORDER_THICKNESS_HOLLOW, border_color=color)
 
 def draw_rectangle_stripe(image, y, color):
     return draw_rectangle(image, y, _lighten_color(color), border_thickness=BORDER_THICKNESS_STRIPE, border_color=color)
+
+def draw_rectangle_solid(image, y, color):
+    return draw_rectangle(image, y, color)
 
 def draw_diamond(image, y, color, border_thickness=0, border_color=""):
     card_width = _get_image_width(image)
     card_height = _get_image_height(image)
     cx, cy = card_width // 2, card_height // 2 + y
-    sw = 142
-    sh = 56
+    sw = 144
+    sh = 58
     _draw_diamond(image, cx, cy, sw, sh, color=color, border=border_thickness, border_color=border_color)
 
 def draw_diamond_hollow(image, y, color):
-    return draw_diamond(image, y, CARD_BACKGROUND_COLOR, border_thickness=BORDER_THICKNESS + 4, border_color=color)
+    return draw_diamond(image, y, CARD_BACKGROUND_COLOR, border_thickness=BORDER_THICKNESS_HOLLOW + 5, border_color=color)
+
+def draw_diamond_stripe(image, y, color):
+    return draw_diamond(image, y, _lighten_color(color), border_thickness=BORDER_THICKNESS_STRIPE + 3, border_color=color)
 
 def draw_diamond_solid(image, y, color):
     return draw_diamond(image, y, color)
-
-def draw_diamond_stripe(image, y, color):
-    return draw_diamond(image, y, _lighten_color(color), border_thickness=BORDER_THICKNESS_STRIPE + 4, border_color=color)
 
 def draw_oval(image, y, color, border_thickness=0, border_color=""):
 
@@ -106,13 +106,13 @@ def draw_oval(image, y, color, border_thickness=0, border_color=""):
     _draw_rectangle(image, cx,  cy, sw, sh,  color, rounding=1.0, border=border_thickness, border_color=border_color)
 
 def draw_oval_hollow(image, y, color):
-    draw_oval(image, y, CARD_BACKGROUND_COLOR, border_thickness=BORDER_THICKNESS, border_color=color)
-
-def draw_oval_solid(image, y, color):
-    draw_oval(image, y, color)
+    draw_oval(image, y, CARD_BACKGROUND_COLOR, border_thickness=BORDER_THICKNESS_HOLLOW, border_color=color)
 
 def draw_oval_stripe(image, y, color):
     draw_oval(image, y, _lighten_color(color), border_thickness=BORDER_THICKNESS_STRIPE, border_color=color)
+
+def draw_oval_solid(image, y, color):
+    draw_oval(image, y, color)
 
 def draw_barbell(image, y, color, border_thickness=0, border_color=""):
 
@@ -135,18 +135,19 @@ def draw_barbell(image, y, color, border_thickness=0, border_color=""):
     # Draw connecting bar.
     _draw_rectangle(image, cx, cy, between + border_thickness * 2 + 4, barh,  color)
     # Draw top border of connecting bar.
-    _draw_rectangle(image, cx, cy - (barh / 2) - (border_thickness / 2), between, border_thickness,  border_color)
-    # Draw bottom border of connecting bar.
-    _draw_rectangle(image, cx, cy + (barh / 2) + (border_thickness / 2), between, border_thickness,  border_color)
-
-def draw_barbell_solid(image, y, color):
-    draw_barbell(image, y, color, border_thickness=BORDER_THICKNESS, border_color=color)
+    if border_thickness:
+        _draw_rectangle(image, cx, cy - (barh / 2) - (border_thickness / 2), between, border_thickness,  border_color)
+        # Draw bottom border of connecting bar.
+        _draw_rectangle(image, cx, cy + (barh / 2) + (border_thickness / 2), between, border_thickness,  border_color)
 
 def draw_barbell_hollow(image, y, color):
-    draw_barbell(image, y, CARD_BACKGROUND_COLOR, border_thickness=BORDER_THICKNESS, border_color=color)
+    draw_barbell(image, y, CARD_BACKGROUND_COLOR, border_thickness=BORDER_THICKNESS_HOLLOW, border_color=color)
 
 def draw_barbell_stripe(image, y, color):
     draw_barbell(image, y, _lighten_color(color), border_thickness=BORDER_THICKNESS_STRIPE, border_color=color)
+
+def draw_barbell_solid(image, y, color):
+    draw_barbell(image, y, color)
 
 def draw_card(number, color, shape, filling):
     image = create_card_image()
