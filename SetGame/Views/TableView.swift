@@ -29,9 +29,12 @@ struct TableView: View {
                     }
                 }
                 VStack {
-                    Rectangle().fill(Color.gray.opacity(0.8)).frame(height: 2)
+                    // Rectangle().fill(Color.gray.opacity(0.8)).frame(height: 2)
+                    Spacer()
+                    Spacer()
                     StatusBarView()
-                    Rectangle().fill(Color.gray.opacity(0.8)).frame(height: 1)
+                    Spacer()
+                    // Rectangle().fill(Color.gray.opacity(0.8)).frame(height: 1)
                     if (self.table.settings.showFoundSets) {
                         FoundSetsView(setsLastFound: table.state.setsLastFound,
                                       cardsAskew: table.settings.cardsAskew)

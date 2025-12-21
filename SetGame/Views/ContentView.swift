@@ -55,6 +55,13 @@ var body: some View {
                         await table.demoCheck()
                     }
                 }
+                .onChange(of: table.settings.useSimpleDeck) { _ in
+                    print("SIMPLE CHANGE")
+                    if (self.table.gameStart() || self.table.gameDone()) {
+                        print("GAME START")
+                        self.table.startNewGame();
+                    }
+                }
             NavigationLink(destination: SettingsView()
                             .environmentObject(table)
                             .environmentObject(settings),

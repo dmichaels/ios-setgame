@@ -548,7 +548,11 @@ class Table<TC : TableCard> : ObservableObject {
         }
     }
 
-    private func gameDone() -> Bool {
+    public func gameStart() -> Bool {
+        return self.state.setsLastFound.count == 0;
+    }
+
+    public func gameDone() -> Bool {
         return (self.deck.count == 0) && !self.containsSet();
     }
 
@@ -568,9 +572,13 @@ class Table<TC : TableCard> : ObservableObject {
             self.unselectCards();
             try? await Task.sleep(nanoseconds: 500_000_000)
         }
+        if (self.gameDone()) {
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            self.startNewGame();
+        }
         while (self.settings.demoMode) {
             if (self.gameDone()) {
-                try? await Task.sleep(nanoseconds: 4_000_000_000)
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
                 self.startNewGame();
             }
             await self.demoStep();

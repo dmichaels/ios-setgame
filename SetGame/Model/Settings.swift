@@ -11,7 +11,7 @@ class Defaults {
 }
 
 class Settings: ObservableObject {
-    @Published var showPeekButton: Bool = Defaults.sounds;
+    @Published var showPeekButton: Bool = Defaults.showPeekButton;
     @Published var sounds: Bool = Defaults.sounds;
     @Published var haptics: Bool = Defaults.haptics;
     @Published var version: Int = 0;
