@@ -1,7 +1,13 @@
 import math
 from PIL import Image, ImageDraw, ImageFont
 
-def draw_circle(image, x, y, radius, color, border=0, border_color=None, aa=4):
+def _get_image_width(image):
+    return image.size[0]
+
+def _get_image_height(image):
+    return image.size[1]
+
+def _draw_circle(image, x, y, radius, color, border=0, border_color=None, aa=4):
 
     r_hi = radius * aa
     size = r_hi * 2
@@ -42,7 +48,7 @@ def draw_circle(image, x, y, radius, color, border=0, border_color=None, aa=4):
         tmp
     )
 
-def draw_square(image, x, y, radius, color, border=0, border_color=None, aa=4):
+def _draw_square(image, x, y, radius, color, border=0, border_color=None, aa=4):
     """
     Draw an antialiased filled square with optional INSIDE border.
     """
@@ -86,7 +92,7 @@ def draw_square(image, x, y, radius, color, border=0, border_color=None, aa=4):
         tmp
     )
 
-def draw_triangle(image, x, y, radius, color, border=0, border_color=None, aa=4):
+def _draw_triangle(image, x, y, radius, color, border=0, border_color=None, aa=4):
     """
     Draw an antialiased filled equilateral triangle centered at (x, y),
     with circumradius = radius (triangle is inscribed in that circle).
@@ -127,7 +133,7 @@ def draw_triangle(image, x, y, radius, color, border=0, border_color=None, aa=4)
     # Paste onto main image using alpha
     image.paste(tmp, (x - radius, y - radius), tmp)
 
-def draw_rectangle(image, x, y, width, height, color,
+def _draw_rectangle(image, x, y, width, height, color,
               border=0, border_color=None,
               rounding=0.0, aa=4):
     """
@@ -181,9 +187,7 @@ def draw_rectangle(image, x, y, width, height, color,
     tmp = tmp.resize((width, height), resample=Image.LANCZOS)
     image.paste(tmp, (int(x - width // 2), int(y - height // 2)), tmp)
 
-def draw_diamond(image, x, y, radius, color,
-                 border=0, border_color=None,
-                 aa=4, stretch_y=1.25):
+def _draw_diamond(image, x, y, radius, color, border=0, border_color=None, aa=4, stretch_y=1.25):
     """
     Antialiased diamond, taller than wide.
 
@@ -231,7 +235,7 @@ def draw_diamond(image, x, y, radius, color,
     # paste centered at (x, y)
     image.paste(tmp, (x - out_w // 2, y - out_h // 2), tmp)
 
-def draw_number(image, x, y, radius, color, number):
+def _draw_number(image, x, y, radius, color, number):
     """
     Draw a bold number centered inside the circle of radius `radius`
     around (x, y). Text color = `color`.
@@ -306,7 +310,26 @@ def draw_number(image, x, y, radius, color, number):
         font=font
     )
 
-def normalize_code(code):
+def _lighten_color(hex_color, amount=0.5):
+    """
+    Lighten a hex color by blending it toward white.
+
+    amount: 0.0 = no change
+            1.0 = white
+    """
+    hex_color = hex_color.lstrip("#")
+
+    r = int(hex_color[0:2], 16)
+    g = int(hex_color[2:4], 16)
+    b = int(hex_color[4:6], 16)
+
+    r = int(r + (255 - r) * amount)
+    g = int(g + (255 - g) * amount)
+    b = int(b + (255 - b) * amount)
+
+    return f"#{r:02X}{g:02X}{b:02X}"
+
+def _normalize_code(code):
 
     if len(code) != 4:
         return code
