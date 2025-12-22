@@ -117,13 +117,15 @@ struct StatusBarView: View {
                     .foregroundColor(FOREGROUND)
                     .fixedSize()
                     .padding(.horizontal, 5)
-                    .padding(.vertical, 1)
+                    .padding(.vertical, 1.1)
                     .padding(.trailing, 1)
+                    .offset(y: 0)
                     .overlay(
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            .stroke(Color(UIColor.separator), lineWidth: 1)
+                            // .stroke(Color(UIColor.separator), lineWidth: 1)
+                            .stroke(FOREGROUND, lineWidth: 1)
                     )
-                    .padding(.trailing, 4)
+                    .padding(.trailing, 3)
                 }
             if (settings.showPeekButton) {
                 Button(action: {
@@ -139,7 +141,7 @@ struct StatusBarView: View {
                         .foregroundColor(self.table.containsSet() ? FOREGROUND : Color.gray)
                         .scaleEffect(1.05)
                         .padding(.trailing, 6)
-                        .offset(y: 1)
+                        .offset(y: 0.5)
                 }
             }
         }
@@ -163,7 +165,7 @@ struct StatusBarView: View {
                 //
                 // This frame-height controls the height of the control; default without this is fairly short.
                 //
-                .frame(height: 34)
+                .frame(height: 35)
                 //
                 // This padding-horizontal controls the internal left/right padding of control as a whole.
                 //
