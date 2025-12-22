@@ -2,7 +2,7 @@ from PIL import Image, ImageDraw, ImageFont
 from draw import _get_image_width, _get_image_height, _draw_rectangle, _draw_diamond, _lighten_color, _normalize_code
 
 CARD_WIDTH              = 200
-CARD_HEIGHT             = 240
+CARD_HEIGHT             = 260
 CARD_BACKGROUND_COLOR   = "white"
 CARD_BORDER_COLOR       = "red"
 CARD_VERTICAL_OFFSETS   = [ [ 0 ], [-45, 45 ], [ -80, 0, 80 ] ]
