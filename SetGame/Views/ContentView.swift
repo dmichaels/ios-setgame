@@ -9,6 +9,8 @@ struct ContentView: View {
 //    @State private var feedback: Feedback = Feedback(sounds: Defaults.sounds,
  //                                                    haptics: Defaults.haptics)
 
+    // let title: String = "SET Game"
+    let title: String = "Tricard"
 
 var body: some View {
     NavigationView {
@@ -17,7 +19,7 @@ var body: some View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        Text(self.table.settings.demoMode ? "SET Game Demo →" : "SET Game")
+                        Text(self.table.settings.demoMode ? "\(title) Demo →" : title)
                             .font(.title).fontWeight(.bold)
                             .padding(.top, 6)
                             .padding(.bottom, 2)
