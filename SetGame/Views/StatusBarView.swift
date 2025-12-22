@@ -117,7 +117,7 @@ struct StatusBarView: View {
                     .foregroundColor(FOREGROUND)
                     .fixedSize()
                     .padding(.horizontal, 5)
-                    .padding(.vertical, 1.1)
+                    .padding(.vertical, 1.0)
                     .padding(.trailing, 1)
                     .offset(y: 0)
                     .overlay(

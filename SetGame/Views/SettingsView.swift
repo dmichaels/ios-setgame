@@ -116,6 +116,11 @@ struct SettingsView: View {
                                                            ? StandardDeck.instanceSimple.cards
                                                            : StandardDeck.instance.cards))
             }
+            HStack {
+                Text("Version").font(.footnote)
+                Spacer()
+                Text("\(version())").font(.footnote)
+            }
         }
         .navigationTitle("Tricard Settings")
         .onDisappear {
