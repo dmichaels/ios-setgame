@@ -6,13 +6,15 @@ CARD_HEIGHT             = 290
 CARD_BACKGROUND_COLOR   = "white"
 CARD_BORDER_COLOR       = "red"
 CARD_VERTICAL_OFFSETS   = [ [ 0 ], [-45, 45 ], [ -80, 0, 80 ] ]
+CARD_VERTICAL_OFFSETS   = [ [ 0 ], [-43, 43 ], [ -74, 0, 74 ] ]
 NUMBERS                 = [ 0, 1, 2 ]
-COLORS                  = [ "#9C3327", "#2D34A1", "#4E824E" ]
+COLORS                  = [ "#9C3327", "#2D34A1", "#4E824E" ] # red, blue, green
+COLORS                  = [ "#9C3327", "#2D34A1", "#3D713D" ] # red, blue, green
 SHAPES                  = [ "oval", "diamond", "squiggle" ]
 FILLINGS                = [ "hollow", "stripe", "solid" ]
 BORDER_THICKNESS_HOLLOW = 10
-BORDER_THICKNESS_STRIPE = 5
-SQUIGGLE_IS_DIAMOND     = True
+BORDER_THICKNESS_STRIPE = 8
+SQUIGGLE_IS_DIAMOND     = False
 
 def create_card_image():
     cx, cy = CARD_WIDTH // 2, CARD_HEIGHT // 2
@@ -67,7 +69,7 @@ def draw_rectangle(image, y, color, border_thickness=0, border_color=""):
     card_height = _get_image_height(image)
     cx, cy = card_width // 2, card_height // 2 + y
     sw = 142
-    sh = 53
+    sh = 51
     _draw_rectangle(image, cx,  cy, sw, sh,  color, rounding=0.2, border=border_thickness, border_color=border_color)
 
 def draw_rectangle_hollow(image, y, color):
@@ -84,7 +86,7 @@ def draw_diamond(image, y, color, border_thickness=0, border_color=""):
     card_height = _get_image_height(image)
     cx, cy = card_width // 2, card_height // 2 + y
     sw = 144
-    sh = 58
+    sh = 60
     _draw_diamond(image, cx, cy, sw, sh, color=color, border=border_thickness, border_color=border_color)
 
 def draw_diamond_hollow(image, y, color):
@@ -102,7 +104,7 @@ def draw_oval(image, y, color, border_thickness=0, border_color=""):
     card_height = _get_image_height(image)
     cx, cy = card_width // 2, card_height // 2 + y
     sw = 142
-    sh = 59
+    sh = 58
     _draw_rectangle(image, cx,  cy, sw, sh,  color, rounding=1.0, border=border_thickness, border_color=border_color)
 
 def draw_oval_hollow(image, y, color):
@@ -114,7 +116,7 @@ def draw_oval_stripe(image, y, color):
 def draw_oval_solid(image, y, color):
     draw_oval(image, y, color)
 
-def draw_barbell(image, y, color, border_thickness=0, border_color=""):
+def old_draw_barbell(image, y, color, border_thickness=0, border_color=""):
 
     card_width = _get_image_width(image)
     card_height = _get_image_height(image)
@@ -124,7 +126,7 @@ def draw_barbell(image, y, color, border_thickness=0, border_color=""):
 
     sw      = 60
     sh      = 60
-    barh    = 20
+    barh    = 16
     between = 30
     leftx   = cx - (sw / 2) - (between / 2)
     rightx  = cx + (sw / 2) + (between / 2)
@@ -135,7 +137,42 @@ def draw_barbell(image, y, color, border_thickness=0, border_color=""):
     # Draw connecting bar.
     _draw_rectangle(image, cx, cy, between + border_thickness * 2 + 4, barh,  color)
     # Draw top border of connecting bar.
-    if border_thickness:
+    if border_thickness > 0:
+        if True:
+            border_thickness /= 2
+            if border_thickness < 0:
+                border_thickness = 1
+        _draw_rectangle(image, cx, cy - (barh / 2) - (border_thickness / 2), between, border_thickness,  border_color)
+        # Draw bottom border of connecting bar.
+        _draw_rectangle(image, cx, cy + (barh / 2) + (border_thickness / 2), between, border_thickness,  border_color)
+
+def draw_barbell(image, y, color, border_thickness=0, border_color=""):
+
+    card_width = _get_image_width(image)
+    card_height = _get_image_height(image)
+    cx, cy = card_width // 2, card_height // 2 + y
+
+    # Draw barbell shape as our standin for squiggle.
+
+    sw      = 56
+    sh      = 56
+    barh    = 16
+    between = 30
+    leftx   = cx - (sw / 2) - (between / 2)
+    rightx  = cx + (sw / 2) + (between / 2)
+
+    # Draw left and right squares.
+    _draw_rectangle(image, leftx,  cy, sw, sh,  color,   rounding=0.1, border=border_thickness, border_color=border_color)
+    _draw_rectangle(image, rightx, cy, sw, sh,  color,   rounding=0.1, border=border_thickness, border_color=border_color)
+    # Draw connecting bar.
+    _draw_rectangle(image, cx, cy, between + border_thickness * 2 + 4, barh,  color)
+    # Draw top border of connecting bar.
+    if border_thickness > 0:
+        if True:
+            border_thickness /= 2
+            border_thickness += 1
+            if border_thickness < 0:
+                border_thickness = 1
         _draw_rectangle(image, cx, cy - (barh / 2) - (border_thickness / 2), between, border_thickness,  border_color)
         # Draw bottom border of connecting bar.
         _draw_rectangle(image, cx, cy + (barh / 2) + (border_thickness / 2), between, border_thickness,  border_color)
@@ -162,17 +199,18 @@ def filepath(code):
     directory = f"/Users/dmichaels/repos/ios-setgame/SetGame/Assets.xcassets/{code}.imageset"
     return f"{directory}/{code}.png"
 
-image = draw_card(number=3, color="blue", shape="oval", filling="solid")
-image.save("/tmp/a.png")
-
 for inumber, number in enumerate(NUMBERS):
     for icolor, color in enumerate(COLORS):
         for ishape, shape in enumerate(SHAPES):
             for ifilling, filling in enumerate(FILLINGS):
                 image = draw_card(number=number, color=color, shape=shape, filling=filling)
-                code = _normalize_code(f"{icolor}{ishape}{ifilling}{inumber}")
+                code = _normalize_code(f"{icolor}{ishape}{ifilling}{inumber}", prefix="ALTC_")
                 file = filepath(code)
                 print(file)
                 image.save(file)
                 # TODO
                 image.save(f"/tmp/setc/{code}.png")
+
+#image = create_card_image()
+#draw_rectangle(image, 20, "#4E824E")
+#image.save(f"/tmp/setc/a.png")

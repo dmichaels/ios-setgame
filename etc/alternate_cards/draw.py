@@ -461,12 +461,12 @@ def _lighten_color(hex_color, amount=0.6):
 
     return f"#{r:02X}{g:02X}{b:02X}"
 
-def _normalize_code(code):
+def _normalize_code(code, prefix = "ALT_"):
 
     if len(code) != 4:
         return code
 
-    normalized_code = "ALT_"
+    normalized_code = prefix
 
     if code[0] == "0":
         normalized_code += "R"
