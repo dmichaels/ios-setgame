@@ -6,6 +6,7 @@ public struct CardView : View {
     @EnvironmentObject var table: Table
 
     var touchedCallback : ((TableCard) -> Void)?
+    let alternateCardImagePrefix : String = "ALTD_";
 
     public var body : some View {
         if (table.state.blinking /*card.blinking*/) {
@@ -20,7 +21,7 @@ public struct CardView : View {
             //
             VStack {
                 Button(action: {touchedCallback?(card)}) {
-                Image(table.settings.alternateCardImages ? "ALTC_" + card.codename : card.codename)
+                Image(table.settings.alternateCardImages ? alternateCardImagePrefix + card.codename : card.codename)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .opacity(card.blink ? 0.0 : 1.0)
@@ -38,7 +39,7 @@ public struct CardView : View {
         else if (false) {
             VStack {
                 Button(action: {touchedCallback?(card)}) {
-                Image(table.settings.alternateCardImages ? "ALTC_" + card.codename : card.codename)
+                Image(table.settings.alternateCardImages ? alternateCardImagePrefix + card.codename : card.codename)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .rotation3DEffect(card.selected ? Angle(degrees: 720) : Angle(degrees: 0),
@@ -64,7 +65,7 @@ public struct CardView : View {
         else {
             VStack {
                 Button(action: {touchedCallback?(card)}) {
-                Image(table.settings.alternateCardImages ? "ALTC_" + card.codename : card.codename)
+                Image(table.settings.alternateCardImages ? alternateCardImagePrefix + card.codename : card.codename)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     //
