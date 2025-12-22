@@ -7,7 +7,7 @@ struct SettingsView: View {
     let cardsPerRowChoices: [Int] = [ 2, 3, 4, 5, 6 ];
     let preferredDisplayCountCardChoices: [Int] = [ 3, 4, 6, 9, 12, 15, 16, 18, 20 ];
     let limitDeckSizeChoices: [Int] = [ 18, 27, 36, 45, 54, 63, 72, 81 ];
-    let iconWidth: CGFloat = 22;
+    let iconWidth: CGFloat = 30;
     
     var body: some View {
         // ScrollView(.vertical, showsIndicators: false) {

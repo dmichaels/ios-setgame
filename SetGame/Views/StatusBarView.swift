@@ -40,68 +40,10 @@ struct StatusBarView: View {
                     .frame(alignment: .leading)
             }
             else {
-                /*
-                if (self.table.settings.showNumberOfSetsPresent) {
-                    Text("\(DIAMOND_SYMBOL) \(table.numberOfSets())")
-                        .font(.subheadline)
-                        .frame(alignment: .leading)
-                        .foregroundColor(FOREGROUND)
-                }
-                */
                 Text("\(DIAMOND_SYMBOL)  Deck: \(table.remainingCardCount())")
                     .font(.subheadline)
                     .frame(alignment: .leading)
                     .foregroundColor(FOREGROUND)
-/*
-                if (self.table.settings.showPartialSetSelectedIndicator) {
-                    if (self.table.state.blinking || self.table.selectedCards().isSet()) {
-                            Text(HAPPY_FACE_SYMBOL)
-                                .font(.subheadline)
-                                .frame(alignment: .leading)
-                                .foregroundColor(FOREGROUND)
-                    }
-                    else if (self.table.state.partialSetSelected) {
-                        if (self.table.selectedCardCount() == 1) {
-                            Text(OK_SYMBOL)
-                                .font(.subheadline)
-                                .frame(alignment: .leading)
-                                .foregroundColor(FOREGROUND)
-                        }
-                        else if (self.table.selectedCardCount() == 2) {
-                            Text(THUMBSUP_SYMBOL)
-                                .font(.subheadline)
-                                .frame(alignment: .leading)
-                                .foregroundColor(FOREGROUND)
-                        }
-                        else {
-                            Text(NEUTRAL_FACE_SYMBOL)
-                                .font(.subheadline)
-                                .frame(alignment: .leading)
-                                .foregroundColor(FOREGROUND)
-                        }
-                    }
-                    else if ((self.table.selectedCardCount() == 1) || (self.table.selectedCardCount() == 2)) {
-                        Text(SAD_FACE_SYMBOL)
-                            .font(.subheadline)
-                            .frame(alignment: .leading)
-                    }
-                    else if (self.table.state.setJustFound || self.table.selectedCards().isSet()) {
-                        Text(HAPPY_FACE_SYMBOL)
-                            .font(.subheadline)
-                            .frame(alignment: .leading)
-                    }
-                    else if (self.table.state.setJustFoundNot) {
-                        Text(SAD_FACE_SYMBOL)
-                            .font(.subheadline)
-                            .frame(alignment: .leading)
-                    }
-                    else {
-                        Text(NEUTRAL_FACE_SYMBOL)
-                            .font(.subheadline)
-                            .frame(alignment: .leading)
-                    }
-                }
-*/
             }
             Spacer()
                 if (self.table.settings.showPartialSetSelectedIndicator) {
@@ -111,6 +53,7 @@ struct StatusBarView: View {
                                 .font(.subheadline)
                                 .frame(alignment: .leading)
                                 .foregroundColor(FOREGROUND)
+                                .padding(.trailing, 4)
                     }
                     else if (self.table.state.partialSetSelected) {
                         if (self.table.selectedCardCount() == 1) {
@@ -119,6 +62,7 @@ struct StatusBarView: View {
                                 .font(.subheadline)
                                 .frame(alignment: .leading)
                                 .foregroundColor(FOREGROUND)
+                                .padding(.trailing, 4)
                         }
                         else if (self.table.selectedCardCount() == 2) {
                             Text(THUMBSUP_SYMBOL)
@@ -126,6 +70,7 @@ struct StatusBarView: View {
                                 .font(.subheadline)
                                 .frame(alignment: .leading)
                                 .foregroundColor(FOREGROUND)
+                                .padding(.trailing, 4)
                         }
                         else {
                             Text(NEUTRAL_FACE_SYMBOL)
@@ -133,6 +78,7 @@ struct StatusBarView: View {
                                 .font(.subheadline)
                                 .frame(alignment: .leading)
                                 .foregroundColor(FOREGROUND)
+                                .padding(.trailing, 4)
                         }
                     }
                     else if ((self.table.selectedCardCount() == 1) || (self.table.selectedCardCount() == 2)) {
@@ -140,47 +86,44 @@ struct StatusBarView: View {
                             .scaleEffect(1.15)
                             .font(.subheadline)
                             .frame(alignment: .leading)
+                            .padding(.trailing, 4)
                     }
                     else if (self.table.state.setJustFound || self.table.selectedCards().isSet()) {
                         Text(HAPPY_FACE_SYMBOL)
                             .scaleEffect(1.15)
                             .font(.subheadline)
                             .frame(alignment: .leading)
+                            .padding(.trailing, 4)
                     }
                     else if (self.table.state.setJustFoundNot) {
                         Text(SAD_FACE_SYMBOL)
                             .scaleEffect(1.15)
                             .font(.subheadline)
                             .frame(alignment: .leading)
+                            .padding(.trailing, 4)
                     }
                     else {
                         Text(NEUTRAL_FACE_SYMBOL)
                             .scaleEffect(1.15)
                             .font(.subheadline)
                             .frame(alignment: .leading)
+                            .padding(.trailing, 4)
                     }
                 }
             if (self.table.settings.showNumberOfSetsPresent) {
-                // Text("\(DIAMOND_SYMBOL) \(table.numberOfSets()) \(DIAMOND_SYMBOL) ")
-                // Text(" \(table.numberOfSets())   ")
                 Text("\(table.numberOfSets())")
-    .font(.subheadline)
-    .monospacedDigit()
-    .foregroundColor(FOREGROUND)
-    .fixedSize()
-    .padding(.horizontal, 5)
-    .padding(.vertical, 1)
-    .padding(.trailing, 1)
-    .overlay(
-        RoundedRectangle(cornerRadius: 6, style: .continuous)
-            .stroke(Color(UIColor.separator), lineWidth: 1)
-    )
-    .padding(.trailing, 8)
-                /*
                     .font(.subheadline)
-                    .frame(alignment: .leading)
+                    .monospacedDigit()
                     .foregroundColor(FOREGROUND)
-                    */
+                    .fixedSize()
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 1)
+                    .padding(.trailing, 1)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .stroke(Color(UIColor.separator), lineWidth: 1)
+                    )
+                    .padding(.trailing, 4)
                 }
             if (settings.showPeekButton) {
                 Button(action: {
@@ -194,39 +137,12 @@ struct StatusBarView: View {
                 }) {
                     Image(systemName: "eyes")
                         .foregroundColor(self.table.containsSet() ? FOREGROUND : Color.gray)
-                        .offset(x: -8, y: 1)
+                        .scaleEffect(1.15)
+                        .padding(.trailing, 4)
+                        .offset(y: 1)
                 }
             }
-/*
-            Button(action: {
-                self.table.state.showingCardsWhichArePartOfSet.toggle();
-                if (self.table.state.showingCardsWhichArePartOfSet) {
-                    self.table.selectAllCardsWhichArePartOfSet();
-                }
-                else {
-                    self.table.unselectCards();
-                }
-            }) {
-                Image(systemName: "target")
-                    .foregroundColor(self.table.containsSet() ? Color.blue : Color.gray)
-                    .offset(y: 2)
-            }
-*/
-/*
-            Button(action: { self.table.addMoreCards(1) }) {
-                Image(systemName: "plus.app")
-                    .foregroundColor(self.table.remainingCardCount() > 0 ? Color.blue : Color.gray)
-                    .offset(y: 2)
-            }
-*/
-/*
-            Button(action: { self.table.startNewGame() }) {
-                Image(systemName: "arrow.clockwise.circle")
-                    .offset(y: 2)
-            }
-*/
         }
-        // .offset(y: 2)
         .background(
             //
             // The corner-radius controls how rounded the control window corners are;
@@ -263,14 +179,6 @@ struct StatusBarView: View {
     }
 }
 
-/*
-struct StatusBarView_Previews: PreviewProvider {
-    static var previews: some View {
-        StatusBarView()
-            .environmentObject(Table(displayCardCount: 12, plantSet: true))
-    }
-}
-*/
 extension Color {
     init(hex: UInt32) {
         self.init(
