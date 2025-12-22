@@ -21,7 +21,7 @@ struct DeckView: View {
                     }
                 }
             }.padding()
-        }.navigationTitle("SET Deck") // SET Game® Deck
+        }.navigationTitle("Tricard Deck") // SET Game® Deck
     }
 
     private func organizeCardsForDisplay(_ cards: [Card]) -> [[Card]] {

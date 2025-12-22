@@ -58,9 +58,7 @@ var body: some View {
                     }
                 }
                 .onChange(of: table.settings.useSimpleDeck) { _ in
-                    print("SIMPLE CHANGE")
                     if (self.table.gameStart() || self.table.gameDone()) {
-                        print("GAME START")
                         self.table.startNewGame();
                     }
                 }

@@ -137,8 +137,8 @@ struct StatusBarView: View {
                 }) {
                     Image(systemName: "eyes")
                         .foregroundColor(self.table.containsSet() ? FOREGROUND : Color.gray)
-                        .scaleEffect(1.15)
-                        .padding(.trailing, 4)
+                        .scaleEffect(1.05)
+                        .padding(.trailing, 6)
                         .offset(y: 1)
                 }
             }

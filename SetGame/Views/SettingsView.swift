@@ -117,7 +117,7 @@ struct SettingsView: View {
                                                            : StandardDeck.instance.cards))
             }
         }
-        .navigationTitle("SET Settings")
+        .navigationTitle("Tricard Settings")
         .onDisappear {
             self.settings.version += 1
         }

@@ -170,15 +170,6 @@ struct StatsView: View  {
                 self.isViewDisplayed = false
             }
             
-        }.navigationTitle("SET Stats")
+        }.navigationTitle("Tricard Stats")
     }
 }
-
-/*
-struct StatsView_Previews: PreviewProvider {
-    static var previews: some View {
-        StatsView()
-            .environmentObject(Table(displayCardCount: 12, plantSet: true))
-    }
-}
-*/
