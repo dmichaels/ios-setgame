@@ -10,8 +10,8 @@ struct StatsView: View  {
             VStack(alignment: .leading) {
                 HStack {
                     Text(self.table.settings.useSimpleDeck
-                         ? "Simplified SET Deck: 27 Cards"
-                         : "Standard SET Deck: 81 Cards") // .font(.footnote).italic()
+                         ? "Simplified Deck: 27 Cards"
+                         : "Standard Deck: 81 Cards") // .font(.footnote).italic()
                     Spacer()
                 }
                 /*

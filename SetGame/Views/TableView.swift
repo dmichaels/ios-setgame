@@ -29,18 +29,15 @@ struct TableView: View {
                     }
                 }
                 VStack {
-                    // Rectangle().fill(Color.gray.opacity(0.8)).frame(height: 2)
-                    Spacer()
-                    Spacer()
+                    Spacer(minLength: 24)
                     StatusBarView()
-                    Spacer()
-                    // Rectangle().fill(Color.gray.opacity(0.8)).frame(height: 1)
+                    Spacer(minLength: 20)
                     if (self.table.settings.showFoundSets) {
                         FoundSetsView(setsLastFound: table.state.setsLastFound,
                                       cardsAskew: table.settings.cardsAskew)
                     }
-                }.offset(y: 4)
-            }.padding().offset(y: -6)
+                } // .offset(y: 4)
+            }.padding().offset(y: -12)
         } // .allowsHitTesting(!self.table.state.blinking && !self.table.settings.demoMode)
     }
 

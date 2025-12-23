@@ -23,7 +23,7 @@ struct StatusBarView: View {
     // let BACKGROUND: Color = Color(hex: 0xEDFDEF);
     // let BACKGROUND: Color = Color(hex: 0xC4D8FF);
     let BACKGROUND: Color = Color(hex: 0xD5E9FF);
-    let SHAPE = RoundedRectangle(cornerRadius: 10, style: .continuous);
+    let SHAPE = RoundedRectangle(cornerRadius: 11, style: .continuous);
 
     // func partialSetSelectedOne() -> Bool { self.table.state.partialSetSelected && table.cards.count == 1; }
     // func partialSetSelectedTwo() -> Bool { self.table.state.partialSetSelected && table.cards.count == 2; }
@@ -171,12 +171,13 @@ struct StatusBarView: View {
                 //
                 // This padding-horizontal controls the internal left/right padding of control as a whole.
                 //
-                .padding(.horizontal, 0)
+                // .padding(.horizontal, 0)
                 //
                 // This shadow-radius controls the soft drop shadow around/behind the control.
                 // though can't really see a different with it on/off or high/low.
                 //
-                .shadow(radius: 1)
+                // .shadow(radius: 1)
+                .shadow(color: .black.opacity(0.3), radius: 4, x: 3, y: 6)
         )
         .background(BACKGROUND)
         .allowsHitTesting(!self.table.state.blinking && !self.table.settings.demoMode)

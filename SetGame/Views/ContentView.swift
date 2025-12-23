@@ -16,15 +16,19 @@ var body: some View {
     NavigationView {
         ZStack {
             TableView()
+                // .navigationTitle(title)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
+                    // ToolbarItem(placement: .navigationBarLeading) {
+                    ToolbarItem(placement: .principal) {
                         Text(self.table.settings.demoMode ? "\(title) Demo →" : title)
-                            .font(.title).fontWeight(.bold)
-                            .padding(.top, 6)
-                            .padding(.bottom, 2)
+                            // .font(.title)
+                            .font(.system(size: 28))
+                            .fontWeight(.bold)
+                            // .font(.title).fontWeight(.bold)
+                            // .padding(.top, 6)
+                            // .padding(.bottom, 2)
                     }
-
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Menu {
                             Button { self.table.startNewGame(); feedback.trigger(); } label: {
@@ -69,7 +73,7 @@ var body: some View {
                 EmptyView()
             }.hidden()
         }
-    }.padding(.top, 4)
+    } // .padding(.top, 4).offset(y: -10)
 }
 }
 

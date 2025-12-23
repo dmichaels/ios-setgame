@@ -15,16 +15,20 @@ struct SettingsView: View {
                 HStack {
                     Image(systemName: "face.smiling").frame(width: iconWidth)
                     Text("Partial SET Hint").lineLimit(1).layoutPriority(1)
+                    Spacer()
                     Toggle(isOn: $table.settings.showPartialSetSelectedIndicator) {}
+                    
                 }
                 HStack {
                     Image(systemName: "number.square").frame(width: iconWidth)
                     Text("Available SETs Count").lineLimit(1).layoutPriority(1)
+                    Spacer()
                     Toggle(isOn: $table.settings.showNumberOfSetsPresent) {}
                 }
-                    HStack {
-                Image(systemName: "eyes").frame(width: iconWidth)
+                HStack {
+                    Image(systemName: "eyes").frame(width: iconWidth)
                     Text("Peek Button")
+                    Spacer()
                     Toggle(isOn: $settings.showPeekButton) {}
                 }
             }
@@ -32,6 +36,7 @@ struct SettingsView: View {
                 HStack {
                     Image(systemName: "plus.square.on.square").frame(width: iconWidth)
                     Text("No SETs → More Cards").lineLimit(1).layoutPriority(1)
+                    Spacer()
                     Toggle(isOn: $table.settings.moreCardsIfNoSet) {}
                 }
                 HStack {
@@ -39,16 +44,19 @@ struct SettingsView: View {
                     // Image(systemName: "dot.scope").frame(width: iconWidth)
                     Image(systemName: "target").frame(width: iconWidth)
                     Text("Plant SET").lineLimit(1).layoutPriority(1)
+                    Spacer()
                     Toggle(isOn: $table.settings.plantSet) {}
                 }
-                if (false) {
-                    Toggle(isOn: $table.settings.moveAnyExistingSetToFront) {
-                        Text("Move SET Front ")
-                    }
+                HStack {
+                    Image(systemName: "arrow.up.left.square").frame(width: iconWidth)
+                    Text("Move SET Front").lineLimit(1).layoutPriority(1)
+                    Spacer()
+                    Toggle(isOn: $table.settings.moveAnyExistingSetToFront) {}
                 }
                 HStack {
                     Image(systemName: "wand.and.rays").frame(width: iconWidth)
                     Text("Plant Magic Square").lineLimit(1).layoutPriority(1)
+                    Spacer()
                     Toggle(isOn: $table.settings.plantInitialMagicSquare) {}
                 }
             }
@@ -57,12 +65,14 @@ struct SettingsView: View {
                     // Image(systemName: "magnifyingglass").frame(width: iconWidth)
                     Image(systemName: "list.number").frame(width: iconWidth)
                     Text("Show Found SETs").lineLimit(1).layoutPriority(1)
+                    Spacer()
                     Toggle(isOn: $table.settings.showFoundSets) {}
                 }
                 HStack {
                     // Image(systemName: "square.stack.3d.up").frame(width: iconWidth)
                     Image(systemName: "square.on.square").frame(width: iconWidth)
                     Text("Display Cards").lineLimit(1).layoutPriority(1)
+                    Spacer()
                     Picker("", selection: $table.settings.displayCardCount) {
                         ForEach(preferredDisplayCountCardChoices, id: \.self) {
                             Text(String($0))
@@ -72,6 +82,7 @@ struct SettingsView: View {
                 HStack {
                     Image(systemName: "square.grid.3x3").frame(width: iconWidth)
                     Text("Cards Per Row").lineLimit(1).layoutPriority(1)
+                    Spacer()
                     Picker("", selection: $table.settings.cardsPerRow) {
                         ForEach(cardsPerRowChoices, id: \.self) {
                             Text(String($0))
@@ -81,11 +92,13 @@ struct SettingsView: View {
                 HStack {
                     Image(systemName: "skew").frame(width: iconWidth)
                     Text("Skew Cards").lineLimit(1).layoutPriority(1)
+                    Spacer()
                     Toggle(isOn: $table.settings.cardsAskew) {}
                 }
                 HStack {
                     Image(systemName: "alternatingcurrent").frame(width: iconWidth)
                     Text("Alternate Cards").lineLimit(1).layoutPriority(1)
+                    Spacer()
                     Toggle(isOn: $table.settings.alternateCardImages) {}
                 }
             }
@@ -93,11 +106,13 @@ struct SettingsView: View {
                 HStack {
                     Image(systemName: "speaker.wave.2")
                     Text("Sounds")
+                    Spacer()
                     Toggle(isOn: $settings.sounds) {}
                 }
                 HStack {
                     Image(systemName: "water.waves")
                     Text("Haptics")
+                    Spacer()
                     Toggle(isOn: $settings.haptics) {}
                 }
             }
@@ -120,9 +135,9 @@ struct SettingsView: View {
                                                            : StandardDeck.instance.cards))
             }
             HStack {
-                Text("Version").font(.footnote)
+                Text("  Version").font(.footnote)
                 Spacer()
-                Text("\(version())").font(.footnote)
+                Text("\(version()) ").font(.footnote)
             }
         }
         .navigationTitle("Tricard Settings")
