@@ -20,7 +20,9 @@ struct StatusBarView: View {
     // let FOREGROUND: Color = Color(hex: 0x404252);
     // let FOREGROUND: Color = Color(hex: 0x738375);
     let FOREGROUND: Color = Color(hex: 0x283028);
-    let BACKGROUND: Color = Color(hex: 0xEDFDEF);
+    // let BACKGROUND: Color = Color(hex: 0xEDFDEF);
+    // let BACKGROUND: Color = Color(hex: 0xC4D8FF);
+    let BACKGROUND: Color = Color(hex: 0xD5E9FF);
     let SHAPE = RoundedRectangle(cornerRadius: 10, style: .continuous);
 
     // func partialSetSelectedOne() -> Bool { self.table.state.partialSetSelected && table.cards.count == 1; }
@@ -49,7 +51,7 @@ struct StatusBarView: View {
                 if (self.table.settings.showPartialSetSelectedIndicator) {
                     if (self.table.state.blinking || self.table.selectedCards().isSet()) {
                             Text(HAPPY_FACE_SYMBOL)
-                                .scaleEffect(1.15)
+                                .scaleEffect(1.2)
                                 .font(.subheadline)
                                 .frame(alignment: .leading)
                                 .foregroundColor(FOREGROUND)
@@ -58,7 +60,7 @@ struct StatusBarView: View {
                     else if (self.table.state.partialSetSelected) {
                         if (self.table.selectedCardCount() == 1) {
                             Text(OK_SYMBOL)
-                                .scaleEffect(1.15)
+                                .scaleEffect(1.2)
                                 .font(.subheadline)
                                 .frame(alignment: .leading)
                                 .foregroundColor(FOREGROUND)
@@ -66,7 +68,7 @@ struct StatusBarView: View {
                         }
                         else if (self.table.selectedCardCount() == 2) {
                             Text(THUMBSUP_SYMBOL)
-                                .scaleEffect(1.15)
+                                .scaleEffect(1.2)
                                 .font(.subheadline)
                                 .frame(alignment: .leading)
                                 .foregroundColor(FOREGROUND)
@@ -74,7 +76,7 @@ struct StatusBarView: View {
                         }
                         else {
                             Text(NEUTRAL_FACE_SYMBOL)
-                                .scaleEffect(1.15)
+                                .scaleEffect(1.2)
                                 .font(.subheadline)
                                 .frame(alignment: .leading)
                                 .foregroundColor(FOREGROUND)
@@ -83,28 +85,28 @@ struct StatusBarView: View {
                     }
                     else if ((self.table.selectedCardCount() == 1) || (self.table.selectedCardCount() == 2)) {
                         Text(SAD_FACE_SYMBOL)
-                            .scaleEffect(1.15)
+                            .scaleEffect(1.2)
                             .font(.subheadline)
                             .frame(alignment: .leading)
                             .padding(.trailing, 4)
                     }
                     else if (self.table.state.setJustFound || self.table.selectedCards().isSet()) {
                         Text(HAPPY_FACE_SYMBOL)
-                            .scaleEffect(1.15)
+                            .scaleEffect(1.2)
                             .font(.subheadline)
                             .frame(alignment: .leading)
                             .padding(.trailing, 4)
                     }
                     else if (self.table.state.setJustFoundNot) {
                         Text(SAD_FACE_SYMBOL)
-                            .scaleEffect(1.15)
+                            .scaleEffect(1.2)
                             .font(.subheadline)
                             .frame(alignment: .leading)
                             .padding(.trailing, 4)
                     }
                     else {
                         Text(NEUTRAL_FACE_SYMBOL)
-                            .scaleEffect(1.15)
+                            .scaleEffect(1.2)
                             .font(.subheadline)
                             .frame(alignment: .leading)
                             .padding(.trailing, 4)

@@ -40,7 +40,7 @@ struct TableView: View {
                                       cardsAskew: table.settings.cardsAskew)
                     }
                 }.offset(y: 4)
-            }.padding()
+            }.padding().offset(y: -6)
         } // .allowsHitTesting(!self.table.state.blinking && !self.table.settings.demoMode)
     }
 

@@ -1,10 +1,11 @@
 from PIL import Image, ImageDraw, ImageFont
-from draw import _get_image_width, _get_image_height, _draw_rectangle, _draw_diamond, _lighten_color, _normalize_code
+from draw import _get_image_width, _get_image_height, _draw_rectangle, _draw_diamond, _lighten_color, _normalize_code, _scale_image
 
 CARD_WIDTH              = 200
-CARD_HEIGHT             = 260
+CARD_HEIGHT             = 240
 CARD_BACKGROUND_COLOR   = "white"
-CARD_BORDER_COLOR       = "red"
+CARD_BORDER_COLOR       = "black"
+CARD_BORDER_COLOR       = "white"
 CARD_VERTICAL_OFFSETS   = [ [ 0 ], [-45, 45 ], [ -80, 0, 80 ] ]
 CARD_VERTICAL_OFFSETS   = [ [ 0 ], [-43, 43 ], [ -74, 0, 74 ] ]
 CARD_VERTICAL_OFFSETS   = [ [ 0 ], [-30, 30 ], [ -60, 0, 60 ] ]
@@ -52,11 +53,13 @@ def get_draw_function(shape, filling):
         elif filling == "stripe":
             return draw_rectangle_three_stripe
 
+FIGURE_WIDTH = CARD_WIDTH * 0.71
+
 def draw_rectangle(image, y, color, border_thickness=0, border_color=""):
     card_width = _get_image_width(image)
     card_height = _get_image_height(image)
     cx, cy = card_width // 2, card_height // 2 + y
-    sw = 142
+    sw = FIGURE_WIDTH + 8 # sw = 142
     sh = 51
     _draw_rectangle(image, cx,  cy, sw, sh,  color, rounding=0.2, border=border_thickness, border_color=border_color)
 
@@ -73,7 +76,7 @@ def draw_rectangle_two(image, y, color, border_thickness=0, border_color=""):
     card_width = _get_image_width(image)
     card_height = _get_image_height(image)
     cx, cy = card_width // 2, card_height // 2 + y
-    sw = 142 // 2
+    sw = FIGURE_WIDTH // 2 # sw = 142 // 2
     sh = 51
     cx_one = cx - 40
     cx_two = cx + 40
@@ -95,7 +98,7 @@ def draw_rectangle_three(image, y, color, border_thickness=0, border_color=""):
     card_width = _get_image_width(image)
     card_height = _get_image_height(image)
     cx, cy = card_width // 2, card_height // 2 + y
-    sw = 142 // 3 - 2
+    sw = FIGURE_WIDTH // 3 - 2 # sw = 142 // 3 - 2
     sh = 51
     cx_one = cx - 52
     cx_two = cx +  0
@@ -123,11 +126,38 @@ def draw_card(number, color, shape, filling):
         draw_function(image, vertical_offset, color)
     return image
 
+def draw_icon():
+    image = create_card_image()
+    draw_function_one = get_draw_function(SHAPES[0], FILLINGS[2])
+    draw_function_two = get_draw_function(SHAPES[1], FILLINGS[1])
+    draw_function_tre = get_draw_function(SHAPES[2], FILLINGS[0])
+    card_vertical_offsets = CARD_VERTICAL_OFFSETS[2]
+    card_vertical_offset_one = card_vertical_offsets[1]
+    card_vertical_offset_two = card_vertical_offsets[0]
+    card_vertical_offset_tre = card_vertical_offsets[2]
+    color_one = COLORS[0]
+    color_two = COLORS[1]
+    color_tre = COLORS[2]
+    draw_function_one(image, card_vertical_offset_one, color_one)
+    draw_function_two(image, card_vertical_offset_two, color_two)
+    draw_function_tre(image, card_vertical_offset_tre, color_tre)
+    tmp_file = "/tmp/setc/tmp.png"
+    image.save(tmp_file)
+    icon_file_180_180 = filepath_icon(f"icon_180_180")
+    icon_file_120_120 = filepath_icon(f"icon_120_120")
+    _scale_image(tmp_file, icon_file_120_120, 120, 120)
+    _scale_image(tmp_file, icon_file_180_180, 180, 180)
+
+def filepath_icon(name):
+    directory = "/Users/dmichaels/repos/ios-setgame/SetGame/Assets.xcassets/AppIcon.appiconset"
+    return f"{directory}/{name}.png"
+
 def filepath(code):
     # directory = "/tmp/setc"
     directory = f"/Users/dmichaels/repos/ios-setgame/SetGame/Assets.xcassets/{code}.imageset"
     return f"{directory}/{code}.png"
 
+draw_icon()
 for icolor, color in enumerate(COLORS):
     for ishape, shape in enumerate(SHAPES):
         for ifilling, filling in enumerate(FILLINGS):
@@ -137,8 +167,6 @@ for icolor, color in enumerate(COLORS):
                 file = filepath(code)
                 print(file)
                 image.save(file)
-                # TODO
-                image.save(f"/tmp/setc/{code}.png")
 
 #image = create_card_image()
 #draw_rectangle(image, 20, "#4E824E")

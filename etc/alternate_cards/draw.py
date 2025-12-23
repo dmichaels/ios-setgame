@@ -497,3 +497,23 @@ def _normalize_code(code, prefix = "ALT_"):
         normalized_code += "3"
 
     return normalized_code
+
+def _scale_image(source_path, target_path, target_width, target_height, background=(255, 255, 255)):
+    img = Image.open(source_path).convert("RGB")
+
+    # Scale proportionally
+    scale = min(target_width / img.width, target_height / img.height)
+    new_w = int(img.width * scale)
+    new_h = int(img.height * scale)
+
+    img = img.resize((new_w, new_h), Image.LANCZOS)
+
+    # Create square canvas
+    canvas = Image.new("RGB", (target_width, target_height), background)
+
+    # Center paste
+    x = (target_width - new_w) // 2
+    y = (target_height - new_h) // 2
+    canvas.paste(img, (x, y))
+
+    canvas.save(target_path, "PNG")
