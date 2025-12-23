@@ -532,6 +532,7 @@
 				DEVELOPMENT_TEAM = N76S683655;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = SetGame/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.card-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -561,6 +562,7 @@
 				DEVELOPMENT_TEAM = N76S683655;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = SetGame/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.card-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
