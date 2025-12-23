@@ -54,12 +54,14 @@ struct SettingsView: View {
             }
             Section(header: Text("Visual")) {
                 HStack {
-                    Image(systemName: "magnifyingglass").frame(width: iconWidth)
+                    // Image(systemName: "magnifyingglass").frame(width: iconWidth)
+                    Image(systemName: "list.number").frame(width: iconWidth)
                     Text("Show Found SETs").lineLimit(1).layoutPriority(1)
                     Toggle(isOn: $table.settings.showFoundSets) {}
                 }
                 HStack {
-                    Image(systemName: "square.stack.3d.up").frame(width: iconWidth)
+                    // Image(systemName: "square.stack.3d.up").frame(width: iconWidth)
+                    Image(systemName: "square.on.square").frame(width: iconWidth)
                     Text("Display Cards").lineLimit(1).layoutPriority(1)
                     Picker("", selection: $table.settings.displayCardCount) {
                         ForEach(preferredDisplayCountCardChoices, id: \.self) {
@@ -111,7 +113,8 @@ struct SettingsView: View {
                     }
                 }
                 navigationRow("SET Stats", icon: "chart.bar", destination: StatsView())
-                navigationRow("SET Cards", icon: "square.stack.3d.down.forward",
+                // navigationRow("SET Cards", icon: "square.stack.3d.down.forward",
+                navigationRow("SET Cards", icon: "square.stack.3d.up",
                               destination: DeckView(cards: table.settings.useSimpleDeck
                                                            ? StandardDeck.instanceSimple.cards
                                                            : StandardDeck.instance.cards))
