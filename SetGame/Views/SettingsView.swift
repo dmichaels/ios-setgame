@@ -120,6 +120,7 @@ struct SettingsView: View {
                 HStack {
                     Image(systemName: "atom").frame(width: iconWidth)
                     Text("Simplified Deck").lineLimit(1).layoutPriority(1)
+                    Spacer()
                     Toggle(isOn: $table.settings.useSimpleDeck) {}
                 }
                 if (false) {
