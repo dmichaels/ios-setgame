@@ -126,7 +126,7 @@ def draw_card(number, color, shape, filling):
         draw_function(image, vertical_offset, color)
     return image
 
-def draw_icon():
+def draw_icons():
     image = create_card_image()
     draw_function_one = get_draw_function(SHAPES[0], FILLINGS[2])
     draw_function_two = get_draw_function(SHAPES[1], FILLINGS[1])
@@ -145,8 +145,18 @@ def draw_icon():
     image.save(tmp_file)
     icon_file_180_180 = filepath_icon(f"icon_180_180")
     icon_file_120_120 = filepath_icon(f"icon_120_120")
-    _scale_image(tmp_file, icon_file_120_120, 120, 120)
-    _scale_image(tmp_file, icon_file_180_180, 180, 180)
+    # icon_ipad_app_76pt_152_152 = (f"/tmp/setc/icon_ipad_app_76pt_152_152.png")
+    # icon_app_store_ios_1024pt_1024_1024 = (f"/tmp/setc/icon_app_store_ios_1024pt_1024_1024.png")
+    icon_ipad_app_76pt_152_152 = filepath_icon(f"icon_ipad_app_76pt_152_152.png")
+    icon_app_store_ios_1024pt_1024_1024 = filepath_icon(f"icon_app_store_ios_1024pt_1024_1024.png")
+    _scale_image(tmp_file, icon_file_120_120,                   120,  120)
+    _scale_image(tmp_file, icon_file_180_180,                   180,  180)
+    _scale_image(tmp_file, icon_ipad_app_76pt_152_152,          152,  152)
+    _scale_image(tmp_file, icon_app_store_ios_1024pt_1024_1024, 1024, 1024)
+    print(icon_file_180_180)
+    print(icon_file_120_120)
+    print(icon_ipad_app_76pt_152_152)
+    print(icon_app_store_ios_1024pt_1024_1024)
 
 def filepath_icon(name):
     directory = "/Users/dmichaels/repos/ios-setgame/SetGame/Assets.xcassets/AppIcon.appiconset"
@@ -157,7 +167,6 @@ def filepath(code):
     directory = f"/Users/dmichaels/repos/ios-setgame/SetGame/Assets.xcassets/{code}.imageset"
     return f"{directory}/{code}.png"
 
-draw_icon()
 for icolor, color in enumerate(COLORS):
     for ishape, shape in enumerate(SHAPES):
         for ifilling, filling in enumerate(FILLINGS):
@@ -167,6 +176,7 @@ for icolor, color in enumerate(COLORS):
                 file = filepath(code)
                 print(file)
                 image.save(file)
+draw_icons()
 
 #image = create_card_image()
 #draw_rectangle(image, 20, "#4E824E")

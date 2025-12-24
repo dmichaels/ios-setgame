@@ -128,9 +128,9 @@ struct SettingsView: View {
                         Text("Demo Mode")
                     }
                 }
-                navigationRow("SET Stats", icon: "chart.bar", destination: StatsView())
+                navigationRow("LogiCard SET Stats", icon: "chart.bar", destination: StatsView())
                 // navigationRow("SET Cards", icon: "square.stack.3d.down.forward",
-                navigationRow("SET Cards", icon: "square.stack.3d.up",
+                navigationRow("LogiCard Deck", icon: "square.stack.3d.up",
                               destination: DeckView(cards: table.settings.useSimpleDeck
                                                            ? StandardDeck.instanceSimple.cards
                                                            : StandardDeck.instance.cards))
