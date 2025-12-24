@@ -18,9 +18,14 @@ struct FoundSetsView: View {
                         let card: TableCard = row[j];
                         if (j == 3) { separator(visible: true) }
                         CardView(card: card)
-                            .frame(width: cardWidth)
+                            // .frame(width: cardWidth)
                             .slightlyRotated(cardsAskew)
                         if ((j == 2) && (row.count == 3)) { separator(visible: false) }
+                    }
+                    if (row.count == 3) {
+                        Image("DUMMY").resizable().aspectRatio(contentMode: .fit)
+                        Image("DUMMY").resizable().aspectRatio(contentMode: .fit)
+                        Image("DUMMY").resizable().aspectRatio(contentMode: .fit)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

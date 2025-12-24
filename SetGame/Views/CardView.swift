@@ -103,15 +103,3 @@ private struct SlightRandomRotation: ViewModifier {
         content.rotationEffect(.degrees(angle));
     }
 }
-
-/*
-struct CardView_Previews: PreviewProvider {
-    static func touchedCallback(_ card : TableCard) {
-        card.selected.toggle();
-    }
-    static var previews: some View {
-        let _ : TableCard = TableCard("PQT3")!;
-        CardView(card: TableCard(), touchedCallback: touchedCallback);
-    }
-}
-*/
