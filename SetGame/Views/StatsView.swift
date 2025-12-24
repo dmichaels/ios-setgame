@@ -170,6 +170,6 @@ struct StatsView: View  {
                 self.isViewDisplayed = false
             }
             
-        }.navigationTitle("Tricard Stats")
+        }.navigationTitle("LogiCard Stats")
     }
 }

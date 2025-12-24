@@ -10,7 +10,7 @@ struct ContentView: View {
  //                                                    haptics: Defaults.haptics)
 
     // let title: String = "SET Game"
-    let title: String = "Tricard"
+    let title: String = "LogiCard"
 
 var body: some View {
     NavigationView {

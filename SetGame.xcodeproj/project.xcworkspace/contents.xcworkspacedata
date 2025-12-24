@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/dmichaels/home/dev/xcode/SetGame/SetGame.xcodeproj">
+      location = "self:">
    </FileRef>
 </Workspace>

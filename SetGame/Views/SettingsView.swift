@@ -141,7 +141,7 @@ struct SettingsView: View {
                 Text("\(version()) ").font(.footnote)
             }
         }
-        .navigationTitle("Tricard Settings")
+        .navigationTitle("LogiCard Settings")
         .onDisappear {
             self.settings.version += 1
         }
