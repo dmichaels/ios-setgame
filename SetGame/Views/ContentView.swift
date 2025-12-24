@@ -5,7 +5,7 @@ struct ContentView: View {
     @EnvironmentObject var table : Table;
     @EnvironmentObject var settings : Settings;
     @EnvironmentObject var feedback : Feedback;
-    @State private var showSettingsView = false;
+    @State private var showSettingsView = true; // xyzzy
 //    @State private var feedback: Feedback = Feedback(sounds: Defaults.sounds,
  //                                                    haptics: Defaults.haptics)
 

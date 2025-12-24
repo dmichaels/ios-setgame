@@ -53,63 +53,56 @@ struct StatusBarView: View {
                             Text(HAPPY_FACE_SYMBOL)
                                 .scaleEffect(1.2)
                                 .font(.subheadline)
-                                .frame(alignment: .leading)
                                 .foregroundColor(FOREGROUND)
-                                .padding(.trailing, 4)
+                                .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
                     }
                     else if (self.table.state.partialSetSelected) {
                         if (self.table.selectedCardCount() == 1) {
                             Text(OK_SYMBOL)
                                 .scaleEffect(1.2)
                                 .font(.subheadline)
-                                .frame(alignment: .leading)
                                 .foregroundColor(FOREGROUND)
-                                .padding(.trailing, 4)
+                                .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
                         }
                         else if (self.table.selectedCardCount() == 2) {
                             Text(THUMBSUP_SYMBOL)
                                 .scaleEffect(1.2)
                                 .font(.subheadline)
-                                .frame(alignment: .leading)
                                 .foregroundColor(FOREGROUND)
-                                .padding(.trailing, 4)
+                                .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
                         }
                         else {
                             Text(NEUTRAL_FACE_SYMBOL)
                                 .scaleEffect(1.2)
                                 .font(.subheadline)
-                                .frame(alignment: .leading)
                                 .foregroundColor(FOREGROUND)
-                                .padding(.trailing, 4)
+                                .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
                         }
                     }
                     else if ((self.table.selectedCardCount() == 1) || (self.table.selectedCardCount() == 2)) {
                         Text(SAD_FACE_SYMBOL)
                             .scaleEffect(1.2)
                             .font(.subheadline)
-                            .frame(alignment: .leading)
-                            .padding(.trailing, 4)
+                            .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
                     }
                     else if (self.table.state.setJustFound || self.table.selectedCards().isSet()) {
                         Text(HAPPY_FACE_SYMBOL)
                             .scaleEffect(1.2)
                             .font(.subheadline)
-                            .frame(alignment: .leading)
-                            .padding(.trailing, 4)
+                            .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
                     }
                     else if (self.table.state.setJustFoundNot) {
                         Text(SAD_FACE_SYMBOL)
                             .scaleEffect(1.2)
                             .font(.subheadline)
-                            .frame(alignment: .leading)
-                            .padding(.trailing, 4)
+                            .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
                     }
                     else {
                         Text(NEUTRAL_FACE_SYMBOL)
                             .scaleEffect(1.2)
                             .font(.subheadline)
                             .frame(alignment: .leading)
-                            .padding(.trailing, 4)
+                            .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
                     }
                 }
             if (self.table.settings.showNumberOfSetsPresent) {
@@ -120,14 +113,12 @@ struct StatusBarView: View {
                     .fixedSize()
                     .padding(.horizontal, 5)
                     .padding(.vertical, 1.0)
-                    .padding(.trailing, 1)
                     .offset(y: 0)
                     .overlay(
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            // .stroke(Color(UIColor.separator), lineWidth: 1)
                             .stroke(FOREGROUND, lineWidth: 1)
                     )
-                    .padding(.trailing, 3)
+                    .padding(.trailing, settings.showPeekButton ? 3 : 10)
                 }
             if (settings.showPeekButton) {
                 Button(action: {
@@ -142,7 +133,7 @@ struct StatusBarView: View {
                     Image(systemName: "eyes")
                         .foregroundColor(self.table.containsSet() ? FOREGROUND : Color.gray)
                         .scaleEffect(1.05)
-                        .padding(.trailing, 6)
+                        .padding(.trailing, 8)
                         .offset(y: 0.5)
                 }
             }
