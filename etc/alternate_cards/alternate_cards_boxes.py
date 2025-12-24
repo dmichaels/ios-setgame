@@ -4,7 +4,6 @@ from draw import _get_image_width, _get_image_height, _draw_rectangle, _draw_dia
 CARD_WIDTH              = 200
 CARD_HEIGHT             = 240
 CARD_BACKGROUND_COLOR   = "white"
-CARD_BORDER_COLOR       = "black"
 CARD_BORDER_COLOR       = "white"
 CARD_VERTICAL_OFFSETS   = [ [ 0 ], [-45, 45 ], [ -80, 0, 80 ] ]
 CARD_VERTICAL_OFFSETS   = [ [ 0 ], [-43, 43 ], [ -74, 0, 74 ] ]
@@ -177,6 +176,9 @@ for icolor, color in enumerate(COLORS):
                 print(file)
                 image.save(file)
 draw_icons()
+
+image = create_card_image()
+image.save(filepath("DUMMY"))
 
 #image = create_card_image()
 #draw_rectangle(image, 20, "#4E824E")
