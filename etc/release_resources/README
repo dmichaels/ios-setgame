@@ -1,0 +1,10 @@
+o Used this site to get nicer screenshot with device frame:
+  - https://mockuphone.com
+    - Save screenshot from xcode simulator locally via XCode (iPhone) Simulator > File > Save Screen
+    - Got to https://mockuphone.com
+    - Choose device (e.g. iPhone 15)
+    - Drag saved screenshot to "Upload Image Here" box
+    - Click "Generate produt mockups" button (on right)
+    - Should see zip file in ~/Downloads e.g. ~/Downloads/apple-iphone-15-black-mockup
+    - Look inside the zip and see relevant file e.g. Simulator Screenshot - iPhone 15 Pro - 2025-07-23 at 08.27.39-portrait.png
+    - Renamed and copied these to this directory
