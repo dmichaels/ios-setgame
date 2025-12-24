@@ -1,5 +1,5 @@
 <h1 style="display:flex; align-items:center; gap:10px;">
-  <img src="support_icon.png" alt="LogiCard Icon" width="36">
+  <img src="support_icon.png" alt="LogiCard Icon" width="56">
   LogiCard Support
 </h1>
 
