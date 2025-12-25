@@ -6,13 +6,10 @@ struct ContentView: View {
     @EnvironmentObject var settings : Settings;
     @EnvironmentObject var feedback : Feedback;
     @State private var showSettingsView = false;
-//    @State private var feedback: Feedback = Feedback(sounds: Defaults.sounds,
- //                                                    haptics: Defaults.haptics)
 
-    // let title: String = "SET Game"
     let title: String = "LogiCard"
 
-var body: some View {
+    var body: some View {
     NavigationView {
         ZStack {
             TableView()
@@ -73,7 +70,7 @@ var body: some View {
                 EmptyView()
             }.hidden()
         }
-    } // .padding(.top, 4).offset(y: -10)
+    }
 }
 }
 
