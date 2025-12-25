@@ -10,3 +10,5 @@ DerivedData/
 
 .swiftpm/
 .build/
+
+SetGame/GitInfo.swift

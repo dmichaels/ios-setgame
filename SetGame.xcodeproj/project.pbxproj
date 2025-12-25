@@ -34,6 +34,7 @@
 		989FF92125F10BA7002AE44A /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989FF92025F10BA7002AE44A /* TableView.swift */; };
 		989FF92625F10F08002AE44A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989FF92525F10F08002AE44A /* SettingsView.swift */; };
 		989FF92B25F11872002AE44A /* StatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989FF92A25F11872002AE44A /* StatusBarView.swift */; };
+		98A5C73D2EFD9F86009E708D /* GitInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A5C73C2EFD9F86009E708D /* GitInfo.swift */; };
 		98C2CA8225F3C1E40050ACDC /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2CA8125F3C1E40050ACDC /* StatsView.swift */; };
 		98E4E3232773B0AC000EEC5A /* SetGame.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98E4E3222773B0AC000EEC5A /* SetGame.xcassets */; };
 /* End PBXBuildFile section */
@@ -89,6 +90,7 @@
 		989FF92025F10BA7002AE44A /* TableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
 		989FF92525F10F08002AE44A /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		989FF92A25F11872002AE44A /* StatusBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusBarView.swift; sourceTree = "<group>"; };
+		98A5C73C2EFD9F86009E708D /* GitInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitInfo.swift; sourceTree = "<group>"; };
 		98C2CA8125F3C1E40050ACDC /* StatsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		98E4E3222773B0AC000EEC5A /* SetGame.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SetGame.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -142,6 +144,7 @@
 		981190EE25ED59CC0083606B /* SetGame */ = {
 			isa = PBXGroup;
 			children = (
+				98A5C73C2EFD9F86009E708D /* GitInfo.swift */,
 				9811914F25ED5CFE0083606B /* Views */,
 				9811911D25ED5A0C0083606B /* Model */,
 				981190EF25ED59CC0083606B /* SetGameApp.swift */,
@@ -371,6 +374,7 @@
 				989FF92125F10BA7002AE44A /* TableView.swift in Sources */,
 				9811914225ED5ACF0083606B /* Deck.swift in Sources */,
 				981190F225ED59CC0083606B /* ContentView.swift in Sources */,
+				98A5C73D2EFD9F86009E708D /* GitInfo.swift in Sources */,
 				9811914925ED5ACF0083606B /* String.swift in Sources */,
 				9811914425ED5ACF0083606B /* Card.swift in Sources */,
 				989D93692EE8B01D00BE461B /* Stats.swift in Sources */,
