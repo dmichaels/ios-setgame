@@ -76,7 +76,7 @@ struct ContentView: View {
     // look normal and not split screen on iPad.
     //
     .navigationViewStyle(.stack)
-}
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
