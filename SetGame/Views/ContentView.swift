@@ -71,6 +71,11 @@ struct ContentView: View {
             }.hidden()
         }
     }
+    //
+    // This line is necessary to make the app
+    // look normal and not split screen on iPad.
+    //
+    .navigationViewStyle(.stack)
 }
 }
 
