@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -34,6 +34,7 @@
 		989FF92125F10BA7002AE44A /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989FF92025F10BA7002AE44A /* TableView.swift */; };
 		989FF92625F10F08002AE44A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989FF92525F10F08002AE44A /* SettingsView.swift */; };
 		989FF92B25F11872002AE44A /* StatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989FF92A25F11872002AE44A /* StatusBarView.swift */; };
+		98A5C7352EFD9CA7009E708D /* GitInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A5C7342EFD9CA7009E708D /* GitInfo.swift */; };
 		98C2CA8225F3C1E40050ACDC /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2CA8125F3C1E40050ACDC /* StatsView.swift */; };
 		98E4E3232773B0AC000EEC5A /* SetGame.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98E4E3222773B0AC000EEC5A /* SetGame.xcassets */; };
 /* End PBXBuildFile section */
@@ -89,6 +90,7 @@
 		989FF92025F10BA7002AE44A /* TableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
 		989FF92525F10F08002AE44A /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		989FF92A25F11872002AE44A /* StatusBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusBarView.swift; sourceTree = "<group>"; };
+		98A5C7342EFD9CA7009E708D /* GitInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitInfo.swift; sourceTree = "<group>"; };
 		98C2CA8125F3C1E40050ACDC /* StatsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		98E4E3222773B0AC000EEC5A /* SetGame.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SetGame.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -181,6 +183,7 @@
 		9811911D25ED5A0C0083606B /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				98A5C7342EFD9CA7009E708D /* GitInfo.swift */,
 				989D93762EF5F30200BE461B /* Math.swift */,
 				989D93722EF4BEDB00BE461B /* Feedback.swift */,
 				989D936E2EF21DEF00BE461B /* Settings.swift */,
@@ -222,6 +225,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9811911125ED59CD0083606B /* Build configuration list for PBXNativeTarget "SetGame" */;
 			buildPhases = (
+				98A5C7332EFD6E64009E708D /* ShellScript */,
 				981190E825ED59CC0083606B /* Sources */,
 				981190E925ED59CC0083606B /* Frameworks */,
 				981190EA25ED59CC0083606B /* Resources */,
@@ -340,6 +344,27 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		98A5C7332EFD6E64009E708D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 12;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\ncd \"${SRCROOT}\"\n\nCOMMIT_HASH=\"$(git rev-parse --short HEAD 2>/dev/null || echo nogit)\"\n\nOUT_FILE=\"${SRCROOT}/SetGame/Model/GitInfo.swift\"\n\nmkdir -p \"$(dirname \"${OUT_FILE}\")\"\n\ncat > \"${OUT_FILE}\" <<EOF\n// This file is auto-generated. Do not edit.\n\nenum GitInfo {\n    static let commit = \"${COMMIT_HASH}\"\n}\nEOF\n\necho \"Generated GitInfo.swift with commit ${COMMIT_HASH}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		981190E825ED59CC0083606B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -349,6 +374,7 @@
 				989FF92125F10BA7002AE44A /* TableView.swift in Sources */,
 				9811914225ED5ACF0083606B /* Deck.swift in Sources */,
 				981190F225ED59CC0083606B /* ContentView.swift in Sources */,
+				98A5C7352EFD9CA7009E708D /* GitInfo.swift in Sources */,
 				9811914925ED5ACF0083606B /* String.swift in Sources */,
 				9811914425ED5ACF0083606B /* Card.swift in Sources */,
 				989D93692EE8B01D00BE461B /* Stats.swift in Sources */,

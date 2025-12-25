@@ -138,8 +138,13 @@ struct SettingsView: View {
             HStack {
                 Text("  Version").font(.footnote)
                 Spacer()
-                // Text("\(version()) ").font(.footnote)
                 Text("\(AppVersionInfo.version).\(AppVersionInfo.build) ").font(.footnote)
+            }
+            HStack {
+                Text("  Commit ID").font(.footnote)
+                Spacer()
+                // Text("\(AppVersionInfo.gitCommit) ").font(.footnote)
+                Text("\(GitInfo.commit) ").font(.footnote)
             }
         }
         .navigationTitle("LogiCard Settings")
@@ -170,4 +175,7 @@ struct AppVersionInfo {
 
     static let build: String =
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
+    static var gitCommit: String {
+        Bundle.main.infoDictionary?["GitCommit"] as? String ?? "unknown"
+    }
 }
