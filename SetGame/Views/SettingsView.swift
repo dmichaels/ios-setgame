@@ -138,7 +138,8 @@ struct SettingsView: View {
             HStack {
                 Text("  Version").font(.footnote)
                 Spacer()
-                Text("\(version()) ").font(.footnote)
+                // Text("\(version()) ").font(.footnote)
+                Text("\(AppVersionInfo.version).\(AppVersionInfo.build) ").font(.footnote)
             }
         }
         .navigationTitle("LogiCard Settings")
@@ -162,4 +163,11 @@ struct SettingsView: View {
         let build: String? = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
         return (version ?? "version") + (build ?? "build")
     }
+}
+struct AppVersionInfo {
+    static let version: String =
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+
+    static let build: String =
+        Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
 }
