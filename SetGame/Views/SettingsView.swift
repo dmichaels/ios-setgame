@@ -22,7 +22,7 @@ struct SettingsView: View {
                 }
                 HStack {
                     Image(systemName: "number.square").frame(width: iconWidth)
-                    Text("Available SETs Count").lineLimit(1).layoutPriority(1)
+                    Text("Available SET Count").lineLimit(1).layoutPriority(1)
                     Spacer()
                     Toggle(isOn: $table.settings.showNumberOfSetsPresent) {}
                 }
