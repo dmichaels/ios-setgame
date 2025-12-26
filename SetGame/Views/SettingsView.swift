@@ -132,7 +132,7 @@ struct SettingsView: View {
                                                            : StandardDeck.instance.cards))
             }
             HStack {
-                Text("  Version ID").font(.footnote)
+                Text("  Version").font(.footnote)
                 Spacer()
                 Text("\(VersionInfo.version).\(VersionInfo.build) ").font(.footnote)
             }

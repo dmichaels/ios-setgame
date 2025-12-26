@@ -340,23 +340,130 @@ extension Array where Element : Card {
 
     /// Returns the number of unique SETs in this array.
     ///
-    func numberOfSets() -> Int {
-        var nsets: Int = 0;
-        self.enumerateSets() { _ in nsets += 1; }
-        return nsets;
+    func numberOfSets(disjoint: Bool = false) -> Int {
+        return self.enumerateSets(disjoint: disjoint).count;
     }
 
     /// Identifies/enumerates any/all SETs in this array and returns them in an array
-    /// of array of cards, each representing a unique (possibily overlaping) SET
-    /// within this array. If no SETs exist then returns an empty array.
+    /// of array of cards, each representing a unique (possibily overlapping) SET
+    /// within this array. The order of the returned array is in no particualr order.
+    /// If the limit argument is greater than zero then the result set will be limited
+    /// to a maximum of that number. If no SETs exist then returns an empty array.
+    /// If the disjoint argument is true then the SETs identified will be limited
+    /// to the maximum number of those which do not share any cards in common.
     ///
-    func enumerateSets(limit: Int = 0) -> [[Element]] {
+    /// FYI the support for disjoint SETs was done with the help of ChatGPT, which
+    /// claims that this is a "set-packing problem" which can be, in general, an
+    /// NP-hard problem; but that for a small such as SET Game, a simple
+    /// backtracking search provides a fast and accurate solution.
+    ///
+    func enumerateSets(limit: Int = 0, disjoint: Bool = false) -> [[Element]] {
+
+        var sets: [[Element]] = [[Element]]();
+
+        if (!disjoint) {
+            //
+            // Default case of non-disjoint (possibly overlapping) set of SETs.
+            //
+            self.enumerateSets(limit: limit) { sets.append($0); }
+            return sets;
+        }
+
+        // Here we want the disjoint set of SETs (see above comment WRT ChatGPT). 
+
+        if (self.count > 63) {
+            //
+            // Hard, and absolutely reasonably, upper bound of
+            // 63 (for the UInt64 bit-mask) for what to look at.
+            //
+            return [];
+        }
+
+        self.enumerateSets() { sets.append($0); }
+
+        // Convert each set to a bitmask of indices in
+        // self (assumes cards are unique on the table).
+
+        var candidates: [SetEnumerationCandidate] = [];
+
+        candidates.reserveCapacity(sets.count);
+
+        for set in sets {
+            var mask: UInt64 = 0;
+            var okay = true;
+            for card in set {
+                guard let index = self.firstIndex(of: card) else {
+                    okay = false;
+                    break;
+                }
+                mask |= (UInt64(1) << UInt64(index));
+            }
+            if (okay) {
+                candidates.append(SetEnumerationCandidate(mask: mask, set: set));
+            }
+        }
+
+        // Optional heuristic: Try more-constraining SETs first; since SET
+        // sizes are alway 3, not so much; but still keeps it deterministic.
+
+        candidates.sort { $0.mask.nonzeroBitCount > $1.mask.nonzeroBitCount }
+
+        // Backtracking to find a maximum disjoint
+        // collection, respecting limit if greater than zero.
+
+        var best: [SetEnumerationCandidate] = [];
+        var chosen: [SetEnumerationCandidate] = [];
+
+        func depthFirstSearch(_ start: Int, _ used: UInt64) {
+            if (chosen.count > best.count) {
+                best = chosen; // update best
+            }
+            if ((limit > 0) && (best.count >= limit)) {
+                return; // already hit target
+            }
+            if (start >= candidates.count) {
+                return;
+            }
+            //
+            // Simple upper-bound prune;
+            // even taking everything remaining can't beat best.
+            //
+            let remaining = candidates.count - start;
+            if ((chosen.count + remaining) <= best.count) {
+                return;
+            }
+            for i in start..<candidates.count {
+                let c = candidates[i];
+                if ((used & c.mask) != 0) {
+                    continue; // skip overlaps
+                }
+                chosen.append(c);
+                depthFirstSearch(i + 1, used | c.mask);
+                chosen.removeLast();
+                if ((limit > 0) && (best.count >= limit)) {
+                    return;
+                }
+            }
+        }
+
+        depthFirstSearch(0, 0);
+        let result: [[Element]] = best.map { $0.set }
+        return (limit > 0) ? result.prefix(limit).map { $0 } : result;
+    }
+
+    fileprivate struct SetEnumerationCandidate {
+        let mask: UInt64
+        let set: [Element]
+    }
+
+    func old_enumerateSets(limit: Int = 0, disjoint: Bool = false) -> [[Element]] {
         var sets: [[Element]] = [[Element]]();
         self.enumerateSets(limit: limit) { sets.append($0); }
         return sets;
     }
 
-    func enumerateSets(limit: Int = 0, _ handler : ([Element]) -> Void) {
+
+    private func enumerateSets(limit: Int = 0, _ handler : ([Element]) -> Void) {
         var nsets: Int = 0;
         if (self.count > 2) {
             for i in 0..<(self.count - 2) {
