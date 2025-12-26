@@ -4,6 +4,7 @@ struct SettingsView: View {
     
     @EnvironmentObject var table : Table;
     @EnvironmentObject var settings : Settings;
+
     let cardsPerRowChoices: [Int] = [ 2, 3, 4, 5, 6 ];
     let preferredDisplayCountCardChoices: [Int] = [ 3, 4, 6, 9, 12, 15, 16, 18, 20 ];
     let limitDeckSizeChoices: [Int] = [ 18, 27, 36, 45, 54, 63, 72, 81 ];
@@ -138,13 +139,12 @@ struct SettingsView: View {
             HStack {
                 Text("  Version").font(.footnote)
                 Spacer()
-                Text("\(AppVersionInfo.version).\(AppVersionInfo.build) ").font(.footnote)
+                Text("\(VersionInfo.version).\(VersionInfo.build) ").font(.footnote)
             }
             HStack {
                 Text("  Commit ID").font(.footnote)
                 Spacer()
-                // Text("\(AppVersionInfo.gitCommit) ").font(.footnote)
-                Text("\(GitInfo.commit) ").font(.footnote)
+                Text("\(VersionInfo.commit) ").font(.footnote)
             }
         }
         .navigationTitle("LogiCard Settings")
@@ -161,21 +161,5 @@ struct SettingsView: View {
             }
             .contentShape(Rectangle()) // makes whole row tap-able
         }
-    }
-
-    private func version() -> String {
-        let version: String? = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-        let build: String? = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
-        return (version ?? "version") + (build ?? "build")
-    }
-}
-struct AppVersionInfo {
-    static let version: String =
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
-
-    static let build: String =
-        Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
-    static var gitCommit: String {
-        Bundle.main.infoDictionary?["GitCommit"] as? String ?? "unknown"
     }
 }
