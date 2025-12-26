@@ -130,7 +130,6 @@ struct SettingsView: View {
                     }
                 }
                 navigationRow("LogiCard SET Stats", icon: "chart.bar", destination: StatsView())
-                // navigationRow("SET Cards", icon: "square.stack.3d.down.forward",
                 navigationRow("LogiCard Deck", icon: "square.stack.3d.up",
                               destination: DeckView(cards: table.settings.useSimpleDeck
                                                            ? StandardDeck.instanceSimple.cards
