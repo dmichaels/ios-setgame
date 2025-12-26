@@ -36,9 +36,9 @@ struct TableView: View {
                         FoundSetsView(setsLastFound: table.state.setsLastFound,
                                       cardsAskew: table.settings.cardsAskew)
                     }
-                } // .offset(y: 4)
+                }
             }.padding().offset(y: -12)
-        } // .allowsHitTesting(!self.table.state.blinking && !self.table.settings.demoMode)
+        }
     }
 
     // N.B. ChatGPT helped here.
@@ -80,12 +80,3 @@ struct TableView: View {
         }
     }
 }
-
-/*
-struct TableView_Previews: PreviewProvider {
-    static var previews: some View {
-        TableView()
-            .environmentObject(Table(displayCardCount: 12, plantSet: true))
-    }
-}
-*/

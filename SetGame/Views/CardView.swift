@@ -9,7 +9,7 @@ public struct CardView : View {
     let alternateCardImagePrefix : String = "ALTD_";
 
     public var body : some View {
-        if (table.state.blinking /*card.blinking*/) {
+        if (table.state.blinking) {
             //
             // ODDITY:
             // Had to duplicate this whole thing here, WITHOUT the rotation3DEffect animation

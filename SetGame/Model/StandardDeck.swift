@@ -1,3 +1,5 @@
+import SwiftUI
+
 class StandardDeck : Deck<Card> {
 
     static let instance       : StandardDeck = StandardDeck();
@@ -24,11 +26,6 @@ class StandardDeck : Deck<Card> {
         let deck = StandardDeck();
         let a = deck.randomCard();
         let b = deck.randomCard();
-        /*
-        let a = deck.takeRandomCard()!;
-        let b = deck.takeRandomCard()!;
-        */
-        let c = Card.matchingSetValue(a, b);
-        return [a, b, c];
+        return [a, b, Card.matchingSetValue(a, b)];
     }
 }

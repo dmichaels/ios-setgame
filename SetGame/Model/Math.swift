@@ -1,6 +1,5 @@
 import Foundation
 
-
 struct Math {
 
     public static func combinations(_ n: Int, _ k: Int) -> Int {

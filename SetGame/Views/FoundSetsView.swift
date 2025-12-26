@@ -23,9 +23,9 @@ struct FoundSetsView: View {
                         if ((j == 2) && (row.count == 3)) { separator(visible: false) }
                     }
                     if (row.count == 3) {
-                        Image("DUMMY").resizable().aspectRatio(contentMode: .fit)
-                        Image("DUMMY").resizable().aspectRatio(contentMode: .fit)
-                        Image("DUMMY").resizable().aspectRatio(contentMode: .fit)
+                        DummyCardView()
+                        DummyCardView()
+                        DummyCardView()
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -62,5 +62,13 @@ struct FoundSetsView: View {
             i += 2;
         }
         return result;
+    }
+}
+
+public struct DummyCardView: View {
+    public var body: some View {
+        Image("DUMMY")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
     }
 }

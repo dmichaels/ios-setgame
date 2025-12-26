@@ -34,7 +34,6 @@
 		989FF92125F10BA7002AE44A /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989FF92025F10BA7002AE44A /* TableView.swift */; };
 		989FF92625F10F08002AE44A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989FF92525F10F08002AE44A /* SettingsView.swift */; };
 		989FF92B25F11872002AE44A /* StatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989FF92A25F11872002AE44A /* StatusBarView.swift */; };
-		98A5C7402EFDA0C7009E708D /* GitInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A5C73F2EFDA0C7009E708D /* GitInfo.swift */; };
 		98A5C7422EFED67E009E708D /* VersionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A5C7412EFED67E009E708D /* VersionInfo.swift */; };
 		98C2CA8225F3C1E40050ACDC /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2CA8125F3C1E40050ACDC /* StatsView.swift */; };
 		98E4E3232773B0AC000EEC5A /* SetGame.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98E4E3222773B0AC000EEC5A /* SetGame.xcassets */; };
@@ -91,7 +90,6 @@
 		989FF92025F10BA7002AE44A /* TableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
 		989FF92525F10F08002AE44A /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		989FF92A25F11872002AE44A /* StatusBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusBarView.swift; sourceTree = "<group>"; };
-		98A5C73F2EFDA0C7009E708D /* GitInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitInfo.swift; sourceTree = "<group>"; };
 		98A5C7412EFED67E009E708D /* VersionInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionInfo.swift; sourceTree = "<group>"; };
 		98C2CA8125F3C1E40050ACDC /* StatsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		98E4E3222773B0AC000EEC5A /* SetGame.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SetGame.xcassets; sourceTree = "<group>"; };
@@ -146,7 +144,6 @@
 		981190EE25ED59CC0083606B /* SetGame */ = {
 			isa = PBXGroup;
 			children = (
-				98A5C73F2EFDA0C7009E708D /* GitInfo.swift */,
 				9811914F25ED5CFE0083606B /* Views */,
 				9811911D25ED5A0C0083606B /* Model */,
 				981190EF25ED59CC0083606B /* SetGameApp.swift */,
@@ -186,22 +183,22 @@
 		9811911D25ED5A0C0083606B /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				98A5C7412EFED67E009E708D /* VersionInfo.swift */,
-				989D93762EF5F30200BE461B /* Math.swift */,
-				989D93722EF4BEDB00BE461B /* Feedback.swift */,
-				989D936E2EF21DEF00BE461B /* Settings.swift */,
-				989FF8F925EF3708002AE44A /* CardArrayExtension.swift */,
-				989FF8F825EF3708002AE44A /* StandardDeck.swift */,
 				9811913A25ED5ACF0083606B /* Card.swift */,
+				989FF8F925EF3708002AE44A /* CardArrayExtension.swift */,
 				9811913925ED5ACF0083606B /* CardColor.swift */,
 				9811913B25ED5ACF0083606B /* CardFilling.swift */,
 				9811913E25ED5ACF0083606B /* CardNumber.swift */,
 				9811914125ED5ACF0083606B /* CardShape.swift */,
 				9811913825ED5ACF0083606B /* Deck.swift */,
+				989D93722EF4BEDB00BE461B /* Feedback.swift */,
+				989D93762EF5F30200BE461B /* Math.swift */,
+				989D936E2EF21DEF00BE461B /* Settings.swift */,
+				989FF8F825EF3708002AE44A /* StandardDeck.swift */,
 				989D93682EE8B01D00BE461B /* Stats.swift */,
 				9811913F25ED5ACF0083606B /* String.swift */,
 				9811913D25ED5ACF0083606B /* Table.swift */,
 				9811914025ED5ACF0083606B /* TableCard.swift */,
+				98A5C7412EFED67E009E708D /* VersionInfo.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -209,14 +206,14 @@
 		9811914F25ED5CFE0083606B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9811915025ED5D0E0083606B /* CardView.swift */,
+				981190F125ED59CC0083606B /* ContentView.swift */,
 				989D93702EF43A8500BE461B /* DeckView.swift */,
 				989D936A2EEDABC600BE461B /* FoundSetsView.swift */,
+				989FF92525F10F08002AE44A /* SettingsView.swift */,
 				98C2CA8125F3C1E40050ACDC /* StatsView.swift */,
 				989FF92A25F11872002AE44A /* StatusBarView.swift */,
-				989FF92525F10F08002AE44A /* SettingsView.swift */,
 				989FF92025F10BA7002AE44A /* TableView.swift */,
-				981190F125ED59CC0083606B /* ContentView.swift */,
-				9811915025ED5D0E0083606B /* CardView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -378,7 +375,6 @@
 				98A5C7422EFED67E009E708D /* VersionInfo.swift in Sources */,
 				9811914225ED5ACF0083606B /* Deck.swift in Sources */,
 				981190F225ED59CC0083606B /* ContentView.swift in Sources */,
-				98A5C7402EFDA0C7009E708D /* GitInfo.swift in Sources */,
 				9811914925ED5ACF0083606B /* String.swift in Sources */,
 				9811914425ED5ACF0083606B /* Card.swift in Sources */,
 				989D93692EE8B01D00BE461B /* Stats.swift in Sources */,

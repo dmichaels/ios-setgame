@@ -16,7 +16,7 @@ class Table<TC : TableCard> : ObservableObject {
         // not the same instance, or the same copy it ? Guess not. A thinker.
         //
         var table                           : Table?;
-        var displayCardCount                : Int  = 12;
+        var displayCardCount                : Int  = Defaults.displayCardCount;
         var limitDeckSize                   : Int  = Deck().count;
         var cardsPerRow                     : Int  = 4;
         var useSimpleDeck                   : Bool = false {

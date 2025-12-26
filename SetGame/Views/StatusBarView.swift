@@ -13,15 +13,7 @@ struct StatusBarView: View {
     let DIAMOND_SYMBOL      : String = "\u{2756}";
     let CHECK_MARK_SYMBOL   : String = "✅";
 
-    // let FOREGROUND: Color = Color(red: 0.3, green: 0.4, blue: 0.4);
-    // let BACKGROUND: Color = Color(red: 0.7, green: 0.8, blue: 0.9)
-    // let BACKGROUND: Color = Color(hex: 0xCFDEFF);
-    // let FOREGROUND: Color = Color(hex: 0x225066);
-    // let FOREGROUND: Color = Color(hex: 0x404252);
-    // let FOREGROUND: Color = Color(hex: 0x738375);
     let FOREGROUND: Color = Color(hex: 0x283028);
-    // let BACKGROUND: Color = Color(hex: 0xEDFDEF);
-    // let BACKGROUND: Color = Color(hex: 0xC4D8FF);
     let BACKGROUND: Color = Color(hex: 0xD5E9FF);
     let SHAPE = RoundedRectangle(cornerRadius: 11, style: .continuous);
 
