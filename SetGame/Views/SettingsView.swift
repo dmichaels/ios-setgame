@@ -41,8 +41,6 @@ struct SettingsView: View {
                     Toggle(isOn: $table.settings.moreCardsIfNoSet) {}
                 }
                 HStack {
-                    // Image(systemName: "numbers.rectangle").frame(width: iconWidtn)
-                    // Image(systemName: "dot.scope").frame(width: iconWidth)
                     Image(systemName: "target").frame(width: iconWidth)
                     Text("Plant SET").lineLimit(1).layoutPriority(1)
                     Spacer()
@@ -63,14 +61,12 @@ struct SettingsView: View {
             }
             Section(header: Text("Visual")) {
                 HStack {
-                    // Image(systemName: "magnifyingglass").frame(width: iconWidth)
                     Image(systemName: "list.number").frame(width: iconWidth)
                     Text("Show Found SETs").lineLimit(1).layoutPriority(1)
                     Spacer()
                     Toggle(isOn: $table.settings.showFoundSets) {}
                 }
                 HStack {
-                    // Image(systemName: "square.stack.3d.up").frame(width: iconWidth)
                     Image(systemName: "square.on.square").frame(width: iconWidth)
                     Text("Display Cards").lineLimit(1).layoutPriority(1)
                     Spacer()
@@ -103,7 +99,7 @@ struct SettingsView: View {
                     Toggle(isOn: $table.settings.alternateCardImages) {}
                 }
             }
-            Section(header: Text("MULTIMEDIA")) {
+            Section(header: Text("Multimedia")) {
                 HStack {
                     Image(systemName: "speaker.wave.2")
                     Text("Sounds")
