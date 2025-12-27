@@ -23,7 +23,7 @@ struct ContentView: View {
                         }
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Menu {
-                                Button { self.table.startNewGame(); feedback.trigger(); } label: {
+                                Button { self.table.startNewGame(); feedback.trigger(Feedback.SWOOSH); } label: {
                                     Label("New Game" , systemImage: "arrow.counterclockwise")
                                 }.disabled(self.table.state.blinking || self.table.settings.demoMode)
                                 Button { self.table.addMoreCards(1) } label: {
@@ -45,8 +45,8 @@ struct ContentView: View {
                         Task { @MainActor in
                             await table.demoCheck()
                         }
-                        feedback.soundsEnabled = settings.sounds;
-                        feedback.hapticsEnabled = settings.haptics;
+                        feedback.sounds = settings.sounds;
+                        feedback.haptics = settings.haptics;
                     }
                     .onChange(of: table.settings.demoMode) { _ in
                         Task { @MainActor in

@@ -5,37 +5,48 @@ import AVFoundation
 
 public class Feedback: ObservableObject
 {
-    public var soundsEnabled: Bool = false
-    public var hapticsEnabled: Bool = false
+    public var haptics: Bool = false;
+    public var sounds: Bool = false;
+
+    public static let TAP: SystemSoundID = 1104;
+    public static let CANCEL: SystemSoundID = 1112;
+    public static let SWOOSH: SystemSoundID = 1001;
+
+    private var haptic: UIImpactFeedbackGenerator? = nil;
 
     public init(sounds: Bool = false, haptics: Bool = false) {
-        self.soundsEnabled = sounds
-        self.hapticsEnabled = haptics
+        self.sounds = sounds
+        self.haptics = haptics
     }
-    
-    public func triggerTapSound() {
-        do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playback, mode: .default, options: .mixWithOthers)
-            try session.setActive(true)
-            AudioServicesPlaySystemSound(1104)
-        } catch {
-            print("Error setting audio session: \(error)")
+
+    private func configure() {
+        if (self.haptic == nil) {
+            do {
+                self.haptic = UIImpactFeedbackGenerator(style: .light);
+                haptic?.prepare();
+                let session: AVAudioSession = AVAudioSession.sharedInstance()
+                try session.setCategory(.playback, mode: .default, options: [.mixWithOthers]);
+                try session.setActive(true);
+            } catch {}
         }
     }
     
     public func triggerHaptic() {
-        let generator = UIImpactFeedbackGenerator(style: .light)
-        generator.prepare()
-        generator.impactOccurred()
+        if (self.haptics) {
+            self.configure();
+            self.haptic?.impactOccurred();
+        }
     }
 
-    public func trigger() {
-        if (self.soundsEnabled) {
-            self.triggerTapSound()
+    public func triggerSound(_ sound: SystemSoundID) {
+        if (self.sounds) {
+            self.configure();
+            AudioServicesPlaySystemSound(sound);
         }
-        if (self.hapticsEnabled) {
-            self.triggerHaptic()
-        }
+    }
+
+    public func trigger(_ sound: SystemSoundID = Feedback.TAP) {
+        self.triggerSound(sound);
+        self.triggerHaptic();
     }
 }

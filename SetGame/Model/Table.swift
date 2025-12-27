@@ -283,6 +283,9 @@ class Table<TC : TableCard> : ObservableObject {
                 return selectedCards;
             }
             else {
+                if (readonly) {
+                    return [];
+                }
                 //
                 // Not a SET! :-(
                 //
@@ -541,9 +544,12 @@ class Table<TC : TableCard> : ObservableObject {
                 let setTableCards: [TC] = setCards.compactMap { $0 as? TC }
                 self.state.blinking = true;
                 TableView.blinkCards(setTableCards, times: nblinks) {
-                    self.checkForSet();
+                    self.checkForSet(readonly: false);
                     self.state.blinking = false;
                 }
+            }
+            else {
+                self.checkForSet(readonly: false);
             }
         }
     }

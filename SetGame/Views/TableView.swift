@@ -17,7 +17,7 @@ struct TableView: View {
                             if (index < table.cards.count) {
                                 CardView(card: table.cards[index]) {
                                     self.table.cardTouched($0);
-                                    self.feedback.trigger();
+                                    self.feedback.trigger(Feedback.TAP);
                                 }
                                 .slightlyRotated(self.table.settings.cardsAskew)
                                 .allowsHitTesting(!self.table.state.blinking && !self.table.settings.demoMode)
