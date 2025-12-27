@@ -8,9 +8,10 @@ public class Feedback: ObservableObject
     public var haptics: Bool = false;
     public var sounds: Bool = false;
 
-    public static let TAP: SystemSoundID = 1104;
+    public static let TAP: SystemSoundID    = 1104;
     public static let CANCEL: SystemSoundID = 1112;
     public static let SWOOSH: SystemSoundID = 1001;
+    public static let BADING: SystemSoundID = 1253;
 
     private var haptic: UIImpactFeedbackGenerator? = nil;
 
