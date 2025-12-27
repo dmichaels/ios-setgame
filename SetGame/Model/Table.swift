@@ -27,9 +27,9 @@ class Table<TC : TableCard> : ObservableObject {
                 // self.table?.startNewGame();
             }
         }
-        var plantSet                        : Bool = false;
+        var plantSet                        : Bool = Defaults.plantSet;
         var plantInitialMagicSquare         : Bool = false;
-        var moreCardsIfNoSet                : Bool = true {
+        var moreCardsIfNoSet                : Bool = Defaults.moreCardsIfNoSet {
             didSet {
                 if (self.moreCardsIfNoSet) {
                     self.table?.fillTable();
@@ -438,7 +438,6 @@ class Table<TC : TableCard> : ObservableObject {
     ///
     func addMoreCards(_ ncards : Int, plantSet : Bool? = nil, frontSet: Bool? = nil) {
         guard (ncards > 0) && (self.deck.count > 0) else { return; }
-        // let plantSet: Bool = (plantSet == nil) ? self.settings.plantSet : plantSet!;
         let plantSet: Bool = plantSet ?? self.settings.plantSet;
         let frontSet: Bool = frontSet ?? self.settings.moveAnyExistingSetToFront;
         if (plantSet && !self.containsSet() && (self.cards.count + min(self.deck.count, ncards)) >= 3) {

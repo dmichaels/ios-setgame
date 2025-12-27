@@ -12,7 +12,7 @@ struct SetGameApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(Table(displayCardCount: 12))
+                .environmentObject(Table(displayCardCount: Defaults.displayCardCount, plantSet: Defaults.plantSet))
                 .environmentObject(Settings())
                 .environmentObject(Feedback(sounds: Defaults.sounds, haptics: Defaults.haptics))
         }

@@ -5,11 +5,13 @@ import SwiftUI
 // Eventually more Table.Settings here.
 //
 class Defaults {
-    public static let displayCardCount: Int = 12;
-    public static let showPeekButton: Bool  = true;
-    public static let peekDisjoint: Bool    = false;
-    public static let sounds: Bool          = false;
-    public static let haptics: Bool         = false;
+    public static let displayCardCount: Int  = 12;
+    public static let plantSet: Bool         = false;
+    public static let moreCardsIfNoSet: Bool = false;
+    public static let showPeekButton: Bool   = true;
+    public static let peekDisjoint: Bool     = false;
+    public static let sounds: Bool           = false;
+    public static let haptics: Bool          = false;
 }
 
 class Settings: ObservableObject {

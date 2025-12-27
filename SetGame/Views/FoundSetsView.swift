@@ -65,7 +65,7 @@ struct FoundSetsView: View {
     }
 }
 
-public struct DummyCardView: View {
+private struct DummyCardView: View {
     public var body: some View {
         Image("DUMMY")
             .resizable()

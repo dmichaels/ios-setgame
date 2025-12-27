@@ -35,7 +35,7 @@ struct SettingsView: View {
                 HStack {
                     Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
                     // Text("Disjoint Peek/Count (↑)")
-                    Text("Disjoint Peek/Count ↑")
+                    Text("Disjoint Peek & Count ↑")
                         .foregroundStyle(table.settings.showNumberOfSetsPresent || settings.showPeekButton ? .primary : .secondary)
                     Spacer()
                     Toggle(isOn: $settings.peekDisjoint) {}

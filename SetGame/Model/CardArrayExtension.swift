@@ -161,8 +161,8 @@ extension Array where Element : Card {
         if (plantSet) {
             //
             // Here, we want to ensure, IF POSSIBLE, that the returned set of
-            // cards (taken from this array of cards), TOGETHER (unioned with)
-            // the given set of existing cards contains at least one SET.
+            // cards (taken from this array of cards), TOGETHER/unioned with
+            // any given set of existing cards contains at least one SET.
             //
             if (existingCards.count > 0) {
                 //
@@ -180,10 +180,9 @@ extension Array where Element : Card {
                 }
                 else {
                     //
-                    // Here, there are no SETs in the given set of existing cards;
-                    // try to ensure, IF POSSIBLE, that the given set of existing
-                    // cards, TOGETHER with (unioned with) the set of cards to be
-                    // returned (taken from this array) contains at least one SET.
+                    // Here, there are no SETs in the given set of existing cards; try to ensure,
+                    // IF POSSIBLE, that the given set of existing cards, TOGETHER/unioned with
+                    // cards to be returned (taken from this array) contains at least one SET.
                     //
                     for card in self {
                         let sets: [[Element]] = ([card] + existingCards).enumerateSets(limit: 1)
