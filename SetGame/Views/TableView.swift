@@ -16,8 +16,19 @@ struct TableView: View {
                             let index = row * table.settings.cardsPerRow + column;
                             if (index < table.cards.count) {
                                 CardView(card: table.cards[index]) {
-                                    self.table.cardTouched($0);
-                                    self.feedback.trigger(Feedback.TAP);
+                                    // self.table.cardTouched($0);
+                                    // self.feedback.trigger(Feedback.TAP);
+                                    self.table.cardTouched($0) { result in
+                                        if (result == nil) {
+                                            self.feedback.trigger(Feedback.TAP);
+                                        }
+                                        else if (result == false) {
+                                            self.feedback.trigger(Feedback.CANCEL);
+                                        }
+                                        else if (result == true) {
+                                            self.feedback.trigger(Feedback.SWOOSH);
+                                        }
+                                    }
                                 }
                                 .slightlyRotated(self.table.settings.cardsAskew)
                                 .allowsHitTesting(!self.table.state.blinking && !self.table.settings.demoMode)

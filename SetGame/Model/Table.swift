@@ -499,7 +499,7 @@ class Table<TC : TableCard> : ObservableObject {
         }
     }
 
-    public func cardTouched(_ card : TC, nblinks: Int = 5, already: Bool = false) {
+    public func cardTouched(_ card : TC, nblinks: Int = 5, already: Bool = false, _ callback: ((Bool?) -> Void)? = nil) {
         //
         // First we notify the table model that the card has been touched,
         // i.e. selected/unselected toggle, then we ask the table check to
@@ -547,8 +547,15 @@ class Table<TC : TableCard> : ObservableObject {
                     self.checkForSet(readonly: false);
                     self.state.blinking = false;
                 }
+                callback?(true);
             }
             else {
+                if (self.selectedCards().count == 3) {
+                    callback?(false);
+                }
+                else {
+                    callback?(nil);
+                }
                 self.checkForSet(readonly: false);
             }
         }
