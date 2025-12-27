@@ -28,10 +28,17 @@ struct SettingsView: View {
                 }
                 HStack {
                     Image(systemName: "eyes").frame(width: iconWidth)
-                    Text("Peek Button")
+                    Text("Peek SET Button")
                     Spacer()
                     Toggle(isOn: $settings.showPeekButton) {}
                 }
+                HStack {
+                    Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
+                    Text("Disjoint Available/Peek")
+                        .foregroundStyle(table.settings.showNumberOfSetsPresent || settings.showPeekButton ? .primary : .secondary)
+                    Spacer()
+                    Toggle(isOn: $settings.peekDisjoint) {}
+                }.disabled(!(table.settings.showNumberOfSetsPresent || settings.showPeekButton))
             }
             Section(header: Text("Behavioral")) {
                 HStack {

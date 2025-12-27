@@ -98,7 +98,7 @@ struct StatusBarView: View {
                     }
                 }
             if (self.table.settings.showNumberOfSetsPresent) {
-                Text("\(table.numberOfSets())")
+                Text("\(table.numberOfSets(disjoint: settings.peekDisjoint))")
                     .font(.subheadline)
                     .monospacedDigit()
                     .foregroundColor(FOREGROUND)
@@ -116,7 +116,7 @@ struct StatusBarView: View {
                 Button(action: {
                     self.table.state.showingOneRandomSet.toggle();
                     if (self.table.state.showingOneRandomSet) {
-                        self.table.selectOneRandomSet();
+                        self.table.selectOneRandomSet(disjoint: settings.peekDisjoint);
                     }
                     else {
                         self.table.unselectCards();

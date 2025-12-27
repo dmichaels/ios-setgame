@@ -105,16 +105,16 @@ class Deck<T : Card> {
 
     /// Returns the number of unique SETs in this deck.
     ///
-    func numberOfSets() -> Int {
-        return self.cards.numberOfSets();
+    func numberOfSets(disjoint: Bool = false) -> Int {
+        return self.cards.numberOfSets(disjoint: disjoint);
     }
 
     /// Identifies/enumerates any/all SETs in this deck and returns them in an array
     /// of array of cards, each representing a unique (possibily overlaping) SET
     /// within this deck. If no SETs exist then returns an empty array.
     ///
-    func enumerateSets(limit: Int = 0) -> [[T]] {
-        return self.cards.enumerateSets(limit: limit);
+    func enumerateSets(limit: Int = 0, disjoint: Bool = false) -> [[T]] {
+        return self.cards.enumerateSets(limit: limit, disjoint: disjoint);
     }
 
     /// Returns the number of cards in a standard deck.

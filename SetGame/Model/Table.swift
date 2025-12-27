@@ -316,9 +316,9 @@ class Table<TC : TableCard> : ObservableObject {
         }
     }
 
-    func selectOneRandomSet() {
+    func selectOneRandomSet(disjoint: Bool = false) {
         self.unselectCards();
-        let sets: [[TC]] = self.enumerateSets();
+        let sets: [[TC]] = self.enumerateSets(disjoint: disjoint);
         if (sets.count > 0) {
             if (self.state.showingOneRandomSetLast == nil) {
                 self.state.showingOneRandomSetLast = Int.random(in: 0..<sets.count);
@@ -379,8 +379,8 @@ class Table<TC : TableCard> : ObservableObject {
 
     /// Returns the number SETs present on the table.
     ///
-    func numberOfSets() -> Int {
-        return self.cards.numberOfSets();
+    func numberOfSets(disjoint: Bool = false) -> Int {
+        return self.cards.numberOfSets(disjoint: disjoint);
     }
 
     /// Identifies/enumerates any/all SETs present on this table,
@@ -388,8 +388,8 @@ class Table<TC : TableCard> : ObservableObject {
     /// a unique (possibily overlaping) SET within the table cards.
     /// If no SETs exist then returns an empty array.
     ///
-    func enumerateSets(limit : Int = 0) -> [[TC]] {
-        return self.cards.enumerateSets(limit: limit);
+    func enumerateSets(limit : Int = 0, disjoint: Bool = false) -> [[TC]] {
+        return self.cards.enumerateSets(limit: limit, disjoint: disjoint);
     }
 
     /// Returns the number of cards remaining in the deck.
