@@ -499,7 +499,8 @@ class Table<TC : TableCard> : ObservableObject {
         }
     }
 
-    public func cardTouched(_ card : TC, nblinks: Int = 5, already: Bool = false, _ callback: ((Bool?) -> Void)? = nil) {
+    public func cardTouched(_ card : TC, nblinks: Int = 5, already: Bool = false,
+                            _ callback: ((Bool?) -> Void)? = nil) {
         //
         // First we notify the table model that the card has been touched,
         // i.e. selected/unselected toggle, then we ask the table check to
