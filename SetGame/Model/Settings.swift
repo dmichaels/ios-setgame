@@ -7,7 +7,7 @@ import SwiftUI
 class Defaults {
     public static let displayCardCount: Int  = 12;
     public static let plantSet: Bool         = false;
-    public static let moreCardsIfNoSet: Bool = false;
+    public static let moreCardsIfNoSet: Bool = true;
     public static let showPeekButton: Bool   = true;
     public static let peekDisjoint: Bool     = false;
     public static let sounds: Bool           = false;
