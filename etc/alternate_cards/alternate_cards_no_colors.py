@@ -9,7 +9,6 @@ CARD_BACKGROUND_COLOR   = "white"
 CARD_BORDER_COLOR       = "black"
 NUMBERS                 = [ "0", "1", "2" ]
 COLUMNS                 = [ "0", "1", "2" ]
-COLORS                  = [ "#9C3327", "#2D34A1", "#3D713D" ] # red, blue, green
 SHAPES                  = [ "oval", "diamond", "squiggle" ]
 FILLINGS                = [ "hollow", "stripe", "solid" ]
 FIGURE_WIDTH            = 50
@@ -17,6 +16,7 @@ FIGURE_HEIGHT           = 50
 FIGURE_SPACING          = 5
 FIGURE_COLOR            = "#0B1280" # blue-ish
 FIGURE_COLOR            = "#1B501B" # green-ish
+FIGURE_COLOR            = "#0A0170" # blue-ish
 IMAGE_PREFIX            = "ALTNC_"
 TEST_DIRECTORY          = lambda code: f"/tmp/set"
 LIVE_DIRECTORY          = lambda code: f"/Users/dmichaels/repos/ios-setgame/SetGame/Assets.xcassets/{code}.imageset"
@@ -122,8 +122,7 @@ def draw_card(number, column, shape, filling):
     coordinates = get_figure_coordinates()[int(number)][int(column)]
 
     for coordinate in coordinates:
-        if coordinate:
-            draw(image, coordinate[0], coordinate[1], FIGURE_WIDTH, FIGURE_HEIGHT)
+        draw(image, coordinate[0], coordinate[1], FIGURE_WIDTH, FIGURE_HEIGHT)
 
     return image
 
@@ -134,7 +133,6 @@ def draw_figures():
                 for ifilling, filling in enumerate(FILLINGS):
                     image = draw_card(number, column, shape, filling)
                     code = _normalize_code(f"{inumber}{icolumn}{ishape}{ifilling}", prefix=IMAGE_PREFIX)
-                    # directory = "/tmp/set"
                     directory = DIRECTORY(code)
                     file = (f"{directory}/{code}.png")
                     image.save(file)
