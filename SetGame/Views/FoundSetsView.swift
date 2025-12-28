@@ -5,8 +5,6 @@ struct FoundSetsView: View {
     let setsLastFound: [[TableCard]];
     let cardsAskew: Bool;
 
-    private let cardWidth: CGFloat = 52;
-
     var body: some View {
         let rows: [[TableCard]] = pairCardsListForDisplay(setsLastFound.reversed());
         Spacer()
@@ -18,7 +16,6 @@ struct FoundSetsView: View {
                         let card: TableCard = row[j];
                         if (j == 3) { separator(visible: true) }
                         CardView(card: card)
-                            // .frame(width: cardWidth)
                             .slightlyRotated(cardsAskew)
                         if ((j == 2) && (row.count == 3)) { separator(visible: false) }
                     }

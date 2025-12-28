@@ -43,7 +43,7 @@ class Table<TC : TableCard> : ObservableObject {
         }
         var showFoundSets: Bool = Defaults.showFoundSets;
         var cardsAskew: Bool = Defaults.cardsAskew;
-        var alternateCards: Bool = Defaults.alternateCards;
+        var alternateCards: Int = Defaults.alternateCards;
         var demoMode: Bool = false;
     }
 

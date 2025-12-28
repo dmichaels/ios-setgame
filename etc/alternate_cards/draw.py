@@ -92,7 +92,61 @@ def _draw_square(image, x, y, radius, color, border=0, border_color=None, aa=4):
         tmp
     )
 
-def _draw_triangle(image, x, y, radius, color, border=0, border_color=None, aa=4):
+def _draw_triangle(
+    image, x, y, radius, color,
+    border=0, border_color=None,
+    aa=4,
+    flip=False
+):
+    """
+    Draw an antialiased filled equilateral triangle centered at (x, y),
+    with circumradius = radius (triangle is inscribed in that circle).
+
+    Optional border is drawn INSIDE (outer size unchanged).
+
+    If flip=True, the triangle is upside-down.
+    """
+
+    r_hi = radius * aa
+    size = r_hi * 2
+
+    tmp = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    d = ImageDraw.Draw(tmp)
+
+    cx = cy = r_hi  # center of the high-res temp canvas
+
+    def tri_points(R):
+        # Point-up triangle
+        angles = [-90, 30, 150]
+        pts = []
+        for deg in angles:
+            t = math.radians(deg)
+            px = cx + R * math.cos(t)
+            py = cy + R * math.sin(t)
+
+            if flip:
+                py = 2 * cy - py   # vertical mirror
+
+            pts.append((px, py))
+        return pts
+
+    # Border logic (unchanged)
+    if border > 0 and border_color is not None:
+        d.polygon(tri_points(r_hi), fill=border_color)
+
+        inner_R = r_hi - border * aa
+        if inner_R > 0:
+            d.polygon(tri_points(inner_R), fill=color)
+    else:
+        d.polygon(tri_points(r_hi), fill=color)
+
+    # Downsample for antialiasing
+    tmp = tmp.resize((radius * 2, radius * 2), resample=Image.LANCZOS)
+
+    # Paste onto main image using alpha
+    image.paste(tmp, (x - radius, y - radius), tmp)
+
+def _old_draw_triangle(image, x, y, radius, color, border=0, border_color=None, aa=4):
     """
     Draw an antialiased filled equilateral triangle centered at (x, y),
     with circumradius = radius (triangle is inscribed in that circle).

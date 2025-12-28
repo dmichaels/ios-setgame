@@ -5,10 +5,12 @@ struct SettingsView: View {
     @EnvironmentObject var table : Table;
     @EnvironmentObject var settings : Settings;
 
-    let cardsPerRowChoices: [Int] = [ 2, 3, 4, 5, 6 ];
-    let preferredDisplayCountCardChoices: [Int] = [ 3, 4, 6, 9, 12, 15, 16, 18, 20 ];
-    let limitDeckSizeChoices: [Int] = [ 18, 27, 36, 45, 54, 63, 72, 81 ];
-    let iconWidth: CGFloat = 30;
+    @State private var alternateCards: Int = 0
+
+    private let cardsPerRowChoices: [Int] = [ 2, 3, 4, 5, 6 ];
+    private let preferredDisplayCountCardChoices: [Int] = [ 3, 4, 6, 9, 12, 15, 16, 18, 20 ];
+    private let limitDeckSizeChoices: [Int] = [ 18, 27, 36, 45, 54, 63, 72, 81 ];
+    private let iconWidth: CGFloat = 30;
     
     var body: some View {
         Form {
@@ -104,8 +106,32 @@ struct SettingsView: View {
                     Image(systemName: "alternatingcurrent").frame(width: iconWidth)
                     Text("Alternate Cards").lineLimit(1).layoutPriority(1)
                     Spacer()
+                    Picker("", selection: $alternateCards) {
+                        ForEach(AlternateCards, id: \.value) { option in Text(option.label) }
+                    }
+                    .pickerStyle(.menu)
+                    .onChange(of: alternateCards) { value in
+                        switch value {
+                            case 0:  table.settings.alternateCards = 0;
+                            case 1:  table.settings.alternateCards = 1;
+                            case 2:  table.settings.alternateCards = 2;
+                            default: table.settings.alternateCards = 0;
+                        }
+                    }
+                    .onAppear {
+                        if      (table.settings.alternateCards == 0) { self.alternateCards = 0 }
+                        else if (table.settings.alternateCards == 1) { self.alternateCards = 1 }
+                        else if (table.settings.alternateCards == 2) { self.alternateCards = 2 }
+                    }
+                }
+                /*
+                HStack {
+                    Image(systemName: "alternatingcurrent").frame(width: iconWidth)
+                    Text("Alternate Cards").lineLimit(1).layoutPriority(1)
+                    Spacer()
                     Toggle(isOn: $table.settings.alternateCards) {}
                 }
+                */
             }
             Section(header: Text("Multimedia")) {
                 HStack {
@@ -166,3 +192,9 @@ struct SettingsView: View {
         }
     }
 }
+
+private let AlternateCards: [(label: String, value: Int)] = [
+    ("Classic", 0),
+    ("Squares", 1),
+    ("Monochrome", 2)
+]

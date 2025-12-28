@@ -6,7 +6,6 @@ public struct CardView : View {
     @EnvironmentObject var table: Table
 
     var touchedCallback : ((TableCard) -> Void)?
-    let alternateCardImagePrefix : String = "ALTNC_"; // "ALTD_";
 
     public var body : some View {
         if (table.state.blinking) {
@@ -21,7 +20,7 @@ public struct CardView : View {
             //
             VStack {
                 Button(action: {touchedCallback?(card)}) {
-                Image(table.settings.alternateCards ? alternateCardImagePrefix + card.codename : card.codename)
+                Image(self.image(card))
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .opacity(card.blink ? 0.0 : 1.0)
@@ -39,7 +38,7 @@ public struct CardView : View {
         else if (false) {
             VStack {
                 Button(action: {touchedCallback?(card)}) {
-                Image(table.settings.alternateCards ? alternateCardImagePrefix + card.codename : card.codename)
+                Image(self.image(card))
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .rotation3DEffect(card.selected ? Angle(degrees: 720) : Angle(degrees: 0),
@@ -65,7 +64,7 @@ public struct CardView : View {
         else {
             VStack {
                 Button(action: {touchedCallback?(card)}) {
-                Image(table.settings.alternateCards ? alternateCardImagePrefix + card.codename : card.codename)
+                Image(self.image(card))
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     //
@@ -87,6 +86,15 @@ public struct CardView : View {
                     }
                 }
             }
+        }
+    }
+
+    private func image(_ card: TableCard) -> String {
+        switch self.table.settings.alternateCards {
+            case 0:  return card.codename;
+            case 1:  return "ALTD_\(card.codename)";
+            case 2:  return "ALTNC_\(card.codename)";
+            default: return card.codename;
         }
     }
 }
