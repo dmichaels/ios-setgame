@@ -6,7 +6,7 @@ public struct CardView : View {
     @EnvironmentObject var table: Table
 
     var touchedCallback : ((TableCard) -> Void)?
-    let alternateCardImagePrefix : String = "ALTD_";
+    let alternateCardImagePrefix : String = "ALTNC_"; // "ALTD_";
 
     public var body : some View {
         if (table.state.blinking) {
