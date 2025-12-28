@@ -9,20 +9,20 @@ struct StatsView: View  {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading) {
                 HStack {
-                    Text(self.table.settings.useSimpleDeck
+                    Text(self.table.settings.simpleDeck
                          ? "Simplified Deck: 27 Cards"
                          : "Standard Deck: 81 Cards") // .font(.footnote).italic()
                     Spacer()
                 }
-                /*
+/*
                 Divider()
                 HStack {
-                    Text("Possible SETs: \(String(Deck.numberOfDistinctSets(simple: self.table.settings.useSimpleDeck)))").font(.footnote)
+                    Text("Possible SETs: \(String(Deck.numberOfDistinctSets(simple: self.table.settings.simpleDeck)))").font(.footnote)
                     Spacer()
                 }
-                */
+*/
                 Rectangle().fill(Color.black).frame(height: 2)
-                ForEach(3...Deck.setlessCount(simple: self.table.settings.useSimpleDeck) , id: \.self) { index in
+                ForEach(3...Deck.setlessCount(simple: self.table.settings.simpleDeck) , id: \.self) { index in
                     if (index == 3) {
                         HStack {
                             Text("\nNumber\nof Cards")
@@ -41,9 +41,9 @@ struct StatsView: View  {
                     }
                     HStack {
                         if (self.isViewDisplayed) {
-                            // let average = Deck.averageNumberOfSets(index, simple: self.table.settings.useSimpleDeck);
+                            // let average = Deck.averageNumberOfSets(index, simple: self.table.settings.simpleDeck);
                             let average = self.table.deck.xaverageNumberOfSets(index);
-                            let p = Deck.probabilityOfAtLeastOneSet(for: index, simple: self.table.settings.useSimpleDeck) * 100.0
+                            let p = Deck.probabilityOfAtLeastOneSet(for: index, simple: self.table.settings.simpleDeck) * 100.0
                             //
                             // Truncate probability to one decimal place so
                             // that we don't show 100.0% for (say) 99.9996%.
@@ -68,11 +68,11 @@ struct StatsView: View  {
                 Spacer()
                 Rectangle().fill(Color.black).frame(height: 2)
                 VStack {
-                    let distinctSetsDifferencesAny:   Int = Deck.numberOfDistinctSets(simple: self.table.settings.useSimpleDeck);
-                    let distinctSetsDifferencesOne:   Int = Deck.numberOfDistinctSets(simple: self.table.settings.useSimpleDeck, ndifferences: 1);
-                    let distinctSetsDifferencesTwo:   Int = Deck.numberOfDistinctSets(simple: self.table.settings.useSimpleDeck, ndifferences: 2);
-                    let distinctSetsDifferencesThree: Int = Deck.numberOfDistinctSets(simple: self.table.settings.useSimpleDeck, ndifferences: 3);
-                    let distinctSetsDifferencesFour:  Int = Deck.numberOfDistinctSets(simple: self.table.settings.useSimpleDeck, ndifferences: 4);
+                    let distinctSetsDifferencesAny:   Int = Deck.numberOfDistinctSets(simple: self.table.settings.simpleDeck);
+                    let distinctSetsDifferencesOne:   Int = Deck.numberOfDistinctSets(simple: self.table.settings.simpleDeck, ndifferences: 1);
+                    let distinctSetsDifferencesTwo:   Int = Deck.numberOfDistinctSets(simple: self.table.settings.simpleDeck, ndifferences: 2);
+                    let distinctSetsDifferencesThree: Int = Deck.numberOfDistinctSets(simple: self.table.settings.simpleDeck, ndifferences: 3);
+                    let distinctSetsDifferencesFour:  Int = Deck.numberOfDistinctSets(simple: self.table.settings.simpleDeck, ndifferences: 4);
                     let percentSetsDifferencesAny:    Float = (Float(distinctSetsDifferencesAny)   / Float(distinctSetsDifferencesAny)) * 100.0;
                     let percentSetsDifferencesOne:    Float = (Float(distinctSetsDifferencesOne)   / Float(distinctSetsDifferencesAny)) * 100.0;
                     let percentSetsDifferencesTwo:    Float = (Float(distinctSetsDifferencesTwo)   / Float(distinctSetsDifferencesAny)) * 100.0;
@@ -131,7 +131,7 @@ struct StatsView: View  {
                             .font(.system(size: 14, design: .monospaced))
                             .frame(alignment: .trailing)
                     }
-                    if (!self.table.settings.useSimpleDeck) {
+                    if (!self.table.settings.simpleDeck) {
                         HStack {
                             Text("Four")
                                 .font(.system(size: 14, design: .monospaced))
@@ -170,6 +170,6 @@ struct StatsView: View  {
                 self.isViewDisplayed = false
             }
             
-        }.navigationTitle("LogiCard Stats")
+        }.navigationTitle("Logicard Stats")
     }
 }

@@ -4,11 +4,12 @@ struct ContentView: View {
 
     @EnvironmentObject var table : Table;
     @EnvironmentObject var settings : Settings;
+    @EnvironmentObject var xsettings : XSettings;
     @EnvironmentObject var feedback : Feedback;
 
     @State private var showSettingsView = false;
 
-    let title: String = "LogiCard";
+    let title: String = "Logicard";
 
     var body: some View {
         NavigationView {
@@ -53,7 +54,7 @@ struct ContentView: View {
                             await table.demoCheck()
                         }
                     }
-                    .onChange(of: table.settings.useSimpleDeck) { _ in
+                    .onChange(of: table.settings.simpleDeck) { _ in
                         if (self.table.gameStart() || self.table.gameDone()) {
                             self.table.startNewGame();
                         }
@@ -70,14 +71,5 @@ struct ContentView: View {
         // look normal and not split screen on iPad.
         //
         .navigationViewStyle(.stack)
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-            .environmentObject(Table(displayCardCount: Defaults.displayCardCount,
-                                     plantSet: Defaults.plantSet))
-            .environmentObject(Settings())
     }
 }

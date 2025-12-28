@@ -40,13 +40,13 @@ struct StatusBarView: View {
                     .foregroundColor(FOREGROUND)
             }
             Spacer()
-                if (self.table.settings.showPartialSetSelectedIndicator) {
+                if (self.table.settings.showPartialSetHint) {
                     if (self.table.state.blinking || self.table.selectedCards().isSet()) {
                             Text(HAPPY_FACE_SYMBOL)
                                 .scaleEffect(1.2)
                                 .font(.subheadline)
                                 .foregroundColor(FOREGROUND)
-                                .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
+                                .padding(.trailing, self.table.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                     }
                     else if (self.table.state.partialSetSelected) {
                         if (self.table.selectedCardCount() == 1) {
@@ -54,50 +54,50 @@ struct StatusBarView: View {
                                 .scaleEffect(1.2)
                                 .font(.subheadline)
                                 .foregroundColor(FOREGROUND)
-                                .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
+                                .padding(.trailing, self.table.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                         }
                         else if (self.table.selectedCardCount() == 2) {
                             Text(THUMBSUP_SYMBOL)
                                 .scaleEffect(1.2)
                                 .font(.subheadline)
                                 .foregroundColor(FOREGROUND)
-                                .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
+                                .padding(.trailing, self.table.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                         }
                         else {
                             Text(NEUTRAL_FACE_SYMBOL)
                                 .scaleEffect(1.2)
                                 .font(.subheadline)
                                 .foregroundColor(FOREGROUND)
-                                .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
+                                .padding(.trailing, self.table.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                         }
                     }
                     else if ((self.table.selectedCardCount() == 1) || (self.table.selectedCardCount() == 2)) {
                         Text(SAD_FACE_SYMBOL)
                             .scaleEffect(1.2)
                             .font(.subheadline)
-                            .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
+                            .padding(.trailing, self.table.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                     }
                     else if (self.table.state.setJustFound || self.table.selectedCards().isSet()) {
                         Text(HAPPY_FACE_SYMBOL)
                             .scaleEffect(1.2)
                             .font(.subheadline)
-                            .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
+                            .padding(.trailing, self.table.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                     }
                     else if (self.table.state.setJustFoundNot) {
                         Text(SAD_FACE_SYMBOL)
                             .scaleEffect(1.2)
                             .font(.subheadline)
-                            .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
+                            .padding(.trailing, self.table.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                     }
                     else {
                         Text(NEUTRAL_FACE_SYMBOL)
                             .scaleEffect(1.2)
                             .font(.subheadline)
                             .frame(alignment: .leading)
-                            .padding(.trailing, self.table.settings.showNumberOfSetsPresent || settings.showPeekButton ? 4 : 10)
+                            .padding(.trailing, self.table.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                     }
                 }
-            if (self.table.settings.showNumberOfSetsPresent) {
+            if (self.table.settings.showSetsPresentCount) {
                 Text("\(table.numberOfSets(disjoint: settings.peekDisjoint))")
                     .font(.subheadline)
                     .monospacedDigit()

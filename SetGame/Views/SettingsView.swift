@@ -17,14 +17,14 @@ struct SettingsView: View {
                     Image(systemName: "face.smiling").frame(width: iconWidth)
                     Text("Partial SET Hint").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $table.settings.showPartialSetSelectedIndicator) {}
+                    Toggle(isOn: $table.settings.showPartialSetHint) {}
                     
                 }
                 HStack {
                     Image(systemName: "number.square").frame(width: iconWidth)
                     Text("Available SET Count").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $table.settings.showNumberOfSetsPresent) {}
+                    Toggle(isOn: $table.settings.showSetsPresentCount) {}
                 }
                 HStack {
                     Image(systemName: "eyes").frame(width: iconWidth)
@@ -36,10 +36,10 @@ struct SettingsView: View {
                     Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
                     // Text("Disjoint Peek/Count (↑)")
                     Text("Disjoint Peek & Count ↑")
-                        .foregroundStyle(table.settings.showNumberOfSetsPresent || settings.showPeekButton ? .primary : .secondary)
+                        .foregroundStyle(table.settings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
                     Spacer()
                     Toggle(isOn: $settings.peekDisjoint) {}
-                }.disabled(!(table.settings.showNumberOfSetsPresent || settings.showPeekButton))
+                }.disabled(!(table.settings.showSetsPresentCount || settings.showPeekButton))
             }
             Section(header: Text("Behavioral")) {
                 HStack {
@@ -58,13 +58,13 @@ struct SettingsView: View {
                     Image(systemName: "arrow.up.left.square").frame(width: iconWidth)
                     Text("Move SET Front").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $table.settings.moveAnyExistingSetToFront) {}
+                    Toggle(isOn: $table.settings.moveSetFront) {}
                 }
                 HStack {
                     Image(systemName: "wand.and.rays").frame(width: iconWidth)
                     Text("Plant Magic Square").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $table.settings.plantInitialMagicSquare) {}
+                    Toggle(isOn: $table.settings.plantMagicSquare) {}
                 }
             }
             Section(header: Text("Visual")) {
@@ -104,7 +104,7 @@ struct SettingsView: View {
                     Image(systemName: "alternatingcurrent").frame(width: iconWidth)
                     Text("Alternate Cards").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $table.settings.alternateCardImages) {}
+                    Toggle(isOn: $table.settings.alternateCards) {}
                 }
             }
             Section(header: Text("Multimedia")) {
@@ -126,16 +126,16 @@ struct SettingsView: View {
                     Image(systemName: "atom").frame(width: iconWidth)
                     Text("Simplified Deck").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $table.settings.useSimpleDeck) {}
+                    Toggle(isOn: $table.settings.simpleDeck) {}
                 }
                 if (false) {
                     Toggle(isOn: $table.settings.demoMode) {
                         Text("Demo Mode")
                     }
                 }
-                navigationRow("LogiCard SET Stats", icon: "chart.bar", destination: StatsView())
-                navigationRow("LogiCard Deck", icon: "square.stack.3d.up",
-                              destination: DeckView(cards: table.settings.useSimpleDeck
+                navigationRow("Logicard SET Stats", icon: "chart.bar", destination: StatsView())
+                navigationRow("Logicard Deck", icon: "square.stack.3d.up",
+                              destination: DeckView(cards: table.settings.simpleDeck
                                                            ? StandardDeck.instanceSimple.cards
                                                            : StandardDeck.instance.cards))
             }
@@ -150,7 +150,7 @@ struct SettingsView: View {
                 Text("\(VersionInfo.commit) ").font(.footnote)
             }
         }
-        .navigationTitle("LogiCard Settings")
+        .navigationTitle("Logicard Settings")
         .onDisappear {
             self.settings.version += 1
         }

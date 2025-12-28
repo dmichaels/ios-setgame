@@ -7,6 +7,8 @@ import SwiftUI
 ///
 class Table<TC : TableCard> : ObservableObject {
 
+    private var xsettings: XSettings?;
+
     class Settings {
         //
         // Something I really don't understand yet ...
@@ -15,39 +17,33 @@ class Table<TC : TableCard> : ObservableObject {
         // the call to fillTable, which checks this value ... Why not? Is this
         // not the same instance, or the same copy it ? Guess not. A thinker.
         //
-        var table                           : Table?;
+        // var table                           : Table?;
         var displayCardCount                : Int  = Defaults.displayCardCount;
-        var limitDeckSize                   : Int  = Deck().count;
-        var cardsPerRow                     : Int  = 4;
-        var useSimpleDeck                   : Bool = false {
-            didSet {
-                //
-                // 2025-12-08
-                // No longer automatically restart when requesting simplifed deck in settings.
-                // self.table?.startNewGame();
-            }
-        }
-        var plantSet                        : Bool = Defaults.plantSet;
-        var plantInitialMagicSquare         : Bool = false;
-        var moreCardsIfNoSet                : Bool = Defaults.moreCardsIfNoSet {
+        var cardsPerRow                     : Int  = Defaults.cardsPerRow;
+        var simpleDeck                   : Bool = Defaults.simpleDeck;
+        var plantSet: Bool = Defaults.plantSet;
+        var plantMagicSquare: Bool = Defaults.plantMagicSquare;
+        var moreCardsIfNoSet: Bool = Defaults.moreCardsIfNoSet {
             didSet {
                 if (self.moreCardsIfNoSet) {
-                    self.table?.fillTable();
+                    // TODO: do this in a different way.
+                    // self.table?.fillTable();
                 }
             }
         }
-        var showPartialSetSelectedIndicator : Bool = true;
-        var showNumberOfSetsPresent         : Bool = true;
-        var moveAnyExistingSetToFront       : Bool = false {
+        var showPartialSetHint: Bool = true;
+        var showSetsPresentCount: Bool = true;
+        var moveSetFront: Bool = false {
             didSet {
-                if (self.moveAnyExistingSetToFront) {
-                    self.table?.moveAnyExistingSetToFront();
+                if (self.moveSetFront) {
+                    // TODO: do this in a different way.
+                    // self.table?.moveAnyExistingSetToFront();
                 }
             }
         }
-        var showFoundSets: Bool = true;
-        var cardsAskew: Bool = false;
-        var alternateCardImages: Bool = true;
+        var showFoundSets: Bool = Defaults.showFoundSets;
+        var cardsAskew: Bool = Defaults.cardsAskew;
+        var alternateCards: Bool = Defaults.alternateCards;
         var demoMode: Bool = false;
     }
 
@@ -75,23 +71,24 @@ class Table<TC : TableCard> : ObservableObject {
 
     var demoTimer: Timer? = nil;
 
-    init(displayCardCount : Int = 9, plantSet : Bool = false) {
+    init(displayCardCount : Int = 9, plantSet : Bool = false, xsettings: XSettings? = nil) {
+        self.xsettings = xsettings;
         self.deck                      = Deck();
         self.cards                     = [TC]();
         self.state                     = State();
         self.settings                  = Settings();
-        self.settings.displayCardCount = displayCardCount;
-        self.settings.plantSet         = plantSet;
-        self.settings.table            = self;
+        self.settings.displayCardCount = Defaults.displayCardCount;
+        self.settings.plantSet         = Defaults.plantSet;
+        // self.settings.table            = self;
         self.fillTable();
     }
 
     func startNewGame() {
-        self.deck  = Deck(simple: self.settings.useSimpleDeck, ncards: self.settings.limitDeckSize);
+        self.deck  = Deck(simple: self.settings.simpleDeck);
         self.cards = [TC]();
         self.state = State();
-        if (self.settings.plantInitialMagicSquare && (self.settings.displayCardCount >= 9)) {
-            let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.settings.useSimpleDeck)
+        if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
+            let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.settings.simpleDeck)
             for card in magicSquareCards {
                 self.cards.add(TC(card))
                 _ = self.deck.takeCard(TC(card))
@@ -439,7 +436,7 @@ class Table<TC : TableCard> : ObservableObject {
     func addMoreCards(_ ncards : Int, plantSet : Bool? = nil, frontSet: Bool? = nil) {
         guard (ncards > 0) && (self.deck.count > 0) else { return; }
         let plantSet: Bool = plantSet ?? self.settings.plantSet;
-        let frontSet: Bool = frontSet ?? self.settings.moveAnyExistingSetToFront;
+        let frontSet: Bool = frontSet ?? self.settings.moveSetFront;
         if (plantSet && !self.containsSet() && (self.cards.count + min(self.deck.count, ncards)) >= 3) {
             //
             // If we want a SET planted, and only if there are not already any
