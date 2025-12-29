@@ -61,6 +61,7 @@ struct ContentView: View {
                     }
                 NavigationLink(destination:
                     SettingsView().environmentObject(table)
+                                  .environmentObject(xsettings)
                                   .environmentObject(settings), isActive: $showSettingsView) {
                         EmptyView()
                     }.hidden()

@@ -7,7 +7,7 @@ import SwiftUI
 ///
 class Table<TC : TableCard> : ObservableObject {
 
-    private var xsettings: XSettings?; // TODO: use instead of Settings below (obsolete that one)
+    private var xsettings: XSettings; // TODO: use instead of Settings below (obsolete that one)
 
     class Settings {
         //
@@ -23,6 +23,7 @@ class Table<TC : TableCard> : ObservableObject {
         var simpleDeck                   : Bool = Defaults.simpleDeck;
         var plantSet: Bool = Defaults.plantSet;
         var plantMagicSquare: Bool = Defaults.plantMagicSquare;
+        /*
         var moreCardsIfNoSet: Bool = Defaults.moreCardsIfNoSet {
             didSet {
                 if (self.moreCardsIfNoSet) {
@@ -31,6 +32,7 @@ class Table<TC : TableCard> : ObservableObject {
                 }
             }
         }
+        */
         var showPartialSetHint: Bool = true;
         var showSetsPresentCount: Bool = true;
         var moveSetFront: Bool = false {
@@ -71,7 +73,7 @@ class Table<TC : TableCard> : ObservableObject {
 
     var demoTimer: Timer? = nil;
 
-    init(displayCardCount : Int = 9, plantSet : Bool = false, xsettings: XSettings? = nil) {
+    init(xsettings: XSettings, displayCardCount : Int = 9, plantSet : Bool = false) {
         self.xsettings = xsettings;
         self.deck                      = Deck();
         self.cards                     = [TC]();
@@ -485,26 +487,13 @@ class Table<TC : TableCard> : ObservableObject {
     ///
     private func fillTable(frontSet: Bool? = nil) {
         self.addMoreCards(self.settings.displayCardCount - self.cards.count, frontSet: frontSet);
-        if (self.settings.moreCardsIfNoSet) {
-            if (true) {
-                //
-                // Actually (2025-12-28) realized official
-                // rules say to add 3 more cards on no SET.
-                //
-                while (!self.containsSet()) {
-                    if (self.deck.cards.count == 0) {
-                        break;
-                    }
-                    self.addMoreCards(self.xsettings?.additionalCards ?? 3, frontSet: frontSet);
+        if (self.xsettings.additionalCards > 0) {
+            while (!self.containsSet()) {
+                if (self.deck.cards.count == 0) {
+                    break;
                 }
-            }
-            else {
-                while (!self.containsSet()) {
-                    if (self.deck.cards.count == 0) {
-                        break;
-                    }
-                    self.addMoreCards(1, frontSet: frontSet);
-                }
+                print("ADD-CARDS: \(xsettings.additionalCards)")
+                self.addMoreCards(self.xsettings.additionalCards, frontSet: frontSet);
             }
         }
     }

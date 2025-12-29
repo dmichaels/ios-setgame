@@ -25,12 +25,14 @@ struct SetGameApp: App {
     @StateObject private var table: Table<TableCard>;
 
     init() {
-        let sharedXSettings: XSettings = XSettings()
-        let sharedSettings: Settings = Settings();
-        _settings = StateObject(wrappedValue: sharedSettings);
-        _feedback = StateObject(wrappedValue: Feedback(sounds: Defaults.sounds, haptics: Defaults.haptics));
-        _table = StateObject(wrappedValue: Table(displayCardCount: Defaults.displayCardCount,
-                                                 plantSet: Defaults.plantSet, xsettings: sharedXSettings));
+        let shared_xsettings: XSettings = XSettings()
+        let shared_settings: Settings = Settings();
+        _xsettings = StateObject(wrappedValue: shared_xsettings);
+        _settings  = StateObject(wrappedValue: shared_settings);
+        _feedback  = StateObject(wrappedValue: Feedback(sounds: Defaults.sounds, haptics: Defaults.haptics));
+        _table     = StateObject(wrappedValue: Table(xsettings: shared_xsettings,
+                                                     displayCardCount: Defaults.displayCardCount,
+                                                     plantSet: Defaults.plantSet));
     }
 
     var body: some Scene {
@@ -38,6 +40,7 @@ struct SetGameApp: App {
             ContentView()
                 .environmentObject(self.table)
                 .environmentObject(self.settings)
+                .environmentObject(self.xsettings)
                 .environmentObject(self.feedback)
         }
     }
