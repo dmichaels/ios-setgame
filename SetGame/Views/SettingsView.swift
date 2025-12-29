@@ -103,8 +103,8 @@ struct SettingsView: View {
                     Toggle(isOn: $table.settings.cardsAskew) {}
                 }
                 HStack {
-                    Image(systemName: "alternatingcurrent").frame(width: iconWidth)
-                    Text("Alternate Cards").lineLimit(1).layoutPriority(1)
+                    Image(systemName: "photo").frame(width: iconWidth)
+                    Text("Cards").lineLimit(1).layoutPriority(1)
                     Spacer()
                     Picker("", selection: $alternateCards) {
                         ForEach(AlternateCards, id: \.value) { option in Text(option.label) }
@@ -191,10 +191,16 @@ struct SettingsView: View {
             .contentShape(Rectangle()) // makes whole row tap-able
         }
     }
-}
 
-private let AlternateCards: [(label: String, value: Int)] = [
-    ("Classic", 0),
-    ("Squares", 1),
-    ("Monochrome", 2)
-]
+    private let AlternateCards: [(label: String, value: Int)] = [
+        ("Classic", 0),
+        ("Squares", 1),
+        ("Monochrome", 2)
+    ]
+
+    private let MoreCards: [(label: String, value: Int)] = [
+        ("One More Cards", 0),
+        ("Two More Cards", 1),
+        ("Three More Cards", 2)
+    ]
+}

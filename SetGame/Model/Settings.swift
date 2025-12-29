@@ -4,12 +4,14 @@ import SwiftUI
 // TODO
 // Eventually more Table.Settings here.
 //
-class Defaults {
+class Defaults
+{
     public static let showPartialSetHint: Bool   = true;
     public static let showSetsPresentCount: Bool = true;
     public static let showPeekButton: Bool       = true;
     public static let peekDisjoint: Bool         = false;
     public static let moreCardsIfNoSet: Bool     = true;
+    public static let additionalCards: Int       = 3;
     public static let plantSet: Bool             = false;
     public static let plantMagicSquare: Bool     = false;
     public static let moveSetFront: Bool         = false;
@@ -24,7 +26,8 @@ class Defaults {
     public static let demoMode: Bool             = false;
 }
 
-class Settings: ObservableObject {
+class Settings: ObservableObject
+{
     @Published var showPeekButton: Bool = Defaults.showPeekButton;
     @Published var peekDisjoint: Bool   = Defaults.peekDisjoint;
     @Published var alternateCards: Int  = Defaults.alternateCards;
@@ -33,12 +36,14 @@ class Settings: ObservableObject {
     @Published var version: Int         = 0;
 }
 
-class XSettings: ObservableObject {
+class XSettings: ObservableObject
+{
     @Published var showPartialSetHint: Bool   = Defaults.showPartialSetHint;
     @Published var showSetsPresentCount: Bool = Defaults.showSetsPresentCount;
     @Published var showPeekButton: Bool       = Defaults.showPeekButton;
     @Published var peekDisjoint: Bool         = Defaults.peekDisjoint;
     @Published var moreCardsIfNoSet: Bool     = Defaults.moreCardsIfNoSet;
+    @Published var additionalCards: Int       = Defaults.additionalCards;
     @Published var plantSet: Bool             = Defaults.plantSet;
     @Published var plantMagicSquare: Bool     = Defaults.plantMagicSquare;
     @Published var moveSetFront: Bool         = Defaults.moveSetFront;

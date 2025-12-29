@@ -7,7 +7,7 @@ import SwiftUI
 ///
 class Table<TC : TableCard> : ObservableObject {
 
-    private var xsettings: XSettings?;
+    private var xsettings: XSettings?; // TODO: use instead of Settings below (obsolete that one)
 
     class Settings {
         //
@@ -26,7 +26,7 @@ class Table<TC : TableCard> : ObservableObject {
         var moreCardsIfNoSet: Bool = Defaults.moreCardsIfNoSet {
             didSet {
                 if (self.moreCardsIfNoSet) {
-                    // TODO: do this in a different way.
+                    // TODO: do this in a different way if at all.
                     // self.table?.fillTable();
                 }
             }
@@ -486,11 +486,25 @@ class Table<TC : TableCard> : ObservableObject {
     private func fillTable(frontSet: Bool? = nil) {
         self.addMoreCards(self.settings.displayCardCount - self.cards.count, frontSet: frontSet);
         if (self.settings.moreCardsIfNoSet) {
-            while (!self.containsSet()) {
-                if (self.deck.cards.count == 0) {
-                    break;
+            if (true) {
+                //
+                // Actually (2025-12-28) realized official
+                // rules say to add 3 more cards on no SET.
+                //
+                while (!self.containsSet()) {
+                    if (self.deck.cards.count == 0) {
+                        break;
+                    }
+                    self.addMoreCards(self.xsettings?.additionalCards ?? 3, frontSet: frontSet);
                 }
-                self.addMoreCards(1, frontSet: frontSet);
+            }
+            else {
+                while (!self.containsSet()) {
+                    if (self.deck.cards.count == 0) {
+                        break;
+                    }
+                    self.addMoreCards(1, frontSet: frontSet);
+                }
             }
         }
     }
