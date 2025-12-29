@@ -9,17 +9,13 @@ struct SettingsView: View {
     @State private var alternateCards: Int = 0
     @State private var additionalCards: Int = 0
 
-    private let cardsPerRowChoices: [Int] = [ 2, 3, 4, 5, 6 ];
-    private let preferredDisplayCountCardChoices: [Int] = [ 3, 4, 6, 9, 12, 15, 16, 18, 20 ];
-    private let limitDeckSizeChoices: [Int] = [ 18, 27, 36, 45, 54, 63, 72, 81 ];
     private let iconWidth: CGFloat = 30;
-    private let additionalCardsChoices: [Int] = [ 0, 1, 2, 3, ];
-
-/*
-    private var additionalCards: Binding<Int> {
-        Binding( get: { xsettings.additionalCards }, set: { xsettings.additionalCards = $0 })
-    }
-*/
+    private let CardsPerRowChoices: [Int] = [ 2, 3, 4, 5, 6 ];
+    private let DisplayCardCountChoices: [Int] = [ 3, 4, 6, 9, 12, 15, 16, 18, 20 ];
+    private let AdditionalCardsChoices: [Int] = [ 0, 1, 2, 3 ];
+    private let AlternateCardsChoices: [(label: String, value: Int)] = [ ("Classic", 0),
+                                                                         ("Squares", 1),
+                                                                         ("Monochrome", 2) ]
     
     var body: some View {
         Form {
@@ -45,7 +41,6 @@ struct SettingsView: View {
                 }
                 HStack {
                     Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
-                    // Text("Disjoint Peek/Count (↑)")
                     Text("Disjoint Peek & Count ↑")
                         .foregroundStyle(table.settings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
                     Spacer()
@@ -58,37 +53,11 @@ struct SettingsView: View {
                     Text("No SETs → More Cards").lineLimit(1).layoutPriority(1)
                     Spacer()
                     Picker("", selection: $xsettings.additionalCards) {
-                        ForEach(additionalCardsChoices, id: \.self) {
+                        ForEach(AdditionalCardsChoices, id: \.self) {
                             Text("\($0)").tag("\($0)")
                         }
                     }.pickerStyle(.menu)
-                    .onAppear {
-                        additionalCards = xsettings.additionalCards;
-                    }
-                    .onChange(of: additionalCards) { value in
-                        xsettings.additionalCards = value;
-                    }
                 }
-/*
-                HStack {
-                    Image(systemName: "plus.square.on.square").frame(width: iconWidth)
-                    Text("No SETs → More Cards").lineLimit(1).layoutPriority(1)
-                    Spacer()
-                    Picker("", selection: self.additionalCards) {
-                        ForEach(AdditionalCards, id: \.value) { option in
-                            Text(option.label).tag(option.value)
-                        }
-                    }.pickerStyle(.menu)
-                }
-*/
-/*
-                HStack {
-                    Image(systemName: "plus.square.on.square").frame(width: iconWidth)
-                    Text("No SETs → More Cards").lineLimit(1).layoutPriority(1)
-                    Spacer()
-                    Toggle(isOn: $table.settings.moreCardsIfNoSet) {}
-                }
-*/
                 HStack {
                     Image(systemName: "target").frame(width: iconWidth)
                     Text("Plant SET").lineLimit(1).layoutPriority(1)
@@ -120,7 +89,7 @@ struct SettingsView: View {
                     Text("Display Cards").lineLimit(1).layoutPriority(1)
                     Spacer()
                     Picker("", selection: $table.settings.displayCardCount) {
-                        ForEach(preferredDisplayCountCardChoices, id: \.self) {
+                        ForEach(DisplayCardCountChoices, id: \.self) {
                             Text(String($0))
                         }
                     }.pickerStyle(MenuPickerStyle())
@@ -130,7 +99,7 @@ struct SettingsView: View {
                     Text("Cards Per Row").lineLimit(1).layoutPriority(1)
                     Spacer()
                     Picker("", selection: $table.settings.cardsPerRow) {
-                        ForEach(cardsPerRowChoices, id: \.self) {
+                        ForEach(CardsPerRowChoices, id: \.self) {
                             Text(String($0))
                         }
                     }.pickerStyle(MenuPickerStyle())
@@ -146,7 +115,7 @@ struct SettingsView: View {
                     Text("Cards").lineLimit(1).layoutPriority(1)
                     Spacer()
                     Picker("", selection: $alternateCards) {
-                        ForEach(AlternateCards, id: \.value) { option in Text(option.label) }
+                        ForEach(AlternateCardsChoices, id: \.value) { option in Text(option.label) }
                     }
                     .pickerStyle(.menu)
                     .onChange(of: alternateCards) { value in
@@ -230,31 +199,4 @@ struct SettingsView: View {
             .contentShape(Rectangle()) // makes whole row tap-able
         }
     }
-
-/*
-    private let XAdditionalCards: [Int] = [
-        0,
-        1,
-        2,
-        3,
-    ]
-    private let AdditionalCards: [(label: String, value: Int)] = [
-        ("None",  0),
-        ("One",   1),
-        ("Two",   2),
-        ("Three", 3)
-    ]
-*/
-
-    private let AlternateCards: [(label: String, value: Int)] = [
-        ("Classic", 0),
-        ("Squares", 1),
-        ("Monochrome", 2)
-    ]
-
-    private let MoreCards: [(label: String, value: Int)] = [
-        ("One More Cards", 0),
-        ("Two More Cards", 1),
-        ("Three More Cards", 2)
-    ]
 }
