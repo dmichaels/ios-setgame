@@ -7,7 +7,7 @@ import SwiftUI
 ///
 class Table<TC : TableCard> : ObservableObject {
 
-    private var xsettings: XSettings; // TODO: use instead of Settings below (obsolete that one)
+    public var xsettings: XSettings; // TODO: use instead of Settings below (obsolete that one)
 
     class Settings {
         //
@@ -45,7 +45,7 @@ class Table<TC : TableCard> : ObservableObject {
         }
         var showFoundSets: Bool = Defaults.showFoundSets;
         var cardsAskew: Bool = Defaults.cardsAskew;
-        var alternateCards: Int = Defaults.alternateCards;
+        // var alternateCards: Int = Defaults.alternateCards;
         var demoMode: Bool = false;
     }
 

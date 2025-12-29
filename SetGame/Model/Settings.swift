@@ -29,7 +29,6 @@ class Settings: ObservableObject
 {
     @Published var showPeekButton: Bool = Defaults.showPeekButton;
     @Published var peekDisjoint: Bool   = Defaults.peekDisjoint;
-    @Published var alternateCards: Int  = Defaults.alternateCards;
     @Published var sounds: Bool         = Defaults.sounds;
     @Published var haptics: Bool        = Defaults.haptics;
     @Published var version: Int         = 0;

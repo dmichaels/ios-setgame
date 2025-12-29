@@ -7,7 +7,6 @@ struct SettingsView: View {
     @EnvironmentObject var xsettings : XSettings;
 
     @State private var alternateCards: Int = 0
-    @State private var additionalCards: Int = 0
 
     private let iconWidth: CGFloat = 30;
     private let CardsPerRowChoices: [Int] = [ 2, 3, 4, 5, 6 ];
@@ -16,7 +15,6 @@ struct SettingsView: View {
     private let AlternateCardsChoices: [(label: String, value: Int)] = [ ("Classic", 0),
                                                                          ("Squares", 1),
                                                                          ("Monochrome", 2) ]
-    
     var body: some View {
         Form {
             Section(header: Text("Informational")) {
@@ -118,6 +116,18 @@ struct SettingsView: View {
                         ForEach(AlternateCardsChoices, id: \.value) { option in Text(option.label) }
                     }
                     .pickerStyle(.menu)
+                    .onChange(of: alternateCards) { value in self.xsettings.alternateCards = value; }
+                    .onAppear { self.alternateCards = xsettings.alternateCards; }
+                }
+                /*
+                HStack {
+                    Image(systemName: "photo").frame(width: iconWidth)
+                    Text("Cards").lineLimit(1).layoutPriority(1)
+                    Spacer()
+                    Picker("", selection: $alternateCards) {
+                        ForEach(AlternateCardsChoices, id: \.value) { option in Text(option.label) }
+                    }
+                    .pickerStyle(.menu)
                     .onChange(of: alternateCards) { value in
                         switch value {
                             case 0:  table.settings.alternateCards = 0;
@@ -132,6 +142,7 @@ struct SettingsView: View {
                         else if (table.settings.alternateCards == 2) { self.alternateCards = 2 }
                     }
                 }
+                */
                 /*
                 HStack {
                     Image(systemName: "alternatingcurrent").frame(width: iconWidth)
