@@ -26,6 +26,6 @@ public struct VersionInfo {
               let commit = dictionary["GitCommit"] as? String else {
             return ""
         }
-        return commit;
+        return commit.uppercased();
     }
 }

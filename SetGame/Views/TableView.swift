@@ -34,7 +34,8 @@ struct TableView: View {
                                 .allowsHitTesting(!self.table.state.blinking && !self.settings.demoMode)
                             }
                             else {
-                                Image("dummy").resizable()
+                                // Image("dummy").resizable()
+                                Color.clear
                             }
                         }
                     }
