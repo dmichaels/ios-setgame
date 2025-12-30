@@ -16,13 +16,6 @@ struct StatsView: View  {
                          : "Standard Deck: 81 Cards") // .font(.footnote).italic()
                     Spacer()
                 }
-/*
-                Divider()
-                HStack {
-                    Text("Possible SETs: \(String(Deck.numberOfDistinctSets(simple: self.settings.simpleDeck)))").font(.footnote)
-                    Spacer()
-                }
-*/
                 Rectangle().fill(Color.black).frame(height: 2)
                 ForEach(3...Deck.setlessCount(simple: self.settings.simpleDeck) , id: \.self) { index in
                     if (index == 3) {

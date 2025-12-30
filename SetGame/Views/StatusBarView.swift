@@ -17,10 +17,6 @@ struct StatusBarView: View {
     let BACKGROUND: Color = Color(hex: 0xD5E9FF);
     let SHAPE = RoundedRectangle(cornerRadius: 11, style: .continuous);
 
-    // func partialSetSelectedOne() -> Bool { self.table.state.partialSetSelected && table.cards.count == 1; }
-    // func partialSetSelectedTwo() -> Bool { self.table.state.partialSetSelected && table.cards.count == 2; }
-    //// xyzzy private func gameDone() -> Bool { (self.table.deck.count == 0) && !self.table.containsSet(); }
-    
     var body: some View {
         HStack(alignment: .firstTextBaseline) {
             Text("  SETs: \(table.state.setsFoundCount)")
@@ -28,7 +24,6 @@ struct StatusBarView: View {
                 .fontWeight(.bold)
                 .frame(alignment: .leading)
                 .foregroundColor(FOREGROUND)
-            //// xyzzy if (self.gameDone()) {
             if (self.table.gameDone()) {
                 Text(CHECK_MARK_SYMBOL)
                     .font(.subheadline)

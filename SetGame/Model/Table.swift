@@ -10,20 +10,20 @@ class Table<TC : TableCard> : ObservableObject {
     public var settings: Settings;
 
     struct State {
-        var partialSetSelected            : Bool = false;
-        var incorrectGuessCount           : Int  = 0;
-        var setsFoundCount                : Int  = 0;
-        var setJustFound                  : Bool = false;
-        var setJustFoundNot               : Bool = false;
-        var setsLastFound                 : [[TC]] = [];
-        var showingCardsWhichArePartOfSet : Bool = false;
-        var showingOneRandomSet           : Bool = false;
-        var showingOneRandomSetLast       : Int? = nil;
+        var partialSetSelected: Bool            = false;
+        var incorrectGuessCount: Int            = 0;
+        var setsFoundCount: Int                 = 0;
+        var setJustFound: Bool                  = false;
+        var setJustFoundNot: Bool               = false;
+        var setsLastFound: [[TC]]               = [];
+        var showingCardsWhichArePartOfSet: Bool = false;
+        var showingOneRandomSet: Bool           = false;
+        var showingOneRandomSetLast: Int?       = nil;
         //
         // This blinking flag is ONLY used to disable input while blinking the cards after
         // a SET is found (see allowsHitTesting in TableView); there should be a better way.
         ///
-        var blinking                      : Bool = false;
+        var blinking: Bool                      = false;
     }
 
     @Published private(set) var cards: [TC];
@@ -34,9 +34,9 @@ class Table<TC : TableCard> : ObservableObject {
 
     init(settings: Settings) {
         self.settings = settings;
-        self.deck                      = Deck();
-        self.cards                     = [TC]();
-        self.state                     = State();
+        self.cards = [TC]();
+        self.state = State();
+        self.deck = Deck();
         self.fillTable();
     }
 
@@ -84,11 +84,6 @@ class Table<TC : TableCard> : ObservableObject {
                 self.cards[10] = TC(magicSquareCards[6])
                 self.cards[11] = TC(magicSquareCards[7])
                 self.cards[12] = TC(magicSquareCards[8])
-            }
-            else if (self.settings.cardsPerRow == 6) {
-                //
-                // TODO
-                //
             }
         }
         else {
