@@ -3,17 +3,17 @@ import SwiftUI
 struct TableView: View {
 
     @EnvironmentObject var table : Table;
-    @EnvironmentObject var xsettings : XSettings;
+    @EnvironmentObject var settings : Settings;
     @EnvironmentObject var feedback : Feedback;
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack {
-                let nrows = Int(ceil(Float(table.cards.count) / Float(xsettings.cardsPerRow)));
+                let nrows = Int(ceil(Float(table.cards.count) / Float(settings.cardsPerRow)));
                 ForEach (0..<nrows, id: \.self) { row in
                     HStack {
-                        ForEach(0..<xsettings.cardsPerRow, id: \.self) { column in
-                            let index = row * xsettings.cardsPerRow + column;
+                        ForEach(0..<settings.cardsPerRow, id: \.self) { column in
+                            let index = row * settings.cardsPerRow + column;
                             if (index < table.cards.count) {
                                 CardView(card: table.cards[index]) {
                                     // self.table.cardTouched($0);
@@ -30,8 +30,8 @@ struct TableView: View {
                                         }
                                     }
                                 }
-                                .slightlyRotated(self.xsettings.cardsAskew)
-                                .allowsHitTesting(!self.table.state.blinking && !self.xsettings.demoMode)
+                                .slightlyRotated(self.settings.cardsAskew)
+                                .allowsHitTesting(!self.table.state.blinking && !self.settings.demoMode)
                             }
                             else {
                                 Image("dummy").resizable()
@@ -43,9 +43,9 @@ struct TableView: View {
                     Spacer(minLength: 24)
                     StatusBarView()
                     Spacer(minLength: 20)
-                    if (self.xsettings.showFoundSets) {
+                    if (self.settings.showFoundSets) {
                         FoundSetsView(setsLastFound: table.state.setsLastFound,
-                                      cardsAskew: xsettings.cardsAskew)
+                                      cardsAskew: settings.cardsAskew)
                     }
                 }
             }.padding().offset(y: -12)

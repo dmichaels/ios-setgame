@@ -3,7 +3,7 @@ import SwiftUI
 struct StatusBarView: View {
     
     @EnvironmentObject var table : Table;
-    @EnvironmentObject var xsettings : XSettings;
+    @EnvironmentObject var settings : Settings;
 
     let OK_SYMBOL           : String = "\u{1F44C}";
     let THUMBSUP_SYMBOL     : String = "\u{1F44D}";
@@ -41,13 +41,13 @@ struct StatusBarView: View {
                     .foregroundColor(FOREGROUND)
             }
             Spacer()
-                if (self.xsettings.showPartialSetHint) {
+                if (self.settings.showPartialSetHint) {
                     if (self.table.state.blinking || self.table.selectedCards().isSet()) {
                             Text(HAPPY_FACE_SYMBOL)
                                 .scaleEffect(1.2)
                                 .font(.subheadline)
                                 .foregroundColor(FOREGROUND)
-                                .padding(.trailing, self.xsettings.showSetsPresentCount || xsettings.showPeekButton ? 4 : 10)
+                                .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                     }
                     else if (self.table.state.partialSetSelected) {
                         if (self.table.selectedCardCount() == 1) {
@@ -55,51 +55,51 @@ struct StatusBarView: View {
                                 .scaleEffect(1.2)
                                 .font(.subheadline)
                                 .foregroundColor(FOREGROUND)
-                                .padding(.trailing, self.xsettings.showSetsPresentCount || xsettings.showPeekButton ? 4 : 10)
+                                .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                         }
                         else if (self.table.selectedCardCount() == 2) {
                             Text(THUMBSUP_SYMBOL)
                                 .scaleEffect(1.2)
                                 .font(.subheadline)
                                 .foregroundColor(FOREGROUND)
-                                .padding(.trailing, self.xsettings.showSetsPresentCount || xsettings.showPeekButton ? 4 : 10)
+                                .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                         }
                         else {
                             Text(NEUTRAL_FACE_SYMBOL)
                                 .scaleEffect(1.2)
                                 .font(.subheadline)
                                 .foregroundColor(FOREGROUND)
-                                .padding(.trailing, self.xsettings.showSetsPresentCount || xsettings.showPeekButton ? 4 : 10)
+                                .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                         }
                     }
                     else if ((self.table.selectedCardCount() == 1) || (self.table.selectedCardCount() == 2)) {
                         Text(SAD_FACE_SYMBOL)
                             .scaleEffect(1.2)
                             .font(.subheadline)
-                            .padding(.trailing, self.xsettings.showSetsPresentCount || xsettings.showPeekButton ? 4 : 10)
+                            .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                     }
                     else if (self.table.state.setJustFound || self.table.selectedCards().isSet()) {
                         Text(HAPPY_FACE_SYMBOL)
                             .scaleEffect(1.2)
                             .font(.subheadline)
-                            .padding(.trailing, self.xsettings.showSetsPresentCount || xsettings.showPeekButton ? 4 : 10)
+                            .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                     }
                     else if (self.table.state.setJustFoundNot) {
                         Text(SAD_FACE_SYMBOL)
                             .scaleEffect(1.2)
                             .font(.subheadline)
-                            .padding(.trailing, self.xsettings.showSetsPresentCount || xsettings.showPeekButton ? 4 : 10)
+                            .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                     }
                     else {
                         Text(NEUTRAL_FACE_SYMBOL)
                             .scaleEffect(1.2)
                             .font(.subheadline)
                             .frame(alignment: .leading)
-                            .padding(.trailing, self.xsettings.showSetsPresentCount || xsettings.showPeekButton ? 4 : 10)
+                            .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                     }
                 }
-            if (self.xsettings.showSetsPresentCount) {
-                Text("\(table.numberOfSets(disjoint: xsettings.peekDisjoint))")
+            if (self.settings.showSetsPresentCount) {
+                Text("\(table.numberOfSets(disjoint: settings.peekDisjoint))")
                     .font(.subheadline)
                     .monospacedDigit()
                     .foregroundColor(FOREGROUND)
@@ -111,13 +111,13 @@ struct StatusBarView: View {
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
                             .stroke(FOREGROUND, lineWidth: 1)
                     )
-                    .padding(.trailing, xsettings.showPeekButton ? 3 : 10)
+                    .padding(.trailing, settings.showPeekButton ? 3 : 10)
                 }
-            if (xsettings.showPeekButton) {
+            if (settings.showPeekButton) {
                 Button(action: {
                     self.table.state.showingOneRandomSet.toggle();
                     if (self.table.state.showingOneRandomSet) {
-                        self.table.selectOneRandomSet(disjoint: xsettings.peekDisjoint);
+                        self.table.selectOneRandomSet(disjoint: settings.peekDisjoint);
                     }
                     else {
                         self.table.unselectCards();
@@ -164,7 +164,7 @@ struct StatusBarView: View {
                 .shadow(color: .black.opacity(0.3), radius: 4, x: 3, y: 6)
         )
         .background(BACKGROUND)
-        .allowsHitTesting(!self.table.state.blinking && !self.xsettings.demoMode)
+        .allowsHitTesting(!self.table.state.blinking && !self.settings.demoMode)
     }
 }
 

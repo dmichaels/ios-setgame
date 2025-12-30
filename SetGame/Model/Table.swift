@@ -7,7 +7,7 @@ import SwiftUI
 ///
 class Table<TC : TableCard> : ObservableObject {
 
-    public var xsettings: XSettings; // TODO: use instead of Settings below (obsolete that one)
+    public var settings: Settings;
 
     struct State {
         var partialSetSelected            : Bool = false;
@@ -32,8 +32,8 @@ class Table<TC : TableCard> : ObservableObject {
     private var deck: Deck<TC>;
     private var demoTimer: Timer? = nil;
 
-    init(xsettings: XSettings) {
-        self.xsettings = xsettings;
+    init(settings: Settings) {
+        self.settings = settings;
         self.deck                      = Deck();
         self.cards                     = [TC]();
         self.state                     = State();
@@ -41,11 +41,11 @@ class Table<TC : TableCard> : ObservableObject {
     }
 
     func startNewGame() {
-        self.deck  = Deck(simple: self.xsettings.simpleDeck);
+        self.deck  = Deck(simple: self.settings.simpleDeck);
         self.cards = [TC]();
         self.state = State();
-        if (self.xsettings.plantMagicSquare && (self.xsettings.displayCardCount >= 9)) {
-            let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.xsettings.simpleDeck)
+        if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
+            let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.settings.simpleDeck)
             for card in magicSquareCards {
                 self.cards.add(TC(card))
                 _ = self.deck.takeCard(TC(card))
@@ -54,16 +54,16 @@ class Table<TC : TableCard> : ObservableObject {
             // Only bother making it look good if the cards-per-row is 4 (the default)
             // or 5; if cards-per-row is 3 it already falls out to look good automatically.
             //
-            let displayCardCountSave: Int = self.xsettings.displayCardCount
-            if ((self.xsettings.cardsPerRow == 4) && (self.xsettings.displayCardCount < 11)) {
-                self.xsettings.displayCardCount = 11
+            let displayCardCountSave: Int = self.settings.displayCardCount
+            if ((self.settings.cardsPerRow == 4) && (self.settings.displayCardCount < 11)) {
+                self.settings.displayCardCount = 11
             }
-            else if ((self.xsettings.cardsPerRow == 5) && (self.xsettings.displayCardCount < 13)) {
-                self.xsettings.displayCardCount = 13
+            else if ((self.settings.cardsPerRow == 5) && (self.settings.displayCardCount < 13)) {
+                self.settings.displayCardCount = 13
             }
             self.fillTable(moveSetFront: false);
-            self.xsettings.displayCardCount = displayCardCountSave
-            if (self.xsettings.cardsPerRow == 4) {
+            self.settings.displayCardCount = displayCardCountSave
+            if (self.settings.cardsPerRow == 4) {
                 self.cards[3]  = self.cards[9]
                 self.cards[7]  = self.cards[10]
                 self.cards[4]  = TC(magicSquareCards[3])
@@ -73,7 +73,7 @@ class Table<TC : TableCard> : ObservableObject {
                 self.cards[9]  = TC(magicSquareCards[7])
                 self.cards[10] = TC(magicSquareCards[8])
             }
-            else if (self.xsettings.cardsPerRow == 5) {
+            else if (self.settings.cardsPerRow == 5) {
                 self.cards[3]  = self.cards[9]
                 self.cards[4]  = self.cards[10]
                 self.cards[8]  = self.cards[11]
@@ -85,7 +85,7 @@ class Table<TC : TableCard> : ObservableObject {
                 self.cards[11] = TC(magicSquareCards[7])
                 self.cards[12] = TC(magicSquareCards[8])
             }
-            else if (self.xsettings.cardsPerRow == 6) {
+            else if (self.settings.cardsPerRow == 6) {
                 //
                 // TODO
                 //
@@ -195,7 +195,7 @@ class Table<TC : TableCard> : ObservableObject {
                 // and with reversion toward the preferred number of display cards.
                 // Slightly tricky to get just right; be careful.
                 //
-                let extraCardsTotal: Int = max(self.cards.count - self.xsettings.displayCardCount, 0);
+                let extraCardsTotal: Int = max(self.cards.count - self.settings.displayCardCount, 0);
                 let extraCardsUnsel: [TC] = self.cards.suffix(extraCardsTotal).filter { !$0.selected };
                 let extraCardsCount: Int = min(extraCardsUnsel.count, 3);
                 let extraCards: [TC] = extraCardsUnsel.suffix(extraCardsCount).reversed();
@@ -203,8 +203,8 @@ class Table<TC : TableCard> : ObservableObject {
                 let newCards: [TC] = newCardsCount <= 0 ? [] : (
                     self.deck.takeRandomCards(
                         newCardsCount,
-                        plantSet: self.xsettings.plantSet,
-                        existingCards: self.xsettings.plantSet ? self.cards.filter { !$0.selected } : []
+                        plantSet: self.settings.plantSet,
+                        existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
                     )
                 );
                 var replacementCards: [TC] = extraCards + newCards;
@@ -394,7 +394,7 @@ class Table<TC : TableCard> : ObservableObject {
     ///
     func addMoreCards(_ ncards : Int, plantSet : Bool? = nil) {
         guard (ncards > 0) && (self.deck.count > 0) else { return; }
-        let plantSet: Bool = plantSet ?? self.xsettings.plantSet;
+        let plantSet: Bool = plantSet ?? self.settings.plantSet;
         if (plantSet && !self.containsSet() && (self.cards.count + min(self.deck.count, ncards)) >= 3) {
             //
             // If we want a SET planted, and only if there are not already any
@@ -439,17 +439,17 @@ class Table<TC : TableCard> : ObservableObject {
     /// the table, then add up to 3 more cards.
     ///
     private func fillTable(moveSetFront: Bool? = nil) {
-        self.addMoreCards(self.xsettings.displayCardCount - self.cards.count);
-        if (self.xsettings.additionalCards > 0) {
+        self.addMoreCards(self.settings.displayCardCount - self.cards.count);
+        if (self.settings.additionalCards > 0) {
             while (!self.containsSet()) {
                 if (self.deck.cards.count == 0) {
                     break;
                 }
-                print("ADD-CARDS: \(xsettings.additionalCards)")
-                self.addMoreCards(self.xsettings.additionalCards);
+                print("ADD-CARDS: \(settings.additionalCards)")
+                self.addMoreCards(self.settings.additionalCards);
             }
         }
-        if (moveSetFront ?? self.xsettings.moveSetFront) {
+        if (moveSetFront ?? self.settings.moveSetFront) {
             self.moveAnyExistingSetToFront();
         }
     }
@@ -526,7 +526,7 @@ class Table<TC : TableCard> : ObservableObject {
     }
 
     public func demoCheck() async {
-        if (self.xsettings.demoMode) {
+        if (self.settings.demoMode) {
             if (self.demoTimer == nil) {
                 await self.demoStart();
             }
@@ -545,7 +545,7 @@ class Table<TC : TableCard> : ObservableObject {
             try? await Task.sleep(nanoseconds: 1_000_000_000)
             self.startNewGame();
         }
-        while (self.xsettings.demoMode) {
+        while (self.settings.demoMode) {
             if (self.gameDone()) {
                 try? await Task.sleep(nanoseconds: 2_000_000_000)
                 self.startNewGame();

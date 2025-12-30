@@ -22,7 +22,7 @@ class Defaults
     public static let demoMode: Bool             = false;
 }
 
-class XSettings: ObservableObject
+class Settings: ObservableObject
 {
     @Published var showPartialSetHint: Bool   = Defaults.showPartialSetHint;
     @Published var showSetsPresentCount: Bool = Defaults.showSetsPresentCount;

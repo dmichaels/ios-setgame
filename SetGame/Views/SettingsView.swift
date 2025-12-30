@@ -3,7 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     
     @EnvironmentObject var table : Table;
-    @EnvironmentObject var xsettings : XSettings;
+    @EnvironmentObject var settings : Settings;
 
     @State private var alternateCards: Int = 0
 
@@ -21,35 +21,35 @@ struct SettingsView: View {
                     Image(systemName: "face.smiling").frame(width: iconWidth)
                     Text("Partial SET Hint").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $xsettings.showPartialSetHint) {}
+                    Toggle(isOn: $settings.showPartialSetHint) {}
                     
                 }
                 HStack {
                     Image(systemName: "number.square").frame(width: iconWidth)
                     Text("Available SET Count").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $xsettings.showSetsPresentCount) {}
+                    Toggle(isOn: $settings.showSetsPresentCount) {}
                 }
                 HStack {
                     Image(systemName: "eyes").frame(width: iconWidth)
                     Text("Peek SET Button")
                     Spacer()
-                    Toggle(isOn: $xsettings.showPeekButton) {}
+                    Toggle(isOn: $settings.showPeekButton) {}
                 }
                 HStack {
                     Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
                     Text("Disjoint Peek & Count ↑")
-                        .foregroundStyle(xsettings.showSetsPresentCount || xsettings.showPeekButton ? .primary : .secondary)
+                        .foregroundStyle(settings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
                     Spacer()
-                    Toggle(isOn: $xsettings.peekDisjoint) {}
-                }.disabled(!(xsettings.showSetsPresentCount || xsettings.showPeekButton))
+                    Toggle(isOn: $settings.peekDisjoint) {}
+                }.disabled(!(settings.showSetsPresentCount || settings.showPeekButton))
             }
             Section(header: Text("Behavioral")) {
                 HStack {
                     Image(systemName: "plus.square.on.square").frame(width: iconWidth)
                     Text("No SETs → More Cards").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Picker("", selection: $xsettings.additionalCards) {
+                    Picker("", selection: $settings.additionalCards) {
                         ForEach(AdditionalCardsChoices, id: \.self) {
                             Text("\($0)").tag("\($0)")
                         }
@@ -59,19 +59,19 @@ struct SettingsView: View {
                     Image(systemName: "target").frame(width: iconWidth)
                     Text("Plant SET").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $xsettings.plantSet) {}
+                    Toggle(isOn: $settings.plantSet) {}
                 }
                 HStack {
                     Image(systemName: "arrow.up.left.square").frame(width: iconWidth)
                     Text("Move SET Front").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $xsettings.moveSetFront) {}
+                    Toggle(isOn: $settings.moveSetFront) {}
                 }
                 HStack {
                     Image(systemName: "wand.and.rays").frame(width: iconWidth)
                     Text("Plant Magic Square").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $xsettings.plantMagicSquare) {}
+                    Toggle(isOn: $settings.plantMagicSquare) {}
                 }
             }
             Section(header: Text("Visual")) {
@@ -79,13 +79,13 @@ struct SettingsView: View {
                     Image(systemName: "list.number").frame(width: iconWidth)
                     Text("Show Found SETs").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $xsettings.showFoundSets) {}
+                    Toggle(isOn: $settings.showFoundSets) {}
                 }
                 HStack {
                     Image(systemName: "square.on.square").frame(width: iconWidth)
                     Text("Display Cards").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Picker("", selection: $xsettings.displayCardCount) {
+                    Picker("", selection: $settings.displayCardCount) {
                         ForEach(DisplayCardCountChoices, id: \.self) {
                             Text(String($0))
                         }
@@ -95,7 +95,7 @@ struct SettingsView: View {
                     Image(systemName: "square.grid.3x3").frame(width: iconWidth)
                     Text("Cards Per Row").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Picker("", selection: $xsettings.cardsPerRow) {
+                    Picker("", selection: $settings.cardsPerRow) {
                         ForEach(CardsPerRowChoices, id: \.self) {
                             Text(String($0))
                         }
@@ -105,7 +105,7 @@ struct SettingsView: View {
                     Image(systemName: "skew").frame(width: iconWidth)
                     Text("Skew Cards").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $xsettings.cardsAskew) {}
+                    Toggle(isOn: $settings.cardsAskew) {}
                 }
                 HStack {
                     Image(systemName: "photo").frame(width: iconWidth)
@@ -115,8 +115,8 @@ struct SettingsView: View {
                         ForEach(AlternateCardsChoices, id: \.value) { option in Text(option.label) }
                     }
                     .pickerStyle(.menu)
-                    .onChange(of: alternateCards) { value in self.xsettings.alternateCards = value; }
-                    .onAppear { self.alternateCards = xsettings.alternateCards; }
+                    .onChange(of: alternateCards) { value in self.settings.alternateCards = value; }
+                    .onAppear { self.alternateCards = settings.alternateCards; }
                 }
             }
             Section(header: Text("Multimedia")) {
@@ -124,13 +124,13 @@ struct SettingsView: View {
                     Image(systemName: "speaker.wave.2")
                     Text("Sounds")
                     Spacer()
-                    Toggle(isOn: $xsettings.sounds) {}
+                    Toggle(isOn: $settings.sounds) {}
                 }
                 HStack {
                     Image(systemName: "water.waves")
                     Text("Haptics")
                     Spacer()
-                    Toggle(isOn: $xsettings.haptics) {}
+                    Toggle(isOn: $settings.haptics) {}
                 }
             }
             Section(header: Text("Game")) {
@@ -138,16 +138,16 @@ struct SettingsView: View {
                     Image(systemName: "atom").frame(width: iconWidth)
                     Text("Simplified Deck").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $xsettings.simpleDeck) {}
+                    Toggle(isOn: $settings.simpleDeck) {}
                 }
                 if (false) {
-                    Toggle(isOn: $xsettings.demoMode) {
+                    Toggle(isOn: $settings.demoMode) {
                         Text("Demo Mode")
                     }
                 }
                 navigationRow("Logicard SET Stats", icon: "chart.bar", destination: StatsView())
                 navigationRow("Logicard Deck", icon: "square.stack.3d.up",
-                              destination: DeckView(cards: xsettings.simpleDeck
+                              destination: DeckView(cards: settings.simpleDeck
                                                            ? StandardDeck.instanceSimple.cards
                                                            : StandardDeck.instance.cards))
             }

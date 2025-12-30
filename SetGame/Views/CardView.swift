@@ -5,11 +5,11 @@ public struct CardView : View {
     @ObservedObject var card : TableCard;
     @EnvironmentObject var table: Table;
     //
-    // Note that this @EnvironmentObject XSettings declaration needs to
+    // Note that this @EnvironmentObject Settings declaration needs to
     // be here otherwise when the Settings.alternateCards property is
     // changed it won't update immediately in the FoundSetsView.
     //
-    @EnvironmentObject var xsettings: XSettings;
+    @EnvironmentObject var settings: Settings;
 
     var touchedCallback : ((TableCard) -> Void)?
 
@@ -96,7 +96,7 @@ public struct CardView : View {
     }
 
     private func image(_ card: TableCard) -> String {
-        switch self.table.xsettings.alternateCards {
+        switch self.table.settings.alternateCards {
             case 0:  return card.codename;
             case 1:  return "ALTD_\(card.codename)";
             case 2:  return "ALTNC_\(card.codename)";
