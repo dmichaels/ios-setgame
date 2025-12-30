@@ -351,7 +351,13 @@ extension Array where Element : Card {
     /// If the disjoint argument is true then the SETs identified will be limited
     /// to the maximum number of those which do not share any cards in common.
     ///
-    /// FYI the support for disjoint SETs was done with the help of ChatGPT, which
+    /// One (possibly important) assumption a caller CAN make WRT ordering:
+    /// Though the order of the SETs returned is arbitrary (as mentioned),
+    /// the order of the (three) cards WITHIN each SET is guaranteed to be
+    /// in the order of their position in this array. This turned out to be
+    /// important for the implementation of moveAnyExistingSetToFront.
+    ///
+    /// FYI: The support for disjoint SETs was done with the help of ChatGPT, which
     /// claims that this is a "set-packing problem" which can be, in general, an
     /// NP-hard problem; but that for a small such as SET Game, a simple
     /// backtracking search provides a fast and accurate solution.
@@ -475,21 +481,82 @@ extension Array where Element : Card {
         }
     }
 
-    /// If there is at least one SET in this array then move any single
-    /// one of them (the SET of three cards) to the front of this array.
+    /// If there is at least one SET in this array then move any single one of
+    /// them (the SET of three cards) to the front of this array. Checks first
+    /// to see if there already is a SET at the front, and if so does nothing.
+    /// This is done while maximally maintaining the current positions of the
+    /// cards in this array, and even choosing the any existing SET which
+    /// already has the most cards in the top position.
     ///
-    mutating func moveAnyExistingSetToFront() -> Bool {
-        let sets: [[Element]] = self.enumerateSets(limit: 1);
-        if (sets.count == 1) {
-            for card in sets[0] {
-                if let index: Int = self.firstIndex(where: {$0 == card}) {
-                    self.remove(at: index);
-                    self.insert(card, at: 0);
+    mutating func moveAnyExistingSetToFront() {
+
+        func findSetToMove(prune: Bool = true) -> [Element]? {
+
+            let sets: [[Element]] = self.enumerateSets();
+
+            guard !sets.isEmpty else {
+                return nil;
+            }
+
+            var nfrontMax: Int = 0;
+            var nfrontMaxSet: [Element] = [];
+            for set in sets {
+                var nfront: Int = 0;
+                for card in set {
+                    if let index: Int = self.firstIndex(where: {$0 == card}) {
+                        if (index < 3) {
+                            nfront += 1;
+                        }
+                    }
+                }
+                if (nfront > nfrontMax) {
+                    nfrontMax = nfront;
+                    nfrontMaxSet = set;
                 }
             }
-            return true;
+
+            let set: [Element] = (nfrontMax > 0) ? nfrontMaxSet : sets[0];
+
+            if (prune) {
+                //
+                // Remove from the SET to move, any cards
+                // which already occupy one of the first three slots.
+                //
+                let prunedSet: [Element] = set.filter { card in
+                    if let index = self.firstIndex(where: { $0 == card }) {
+                        return index >= 3;
+                    }
+                    return false;
+                }
+                return prunedSet.count > 0 ? prunedSet : nil;
+            }
+
+            return set;
         }
-        return false;
+
+        if ((self.count > 3) && !Card.isSet(self[0], self[1], self[2])) {
+            //
+            // Here, we have more than three cards in this
+            // array and the first three do NOT comprise a SET.
+            //
+            if var set: [Element] = findSetToMove() {
+                //
+                // Note that we assume (via enumerateSets) that the order of the
+                // cards in the SET reflect the order they occur in this array.
+                //
+                for (slot, card) in set.enumerated() {
+                    if let index: Int = self.firstIndex(where: {$0 == card}) {
+                        //
+                        // If a SET card to move already occupies one of the first three
+                        // slots (i.e. index < 3), then it stays there (i.e. do nothing).
+                        //
+                        if (index >= 3) {
+                            self.swapAt(index, slot);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /// Parses and returns a card array representing given comma-separated list of

@@ -15,7 +15,7 @@ class Defaults
     public static let displayCardCount: Int      = 12;
     public static let cardsPerRow: Int           = 4;
     public static let cardsAskew: Bool           = false;
-    public static let alternateCards: Int        = 2;
+    public static let alternateCards: Int        = 1;
     public static let simpleDeck: Bool           = false;
     public static let sounds: Bool               = false;
     public static let haptics: Bool              = false;

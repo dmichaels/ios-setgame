@@ -44,6 +44,19 @@ class Table<TC : TableCard> : ObservableObject {
         self.deck  = Deck(simple: self.settings.simpleDeck);
         self.cards = [TC]();
         self.state = State();
+
+        if (false) {
+            //
+            // Tempoary debugging 2025-12-30.
+            //
+            self.cards = Array<TC>.from([
+                "GDS2", "PDT1", "GQS3", "PDS1",
+                "RQS1", "PQS2", "GDT2", "RQT1",
+                "GDT1", "GQS2", "RQH2", "PQH1"
+            ]);
+            return;
+        }
+
         if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.settings.simpleDeck)
             for card in magicSquareCards {
@@ -381,7 +394,7 @@ class Table<TC : TableCard> : ObservableObject {
     ///
     func moveAnyExistingSetToFront() {
         if ((self.cards.count > 3) && !Card.isSet(self.cards[0], self.cards[1], self.cards[2])) {
-            _ = self.cards.moveAnyExistingSetToFront();
+            self.cards.moveAnyExistingSetToFront();
         }
     }
 
