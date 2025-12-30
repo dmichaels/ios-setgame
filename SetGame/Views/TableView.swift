@@ -4,7 +4,6 @@ struct TableView: View {
 
     @EnvironmentObject var table : Table;
     @EnvironmentObject var xsettings : XSettings;
-    // @EnvironmentObject var settings : Settings;
     @EnvironmentObject var feedback : Feedback;
 
     var body: some View {

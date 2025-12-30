@@ -1,9 +1,6 @@
 import Foundation
 import SwiftUI
 
-// TODO
-// Eventually more Table.Settings here.
-//
 class Defaults
 {
     public static let showPartialSetHint: Bool   = true;
@@ -24,17 +21,6 @@ class Defaults
     public static let haptics: Bool              = false;
     public static let demoMode: Bool             = false;
 }
-
-/*
-class Settings: ObservableObject
-{
-    @Published var showPeekButton: Bool = Defaults.showPeekButton;
-    @Published var peekDisjoint: Bool   = Defaults.peekDisjoint;
-    @Published var sounds: Bool         = Defaults.sounds;
-    @Published var haptics: Bool        = Defaults.haptics;
-    @Published var version: Int         = 0;
-}
-*/
 
 class XSettings: ObservableObject
 {

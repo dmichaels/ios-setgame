@@ -3,7 +3,6 @@ import SwiftUI
 struct ContentView: View {
 
     @EnvironmentObject var table : Table;
-    // @EnvironmentObject var settings : Settings;
     @EnvironmentObject var xsettings : XSettings;
     @EnvironmentObject var feedback : Feedback;
 
@@ -64,7 +63,6 @@ struct ContentView: View {
                             //
                             // Back from SettingsView.
                             //
-                            print("BACK-FROM-SETTINGS")
                             if ((self.xsettings.simpleDeck != self.saveSettings.simpleDeck) &&
                                 (self.table.gameStart() || self.table.gameDone())) {
                                 self.table.startNewGame();
@@ -84,7 +82,6 @@ struct ContentView: View {
                 NavigationLink(destination:
                     SettingsView().environmentObject(table)
                                   .environmentObject(xsettings), isActive: $showSettingsView) {
-                                  // .environmentObject(settings), isActive: $showSettingsView) CURLY
                         EmptyView()
                     }.hidden()
             }

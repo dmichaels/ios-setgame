@@ -118,38 +118,6 @@ struct SettingsView: View {
                     .onChange(of: alternateCards) { value in self.xsettings.alternateCards = value; }
                     .onAppear { self.alternateCards = xsettings.alternateCards; }
                 }
-                /*
-                HStack {
-                    Image(systemName: "photo").frame(width: iconWidth)
-                    Text("Cards").lineLimit(1).layoutPriority(1)
-                    Spacer()
-                    Picker("", selection: $alternateCards) {
-                        ForEach(AlternateCardsChoices, id: \.value) { option in Text(option.label) }
-                    }
-                    .pickerStyle(.menu)
-                    .onChange(of: alternateCards) { value in
-                        switch value {
-                            case 0:  table.settings.alternateCards = 0;
-                            case 1:  table.settings.alternateCards = 1;
-                            case 2:  table.settings.alternateCards = 2;
-                            default: table.settings.alternateCards = 0;
-                        }
-                    }
-                    .onAppear {
-                        if      (table.settings.alternateCards == 0) { self.alternateCards = 0 }
-                        else if (table.settings.alternateCards == 1) { self.alternateCards = 1 }
-                        else if (table.settings.alternateCards == 2) { self.alternateCards = 2 }
-                    }
-                }
-                */
-                /*
-                HStack {
-                    Image(systemName: "alternatingcurrent").frame(width: iconWidth)
-                    Text("Alternate Cards").lineLimit(1).layoutPriority(1)
-                    Spacer()
-                    Toggle(isOn: $table.settings.alternateCards) {}
-                }
-                */
             }
             Section(header: Text("Multimedia")) {
                 HStack {

@@ -20,15 +20,12 @@ struct SetGameApp: App {
 struct SetGameApp: App {
 
     @StateObject private var xsettings: XSettings = XSettings();
-    // @StateObject private var settings: Settings = Settings();
     @StateObject private var feedback: Feedback;
     @StateObject private var table: Table<TableCard>;
 
     init() {
         let shared_xsettings: XSettings = XSettings()
-        // let shared_settings: Settings = Settings();
         _xsettings = StateObject(wrappedValue: shared_xsettings);
-        // _settings  = StateObject(wrappedValue: shared_settings);
         _feedback  = StateObject(wrappedValue: Feedback(sounds: Defaults.sounds, haptics: Defaults.haptics));
         _table     = StateObject(wrappedValue: Table(xsettings: shared_xsettings));
     }
@@ -37,7 +34,6 @@ struct SetGameApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(self.table)
-                // .environmentObject(self.settings)
                 .environmentObject(self.xsettings)
                 .environmentObject(self.feedback)
         }

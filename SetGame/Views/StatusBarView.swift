@@ -4,7 +4,6 @@ struct StatusBarView: View {
     
     @EnvironmentObject var table : Table;
     @EnvironmentObject var xsettings : XSettings;
-    // @EnvironmentObject var settings : Settings;
 
     let OK_SYMBOL           : String = "\u{1F44C}";
     let THUMBSUP_SYMBOL     : String = "\u{1F44D}";
