@@ -20,6 +20,7 @@ class Defaults
     public static let sounds: Bool               = false;
     public static let haptics: Bool              = false;
     public static let demoMode: Bool             = false;
+    public static let title: String              = "Logicard";
 }
 
 class Settings: ObservableObject

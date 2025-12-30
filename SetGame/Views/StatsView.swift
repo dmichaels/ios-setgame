@@ -172,6 +172,6 @@ struct StatsView: View  {
                 self.isViewDisplayed = false
             }
             
-        }.navigationTitle("Logicard Stats")
+        }.navigationTitle("\(Defaults.title) Stats")
     }
 }

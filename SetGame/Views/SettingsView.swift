@@ -145,8 +145,8 @@ struct SettingsView: View {
                         Text("Demo Mode")
                     }
                 }
-                navigationRow("Logicard SET Stats", icon: "chart.bar", destination: StatsView())
-                navigationRow("Logicard Deck", icon: "square.stack.3d.up",
+                navigationRow("\(Defaults.title) SET Stats", icon: "chart.bar", destination: StatsView())
+                navigationRow("\(Defaults.title) Deck", icon: "square.stack.3d.up",
                               destination: DeckView(cards: settings.simpleDeck
                                                            ? StandardDeck.instanceSimple.cards
                                                            : StandardDeck.instance.cards))
@@ -162,7 +162,7 @@ struct SettingsView: View {
                 Text("\(VersionInfo.commit) ").font(.footnote)
             }
         }
-        .navigationTitle("Logicard Settings")
+        .navigationTitle("\(Defaults.title) Settings")
     }
 
     private func navigationRow<Destination: View>(_ title: String, icon: String, destination: Destination) -> some View {
