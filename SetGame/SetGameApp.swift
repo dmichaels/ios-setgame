@@ -1,6 +1,5 @@
 import SwiftUI
 
-
 @main
 struct SetGameApp: App {
 
