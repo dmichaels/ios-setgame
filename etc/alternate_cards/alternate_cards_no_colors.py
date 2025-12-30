@@ -147,7 +147,8 @@ def draw_figures():
             for ishape, shape in enumerate(SHAPES):
                 for ifilling, filling in enumerate(FILLINGS):
                     image = draw_card(number, column, shape, filling)
-                    code = _normalize_code(f"{inumber}{icolumn}{ishape}{ifilling}", prefix=IMAGE_PREFIX)
+                    # code = _normalize_code(f"{inumber}{icolumn}{ishape}{ifilling}", prefix=IMAGE_PREFIX)
+                    code = _normalize_code(f"{icolumn}{ishape}{ifilling}{inumber}", prefix=IMAGE_PREFIX)
                     directory = DIRECTORY(code)
                     file = (f"{directory}/{code}.png")
                     image.save(file)
