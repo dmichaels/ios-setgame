@@ -40,6 +40,7 @@ struct SettingsView: View {
                     Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
                     Text("Disjoint Peek & Count ↑")
                         .foregroundStyle(settings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
+                        .lineLimit(1).layoutPriority(1)
                     Spacer()
                     Toggle(isOn: $settings.peekDisjoint) {}
                 }.disabled(!(settings.showSetsPresentCount || settings.showPeekButton))
