@@ -80,7 +80,7 @@ struct SettingsView: View {
                     Image(systemName: "list.number").frame(width: iconWidth)
                     Text("Show Found SETs").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $table.settings.showFoundSets) {}
+                    Toggle(isOn: $xsettings.showFoundSets) {}
                 }
                 HStack {
                     Image(systemName: "square.on.square").frame(width: iconWidth)

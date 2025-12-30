@@ -44,7 +44,7 @@ struct TableView: View {
                     Spacer(minLength: 24)
                     StatusBarView()
                     Spacer(minLength: 20)
-                    if (self.table.settings.showFoundSets) {
+                    if (self.xsettings.showFoundSets) {
                         FoundSetsView(setsLastFound: table.state.setsLastFound,
                                       cardsAskew: table.settings.cardsAskew)
                     }

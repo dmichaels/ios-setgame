@@ -18,8 +18,7 @@ class Table<TC : TableCard> : ObservableObject {
         // not the same instance, or the same copy it ? Guess not. A thinker.
         //
         var simpleDeck                   : Bool = Defaults.simpleDeck;
-        // var plantMagicSquare: Bool = Defaults.plantMagicSquare;
-        var showFoundSets: Bool = Defaults.showFoundSets;
+        // var showFoundSets: Bool = Defaults.showFoundSets;
         var cardsAskew: Bool = Defaults.cardsAskew;
         var demoMode: Bool = false;
     }
