@@ -31,7 +31,7 @@ struct TableView: View {
                                         }
                                     }
                                 }
-                                .slightlyRotated(self.table.settings.cardsAskew)
+                                .slightlyRotated(self.xsettings.cardsAskew)
                                 .allowsHitTesting(!self.table.state.blinking && !self.table.settings.demoMode)
                             }
                             else {
@@ -46,7 +46,7 @@ struct TableView: View {
                     Spacer(minLength: 20)
                     if (self.xsettings.showFoundSets) {
                         FoundSetsView(setsLastFound: table.state.setsLastFound,
-                                      cardsAskew: table.settings.cardsAskew)
+                                      cardsAskew: xsettings.cardsAskew)
                     }
                 }
             }.padding().offset(y: -12)

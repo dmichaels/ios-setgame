@@ -106,7 +106,7 @@ struct SettingsView: View {
                     Image(systemName: "skew").frame(width: iconWidth)
                     Text("Skew Cards").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $table.settings.cardsAskew) {}
+                    Toggle(isOn: $xsettings.cardsAskew) {}
                 }
                 HStack {
                     Image(systemName: "photo").frame(width: iconWidth)
