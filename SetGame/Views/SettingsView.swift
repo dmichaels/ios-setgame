@@ -171,16 +171,16 @@ struct SettingsView: View {
                     Image(systemName: "atom").frame(width: iconWidth)
                     Text("Simplified Deck").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $table.settings.simpleDeck) {}
+                    Toggle(isOn: $xsettings.simpleDeck) {}
                 }
                 if (false) {
-                    Toggle(isOn: $table.settings.demoMode) {
+                    Toggle(isOn: $xsettings.demoMode) {
                         Text("Demo Mode")
                     }
                 }
                 navigationRow("Logicard SET Stats", icon: "chart.bar", destination: StatsView())
                 navigationRow("Logicard Deck", icon: "square.stack.3d.up",
-                              destination: DeckView(cards: table.settings.simpleDeck
+                              destination: DeckView(cards: xsettings.simpleDeck
                                                            ? StandardDeck.instanceSimple.cards
                                                            : StandardDeck.instance.cards))
             }

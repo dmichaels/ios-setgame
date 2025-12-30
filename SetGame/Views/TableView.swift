@@ -32,7 +32,7 @@ struct TableView: View {
                                     }
                                 }
                                 .slightlyRotated(self.xsettings.cardsAskew)
-                                .allowsHitTesting(!self.table.state.blinking && !self.table.settings.demoMode)
+                                .allowsHitTesting(!self.table.state.blinking && !self.xsettings.demoMode)
                             }
                             else {
                                 Image("dummy").resizable()

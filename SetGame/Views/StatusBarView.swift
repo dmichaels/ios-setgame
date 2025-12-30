@@ -20,7 +20,7 @@ struct StatusBarView: View {
 
     // func partialSetSelectedOne() -> Bool { self.table.state.partialSetSelected && table.cards.count == 1; }
     // func partialSetSelectedTwo() -> Bool { self.table.state.partialSetSelected && table.cards.count == 2; }
-    private func gameDone() -> Bool { (self.table.deck.count == 0) && !self.table.containsSet(); }
+    //// xyzzy private func gameDone() -> Bool { (self.table.deck.count == 0) && !self.table.containsSet(); }
     
     var body: some View {
         HStack(alignment: .firstTextBaseline) {
@@ -29,7 +29,8 @@ struct StatusBarView: View {
                 .fontWeight(.bold)
                 .frame(alignment: .leading)
                 .foregroundColor(FOREGROUND)
-            if (self.gameDone()) {
+            //// xyzzy if (self.gameDone()) {
+            if (self.table.gameDone()) {
                 Text(CHECK_MARK_SYMBOL)
                     .font(.subheadline)
                     .frame(alignment: .leading)
@@ -164,7 +165,7 @@ struct StatusBarView: View {
                 .shadow(color: .black.opacity(0.3), radius: 4, x: 3, y: 6)
         )
         .background(BACKGROUND)
-        .allowsHitTesting(!self.table.state.blinking && !self.table.settings.demoMode)
+        .allowsHitTesting(!self.table.state.blinking && !self.xsettings.demoMode)
     }
 }
 

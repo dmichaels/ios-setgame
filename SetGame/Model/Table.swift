@@ -9,19 +9,6 @@ class Table<TC : TableCard> : ObservableObject {
 
     public var xsettings: XSettings; // TODO: use instead of Settings below (obsolete that one)
 
-    class Settings {
-        //
-        // Something I really don't understand yet ...
-        // Needed to make this a class and not a struct because on the didSet
-        // for moreCardsIfNoSet, though if when it's true, it is not true within
-        // the call to fillTable, which checks this value ... Why not? Is this
-        // not the same instance, or the same copy it ? Guess not. A thinker.
-        //
-        var simpleDeck                   : Bool = Defaults.simpleDeck;
-        // var cardsAskew: Bool = Defaults.cardsAskew;
-        var demoMode: Bool = false;
-    }
-
     struct State {
         var partialSetSelected            : Bool = false;
         var incorrectGuessCount           : Int  = 0;
@@ -39,28 +26,26 @@ class Table<TC : TableCard> : ObservableObject {
         var blinking                      : Bool = false;
     }
 
-                      public       var deck     : Deck<TC>;
-    @Published public private(set) var cards    : [TC];
-    @Published                     var state    : State;
-    @Published                     var settings : Settings;
+    @Published private(set) var cards: [TC];
+    @Published var state: State;
 
-    var demoTimer: Timer? = nil;
+    private var deck: Deck<TC>;
+    private var demoTimer: Timer? = nil;
 
     init(xsettings: XSettings) {
         self.xsettings = xsettings;
         self.deck                      = Deck();
         self.cards                     = [TC]();
         self.state                     = State();
-        self.settings                  = Settings();
         self.fillTable();
     }
 
     func startNewGame() {
-        self.deck  = Deck(simple: self.settings.simpleDeck);
+        self.deck  = Deck(simple: self.xsettings.simpleDeck);
         self.cards = [TC]();
         self.state = State();
         if (self.xsettings.plantMagicSquare && (self.xsettings.displayCardCount >= 9)) {
-            let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.settings.simpleDeck)
+            let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.xsettings.simpleDeck)
             for card in magicSquareCards {
                 self.cards.add(TC(card))
                 _ = self.deck.takeCard(TC(card))
@@ -541,7 +526,7 @@ class Table<TC : TableCard> : ObservableObject {
     }
 
     public func demoCheck() async {
-        if (self.settings.demoMode) {
+        if (self.xsettings.demoMode) {
             if (self.demoTimer == nil) {
                 await self.demoStart();
             }
@@ -560,7 +545,7 @@ class Table<TC : TableCard> : ObservableObject {
             try? await Task.sleep(nanoseconds: 1_000_000_000)
             self.startNewGame();
         }
-        while (self.settings.demoMode) {
+        while (self.xsettings.demoMode) {
             if (self.gameDone()) {
                 try? await Task.sleep(nanoseconds: 2_000_000_000)
                 self.startNewGame();

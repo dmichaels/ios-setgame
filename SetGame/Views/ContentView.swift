@@ -27,7 +27,7 @@ struct ContentView: View {
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .principal) {
-                            Text(self.table.settings.demoMode ? "\(title) Demo →" : title)
+                            Text(self.xsettings.demoMode ? "\(title) Demo →" : title)
                                 .font(.system(size: 28))
                                 .fontWeight(.bold)
                         }
@@ -35,16 +35,16 @@ struct ContentView: View {
                             Menu {
                                 Button { self.table.startNewGame(); feedback.trigger(Feedback.BADING); } label: {
                                     Label("New Game" , systemImage: "arrow.counterclockwise")
-                                }.disabled(self.table.state.blinking || self.table.settings.demoMode)
+                                }.disabled(self.table.state.blinking || self.xsettings.demoMode)
                                 Button { self.table.addMoreCards(1) } label: {
                                     Label("Add Card" , systemImage: "plus.rectangle")
-                                }.disabled(self.table.state.blinking || self.table.settings.demoMode)
-                                Toggle(isOn: $table.settings.demoMode) {
+                                }.disabled(self.table.state.blinking || self.xsettings.demoMode)
+                                Toggle(isOn: $xsettings.demoMode) {
                                     Label("Demo Mode", systemImage: "play.circle")
                                 }
                                 Button { self.showSettingsView = true } label: {
                                     Label("Settings ...", systemImage: "gearshape")
-                                }.disabled(self.table.state.blinking || self.table.settings.demoMode)
+                                }.disabled(self.table.state.blinking || self.xsettings.demoMode)
                             } label: {
                                 Image(systemName: "gearshape.fill")
                                     .foregroundColor(Color(UIColor.darkGray))
@@ -77,12 +77,12 @@ struct ContentView: View {
                         feedback.sounds = settings.sounds;
                         feedback.haptics = settings.haptics;
                     }
-                    .onChange(of: table.settings.demoMode) { _ in
+                    .onChange(of: xsettings.demoMode) { _ in
                         Task { @MainActor in
                             await table.demoCheck()
                         }
                     }
-                    .onChange(of: table.settings.simpleDeck) { _ in
+                    .onChange(of: xsettings.simpleDeck) { _ in
                         if (self.table.gameStart() || self.table.gameDone()) {
                             self.table.startNewGame();
                         }
