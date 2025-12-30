@@ -3,7 +3,6 @@ import SwiftUI
 struct SettingsView: View {
     
     @EnvironmentObject var table : Table;
-    @EnvironmentObject var settings : Settings;
     @EnvironmentObject var xsettings : XSettings;
 
     @State private var alternateCards: Int = 0
@@ -35,15 +34,15 @@ struct SettingsView: View {
                     Image(systemName: "eyes").frame(width: iconWidth)
                     Text("Peek SET Button")
                     Spacer()
-                    Toggle(isOn: $settings.showPeekButton) {}
+                    Toggle(isOn: $xsettings.showPeekButton) {}
                 }
                 HStack {
                     Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
                     Text("Disjoint Peek & Count ↑")
-                        .foregroundStyle(xsettings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
+                        .foregroundStyle(xsettings.showSetsPresentCount || xsettings.showPeekButton ? .primary : .secondary)
                     Spacer()
-                    Toggle(isOn: $settings.peekDisjoint) {}
-                }.disabled(!(xsettings.showSetsPresentCount || settings.showPeekButton))
+                    Toggle(isOn: $xsettings.peekDisjoint) {}
+                }.disabled(!(xsettings.showSetsPresentCount || xsettings.showPeekButton))
             }
             Section(header: Text("Behavioral")) {
                 HStack {
@@ -157,13 +156,13 @@ struct SettingsView: View {
                     Image(systemName: "speaker.wave.2")
                     Text("Sounds")
                     Spacer()
-                    Toggle(isOn: $settings.sounds) {}
+                    Toggle(isOn: $xsettings.sounds) {}
                 }
                 HStack {
                     Image(systemName: "water.waves")
                     Text("Haptics")
                     Spacer()
-                    Toggle(isOn: $settings.haptics) {}
+                    Toggle(isOn: $xsettings.haptics) {}
                 }
             }
             Section(header: Text("Game")) {
@@ -196,14 +195,6 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Logicard Settings")
-        .onAppear {
-            // print("ON-APPEAR-SETTINGS-VIEW> version: \(xsettings.version)")
-        }
-        .onDisappear {
-            // print("ON-DISAPPEAR-SETTINGS-VIEW> version: \(xsettings.version)")
-            self.settings.version += 1;
-            self.xsettings.version += 1;
-        }
     }
 
     private func navigationRow<Destination: View>(_ title: String, icon: String, destination: Destination) -> some View {

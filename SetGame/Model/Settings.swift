@@ -25,6 +25,7 @@ class Defaults
     public static let demoMode: Bool             = false;
 }
 
+/*
 class Settings: ObservableObject
 {
     @Published var showPeekButton: Bool = Defaults.showPeekButton;
@@ -33,6 +34,7 @@ class Settings: ObservableObject
     @Published var haptics: Bool        = Defaults.haptics;
     @Published var version: Int         = 0;
 }
+*/
 
 class XSettings: ObservableObject
 {
@@ -53,5 +55,4 @@ class XSettings: ObservableObject
     @Published var sounds: Bool               = Defaults.sounds;
     @Published var haptics: Bool              = Defaults.haptics;
     @Published var demoMode: Bool             = Defaults.demoMode;
-    @Published var version: Int               = 0;
 }
