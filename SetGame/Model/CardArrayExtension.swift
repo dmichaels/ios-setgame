@@ -351,11 +351,10 @@ extension Array where Element : Card {
     /// If the disjoint argument is true then the SETs identified will be limited
     /// to the maximum number of those which do not share any cards in common.
     ///
-    /// One (possibly important) assumption a caller CAN make WRT ordering:
-    /// Though the order of the SETs returned is arbitrary (as mentioned),
-    /// the order of the (three) cards WITHIN each SET is guaranteed to be
-    /// in the order of their position in this array. This turned out to be
-    /// important for the implementation of moveAnyExistingSetToFront.
+    /// One (possibly important -> moveAnyExistingSetToFront) assumption a caller
+    /// CAN make WRT ordering: Though the order of the SETs returned is arbitrary,
+    /// as mentioned, the order of the (three) cards WITHIN each SET is guaranteed
+    /// to be in the order of their position in this array.
     ///
     /// FYI: The support for disjoint SETs was done with the help of ChatGPT, which
     /// claims that this is a "set-packing problem" which can be, in general, an
@@ -371,6 +370,7 @@ extension Array where Element : Card {
             // Default case of non-disjoint (possibly overlapping) set of SETs.
             //
             self.enumerateSets(limit: limit) { sets.append($0); }
+            print("ENUMERATE-SETS: \(sets)")
             return sets;
         }
 
@@ -462,6 +462,7 @@ extension Array where Element : Card {
     }
 
     private func enumerateSets(limit: Int = 0, _ handler : ([Element]) -> Void) {
+        print("ENUM-SETS> limit: \(limit)")
         var nsets: Int = 0;
         if (self.count > 2) {
             for i in 0..<(self.count - 2) {
@@ -469,6 +470,7 @@ extension Array where Element : Card {
                     for k in (j + 1)..<(self.count) {
                         let a: Element = self[i], b : Element = self[j], c : Element = self[k];
                         if (a.formsSetWith(b, c)) {
+                            print("ENUM-SETS> set: [\([a, b, c])] [\(i), \(j), \(k)]")
                             handler([a, b, c]);
                             nsets += 1;
                             if ((limit > 0) && (limit == nsets)) {
@@ -490,7 +492,7 @@ extension Array where Element : Card {
     ///
     mutating func moveAnyExistingSetToFront() {
 
-        func findSetToMove(prune: Bool = true) -> [Element]? {
+        func findTargetSetIndices() -> [Int]? {
 
             let sets: [[Element]] = self.enumerateSets();
 
@@ -517,50 +519,25 @@ extension Array where Element : Card {
 
             let set: [Element] = (nfrontMax > 0) ? nfrontMaxSet : sets[0];
 
-            if (prune) {
-                //
-                // Remove from the SET to move, any cards
-                // which already occupy one of the first three slots.
-                //
-                let prunedSet: [Element] = set.filter { card in
-                    if let index = self.firstIndex(where: { $0 == card }) {
-                        return index >= 3;
-                    }
-                    return false;
+            func indices(cards: [Element]) -> [Int] {
+                cards.compactMap { card in
+                    self.firstIndex(of: card)
                 }
-                return prunedSet.count > 0 ? prunedSet : nil;
             }
 
-            return set;
+            return indices(cards: set);
         }
 
         if ((self.count > 3) && !Card.isSet(self[0], self[1], self[2])) {
             //
-            // Here, we have more than three cards in this
-            // array and the first three do NOT comprise a SET.
+            // Here, we have more than three cards in this array
+            // and the first three do NOT already comprise a SET.
             //
-            if var set: [Element] = findSetToMove(prune: false) {
-                //
-                // Note that we assume (via enumerateSets) that the order of the
-                // cards in the SET reflect the order they occur in this array.
-                //
-                // for (slot, card) in set.enumerated() CURLY
-                var slot: Int = 0;
-                var skip: Int = 0;
-                for card in set {
-                    if let index: Int = self.firstIndex(where: {$0 == card}) {
-                        //
-                        // If a SET card to move already occupies one of the first three
-                        // slots (i.e. index < 3), then it stays there (i.e. do nothing).
-                        //
-                        if (index >= 3) {
-                            self.swapAt(index, slot);
-                            slot += 1 + skip;
-                        }
-                        else {
-                            skip += 1;
-                        }
-                    }
+            if let setIndices: [Int] = findTargetSetIndices() {
+                let setIndicesAboveSlot: [Int] = setIndices.filter { $0 >= 3 };
+                let slotIndices: [Int] = [0, 1, 2].filter { !setIndices.contains($0) };
+                for i in 0..<slotIndices.count {
+                    self.swapAt(slotIndices[i], setIndicesAboveSlot[i]);
                 }
             }
         }

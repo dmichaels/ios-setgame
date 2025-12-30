@@ -10,7 +10,7 @@ class Defaults
     public static let additionalCards: Int       = 3;
     public static let plantSet: Bool             = false;
     public static let plantMagicSquare: Bool     = false;
-    public static let moveSetFront: Bool         = false;
+    public static let moveSetFront: Bool         = true;
     public static let showFoundSets: Bool        = true;
     public static let displayCardCount: Int      = 12;
     public static let cardsPerRow: Int           = 4;

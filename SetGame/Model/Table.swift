@@ -59,6 +59,11 @@ class Table<TC : TableCard> : ObservableObject {
                 "PDH1", "GOH1", "PDT1", "GQT1",
                 "RQT3", "GQS1", "PDH3", "GOH3"
             ]);
+            self.cards = Array<TC>.from([
+                "POH1", "ROT2", "POT1", "PDT3",
+                "ROS1", "RDS1", "PQT3", "POH3",
+                "PDT2", "PDS1", "GQT1", "PDS3"
+            ]);
             return;
         }
 
@@ -291,7 +296,12 @@ class Table<TC : TableCard> : ObservableObject {
         let sets: [[TC]] = self.enumerateSets(disjoint: disjoint);
         if (sets.count > 0) {
             if (self.state.showingOneRandomSetLast == nil) {
-                self.state.showingOneRandomSetLast = Int.random(in: 0..<sets.count);
+                //
+                // Actually not random any more (circa December 2025)
+                // since we are now cycling through them deterministically.
+                // self.state.showingOneRandomSetLast = Int.random(in: 0..<sets.count);
+                //
+                self.state.showingOneRandomSetLast = 0;
             }
             else if (self.state.showingOneRandomSetLast! < (sets.count - 1)) {
                 self.state.showingOneRandomSetLast = self.state.showingOneRandomSetLast! + 1
