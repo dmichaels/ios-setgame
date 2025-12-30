@@ -11,6 +11,15 @@ struct ContentView: View {
 
     let title: String = "Logicard";
 
+    class SaveSettings {
+        public var moveSetFront: Bool = Defaults.moveSetFront;
+        public var haptics: Bool = Defaults.haptics;
+        public var sounds: Bool = Defaults.sounds;
+    }
+
+    // @State var saveSettings: SaveSettings = SaveSettings();
+    @State var saveSettings: XSettings = XSettings();
+
     var body: some View {
         NavigationView {
             ZStack {
@@ -42,6 +51,25 @@ struct ContentView: View {
                             }
                         }
                     }
+                    .onChange(of: self.showSettingsView) { _ in
+                        if (self.showSettingsView) {
+                            //
+                            // Going to SettingsView.
+                            //
+                            self.saveSettings.moveSetFront = self.xsettings.moveSetFront
+                        }
+                        else {
+                            //
+                            // Back from SettingsView.
+                            //
+                            if (self.xsettings.moveSetFront && !self.saveSettings.moveSetFront) {
+                                self.table.moveAnyExistingSetToFront();
+                            }
+                        }
+                    }
+                    .onChange(of: xsettings.version) { _ in
+                        // print("ContentView> onChange(xsettings.version) | show: (\(showSettingsView)) | xsettings.version: \(self.xsettings.version)")
+                    }
                     .onChange(of: settings.version) { _ in
                         Task { @MainActor in
                             await table.demoCheck()
@@ -58,6 +86,9 @@ struct ContentView: View {
                         if (self.table.gameStart() || self.table.gameDone()) {
                             self.table.startNewGame();
                         }
+                    }
+                    .onChange(of: xsettings.moveSetFront) { _ in
+                        print("MOVE_SET_FRONT")
                     }
                 NavigationLink(destination:
                     SettingsView().environmentObject(table)

@@ -53,4 +53,5 @@ class XSettings: ObservableObject
     @Published var sounds: Bool               = Defaults.sounds;
     @Published var haptics: Bool              = Defaults.haptics;
     @Published var demoMode: Bool             = Defaults.demoMode;
+    @Published var version: Int               = 0;
 }

@@ -30,9 +30,7 @@ struct SetGameApp: App {
         _xsettings = StateObject(wrappedValue: shared_xsettings);
         _settings  = StateObject(wrappedValue: shared_settings);
         _feedback  = StateObject(wrappedValue: Feedback(sounds: Defaults.sounds, haptics: Defaults.haptics));
-        _table     = StateObject(wrappedValue: Table(xsettings: shared_xsettings,
-                                                     displayCardCount: Defaults.displayCardCount,
-                                                     plantSet: Defaults.plantSet));
+        _table     = StateObject(wrappedValue: Table(xsettings: shared_xsettings));
     }
 
     var body: some Scene {

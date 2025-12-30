@@ -3,17 +3,18 @@ import SwiftUI
 struct TableView: View {
 
     @EnvironmentObject var table : Table;
+    @EnvironmentObject var xsettings : XSettings;
     @EnvironmentObject var settings : Settings;
     @EnvironmentObject var feedback : Feedback;
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack {
-                let nrows = Int(ceil(Float(table.cards.count) / Float(table.settings.cardsPerRow)));
+                let nrows = Int(ceil(Float(table.cards.count) / Float(xsettings.cardsPerRow)));
                 ForEach (0..<nrows, id: \.self) { row in
                     HStack {
-                        ForEach(0..<table.settings.cardsPerRow, id: \.self) { column in
-                            let index = row * table.settings.cardsPerRow + column;
+                        ForEach(0..<xsettings.cardsPerRow, id: \.self) { column in
+                            let index = row * xsettings.cardsPerRow + column;
                             if (index < table.cards.count) {
                                 CardView(card: table.cards[index]) {
                                     // self.table.cardTouched($0);

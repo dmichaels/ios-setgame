@@ -17,32 +17,8 @@ class Table<TC : TableCard> : ObservableObject {
         // the call to fillTable, which checks this value ... Why not? Is this
         // not the same instance, or the same copy it ? Guess not. A thinker.
         //
-        // var table                           : Table?;
-        var displayCardCount                : Int  = Defaults.displayCardCount;
-        var cardsPerRow                     : Int  = Defaults.cardsPerRow;
         var simpleDeck                   : Bool = Defaults.simpleDeck;
-        var plantSet: Bool = Defaults.plantSet;
         var plantMagicSquare: Bool = Defaults.plantMagicSquare;
-        /*
-        var moreCardsIfNoSet: Bool = Defaults.moreCardsIfNoSet {
-            didSet {
-                if (self.moreCardsIfNoSet) {
-                    // TODO: do this in a different way if at all.
-                    // self.table?.fillTable();
-                }
-            }
-        }
-        */
-        var showPartialSetHint: Bool = true;
-        var showSetsPresentCount: Bool = true;
-        var moveSetFront: Bool = false {
-            didSet {
-                if (self.moveSetFront) {
-                    // TODO: do this in a different way.
-                    // self.table?.moveAnyExistingSetToFront();
-                }
-            }
-        }
         var showFoundSets: Bool = Defaults.showFoundSets;
         var cardsAskew: Bool = Defaults.cardsAskew;
         var demoMode: Bool = false;
@@ -72,15 +48,12 @@ class Table<TC : TableCard> : ObservableObject {
 
     var demoTimer: Timer? = nil;
 
-    init(xsettings: XSettings, displayCardCount : Int = 9, plantSet : Bool = false) {
+    init(xsettings: XSettings) {
         self.xsettings = xsettings;
         self.deck                      = Deck();
         self.cards                     = [TC]();
         self.state                     = State();
         self.settings                  = Settings();
-        self.settings.displayCardCount = Defaults.displayCardCount;
-        self.settings.plantSet         = Defaults.plantSet;
-        // self.settings.table            = self;
         self.fillTable();
     }
 
@@ -88,7 +61,7 @@ class Table<TC : TableCard> : ObservableObject {
         self.deck  = Deck(simple: self.settings.simpleDeck);
         self.cards = [TC]();
         self.state = State();
-        if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
+        if (self.settings.plantMagicSquare && (self.xsettings.displayCardCount >= 9)) {
             let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.settings.simpleDeck)
             for card in magicSquareCards {
                 self.cards.add(TC(card))
@@ -98,16 +71,16 @@ class Table<TC : TableCard> : ObservableObject {
             // Only bother making it look good if the cards-per-row is 4 (the default)
             // or 5; if cards-per-row is 3 it already falls out to look good automatically.
             //
-            let displayCardCountSave: Int = self.settings.displayCardCount
-            if ((self.settings.cardsPerRow == 4) && (self.settings.displayCardCount < 11)) {
-                self.settings.displayCardCount = 11
+            let displayCardCountSave: Int = self.xsettings.displayCardCount
+            if ((self.xsettings.cardsPerRow == 4) && (self.xsettings.displayCardCount < 11)) {
+                self.xsettings.displayCardCount = 11
             }
-            else if ((self.settings.cardsPerRow == 5) && (self.settings.displayCardCount < 13)) {
-                self.settings.displayCardCount = 13
+            else if ((self.xsettings.cardsPerRow == 5) && (self.xsettings.displayCardCount < 13)) {
+                self.xsettings.displayCardCount = 13
             }
-            self.fillTable(frontSet: false);
-            self.settings.displayCardCount = displayCardCountSave
-            if (self.settings.cardsPerRow == 4) {
+            self.fillTable(moveSetFront: false);
+            self.xsettings.displayCardCount = displayCardCountSave
+            if (self.xsettings.cardsPerRow == 4) {
                 self.cards[3]  = self.cards[9]
                 self.cards[7]  = self.cards[10]
                 self.cards[4]  = TC(magicSquareCards[3])
@@ -117,7 +90,7 @@ class Table<TC : TableCard> : ObservableObject {
                 self.cards[9]  = TC(magicSquareCards[7])
                 self.cards[10] = TC(magicSquareCards[8])
             }
-            else if (self.settings.cardsPerRow == 5) {
+            else if (self.xsettings.cardsPerRow == 5) {
                 self.cards[3]  = self.cards[9]
                 self.cards[4]  = self.cards[10]
                 self.cards[8]  = self.cards[11]
@@ -129,7 +102,7 @@ class Table<TC : TableCard> : ObservableObject {
                 self.cards[11] = TC(magicSquareCards[7])
                 self.cards[12] = TC(magicSquareCards[8])
             }
-            else if (self.settings.cardsPerRow == 6) {
+            else if (self.xsettings.cardsPerRow == 6) {
                 //
                 // TODO
                 //
@@ -239,7 +212,7 @@ class Table<TC : TableCard> : ObservableObject {
                 // and with reversion toward the preferred number of display cards.
                 // Slightly tricky to get just right; be careful.
                 //
-                let extraCardsTotal: Int = max(self.cards.count - self.settings.displayCardCount, 0);
+                let extraCardsTotal: Int = max(self.cards.count - self.xsettings.displayCardCount, 0);
                 let extraCardsUnsel: [TC] = self.cards.suffix(extraCardsTotal).filter { !$0.selected };
                 let extraCardsCount: Int = min(extraCardsUnsel.count, 3);
                 let extraCards: [TC] = extraCardsUnsel.suffix(extraCardsCount).reversed();
@@ -247,8 +220,8 @@ class Table<TC : TableCard> : ObservableObject {
                 let newCards: [TC] = newCardsCount <= 0 ? [] : (
                     self.deck.takeRandomCards(
                         newCardsCount,
-                        plantSet: self.settings.plantSet,
-                        existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
+                        plantSet: self.xsettings.plantSet,
+                        existingCards: self.xsettings.plantSet ? self.cards.filter { !$0.selected } : []
                     )
                 );
                 var replacementCards: [TC] = extraCards + newCards;
@@ -425,19 +398,20 @@ class Table<TC : TableCard> : ObservableObject {
         return false;
     }
 
-    /// Move and SET which might exist in the table cards
-    /// to the front of the cards list/array.
+    /// Move a SET (if any) which may exist in the table cards to the front (top-left) of the table
+    /// cards array; check first to see if there already is a SET at the front, and if so do nothing.
     ///
     func moveAnyExistingSetToFront() {
-        _ = self.cards.moveAnyExistingSetToFront();
+        if ((self.cards.count > 3) && !Card.isSet(self.cards[0], self.cards[1], self.cards[2])) {
+            _ = self.cards.moveAnyExistingSetToFront();
+        }
     }
 
     /// Adds (at most) the given number of cards to the table from the deck.
     ///
-    func addMoreCards(_ ncards : Int, plantSet : Bool? = nil, frontSet: Bool? = nil) {
+    func addMoreCards(_ ncards : Int, plantSet : Bool? = nil) {
         guard (ncards > 0) && (self.deck.count > 0) else { return; }
-        let plantSet: Bool = plantSet ?? self.settings.plantSet;
-        let frontSet: Bool = frontSet ?? self.settings.moveSetFront;
+        let plantSet: Bool = plantSet ?? self.xsettings.plantSet;
         if (plantSet && !self.containsSet() && (self.cards.count + min(self.deck.count, ncards)) >= 3) {
             //
             // If we want a SET planted, and only if there are not already any
@@ -466,7 +440,7 @@ class Table<TC : TableCard> : ObservableObject {
                         let c: TC = TC(TC.matchingSetValue(a, b));
                         if let c = self.deck.takeCard(c) {
                             self.cards.add(c);
-                            self.addMoreCards(ncards - 1, plantSet: false, frontSet: frontSet);
+                            self.addMoreCards(ncards - 1, plantSet: false);
                         }
                     }
                 }
@@ -475,25 +449,25 @@ class Table<TC : TableCard> : ObservableObject {
         else {
             self.cards.add(self.deck.takeRandomCards(ncards));
         }
-        if (frontSet) {
-            self.moveAnyExistingSetToFront();
-        }
     }
 
     /// Populate the table cards from the deck up to the displayCardCount.
     /// If the moreCardsIfNoSet flag is set then if we don't have a SET on
     /// the table, then add up to 3 more cards.
     ///
-    private func fillTable(frontSet: Bool? = nil) {
-        self.addMoreCards(self.settings.displayCardCount - self.cards.count, frontSet: frontSet);
+    private func fillTable(moveSetFront: Bool? = nil) {
+        self.addMoreCards(self.xsettings.displayCardCount - self.cards.count);
         if (self.xsettings.additionalCards > 0) {
             while (!self.containsSet()) {
                 if (self.deck.cards.count == 0) {
                     break;
                 }
                 print("ADD-CARDS: \(xsettings.additionalCards)")
-                self.addMoreCards(self.xsettings.additionalCards, frontSet: frontSet);
+                self.addMoreCards(self.xsettings.additionalCards);
             }
+        }
+        if (moveSetFront ?? self.xsettings.moveSetFront) {
+            self.moveAnyExistingSetToFront();
         }
     }
 

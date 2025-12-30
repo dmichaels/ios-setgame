@@ -22,14 +22,14 @@ struct SettingsView: View {
                     Image(systemName: "face.smiling").frame(width: iconWidth)
                     Text("Partial SET Hint").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $table.settings.showPartialSetHint) {}
+                    Toggle(isOn: $xsettings.showPartialSetHint) {}
                     
                 }
                 HStack {
                     Image(systemName: "number.square").frame(width: iconWidth)
                     Text("Available SET Count").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $table.settings.showSetsPresentCount) {}
+                    Toggle(isOn: $xsettings.showSetsPresentCount) {}
                 }
                 HStack {
                     Image(systemName: "eyes").frame(width: iconWidth)
@@ -40,10 +40,10 @@ struct SettingsView: View {
                 HStack {
                     Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
                     Text("Disjoint Peek & Count ↑")
-                        .foregroundStyle(table.settings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
+                        .foregroundStyle(xsettings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
                     Spacer()
                     Toggle(isOn: $settings.peekDisjoint) {}
-                }.disabled(!(table.settings.showSetsPresentCount || settings.showPeekButton))
+                }.disabled(!(xsettings.showSetsPresentCount || settings.showPeekButton))
             }
             Section(header: Text("Behavioral")) {
                 HStack {
@@ -60,13 +60,13 @@ struct SettingsView: View {
                     Image(systemName: "target").frame(width: iconWidth)
                     Text("Plant SET").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $table.settings.plantSet) {}
+                    Toggle(isOn: $xsettings.plantSet) {}
                 }
                 HStack {
                     Image(systemName: "arrow.up.left.square").frame(width: iconWidth)
                     Text("Move SET Front").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $table.settings.moveSetFront) {}
+                    Toggle(isOn: $xsettings.moveSetFront) {}
                 }
                 HStack {
                     Image(systemName: "wand.and.rays").frame(width: iconWidth)
@@ -86,7 +86,7 @@ struct SettingsView: View {
                     Image(systemName: "square.on.square").frame(width: iconWidth)
                     Text("Display Cards").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Picker("", selection: $table.settings.displayCardCount) {
+                    Picker("", selection: $xsettings.displayCardCount) {
                         ForEach(DisplayCardCountChoices, id: \.self) {
                             Text(String($0))
                         }
@@ -96,7 +96,7 @@ struct SettingsView: View {
                     Image(systemName: "square.grid.3x3").frame(width: iconWidth)
                     Text("Cards Per Row").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Picker("", selection: $table.settings.cardsPerRow) {
+                    Picker("", selection: $xsettings.cardsPerRow) {
                         ForEach(CardsPerRowChoices, id: \.self) {
                             Text(String($0))
                         }
@@ -196,8 +196,13 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Logicard Settings")
+        .onAppear {
+            // print("ON-APPEAR-SETTINGS-VIEW> version: \(xsettings.version)")
+        }
         .onDisappear {
-            self.settings.version += 1
+            // print("ON-DISAPPEAR-SETTINGS-VIEW> version: \(xsettings.version)")
+            self.settings.version += 1;
+            self.xsettings.version += 1;
         }
     }
 

@@ -455,13 +455,6 @@ extension Array where Element : Card {
         let set: [Element]
     }
 
-    func old_enumerateSets(limit: Int = 0, disjoint: Bool = false) -> [[Element]] {
-        var sets: [[Element]] = [[Element]]();
-        self.enumerateSets(limit: limit) { sets.append($0); }
-        return sets;
-    }
-
-
     private func enumerateSets(limit: Int = 0, _ handler : ([Element]) -> Void) {
         var nsets: Int = 0;
         if (self.count > 2) {
