@@ -96,6 +96,14 @@ public struct CardView : View {
     }
 
     private func image(_ card: TableCard) -> String {
+        //
+        // The default cards are the classic SET Game ones.
+        // - Original ones from Java based SET Game circa 1999.
+        // The ALTD_ cards are the rectangle color based ones.
+        // - See ios-setgame/etc/alternate_cards/alternate_cards_analogous.py
+        // The ALTNC_ cards are the monochrome (no-color) based ones.
+        // - See ios-setgame/etc/alternate_cards/alternate_cards_no_colors.py
+        //
         switch self.table.settings.alternateCards {
             case 0:  return card.codename;
             case 1:  return "ALTD_\(card.codename)";
