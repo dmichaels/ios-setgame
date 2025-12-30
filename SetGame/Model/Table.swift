@@ -54,6 +54,11 @@ class Table<TC : TableCard> : ObservableObject {
                 "RQS1", "PQS2", "GDT2", "RQT1",
                 "GDT1", "GQS2", "RQH2", "PQH1"
             ]);
+            self.cards = Array<TC>.from([
+                "RDS1", "PDH2", "GOT2", "PQH2",
+                "PDH1", "GOH1", "PDT1", "GQT1",
+                "RQT3", "GQS1", "PDH3", "GOH3"
+            ]);
             return;
         }
 

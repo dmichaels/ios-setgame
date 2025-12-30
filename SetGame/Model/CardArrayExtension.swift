@@ -539,12 +539,15 @@ extension Array where Element : Card {
             // Here, we have more than three cards in this
             // array and the first three do NOT comprise a SET.
             //
-            if var set: [Element] = findSetToMove() {
+            if var set: [Element] = findSetToMove(prune: false) {
                 //
                 // Note that we assume (via enumerateSets) that the order of the
                 // cards in the SET reflect the order they occur in this array.
                 //
-                for (slot, card) in set.enumerated() {
+                // for (slot, card) in set.enumerated() CURLY
+                var slot: Int = 0;
+                var skip: Int = 0;
+                for card in set {
                     if let index: Int = self.firstIndex(where: {$0 == card}) {
                         //
                         // If a SET card to move already occupies one of the first three
@@ -552,6 +555,10 @@ extension Array where Element : Card {
                         //
                         if (index >= 3) {
                             self.swapAt(index, slot);
+                            slot += 1 + skip;
+                        }
+                        else {
+                            skip += 1;
                         }
                     }
                 }
