@@ -3,7 +3,7 @@ import SwiftUI
 struct ContentView: View {
 
     @EnvironmentObject var table : Table;
-    @EnvironmentObject var settings : Settings;
+    // @EnvironmentObject var settings : Settings;
     @EnvironmentObject var xsettings : XSettings;
     @EnvironmentObject var feedback : Feedback;
 
@@ -13,8 +13,8 @@ struct ContentView: View {
 
     class SaveSettings {
         public var moveSetFront: Bool = Defaults.moveSetFront;
-        public var haptics: Bool = Defaults.haptics;
         public var sounds: Bool = Defaults.sounds;
+        public var haptics: Bool = Defaults.haptics;
     }
 
     // @State var saveSettings: SaveSettings = SaveSettings();
@@ -56,44 +56,35 @@ struct ContentView: View {
                             //
                             // Going to SettingsView.
                             //
-                            self.saveSettings.moveSetFront = self.xsettings.moveSetFront
+                            self.saveSettings.moveSetFront = self.xsettings.moveSetFront;
+                            self.saveSettings.sounds = self.xsettings.sounds;
+                            self.saveSettings.haptics = self.xsettings.haptics;
                         }
                         else {
                             //
                             // Back from SettingsView.
                             //
-                            if (self.xsettings.moveSetFront && !self.saveSettings.moveSetFront) {
-                                self.table.moveAnyExistingSetToFront();
+                            print("BACK-FROM-SETTINGS")
+                            if ((self.xsettings.simpleDeck != self.saveSettings.simpleDeck) &&
+                                (self.table.gameStart() || self.table.gameDone())) {
+                                self.table.startNewGame();
+                            }
+                            else {
+                                if (self.xsettings.moveSetFront && !self.saveSettings.moveSetFront) {
+                                    self.table.moveAnyExistingSetToFront();
+                                }
                             }
                         }
-                    }
-                    .onChange(of: xsettings.version) { _ in
-                        // print("ContentView> onChange(xsettings.version) | show: (\(showSettingsView)) | xsettings.version: \(self.xsettings.version)")
-                    }
-                    .onChange(of: settings.version) { _ in
-                        Task { @MainActor in
-                            await table.demoCheck()
-                        }
-                        feedback.sounds = settings.sounds;
-                        feedback.haptics = settings.haptics;
                     }
                     .onChange(of: xsettings.demoMode) { _ in
                         Task { @MainActor in
                             await table.demoCheck()
                         }
                     }
-                    .onChange(of: xsettings.simpleDeck) { _ in
-                        if (self.table.gameStart() || self.table.gameDone()) {
-                            self.table.startNewGame();
-                        }
-                    }
-                    .onChange(of: xsettings.moveSetFront) { _ in
-                        print("MOVE_SET_FRONT")
-                    }
                 NavigationLink(destination:
                     SettingsView().environmentObject(table)
-                                  .environmentObject(xsettings)
-                                  .environmentObject(settings), isActive: $showSettingsView) {
+                                  .environmentObject(xsettings), isActive: $showSettingsView) {
+                                  // .environmentObject(settings), isActive: $showSettingsView) CURLY
                         EmptyView()
                     }.hidden()
             }
