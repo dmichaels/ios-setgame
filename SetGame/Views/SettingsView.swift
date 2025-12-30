@@ -72,7 +72,7 @@ struct SettingsView: View {
                     Image(systemName: "wand.and.rays").frame(width: iconWidth)
                     Text("Plant Magic Square").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Toggle(isOn: $table.settings.plantMagicSquare) {}
+                    Toggle(isOn: $xsettings.plantMagicSquare) {}
                 }
             }
             Section(header: Text("Visual")) {
