@@ -453,7 +453,6 @@ class Table<TC : TableCard> : ObservableObject {
                 if (self.deck.cards.count == 0) {
                     break;
                 }
-                print("ADD-CARDS: \(settings.additionalCards)")
                 self.addMoreCards(self.settings.additionalCards);
             }
         }
