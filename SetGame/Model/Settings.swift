@@ -123,6 +123,8 @@ public final class Settings: ObservableObject {
 
     public func reset() {
 
+        // Called from SettingsView to reset to original ("factory") settings.
+
         defaults.removeObject(forKey: Keys.showPartialSetHint)
         defaults.removeObject(forKey: Keys.showSetsPresentCount)
         defaults.removeObject(forKey: Keys.showPeekButton)
@@ -159,6 +161,10 @@ public final class Settings: ObservableObject {
     }
 
     public func isDefault() -> Bool {
+
+        // Called from SettingsView to disable the button
+        // to reset to original ("factory") settings.
+
         return ((showPartialSetHint   == Defaults.showPartialSetHint)
             &&  (showSetsPresentCount == Defaults.showSetsPresentCount)
             &&  (showPeekButton       == Defaults.showPeekButton)
