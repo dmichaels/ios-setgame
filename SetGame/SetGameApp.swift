@@ -10,7 +10,8 @@ struct SetGameApp: App {
     init() {
         let shared_settings: Settings = Settings()
         _settings = StateObject(wrappedValue: shared_settings);
-        _feedback  = StateObject(wrappedValue: Feedback(sounds: Defaults.sounds, haptics: Defaults.haptics));
+        _feedback  = StateObject(wrappedValue: Feedback(sounds: shared_settings.sounds,
+                                                        haptics: shared_settings.haptics));
         _table     = StateObject(wrappedValue: Table(settings: shared_settings));
     }
 
