@@ -162,7 +162,7 @@ class Table<TC : TableCard> : ObservableObject {
         self.state.partialSetSelected = self.partialSetSelected();
     }
 
-    public func cardTouched(_ card : TC, nblinks: Int = 5, already: Bool = false,
+    public func cardTouched(_ card : TC, nblinks: Int = 5, select: Bool = true,
                             _ callback: ((Bool?) -> Void)? = nil) {
 
         // First we notify the table model that the card has been touched,
@@ -184,7 +184,7 @@ class Table<TC : TableCard> : ObservableObject {
             return;
         }
 
-        if (!already) {
+        if (select) {
             self.selectCard(card);
         }
 
@@ -574,7 +574,7 @@ class Table<TC : TableCard> : ObservableObject {
                     try? await Task.sleep(nanoseconds: 500_000_000)
                 }
                 for card in set {
-                    self.cardTouched(card, already: true);
+                    self.cardTouched(card, select: false);
                 }
                 try? await Task.sleep(nanoseconds: 1_500_000_000)
             }
