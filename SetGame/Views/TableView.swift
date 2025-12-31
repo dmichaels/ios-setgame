@@ -69,12 +69,12 @@ struct TableView: View {
             return;
         }
 
-        var togglesRemaining = times * 2; // times two because counting on/off
+        var nblinks = times * 2; // times two because counting on/off
 
         cards.blinkingStart();
 
         func tick() {
-            togglesRemaining -= 1; if (togglesRemaining <= 0) {
+            nblinks -= 1 ; if (nblinks <= 0) {
                 cards.blinkingEnd();
                 completion();
                 return;
