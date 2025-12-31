@@ -219,90 +219,89 @@ class Table<TC : TableCard> : ObservableObject {
 
         let selectedCards: [TC] = self.selectedCards();
 
-        // See if we have a SET selected now.
+        guard selectedCards.count == 3 else {
+            return [];
+        }
 
-        if (selectedCards.count == 3) {
+        // We have three cards selected; now see if
+        // we have a SET selected, or a wrong guess.
+
+        if (selectedCards.isSet()) {
             //
-            // Here we either have a SET selected or a wrong guess.
+            // We have a SET!
             //
-            if (selectedCards.isSet()) {
-                if (readonly) {
-                    return selectedCards;
-                }
-                //
-                // SET!
-                // Unselect the SET cards, calling the given callback if any,
-                // and then remove these SET cards from the table,
-                // and replace them with cards from the deck.
-                //
-                self.state.setsFoundCount += 1;
-                self.state.setJustFound = true;
-                //
-                // 2025-12-12
-                // Better code which replaces selected SET cards minimum reordering,
-                // and with reversion toward the preferred number of display cards.
-                // Slightly tricky to get just right; be careful.
-                //
-                let extraCardsTotal: Int = max(self.cards.count - self.settings.displayCardCount, 0);
-                let extraCardsUnsel: [TC] = self.cards.suffix(extraCardsTotal).filter { !$0.selected };
-                let extraCardsCount: Int = min(extraCardsUnsel.count, 3);
-                let extraCards: [TC] = extraCardsUnsel.suffix(extraCardsCount).reversed();
-                let newCardsCount: Int = 3 - min(extraCardsTotal, 3);
-                let newCards: [TC] = newCardsCount <= 0 ? [] : (
-                    self.deck.takeRandomCards(
-                        newCardsCount,
-                        plantSet: self.settings.plantSet,
-                        existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
-                    )
-                );
-                var replacementCards: [TC] = extraCards + newCards;
-                var deletionIndices: [Int] = []
-                for i in 0..<self.cards.count {
-                    if (self.cards[i].selected) {
-                        if (replacementCards.count > 0) {
-                            self.cards[i] = replacementCards[0];
-                            replacementCards.remove(at: 0);
-                        }
-                        else {
-                            deletionIndices.append(i);
-                        }
-                    }
-                }
-                self.cards.removeLast(3 - newCardsCount);
-                for deletionIndex in deletionIndices.reversed() {
-                    if (deletionIndex < self.cards.count) {
-                        self.cards.remove(at: deletionIndex);
-                    }
-                }
-                //
-                // Fill just in case we have fewer cards than
-                // what is normally desired; and unselect all.
-                //
-                self.unselectCards()
-                self.fillTable();
-                self.state.setsLastFound.append(selectedCards);
-                self.state.setsLastFound.flatMap { $0 }.forEach { $0.selected = false };
+            if (readonly) {
                 return selectedCards;
             }
-            else {
-                if (readonly) {
-                    return [];
+            //
+            // Unselect the SET cards, calling the given callback if any,
+            // and then remove these SET cards from the table,
+            // and replace them with cards from the deck.
+            //
+            self.state.setsFoundCount += 1;
+            self.state.setJustFound = true;
+            //
+            // 2025-12-12
+            // Better code which replaces selected SET cards minimum reordering,
+            // and with reversion toward the preferred number of display cards.
+            // Slightly tricky to get just right; be careful.
+            //
+            let extraCardsTotal: Int = max(self.cards.count - self.settings.displayCardCount, 0);
+            let extraCardsUnsel: [TC] = self.cards.suffix(extraCardsTotal).filter { !$0.selected };
+            let extraCardsCount: Int = min(extraCardsUnsel.count, 3);
+            let extraCards: [TC] = extraCardsUnsel.suffix(extraCardsCount).reversed();
+            let newCardsCount: Int = 3 - min(extraCardsTotal, 3);
+            let newCards: [TC] = newCardsCount <= 0 ? [] : (
+                self.deck.takeRandomCards(
+                    newCardsCount,
+                    plantSet: self.settings.plantSet,
+                    existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
+                )
+            );
+            var replacementCards: [TC] = extraCards + newCards;
+            var deletionIndices: [Int] = []
+            for i in 0..<self.cards.count {
+                if (self.cards[i].selected) {
+                    if (replacementCards.count > 0) {
+                        self.cards[i] = replacementCards[0];
+                        replacementCards.remove(at: 0);
+                    }
+                    else {
+                        deletionIndices.append(i);
+                    }
                 }
-                //
-                // Not a SET! :-(
-                //
-                self.state.setJustFoundNot = true;
-                self.state.incorrectGuessCount += 1;
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    //
-                    // Unselecting the (non-SET) cards inside this dispatch block allows the
-                    // UI to actually show the 3 cards as selected before they get visually
-                    // unselected; otherwise (without the dispatch block) it happens so quick
-                    // you don't really see all 3 (especially the last one) selected at once,
-                    // before they're unselected here.
-                    //
-                    self.unselectCards();
+            }
+            self.cards.removeLast(3 - newCardsCount);
+            for deletionIndex in deletionIndices.reversed() {
+                if (deletionIndex < self.cards.count) {
+                    self.cards.remove(at: deletionIndex);
                 }
+            }
+            //
+            // Fill just in case we have fewer cards than
+            // what is normally desired; and unselect all.
+            //
+            self.unselectCards()
+            self.fillTable();
+            self.state.setsLastFound.append(selectedCards);
+            self.state.setsLastFound.flatMap { $0 }.forEach { $0.selected = false };
+            return selectedCards;
+        }
+
+        // We do NOT have a SET :-(
+
+        if (!readonly) {
+            self.state.setJustFoundNot = true;
+            self.state.incorrectGuessCount += 1;
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                //
+                // Unselecting the (non-SET) cards inside this dispatch block allows the
+                // UI to actually show the 3 cards as selected before they get visually
+                // unselected; otherwise (without the dispatch block) it happens so quick
+                // you don't really see all 3 (especially the last one) selected at once,
+                // before they're unselected here.
+                //
+                self.unselectCards();
             }
         }
 
