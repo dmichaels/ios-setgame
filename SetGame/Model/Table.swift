@@ -442,7 +442,7 @@ class Table<TC : TableCard> : ObservableObject {
 
     /// Adds (at most) the given number of cards to the table from the deck.
     ///
-    func addMoreCards(_ ncards : Int, plantSet : Bool? = nil) {
+    func addMoreCards(_ ncards: Int, plantSet: Bool? = nil) {
         guard (ncards > 0) && (self.deck.count > 0) else { return; }
         let plantSet: Bool = plantSet ?? self.settings.plantSet;
         if (plantSet && !self.containsSet() && (self.cards.count + min(self.deck.count, ncards)) >= 3) {
