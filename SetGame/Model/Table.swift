@@ -114,7 +114,7 @@ class Table<TC : TableCard> : ObservableObject {
 
     /// Touch the given card; selects or unselects as appropriate.
     ///
-    private func touchCard(_ card : TC) {
+    private func selectCard(_ card : TC) {
 
         if (!self.cards.contains(card)) {
             //
@@ -184,14 +184,14 @@ class Table<TC : TableCard> : ObservableObject {
             return;
         }
 
-        let selectedCards: [TC] = self.selectedCards();
-
-        if (self.selectedCards().count == 3) {
-            self.state.resolving = true;
+        if (!already) {
+            self.selectCard(card);
         }
 
-        if (!already) {
-            self.touchCard(card);
+        let selectedCards: [TC] = self.selectedCards();
+
+        if (selectedCards.count == 3) {
+            self.state.resolving = true;
         }
 
         func delayQuick(_ seconds : Float = 0.0, _ callback: @escaping () -> Void) {
@@ -217,14 +217,14 @@ class Table<TC : TableCard> : ObservableObject {
                 let setTableCards: [TC] = setCards.compactMap { $0 as? TC }
                 TableView.blinkCards(setTableCards, times: nblinks) {
                     self.checkForSet(readonly: false);
-                    callback?(true); // xyzzy
-                    self.state.resolving = false; // xyzzy
+                    callback?(true);
+                    self.state.resolving = false;
                 }
                 // callback?(true);
             }
             else {
                 self.checkForSet(readonly: false);
-                callback?(self.selectedCards().count == 3 ? false : nil); // xyzzy
+                callback?(selectedCards.count == 3 ? false : nil);
                 self.state.resolving = false; // xyzzy
             }
         }
@@ -236,7 +236,7 @@ class Table<TC : TableCard> : ObservableObject {
     /// If a non-SET is selected (i.e. three cards selected but which do
     /// not form SET), then these cards will simply be unselected.
     ///
-    func checkForSet(readonly: Bool = false) -> [TC] {
+    private func checkForSet(readonly: Bool = false) -> [TC] {
 
         let selectedCards: [TC] = self.selectedCards();
 
@@ -576,7 +576,7 @@ class Table<TC : TableCard> : ObservableObject {
             if (sets.count > 0) {
                 let set: [TC] = sets[0];
                 for card in set {
-                    self.touchCard(card);
+                    self.selectCard(card);
                     try? await Task.sleep(nanoseconds: 500_000_000)
                 }
                 for card in set {
