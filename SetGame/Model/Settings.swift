@@ -2,7 +2,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-class Defaults {
+public class Defaults {
 
     public static let showPartialSetHint: Bool   = true;
     public static let showSetsPresentCount: Bool = true;
@@ -30,7 +30,7 @@ public final class Settings: ObservableObject {
     // with compliments (?) to ChatGPT for help on this.
     // Note that demoMode is intentionally left out.
 
-    enum Keys {
+    private enum Keys {
         static let showPartialSetHint   = "showPartialSetHint"
         static let showSetsPresentCount = "showSetsPresentCount"
         static let showPeekButton       = "showPeekButton"
@@ -119,6 +119,43 @@ public final class Settings: ObservableObject {
         $haptics
             .sink { self.defaults.set($0, forKey: Keys.haptics) }
             .store(in: &cancellables)
+    }
+
+    public func reset() {
+
+        defaults.removeObject(forKey: Keys.showPartialSetHint)
+        defaults.removeObject(forKey: Keys.showSetsPresentCount)
+        defaults.removeObject(forKey: Keys.showPeekButton)
+        defaults.removeObject(forKey: Keys.peekDisjoint)
+        defaults.removeObject(forKey: Keys.additionalCards)
+        defaults.removeObject(forKey: Keys.plantSet)
+        defaults.removeObject(forKey: Keys.plantMagicSquare)
+        defaults.removeObject(forKey: Keys.moveSetFront)
+        defaults.removeObject(forKey: Keys.showFoundSets)
+        defaults.removeObject(forKey: Keys.displayCardCount)
+        defaults.removeObject(forKey: Keys.cardsPerRow)
+        defaults.removeObject(forKey: Keys.cardsAskew)
+        defaults.removeObject(forKey: Keys.alternateCards)
+        defaults.removeObject(forKey: Keys.simpleDeck)
+        defaults.removeObject(forKey: Keys.sounds)
+        defaults.removeObject(forKey: Keys.haptics)
+
+        showPartialSetHint   = Defaults.showPartialSetHint
+        showSetsPresentCount = Defaults.showSetsPresentCount
+        showPeekButton       = Defaults.showPeekButton
+        peekDisjoint         = Defaults.peekDisjoint
+        additionalCards      = Defaults.additionalCards
+        plantSet             = Defaults.plantSet
+        plantMagicSquare     = Defaults.plantMagicSquare
+        moveSetFront         = Defaults.moveSetFront
+        showFoundSets        = Defaults.showFoundSets
+        displayCardCount     = Defaults.displayCardCount
+        cardsPerRow          = Defaults.cardsPerRow
+        cardsAskew           = Defaults.cardsAskew
+        alternateCards       = Defaults.alternateCards
+        simpleDeck           = Defaults.simpleDeck
+        sounds               = Defaults.sounds
+        haptics              = Defaults.haptics
     }
 
     // These are the actual app settings properties.

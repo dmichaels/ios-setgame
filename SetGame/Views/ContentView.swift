@@ -65,8 +65,8 @@ struct ContentView: View {
 
     private func onGoToSettingsView() {
         self.saveSettings.moveSetFront = self.settings.moveSetFront;
-        self.saveSettings.sounds = self.settings.sounds;
-        self.saveSettings.haptics = self.settings.haptics;
+        // self.saveSettings.sounds = self.settings.sounds;
+        // self.saveSettings.haptics = self.settings.haptics;
     }
 
     private func onBackFromSettingsView() {
@@ -79,5 +79,7 @@ struct ContentView: View {
                 self.table.moveAnyExistingSetToFront();
             }
         }
+        self.feedback.sounds = settings.sounds;
+        self.feedback.haptics = settings.haptics;
     }
 }

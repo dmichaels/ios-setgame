@@ -5,7 +5,8 @@ struct SettingsView: View {
     @EnvironmentObject var table : Table;
     @EnvironmentObject var settings : Settings;
 
-    @State private var alternateCards: Int = 0
+    // @State private var alternateCards: Int = 0
+    @State private var showResetConfirmation = false
 
     private let iconWidth: CGFloat = 30;
     private let CardsPerRowChoices: [Int] = [ 2, 3, 4, 5, 6 ];
@@ -112,12 +113,10 @@ struct SettingsView: View {
                     Image(systemName: "photo").frame(width: iconWidth)
                     Text("Cards").lineLimit(1).layoutPriority(1)
                     Spacer()
-                    Picker("", selection: $alternateCards) {
+                    Picker("", selection: $settings.alternateCards) {
                         ForEach(AlternateCardsChoices, id: \.value) { option in Text(option.label) }
                     }
                     .pickerStyle(.menu)
-                    .onChange(of: alternateCards) { value in self.settings.alternateCards = value; }
-                    .onAppear { self.alternateCards = settings.alternateCards; }
                 }
             }
             Section(header: Text("Multimedia")) {
@@ -152,6 +151,20 @@ struct SettingsView: View {
                                                            ? StandardDeck.instanceSimple.cards
                                                            : StandardDeck.instance.cards))
             }
+            Section {
+                Button {
+                    showResetConfirmation = true
+                } label: {
+                    HStack {
+                        Spacer()
+                        Text("Reset Settings to Original Defaults")
+                            .fontWeight(.bold)
+                        Spacer()
+                    }
+                    .foregroundColor(.white)
+                }
+                .listRowBackground(Color.red)
+            }
             HStack {
                 Text("  Version").font(.footnote)
                 Spacer()
@@ -164,6 +177,17 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("\(Defaults.title) Settings")
+        .confirmationDialog(
+            "Reset Settings?",
+            isPresented: $showResetConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Reset", role: .destructive) {
+                settings.reset()
+            }
+            Button("Cancel", role: .cancel) {
+            }
+        }
     }
 
     private func navigationRow<Destination: View>(_ title: String, icon: String, destination: Destination) -> some View {
