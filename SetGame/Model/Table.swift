@@ -112,7 +112,7 @@ class Table<TC : TableCard> : ObservableObject {
 
     /// Touch the given card; selects or unselects as appropriate.
     ///
-    func touchCard(_ card : TC) {
+    private func touchCard(_ card : TC) {
 
         if (!self.cards.contains(card)) {
             //
@@ -158,6 +158,66 @@ class Table<TC : TableCard> : ObservableObject {
 
         card.selected = true;
         self.state.partialSetSelected = self.partialSetSelected();
+    }
+
+    public func cardTouched(_ card : TC, nblinks: Int = 5, already: Bool = false,
+                            _ callback: ((Bool?) -> Void)? = nil) {
+        //
+        // First we notify the table model that the card has been touched,
+        // i.e. selected/unselected toggle, then we ask the table check to
+        // check if a 3 card SET has been selected, in which case it would
+        // remove the SET cards and replace them with new ones from the deck,
+        // or if no SET, but 3 cards selected, then it would unselect the cards.
+        //
+        // Done in two steps because the CardView needs a breather to do its
+        // visual flipping. This breather is manifested as a delay on the SET
+        // check action. Without this delay, when the third card was selected,
+        // we wouldn't see its flipping before it either got replaced by a new
+        // card, if a SET; or got immediatly unselected, if no SET.
+        //
+        // No idea right now if this is the right/Swift-y way
+        // to handle such a situation; but it does work for now.
+        //
+        if (!already) {
+            self.touchCard(card);
+        }
+
+        func delayQuick(_ seconds : Float = 0.0, _ callback: @escaping () -> Void) {
+            if (seconds < 0) {
+                callback();
+            }
+            else {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    callback();
+                }
+            }
+        }
+
+        delayQuick() {
+            let setCards: [TC] = self.checkForSet(readonly: true);
+            if (setCards.count == 3) {
+                //
+                // SET found!
+                // Blink the 3 cards found a few times.
+                // Note that the table.state.blinking flag is
+                // used ONLY to disable input during this blinking.
+                //
+                let setTableCards: [TC] = setCards.compactMap { $0 as? TC }
+                TableView.blinkCards(setTableCards, times: nblinks) {
+                    self.checkForSet(readonly: false);
+                }
+                callback?(true);
+            }
+            else {
+                if (self.selectedCards().count == 3) {
+                    callback?(false);
+                }
+                else {
+                    callback?(nil);
+                }
+                self.checkForSet(readonly: false);
+            }
+        }
     }
 
     /// Checks whether or not a SET is currently selected on the table.
@@ -454,66 +514,6 @@ class Table<TC : TableCard> : ObservableObject {
         }
         if (moveSetFront ?? self.settings.moveSetFront) {
             self.moveAnyExistingSetToFront();
-        }
-    }
-
-    public func cardTouched(_ card : TC, nblinks: Int = 5, already: Bool = false,
-                            _ callback: ((Bool?) -> Void)? = nil) {
-        //
-        // First we notify the table model that the card has been touched,
-        // i.e. selected/unselected toggle, then we ask the table check to
-        // check if a 3 card SET has been selected, in which case it would
-        // remove the SET cards and replace them with new ones from the deck,
-        // or if no SET, but 3 cards selected, then it would unselect the cards.
-        //
-        // Done in two steps because the CardView needs a breather to do its
-        // visual flipping. This breather is manifested as a delay on the SET
-        // check action. Without this delay, when the third card was selected,
-        // we wouldn't see its flipping before it either got replaced by a new
-        // card, if a SET; or got immediatly unselected, if no SET.
-        //
-        // No idea right now if this is the right/Swift-y way
-        // to handle such a situation; but it does work for now.
-        //
-        if (!already) {
-            self.touchCard(card);
-        }
-
-        func delayQuick(_ seconds : Float = 0.0, _ callback: @escaping () -> Void) {
-            if (seconds < 0) {
-                callback();
-            }
-            else {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    callback();
-                }
-            }
-        }
-
-        delayQuick() {
-            let setCards: [TC] = self.checkForSet(readonly: true)
-            if (setCards.count == 3) {
-                //
-                // SET found!
-                // Blink the 3 cards found a few times.
-                // Note that the table.state.blinking flag is
-                // used ONLY to disable input during this blinking.
-                //
-                let setTableCards: [TC] = setCards.compactMap { $0 as? TC }
-                TableView.blinkCards(setTableCards, times: nblinks) {
-                    self.checkForSet(readonly: false);
-                }
-                callback?(true);
-            }
-            else {
-                if (self.selectedCards().count == 3) {
-                    callback?(false);
-                }
-                else {
-                    callback?(nil);
-                }
-                self.checkForSet(readonly: false);
-            }
         }
     }
 

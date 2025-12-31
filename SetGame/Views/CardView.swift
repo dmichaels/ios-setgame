@@ -14,7 +14,6 @@ public struct CardView : View {
     var touchedCallback : ((TableCard) -> Void)?
 
     public var body : some View {
-        // xyzzy if (table.state.blinking || card.blinking) ...
         if (card.blinking) {
             //
             // ODDITY:
@@ -26,25 +25,22 @@ public struct CardView : View {
             // values for the rotation3DEffect based on card.blinking.
             //
             VStack {
-                Button(action: {touchedCallback?(card)}) {
-                Image(self.image(card))
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .opacity(card.blinkout ? 0.0 : 1.0)
-                    .cornerRadius(8)
-                    .overlay(RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
-                            .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1))
-                    .shadow(color: card.selected ? Color.green : Color.blue, radius: card.selected ? 3 : 1)
-                    .padding(1)
-                    .onTapGesture {
-                        touchedCallback?(card);
-                    }
+                Button(action: { touchedCallback?(card) }) {
+                    Image(self.image(card))
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .opacity(card.blinkout ? 0.0 : 1.0)
+                        .cornerRadius(8)
+                        .overlay(RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
+                                .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1))
+                        .shadow(color: card.selected ? Color.green : Color.blue, radius: card.selected ? 3 : 1)
+                        .padding(1)
                 }
             }
         }
         else if (false) {
             VStack {
-                Button(action: {touchedCallback?(card)}) {
+                Button(action: { touchedCallback?(card) }) {
                 Image(self.image(card))
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -62,15 +58,12 @@ public struct CardView : View {
                     // FYI: Move the rotation3DEffect and animation here to get a more robust effect;
                     // where it looks like the whole card including border is spinning around.
                     //
-                    .onTapGesture {
-                        touchedCallback?(card);
-                    }
                 }
             }
         }
         else {
             VStack {
-                Button(action: {touchedCallback?(card)}) {
+                Button(action: { touchedCallback?(card) }) {
                 Image(self.image(card))
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -88,9 +81,6 @@ public struct CardView : View {
                                              y: CGFloat(card.selected ? 0 : 1),
                                              z: CGFloat(card.selected ? 1 : 0)))
                     .animation(Animation.linear(duration: 0.20))
-                    .onTapGesture {
-                        touchedCallback?(card);
-                    }
                 }
             }
         }
