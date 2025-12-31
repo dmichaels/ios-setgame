@@ -97,21 +97,6 @@ class Table<TC : TableCard> : ObservableObject {
         }
     }
 
-    private func findTableDuplicates() {
-        //
-        // FOR DEBUGGING ONLY!
-        //
-        for i in 0..<(self.cards.count - 1) {
-            for j in (i + 1)..<(self.cards.count) {
-                let a: TC = self.cards[i];
-                let b: TC = self.cards[j];
-                if (a == b) {
-                    print("DUPLICATE!!! [\(i),\(j)]: \(a)");
-                }
-            }
-        }
-    }
-
     /// Touch the given card; selects or unselects as appropriate.
     ///
     private func selectCard(_ card : TC) {
@@ -320,8 +305,6 @@ class Table<TC : TableCard> : ObservableObject {
                 }
             }
         }
-
-        // findTableDuplicates();
 
         return [];
     }
