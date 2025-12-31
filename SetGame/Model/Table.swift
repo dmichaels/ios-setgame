@@ -26,18 +26,15 @@ class Table<TC : TableCard> : ObservableObject {
         var blinking: Bool                      = false;
     }
 
-    @Published private(set) var cards: [TC];
-    @Published var state: State;
+    @Published private(set) var cards: [TC]!;
+    @Published var state: State!;
 
-    private var deck: Deck<TC>;
+    private var deck: Deck<TC>!;
     private var demoTimer: Timer? = nil;
 
     init(settings: Settings) {
         self.settings = settings;
-        self.cards = [TC]();
-        self.state = State();
-        self.deck = Deck();
-        self.fillTable();
+        self.startNewGame();
     }
 
     func startNewGame() {
