@@ -370,7 +370,6 @@ extension Array where Element : Card {
             // Default case of non-disjoint (possibly overlapping) set of SETs.
             //
             self.enumerateSets(limit: limit) { sets.append($0); }
-            print("ENUMERATE-SETS: \(sets)")
             return sets;
         }
 
@@ -462,7 +461,6 @@ extension Array where Element : Card {
     }
 
     private func enumerateSets(limit: Int = 0, _ handler : ([Element]) -> Void) {
-        print("ENUM-SETS> limit: \(limit)")
         var nsets: Int = 0;
         if (self.count > 2) {
             for i in 0..<(self.count - 2) {
@@ -470,7 +468,6 @@ extension Array where Element : Card {
                     for k in (j + 1)..<(self.count) {
                         let a: Element = self[i], b : Element = self[j], c : Element = self[k];
                         if (a.formsSetWith(b, c)) {
-                            print("ENUM-SETS> set: [\([a, b, c])] [\(i), \(j), \(k)]")
                             handler([a, b, c]);
                             nsets += 1;
                             if ((limit > 0) && (limit == nsets)) {

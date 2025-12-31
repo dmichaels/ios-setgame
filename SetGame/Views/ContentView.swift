@@ -8,7 +8,9 @@ struct ContentView: View {
 
     @State private var showSettingsView = false;
 
-    @State var saveSettings: Settings = Settings();
+    // @State var saveSettings: Settings = Settings();
+    @State private var saveMoveSetFront: Bool = false;
+    @State private var saveSimpleDeck: Bool   = false;
 
     var body: some View {
         NavigationView {
@@ -64,18 +66,20 @@ struct ContentView: View {
     }
 
     private func onGoToSettingsView() {
-        self.saveSettings.moveSetFront = self.settings.moveSetFront;
+        self.saveMoveSetFront = self.settings.moveSetFront;
+        self.saveSimpleDeck = self.settings.simpleDeck;
+        // self.saveSettings.moveSetFront = self.settings.moveSetFront;
         // self.saveSettings.sounds = self.settings.sounds;
         // self.saveSettings.haptics = self.settings.haptics;
     }
 
     private func onBackFromSettingsView() {
-        if ((self.settings.simpleDeck != self.saveSettings.simpleDeck) &&
+        if ((self.settings.simpleDeck != self.saveSimpleDeck) &&
             (self.table.gameStart() || self.table.gameDone())) {
             self.table.startNewGame();
         }
         else {
-            if (self.settings.moveSetFront && !self.saveSettings.moveSetFront) {
+            if (self.settings.moveSetFront && !self.saveMoveSetFront) {
                 self.table.moveAnyExistingSetToFront();
             }
         }
