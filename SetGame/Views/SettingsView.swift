@@ -157,13 +157,21 @@ struct SettingsView: View {
                 } label: {
                     HStack {
                         Spacer()
-                        Text("Reset Settings to Original Defaults")
+                        // Text("Reset Settings to Original Defaults")
+                        Text("Reset Settings")
                             .fontWeight(.bold)
                         Spacer()
                     }
                     .foregroundColor(.white)
                 }
-                .listRowBackground(Color.red)
+                .listRowBackground(settings.isDefault() ? Color.secondary : Color.red)
+                .disabled(settings.isDefault())
+                .accessibilityHint(
+                    settings.isDefault()
+                    ? "All settings are already at their default values"
+                    : "Resets all settings to their defaults"
+                )
+                .opacity(settings.isDefault() ? 0.5 : 1.0)
             }
             HStack {
                 Text("  Version").font(.footnote)
@@ -177,19 +185,6 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("\(Defaults.title) Settings")
-/*
-        .confirmationDialog(
-            "Reset Settings?",
-            isPresented: $showResetConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("Reset", role: .destructive) {
-                settings.reset()
-            }
-            Button("Cancel", role: .cancel) {
-            }
-        }
-*/
         .alert("Reset Settings?", isPresented: $showResetConfirmation) {
             Button("Reset", role: .destructive) { settings.reset() }
             Button("Cancel", role: .cancel) { }

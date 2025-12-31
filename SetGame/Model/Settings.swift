@@ -158,6 +158,26 @@ public final class Settings: ObservableObject {
         haptics              = Defaults.haptics
     }
 
+    public func isDefault() -> Bool {
+        return ((showPartialSetHint   == Defaults.showPartialSetHint)
+            &&  (showSetsPresentCount == Defaults.showSetsPresentCount)
+            &&  (showPeekButton       == Defaults.showPeekButton)
+            &&  (peekDisjoint         == Defaults.peekDisjoint)
+            &&  (additionalCards      == Defaults.additionalCards)
+            &&  (plantSet             == Defaults.plantSet)
+            &&  (plantMagicSquare     == Defaults.plantMagicSquare)
+            &&  (moveSetFront         == Defaults.moveSetFront)
+            &&  (showFoundSets        == Defaults.showFoundSets)
+            &&  (displayCardCount     == Defaults.displayCardCount)
+            &&  (cardsPerRow          == Defaults.cardsPerRow
+            &&  (cardsAskew           == Defaults.cardsAskew))
+            &&  (alternateCards       == Defaults.alternateCards)
+            &&  (simpleDeck           == Defaults.simpleDeck)
+            &&  (sounds               == Defaults.sounds)
+            &&  (haptics              == Defaults.haptics)
+        )
+    }
+
     // These are the actual app settings properties.
 
     @Published var showPartialSetHint: Bool   = Defaults.showPartialSetHint;
