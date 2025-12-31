@@ -28,7 +28,9 @@ class Table<TC : TableCard> : ObservableObject {
         // a SET is found (see allowsHitTesting in TableView); there should be a better way.
         ///
         public var blinking: Bool { self.table.cards.contains(where: { $0.blinking }) }
-        public var newlyAddedCards: Set<TC.ID> = [];
+        fileprivate var resolving: Bool = false;
+        public var disabled: Bool { return self.table.state.blinking || self.table.state.resolving }
+        public var newlyAddedCards: Set<TC.ID> = []; // TODO
     }
 
     @Published private(set) var cards: [TC]!;
@@ -162,7 +164,7 @@ class Table<TC : TableCard> : ObservableObject {
 
     public func cardTouched(_ card : TC, nblinks: Int = 5, already: Bool = false,
                             _ callback: ((Bool?) -> Void)? = nil) {
-        //
+
         // First we notify the table model that the card has been touched,
         // i.e. selected/unselected toggle, then we ask the table check to
         // check if a 3 card SET has been selected, in which case it would
@@ -177,7 +179,17 @@ class Table<TC : TableCard> : ObservableObject {
         //
         // No idea right now if this is the right/Swift-y way
         // to handle such a situation; but it does work for now.
-        //
+
+        guard !self.state.resolving else {
+            return;
+        }
+
+        let selectedCards: [TC] = self.selectedCards();
+
+        if (self.selectedCards().count == 3) {
+            self.state.resolving = true;
+        }
+
         if (!already) {
             self.touchCard(card);
         }
@@ -205,17 +217,15 @@ class Table<TC : TableCard> : ObservableObject {
                 let setTableCards: [TC] = setCards.compactMap { $0 as? TC }
                 TableView.blinkCards(setTableCards, times: nblinks) {
                     self.checkForSet(readonly: false);
+                    callback?(true); // xyzzy
+                    self.state.resolving = false; // xyzzy
                 }
-                callback?(true);
+                // callback?(true);
             }
             else {
-                if (self.selectedCards().count == 3) {
-                    callback?(false);
-                }
-                else {
-                    callback?(nil);
-                }
                 self.checkForSet(readonly: false);
+                callback?(self.selectedCards().count == 3 ? false : nil); // xyzzy
+                self.state.resolving = false; // xyzzy
             }
         }
     }

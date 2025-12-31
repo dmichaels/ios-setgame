@@ -23,7 +23,6 @@ struct TableView: View {
                             let index = row * settings.cardsPerRow + column;
                             if (index < table.cards.count) {
                                 CardView(card: table.cards[index]) {
-                                    print("CardView callback ...")
                                     self.table.cardTouched($0) { result in
                                         if (result == nil) {
                                             self.feedback.trigger(Feedback.TAP);
@@ -32,13 +31,12 @@ struct TableView: View {
                                             self.feedback.trigger(Feedback.CANCEL);
                                         }
                                         else if (result == true) {
-                                            print("SWOOSH")
                                             self.feedback.trigger(Feedback.SWOOSH);
                                         }
                                     }
                                 }
                                 .slightlyRotated(self.settings.cardsAskew)
-                                .allowsHitTesting(!self.table.state.blinking && !self.settings.demoMode)
+                                .allowsHitTesting(!self.table.state.disabled && !self.settings.demoMode)
                             }
                             else {
                                 Color.clear
