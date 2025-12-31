@@ -12,12 +12,17 @@ struct TableView: View {
                 let nrows = Int(ceil(Float(table.cards.count) / Float(settings.cardsPerRow)));
                 ForEach (0..<nrows, id: \.self) { row in
                     HStack {
+                        /*
+                        ForEach(table.cards) { card in
+                            CardView(card: card, touchedCallback: { /* ... */ })
+                                .transition(.popInCard)
+                        }
+                        .animation(.spring(response: 0.22, dampingFraction: 0.85), value: table.cards.map(\.id))
+                        */
                         ForEach(0..<settings.cardsPerRow, id: \.self) { column in
                             let index = row * settings.cardsPerRow + column;
                             if (index < table.cards.count) {
                                 CardView(card: table.cards[index]) {
-                                    // self.table.cardTouched($0);
-                                    // self.feedback.trigger(Feedback.TAP);
                                     self.table.cardTouched($0) { result in
                                         if (result == nil) {
                                             self.feedback.trigger(Feedback.TAP);

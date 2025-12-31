@@ -125,3 +125,13 @@ private struct SlightRandomRotation: ViewModifier {
         content.rotationEffect(.degrees(angle));
     }
 }
+
+extension AnyTransition {
+    static var popInCard: AnyTransition {
+        .asymmetric(
+            insertion: .scale(scale: 0.05, anchor: .center)
+                .combined(with: .opacity),
+            removal: .opacity
+        )
+    }
+}
