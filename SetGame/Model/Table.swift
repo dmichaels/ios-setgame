@@ -190,9 +190,12 @@ class Table<TC : TableCard> : ObservableObject {
 
         let selectedCards: [TC] = self.selectedCards();
 
-        if (selectedCards.count == 3) {
-            self.state.resolving = true;
+        guard selectedCards.count == 3 else {
+            callback?(nil);
+            return;
         }
+
+        self.state.resolving = true;
 
         func delayQuick(_ seconds : Float = 0.0, _ callback: @escaping () -> Void) {
             if (seconds < 0) {
@@ -220,12 +223,11 @@ class Table<TC : TableCard> : ObservableObject {
                     callback?(true);
                     self.state.resolving = false;
                 }
-                // callback?(true);
             }
             else {
                 self.checkForSet(readonly: false);
                 callback?(selectedCards.count == 3 ? false : nil);
-                self.state.resolving = false; // xyzzy
+                self.state.resolving = false;
             }
         }
     }
