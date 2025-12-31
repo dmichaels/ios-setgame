@@ -1,6 +1,6 @@
 <img src="https://github.com/dmichaels/public/blob/master/work/code/personal/SetGame/SetGame.png" alt="drawing" width="300" align="left" /> My first foray into iOS/Swift development. <br />
 
-LogiCard: An iOS app inspired by [SET Game®](https://www.setgame.com/set/puzzle).
+Logicard: An iOS app inspired by [SET Game®](https://www.setgame.com/set/puzzle).
 Instructions **[here](https://www.setgame.com/sites/default/files/instructions/SET%20INSTRUCTIONS%20-%20ENGLISH.pdf)**. <br />
 Source code free for the taking. <br /><br />
 <!--

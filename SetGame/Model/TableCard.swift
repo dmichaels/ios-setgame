@@ -5,15 +5,15 @@ import SwiftUI
 ///
 class TableCard : Card, ObservableObject {
 
-    @Published var selected : Bool = false;
-    @Published var set      : Bool = false;
+    @Published var selected: Bool = false;
+    @Published var set: Bool      = false;
     //
     // These blink/blinking properties are used only for blinking the cards when a SET is found;
     // the blinking property means that we are in the processing of doing the blinking, and the
     // blink property means we are either blinked on or off at any one moment; see CardView.
     //
-    @Published var blink    : Bool = false;
-    @Published var blinking : Bool = false;
+    @Published var blinkout: Bool = false;
+    @Published var blinking: Bool = false;
 
     required init() {
         super.init(color: .random, shape: .random, filling: .random, number: .random);

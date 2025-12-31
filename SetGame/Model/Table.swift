@@ -9,21 +9,26 @@ class Table<TC : TableCard> : ObservableObject {
 
     public var settings: Settings;
 
-    struct State {
-        var partialSetSelected: Bool            = false;
-        var incorrectGuessCount: Int            = 0;
-        var setsFoundCount: Int                 = 0;
-        var setJustFound: Bool                  = false;
-        var setJustFoundNot: Bool               = false;
-        var setsLastFound: [[TC]]               = [];
-        var showingCardsWhichArePartOfSet: Bool = false;
-        var showingOneRandomSet: Bool           = false;
-        var showingOneRandomSetLast: Int?       = nil;
+    public struct State {
+        private let table: Table;
+        public init(_ table: Table) {
+            self.table = table;
+        }
+        public var partialSetSelected: Bool            = false;
+        public var incorrectGuessCount: Int            = 0;
+        public var setsFoundCount: Int                 = 0;
+        public var setJustFound: Bool                  = false;
+        public var setJustFoundNot: Bool               = false;
+        public var setsLastFound: [[TC]]               = [];
+        public var showingCardsWhichArePartOfSet: Bool = false;
+        public var showingOneRandomSet: Bool           = false;
+        public var showingOneRandomSetLast: Int?       = nil;
         //
         // This blinking flag is ONLY used to disable input while blinking the cards after
         // a SET is found (see allowsHitTesting in TableView); there should be a better way.
         ///
-        var blinking: Bool                      = false;
+        public var blinking: Bool { self.table.cards.contains(where: { $0.blinking }) }
+        public var newlyAddedCards: Set<TC.ID> = [];
     }
 
     @Published private(set) var cards: [TC]!;
@@ -38,31 +43,10 @@ class Table<TC : TableCard> : ObservableObject {
     }
 
     func startNewGame() {
+
         self.deck  = Deck(simple: self.settings.simpleDeck);
         self.cards = [TC]();
-        self.state = State();
-
-        if (false) {
-            //
-            // Tempoary debugging 2025-12-30.
-            //
-            self.cards = Array<TC>.from([
-                "GDS2", "PDT1", "GQS3", "PDS1",
-                "RQS1", "PQS2", "GDT2", "RQT1",
-                "GDT1", "GQS2", "RQH2", "PQH1"
-            ]);
-            self.cards = Array<TC>.from([
-                "RDS1", "PDH2", "GOT2", "PQH2",
-                "PDH1", "GOH1", "PDT1", "GQT1",
-                "RQT3", "GQS1", "PDH3", "GOH3"
-            ]);
-            self.cards = Array<TC>.from([
-                "POH1", "ROT2", "POT1", "PDT3",
-                "ROS1", "RDS1", "PQT3", "POH3",
-                "PDT2", "PDS1", "GQT1", "PDS3"
-            ]);
-            return;
-        }
+        self.state = State(self);
 
         if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.settings.simpleDeck)
@@ -506,7 +490,6 @@ class Table<TC : TableCard> : ObservableObject {
             }
         }
 
-
         delayQuick() {
             let setCards: [TC] = self.checkForSet(readonly: true)
             if (setCards.count == 3) {
@@ -517,10 +500,8 @@ class Table<TC : TableCard> : ObservableObject {
                 // used ONLY to disable input during this blinking.
                 //
                 let setTableCards: [TC] = setCards.compactMap { $0 as? TC }
-                self.state.blinking = true;
                 TableView.blinkCards(setTableCards, times: nblinks) {
                     self.checkForSet(readonly: false);
-                    self.state.blinking = false;
                 }
                 callback?(true);
             }

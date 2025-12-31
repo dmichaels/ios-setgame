@@ -39,7 +39,6 @@ struct TableView: View {
                                 .allowsHitTesting(!self.table.state.blinking && !self.settings.demoMode)
                             }
                             else {
-                                // Image("dummy").resizable()
                                 Color.clear
                             }
                         }
@@ -58,42 +57,34 @@ struct TableView: View {
         }
     }
 
-    // N.B. ChatGPT helped here.
-    //
     public static func blinkCards(_ cards: [TableCard], times: Int = 3, interval: Double = 0.15,
                                     completion: @escaping () -> Void = {}) {
 
-        for card in cards {
-            if card.blinking {
-                return;
-            }
+        guard !cards.blinking else {
+            return;
         }
 
         guard times > 0 else {
             completion();
-            return
+            return;
         }
-
-        func setBlinking(_ on: Bool) { for card in cards { card.blink = on; card.blinking = on; } }
-        func toggleBlink()           { for card in cards { card.blink = !card.blink; } }
 
         var togglesRemaining = times * 2; // times two because counting on/off
 
-        setBlinking(true);
+        cards.blinkingStart();
+
         func tick() {
-            togglesRemaining -= 1;
-            if (togglesRemaining <= 0) {
-                setBlinking(false);
+            togglesRemaining -= 1; if (togglesRemaining <= 0) {
+                cards.blinkingEnd();
                 completion();
                 return;
             }
-            toggleBlink();
+            cards.blinkoutToggle();
             DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
                 tick();
             }
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
-            tick();
-        }
+
+        tick();
     }
 }

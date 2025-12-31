@@ -14,7 +14,8 @@ public struct CardView : View {
     var touchedCallback : ((TableCard) -> Void)?
 
     public var body : some View {
-        if (table.state.blinking) {
+        // xyzzy if (table.state.blinking || card.blinking) ...
+        if (card.blinking) {
             //
             // ODDITY:
             // Had to duplicate this whole thing here, WITHOUT the rotation3DEffect animation
@@ -29,7 +30,7 @@ public struct CardView : View {
                 Image(self.image(card))
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .opacity(card.blink ? 0.0 : 1.0)
+                    .opacity(card.blinkout ? 0.0 : 1.0)
                     .cornerRadius(8)
                     .overlay(RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
                             .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1))
