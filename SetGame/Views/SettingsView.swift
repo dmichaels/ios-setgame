@@ -177,6 +177,7 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("\(Defaults.title) Settings")
+/*
         .confirmationDialog(
             "Reset Settings?",
             isPresented: $showResetConfirmation,
@@ -187,6 +188,13 @@ struct SettingsView: View {
             }
             Button("Cancel", role: .cancel) {
             }
+        }
+*/
+        .alert("Reset Settings?", isPresented: $showResetConfirmation) {
+            Button("Reset", role: .destructive) { settings.reset() }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This will restore all settings to their original defaults.")
         }
     }
 
