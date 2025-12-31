@@ -197,18 +197,10 @@ class Table<TC : TableCard> : ObservableObject {
 
         self.state.resolving = true;
 
-        func delayQuick(_ seconds : Float = 0.0, _ callback: @escaping () -> Void) {
-            if (seconds < 0) {
-                callback();
-            }
-            else {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    callback();
-                }
-            }
-        }
+        // This little delay gives us time to see the cards in a selected state, before
+        // moving on to deselect (if no SET); or on to blinking, removing, and replacing (if SET)
 
-        delayQuick() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             let setCards: [TC] = self.checkForSet(readonly: true);
             if (setCards.count == 3) {
                 //
