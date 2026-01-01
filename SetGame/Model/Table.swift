@@ -209,6 +209,7 @@ class Table<TC : TableCard> : ObservableObject {
         // This little delay gives us time to briefly see the cards
         // in a stable selected state, before moving on to deselect,
         // if no SET; or on to blinking, removing, and replacing, if SET.
+        // Slightly shorter delay for the SET case, since blinking.
 
         let set: Bool = Card.isSet(selectedCards[0], selectedCards[1], selectedCards[2]);
         let interval: Double = set ? 0.4 : 0.6;
