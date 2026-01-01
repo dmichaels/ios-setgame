@@ -166,84 +166,90 @@ class Table<TC : TableCard> : ObservableObject {
         // to handle such a situation; but it does work for now.
 
         guard !self.state.resolving else {
+            //
+            // We are already in the process of resolving a three-card selection;
+            // this essentially makes this function non-reentrant, by setting the
+            // state.resolving property during this process (function execution);
+            // should not really get here because state.disabled is true in this
+            // case in which disallows input (via allowsHitTesting in TableView).
+            //
             return;
         }
 
         if (select) {
+            //
+            // This is the default case; we first actually put the
+            // given card in a selected state; we don't do this the
+            // demo-mode case, in which case we don't visually select
+            // the SET first, rather we just do the blinking thing.
+            //
             self.selectCard(card);
         }
 
         let selectedCards: [TC] = self.selectedCards();
 
         guard selectedCards.count == 3 else {
+            //
+            // We don't even have three cards selected; do nothing.
+            // we still call the given callback (with nil argument meaning
+            // three cards were not even selected); this allows the caller
+            // to do something in this case, like make a tapping sound.
+            //
             callback?(nil);
             return;
         }
 
+        // Here three cards are selected; we note that we are we are now resolving
+        // this seleciton by setting the state.resolving property, which prevents
+        // this function from being re-entered, and makes state.disabled true
+        // which disallows input (via allowsHitTesting in TestView).
+
         self.state.resolving = true;
 
-        // This little delay gives us time to see the cards in a selected state, before
-        // moving on to deselect (if no SET); or on to blinking, removing, and replacing (if SET)
+        // This little delay gives us time to briefly see the cards
+        // in a stable selected state, before moving on to deselect,
+        // if no SET; or on to blinking, removing, and replacing, if SET.
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            if (Card.isSet(selectedCards[0], selectedCards[1], selectedCards[2])) {
+        let set: Bool = Card.isSet(selectedCards[0], selectedCards[1], selectedCards[2]);
+        let interval: Double = set ? 0.4 : 0.6;
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
+            if (set) {
                 //
-                // SET found!
-                // Blink the 3 cards found a few times.
-                // Note that the table.state.blinking flag is
-                // used ONLY to disable input during this blinking.
+                // SET found! Blink the three cards a few times.
                 //
                 TableView.blinkCards(selectedCards, times: nblinks) {
-                    self.checkForSet();
+                    self.resolveSet();
                     callback?(true);
                     self.state.resolving = false;
                 }
             }
             else {
-                self.checkForSet();
+                //
+                // SET not found :-(
+                //
+                self.resolveSet();
                 callback?(false);
                 self.state.resolving = false;
             }
         }
-
-/*
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            let setCards: [TC] = self.checkForSet(readonly: true);
-            if (setCards.count == 3) {
-                //
-                // SET found!
-                // Blink the 3 cards found a few times.
-                // Note that the table.state.blinking flag is
-                // used ONLY to disable input during this blinking.
-                //
-                let setTableCards: [TC] = setCards.compactMap { $0 as? TC }
-                TableView.blinkCards(setTableCards, times: nblinks) {
-                    self.checkForSet(readonly: false);
-                    callback?(true);
-                    self.state.resolving = false;
-                }
-            }
-            else {
-                self.checkForSet(readonly: false);
-                callback?(selectedCards.count == 3 ? false : nil);
-                self.state.resolving = false;
-            }
-        }
-*/
     }
 
     /// Checks whether or not a SET is currently selected on the table.
     /// If a SET is selected, then removes these selected SET cards and
-    /// replaces them with new ones from the deck (in an unselected state).
+    /// replaces them with new ones from the deck (in an unselected state),
     /// If a non-SET is selected (i.e. three cards selected but which do
     /// not form SET), then these cards will simply be unselected.
     ///
-    private func checkForSet(readonly: Bool = false) -> [TC] {
+    private func resolveSet() {
 
         let selectedCards: [TC] = self.selectedCards();
 
         guard selectedCards.count == 3 else {
-            return [];
+            //
+            // Three cards are not even selected; do nothing.
+            //
+            return;
         }
 
         // We have three cards selected; now see if
@@ -252,11 +258,6 @@ class Table<TC : TableCard> : ObservableObject {
         if (selectedCards.isSet()) {
             //
             // We have a SET!
-            //
-            if (readonly) {
-                return selectedCards;
-            }
-            //
             // Unselect the SET cards, calling the given callback if any,
             // and then remove these SET cards from the table,
             // and replace them with cards from the deck.
@@ -308,30 +309,15 @@ class Table<TC : TableCard> : ObservableObject {
             self.fillTable();
             self.state.setsLastFound.append(selectedCards);
             self.state.setsLastFound.flatMap { $0 }.forEach { $0.selected = false };
-            return selectedCards;
         }
-
-        // We do NOT have a SET :-(
-
-        if (!readonly) {
+        else {
+            //
+            // We do NOT have a SET :-(
+            //
             self.state.setJustFoundNot = true;
             self.state.incorrectGuessCount += 1;
-            //
-            // TODO: Get rid of this dispatch thing here - do it all in cardTouched.
-            //
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                //
-                // Unselecting the (non-SET) cards inside this dispatch block allows the
-                // UI to actually show the 3 cards as selected before they get visually
-                // unselected; otherwise (without the dispatch block) it happens so quick
-                // you don't really see all 3 (especially the last one) selected at once,
-                // before they're unselected here.
-                //
-                self.unselectCards();
-            }
+            self.unselectCards();
         }
-
-        return [];
     }
 
     func selectAllCardsWhichArePartOfSet() {
