@@ -159,7 +159,8 @@ struct StatusBarView: View {
                 .shadow(color: .black.opacity(0.3), radius: 4, x: 3, y: 6)
         )
         .background(BACKGROUND)
-        .allowsHitTesting(!self.table.state.blinking && !self.settings.demoMode)
+        // .allowsHitTesting(!self.table.state.blinking && !self.settings.demoMode)
+        .allowsHitTesting(!self.table.state.disabled && !self.settings.demoMode)
     }
 }
 

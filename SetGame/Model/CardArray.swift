@@ -197,8 +197,8 @@ extension Array where Element : Card {
             }
             else if ((n >= 3) && (self.count >= 3)) {
                 ///
-                // Here, we want to take at least 3 cards from this array of cards,
-                // and there are at least 3 cars in this array of cards.
+                // Here, we want to take at least three cards from this array of cards,
+                // and there are at least three cars in this array of cards.
                 ///
                 let sets: [[Element]] = self.enumerateSets(limit: 1);
                 if (sets.count > 0) {
@@ -234,12 +234,12 @@ extension Array where Element : Card {
         return randomCards;
     }
 
-    /// Returns (WITH removal) 3 random cards (in a new array) from this array of cards,
+    /// Returns (WITH removal) three random cards (in a new array) from this array of cards,
     /// ENSURING that, IF POSSIBLE, there NO SETs in the returned cards. If this is NOT
     /// POSSIBLE (either because there are not enough cards in this array of cards, or if
-    /// they do not contain a non-SET of 3), then returns and empty list (nothing removed).
-    /// Guaranteed: Return either an array of 3 cards which are a SET, or an empty array;
-    /// and if the former, then these 3 cards will be removed from this array of cards.
+    /// they do not contain a non-SET of three), then returns and empty list (nothing removed).
+    /// Guaranteed: Return either an array of three cards which are a SET, or an empty array;
+    /// and if the former, then these three cards will be removed from this array of cards.
     ///
     /// N.B. Only (currently) used for the purpose of constructing a magic square.
     ///
@@ -275,7 +275,7 @@ extension Array where Element : Card {
         return randomCards;
     }
 
-    /// Returns (WITHOUT removal) 3 random cards from this array which form a SET.
+    /// Returns (WITHOUT removal) three random cards from this array which form a SET.
     /// If no such thing can be found then returns an empty array.
     ///
     func randomSetCards() -> [Element] {
@@ -295,11 +295,11 @@ extension Array where Element : Card {
         return [];
     }
 
-    /// Returns (without removal) 3 random cards from this array of cards, and returns these cards
+    /// Returns (without removal) three random cards from this array of cards, and returns these cards
     /// in a new array; but we ensure, IF POSSIBLE, there are NOT any SETs in the returned cards.
     /// If this is NOT POSSIBLE, either because there are not enough cards in this array of
-    /// cards, or if they do not contain a non-SET of 3, then an empty list is returned.
-    /// Guaranteed: Return either an array of 3 cards which are a SET, or an empty array.
+    /// cards, or if they do not contain a non-SET of three, then an empty list is returned.
+    /// Guaranteed: Return either an array of three cards which are a SET, or an empty array.
     ///
     /// N.B. Only (currently) used for the purpose of constructing a magic square.
     ///
@@ -317,8 +317,16 @@ extension Array where Element : Card {
         return [];
     }
 
+    /// Returns true iff this array comprises a SET.
+    ///
     func isSet() -> Bool {
         return (self.count == 3) && Element.isSet(self[0], self[1], self[2]);
+    }
+
+    /// Returns true iff this array has three cards which do NOT comprise a SET.
+    ///
+    func isNonSet() -> Bool {
+        return (self.count == 3) && !Element.isSet(self[0], self[1], self[2]);
     }
 
     func formsSetWith(_ a : Element, _ b : Element) -> Bool {
@@ -408,7 +416,7 @@ extension Array where Element : Card {
         }
 
         // Optional heuristic: Try more-constraining SETs first; since SET
-        // sizes are alway 3, not so much; but still keeps it deterministic.
+        // sizes are always three, not so much; but still keeps it deterministic.
 
         candidates.sort { $0.mask.nonzeroBitCount > $1.mask.nonzeroBitCount }
 

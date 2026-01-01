@@ -186,6 +186,28 @@ class Table<TC : TableCard> : ObservableObject {
         // moving on to deselect (if no SET); or on to blinking, removing, and replacing (if SET)
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            if (Card.isSet(selectedCards[0], selectedCards[1], selectedCards[2])) {
+                //
+                // SET found!
+                // Blink the 3 cards found a few times.
+                // Note that the table.state.blinking flag is
+                // used ONLY to disable input during this blinking.
+                //
+                TableView.blinkCards(selectedCards, times: nblinks) {
+                    self.checkForSet();
+                    callback?(true);
+                    self.state.resolving = false;
+                }
+            }
+            else {
+                self.checkForSet();
+                callback?(false);
+                self.state.resolving = false;
+            }
+        }
+
+/*
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             let setCards: [TC] = self.checkForSet(readonly: true);
             if (setCards.count == 3) {
                 //
@@ -207,6 +229,7 @@ class Table<TC : TableCard> : ObservableObject {
                 self.state.resolving = false;
             }
         }
+*/
     }
 
     /// Checks whether or not a SET is currently selected on the table.
@@ -293,6 +316,9 @@ class Table<TC : TableCard> : ObservableObject {
         if (!readonly) {
             self.state.setJustFoundNot = true;
             self.state.incorrectGuessCount += 1;
+            //
+            // TODO: Get rid of this dispatch thing here - do it all in cardTouched.
+            //
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 //
                 // Unselecting the (non-SET) cards inside this dispatch block allows the
