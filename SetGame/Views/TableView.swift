@@ -70,7 +70,7 @@ struct TableView: View {
         }
     }
 
-    public static func blinkCards(_ cards: [TableCard], times: Int = 3, interval: Double = 0.15,
+    public static func blinkCards(_ cards: [TableCard], times: Int = 3, interval: Double = 0.18,
                                     completion: @escaping () -> Void = {}) {
 
         // The interval is the time between blinks;
