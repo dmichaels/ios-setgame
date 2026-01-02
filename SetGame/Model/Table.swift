@@ -10,10 +10,19 @@ class Table<TC : TableCard> : ObservableObject {
     public var settings: Settings;
 
     public struct State {
+
         private let table: Table;
+
+        public enum Progress { // TODO
+            case selected
+            case nonset
+            case set(cardIDs: [TC.ID], times: Int, interval: Double)
+        }
+
         public init(_ table: Table) {
             self.table = table;
         }
+
         public var partialSetSelected: Bool            = false;
         public var incorrectGuessCount: Int            = 0;
         public var setsFoundCount: Int                 = 0;
@@ -23,14 +32,14 @@ class Table<TC : TableCard> : ObservableObject {
         public var showingCardsWhichArePartOfSet: Bool = false;
         public var showingOneRandomSet: Bool           = false;
         public var showingOneRandomSetLast: Int?       = nil;
-        //
+
         // This blinking flag is ONLY used to disable input while blinking the cards after
         // a SET is found (see allowsHitTesting in TableView); there should be a better way.
         ///
-        public var blinking: Bool { self.table.cards.contains(where: { $0.blinking }) }
+        public      var blinking: Bool { self.table.cards.contains(where: { $0.blinking }) }
         fileprivate var resolving: Bool = false;
-        public var disabled: Bool { return self.table.state.blinking || self.table.state.resolving }
-        public var newlyAddedCards: Set<TC.ID> = []; // TODO
+        public      var disabled: Bool { return self.table.state.blinking || self.table.state.resolving }
+        public      var newlyAddedCards: Set<TC.ID> = []; // TODO
     }
 
     @Published private(set) var cards: [TC]!;

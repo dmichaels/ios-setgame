@@ -12,13 +12,6 @@ struct TableView: View {
                 let nrows = Int(ceil(Float(table.cards.count) / Float(settings.cardsPerRow)));
                 ForEach (0..<nrows, id: \.self) { row in
                     HStack {
-                        /*
-                        ForEach(table.cards) { card in
-                            CardView(card: card, touchedCallback: { /* ... */ })
-                                .transition(.popInCard)
-                        }
-                        .animation(.spring(response: 0.22, dampingFraction: 0.85), value: table.cards.map(\.id))
-                        */
                         ForEach(0..<settings.cardsPerRow, id: \.self) { column in
                             let index = row * settings.cardsPerRow + column;
                             if (index < table.cards.count) {
@@ -75,9 +68,6 @@ struct TableView: View {
                 }
             }.padding().offset(y: -12)
         }
-    }
-
-    public static func blinkCards() async {
     }
 
     public static func blinkCards(_ cards: [TableCard], times: Int = 3, interval: Double = 0.15,
