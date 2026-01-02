@@ -13,6 +13,44 @@ public struct CardView : View {
 
     var touchedCallback : ((TableCard) -> Void)?
 
+    public var body: some View {
+        VStack {
+            Button(action: { touchedCallback?(card) }) {
+                Image(self.image(card))
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .opacity(card.blinkout ? 0.0 : 1.0)
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
+                            .stroke(card.selected ? Color.red : Color.gray,
+                                    lineWidth: card.selected ? 3 : 1)
+                    )
+                    .shadow(color: card.selected ? Color.green : Color.blue, radius: card.selected ? 3 : 1)
+                    .padding(1)
+                    //
+                    // Keep this transform always present ...
+                    //
+                    .rotation3DEffect(
+                        card.selected ? Angle(degrees: 360) : Angle(degrees: 0),
+                        axis: (x: CGFloat(card.selected ? 0 : 1),
+                               y: CGFloat(card.selected ? 0 : 1),
+                               z: CGFloat(card.selected ? 1 : 0))
+                    )
+                    //
+                    // ... but only animate selection changes, and NEVER during blinking.
+                    //
+                    .animation(card.blinking ? nil : .linear(duration: 0.20),
+                            value: card.selected)
+                    //
+                    // Optional: Also ensure blinkout toggles don’t animate (belt+suspenders).
+                    //
+                    .animation(nil, value: card.blinkout)
+            }
+        }
+    }
+
+/*
     public var body : some View {
         if (card.blinking) {
             //
@@ -62,6 +100,7 @@ public struct CardView : View {
             }
         }
     }
+*/
 
     private func image(_ card: TableCard) -> String {
         //
