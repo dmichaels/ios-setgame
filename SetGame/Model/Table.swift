@@ -222,6 +222,7 @@ class Table<TC : TableCard> : ObservableObject {
         // MUST call the given resolve function at the end of its processing.
 
         if (delay > 0) {
+            let delay: Double = selectedCards.isSet() ? delay / 2.0 : delay;
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 if let callback = callback {
                     callback(selectedCards, selectedCards.isSet(), resolve);
@@ -286,6 +287,7 @@ class Table<TC : TableCard> : ObservableObject {
                     existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
                 )
             );
+            print("NEW: \(newCards)")
             var replacementCards: [TC] = extraCards + newCards;
             var deletionIndices: [Int] = []
             for i in 0..<self.cards.count {
@@ -313,6 +315,10 @@ class Table<TC : TableCard> : ObservableObject {
             self.fillTable();
             self.state.setsLastFound.append(selectedCards);
             self.state.setsLastFound.flatMap { $0 }.forEach { $0.selected = false };
+            //
+            // xyzzy
+            //
+            self.noteNewcomers(newCards);
         }
         else {
             //
@@ -321,6 +327,14 @@ class Table<TC : TableCard> : ObservableObject {
             self.state.setJustFoundNot = true;
             self.state.incorrectGuessCount += 1;
             self.unselectCards();
+        }
+    }
+
+    private func noteNewcomers(_ cards: [TC]) {
+        let ids: Set<TC.ID> = Set(cards.map(\.id));
+        self.state.newcomers.formUnion(ids);
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.state.newcomers.subtract(ids);
         }
     }
 
@@ -459,6 +473,53 @@ class Table<TC : TableCard> : ObservableObject {
     /// Adds (at most) the given number of cards to the table from the deck.
     ///
     func addMoreCards(_ ncards: Int, plantSet: Bool? = nil) {
+        guard (ncards > 0) && (self.deck.count > 0) else { return; }
+        let plantSet: Bool = plantSet ?? self.settings.plantSet;
+        let newcomers: [TC] = [];
+        if (plantSet && !self.containsSet() && (self.cards.count + min(self.deck.count, ncards)) >= 3) {
+            //
+            // If we want a SET planted, and only if there are not already any
+            // SETs on the table, and only if there are enough cards between
+            // what's on the table and what we're adding and what's left in
+            // the deck, then try to plant a SET with these newly added cards.
+            //
+            if (ncards >= 3) {
+                //
+                // Trivial case; no SETs on the table and adding 3 or more
+                // cards; just try to ensure the random 3+ cards taken
+                // from the deck contain a SET.
+                //
+                let cards: [TC] = self.deck.takeRandomCards(ncards, plantSet: true);
+                self.cards.add(cards);
+                self.noteNewcomers(cards);
+            }
+            else {
+                //
+                // Not so trivial case; check each pair (of 2) cards on
+                // the table, see if there's a matching card in the deck,
+                // and if so, include that in the cards added to the table.
+                //
+                for i in 0..<(self.cards.count - 1) {
+                    for j in (i + 1)..<(self.cards.count) {
+                        let a: TC = self.cards[i];
+                        let b: TC = self.cards[j];
+                        let c: TC = TC(TC.matchingSetValue(a, b));
+                        if let c = self.deck.takeCard(c) {
+                            self.cards.add(c);
+                            self.noteNewcomers([c]);
+                            self.addMoreCards(ncards - 1, plantSet: false);
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            let cards: [TC] = self.deck.takeRandomCards(ncards);
+            self.cards.add(cards);
+            self.noteNewcomers(cards);
+        }
+    }
+    func old_addMoreCards(_ ncards: Int, plantSet: Bool? = nil) {
         guard (ncards > 0) && (self.deck.count > 0) else { return; }
         let plantSet: Bool = plantSet ?? self.settings.plantSet;
         if (plantSet && !self.containsSet() && (self.cards.count + min(self.deck.count, ncards)) >= 3) {

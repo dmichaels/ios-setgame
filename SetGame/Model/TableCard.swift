@@ -50,4 +50,8 @@ class TableCard : Card, ObservableObject {
     override func toString(_ verbose : Bool = false) -> String {
         return super.toString(verbose) + ":\(self.selected)";
     }
+
+    public func newcomer(to table: Table<TableCard>) -> Bool {
+        return table.state.newcomers.contains(self.id);
+    }
 }

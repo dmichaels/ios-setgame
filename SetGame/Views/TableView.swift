@@ -73,6 +73,9 @@ struct TableView: View {
     public static func blinkCards(_ cards: [TableCard], times: Int = 3, interval: Double = 0.15,
                                     completion: @escaping () -> Void = {}) {
 
+        // The interval is the time between blinks;
+        // the lower the faster the blink.
+
         guard !cards.blinking else {
             return;
         }

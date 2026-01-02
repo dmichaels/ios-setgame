@@ -14,7 +14,7 @@ public struct CardView : View {
     var cardTouchedCallback : ((TableCard) -> Void)?
 
     public var body: some View {
-        let new: Bool = !table.state.blinking && table.state.newcomers.contains(card.id);
+        let new: Bool = card.newcomer(to: table);
         VStack {
             Button(action: { cardTouchedCallback?(card) }) {
                 Image(self.image(card))
@@ -58,7 +58,16 @@ public struct CardView : View {
                     // See comment above about the placement of this .opacity qualifier.
                     //
                     .opacity(new || card.blinkout ? 0.0 : 1.0)
-                    .animation(.spring(response: 0.22, dampingFraction: 0.82), value: new)
+                    //
+                    // Animation for newly added cards.
+                    // - The response argument to the .spring qualifier
+                    //   qualifier controls how fast the spring is;
+                    //   lower is faster; higher is slower.
+                    // - The dampingFraction argument to .spring qualifier
+                    //   qualifier controls how flexible/slopping the bounce is;
+                    //   lower is e bouncier and sloppier; higher is stiffer.
+                    //
+                    .animation(.spring(response: 0.55, dampingFraction: 0.60), value: new)
             }
         }
     }
