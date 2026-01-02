@@ -54,6 +54,28 @@ struct TableView: View {
                                             resolve();
                                         }
                                     }
+/*
+                                    self.table.cardTouched($0, delay: 0.5) { set in
+                                        if let set: Bool = set {
+                                            if (set) {
+                                                self.feedback.trigger(Feedback.SWOOSH);
+                                                print("BLINK BEFORE TASK")
+                                                Task {
+                                                    print("BLINK BEFORE AWAIT")
+                                                    await TableView.blinkCards()
+                                                    print("BLINK AFTER AWAIT")
+                                                }
+                                                print("BLINK AFTER TASK")
+                                            }
+                                            else {
+                                                self.feedback.trigger(Feedback.CANCEL);
+                                            }
+                                        }
+                                        else {
+                                            self.feedback.trigger(Feedback.TAP);
+                                        }
+                                    }
+*/
                                 }
                                 .slightlyRotated(self.settings.cardsAskew)
                                 .allowsHitTesting(!self.table.state.disabled && !self.settings.demoMode)
