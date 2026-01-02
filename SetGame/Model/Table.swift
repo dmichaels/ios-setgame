@@ -13,7 +13,7 @@ class Table<TC : TableCard> : ObservableObject {
 
         private let table: Table;
 
-        public enum Progress { // TODO
+        public enum Progression { // TODO
             case selected
             case nonset
             case set(cardIDs: [TC.ID], times: Int, interval: Double)
@@ -36,10 +36,11 @@ class Table<TC : TableCard> : ObservableObject {
         // This blinking flag is ONLY used to disable input while blinking the cards after
         // a SET is found (see allowsHitTesting in TableView); there should be a better way.
         ///
-        public      var blinking: Bool { self.table.cards.contains(where: { $0.blinking }) }
         fileprivate var resolving: Bool = false;
-        public      var disabled: Bool { return self.table.state.blinking || self.table.state.resolving }
-        public      var newlyAddedCards: Set<TC.ID> = []; // TODO
+        public      var progression: Progression? = nil;
+
+        public var blinking: Bool { self.table.cards.contains(where: { $0.blinking }) }
+        public var disabled: Bool { self.table.state.blinking || self.table.state.resolving }
     }
 
     @Published private(set) var cards: [TC]!;
