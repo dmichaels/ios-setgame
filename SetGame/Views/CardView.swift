@@ -11,20 +11,27 @@ public struct CardView : View {
     //
     @EnvironmentObject var settings: Settings;
 
-    var touchedCallback : ((TableCard) -> Void)?
+    var cardTouchedCallback : ((TableCard) -> Void)?
 
     public var body: some View {
+        let new: Bool = !table.state.blinking && table.state.newcomers.contains(card.id);
         VStack {
-            Button(action: { touchedCallback?(card) }) {
+            Button(action: { cardTouchedCallback?(card) }) {
                 Image(self.image(card))
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .opacity(card.blinkout ? 0.0 : 1.0)
+                    //
+                    // Putting .opacity here rather than below causes
+                    // only the inside of the card to blink in/out on SET;
+                    // putting it below (where commented out now) makes the
+                    // whole card including the border to blink in/out on SET.
+                    // Not sure which is better visually; just FYI.
+                    //
+                    .opacity(new || card.blinkout ? 0.0 : 1.0)
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
-                            .stroke(card.selected ? Color.red : Color.gray,
-                                    lineWidth: card.selected ? 3 : 1)
+                            .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1)
                     )
                     .shadow(color: card.selected ? Color.green : Color.blue, radius: card.selected ? 3 : 1)
                     .padding(1)
@@ -40,67 +47,21 @@ public struct CardView : View {
                     //
                     // ... but only animate selection changes, and NEVER during blinking.
                     //
-                    .animation(card.blinking ? nil : .linear(duration: 0.20),
-                            value: card.selected)
+                    .animation(card.blinking ? nil : .linear(duration: 0.20), value: card.selected)
                     //
                     // Optional: Also ensure blinkout toggles don’t animate (belt+suspenders).
                     //
                     .animation(nil, value: card.blinkout)
-            }
-        }
-    }
 
-/*
-    public var body : some View {
-        if (card.blinking) {
-            //
-            // ODDITY:
-            // Had to duplicate this whole thing here, WITHOUT the rotation3DEffect animation
-            // modifiers, for the blinking state; i.e. where we have found a SET and we want to
-            // blink the 3 SET cards on/off a few times; without this we will see the rotation
-            // and flipping thing as a part of the blinking (only on the last SET card selected
-            // actually for some reason), even if we conditionally choose non-rotation/flipping
-            // values for the rotation3DEffect based on card.blinking.
-            //
-            VStack {
-                Button(action: { touchedCallback?(card) }) {
-                    Image(self.image(card))
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .opacity(card.blinkout ? 0.0 : 1.0)
-                        .cornerRadius(8)
-                        .overlay(RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
-                                .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1))
-                        .shadow(color: card.selected ? Color.green : Color.blue, radius: card.selected ? 3 : 1)
-                        .padding(1)
-                }
-            }
-        }
-        else {
-            VStack {
-                Button(action: { touchedCallback?(card) }) {
-                Image(self.image(card))
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+                    .scaleEffect(new ? 0.05 : 1.0, anchor: .center)
                     //
-                    // FYI: Move the rotation3DEffect and animation here to get a less robust effect;
-                    // where it looks like the just the inner parf of the card is spinning around.
+                    // See comment above about the placement of this .opacity qualifier.
                     //
-                    .cornerRadius(8)
-                    .overlay(RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
-                            .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1))
-                    .shadow(color: card.selected ? Color.green : Color.blue, radius: card.selected ? 3 : 1)
-                    .padding(1)
-                    .rotation3DEffect(card.selected ? Angle(degrees: 360) : Angle(degrees: 0),
-                                      axis: (x: CGFloat(card.selected ? 0 : 1),
-                                             y: CGFloat(card.selected ? 0 : 1),
-                                             z: CGFloat(card.selected ? 1 : 0)))
-                    .animation(Animation.linear(duration: 0.20))
-                }
+                    .opacity(new || card.blinkout ? 0.0 : 1.0)
+                    .animation(.spring(response: 0.22, dampingFraction: 0.82), value: new)
             }
         }
     }
-*/
 
     private func image(_ card: TableCard) -> String {
         //
@@ -134,7 +95,7 @@ private struct SlightRandomRotation: ViewModifier {
 }
 
 extension AnyTransition {
-    static var popInCard: AnyTransition {
+    static var XYZZY_UNUSED_CURRENTLY_popInCard: AnyTransition {
         .asymmetric(
             insertion: .scale(scale: 0.05, anchor: .center)
                 .combined(with: .opacity),
