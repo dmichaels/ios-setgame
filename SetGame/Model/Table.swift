@@ -530,7 +530,6 @@ class Table<TC : TableCard> : ObservableObject {
     public func demoStart() async {
         if (self.selectedCards().count > 0) {
             self.unselectCards();
-            try? await Task.sleep(nanoseconds: 500_000_000)
         }
         if (self.gameDone()) {
             try? await Task.sleep(nanoseconds: 1_000_000_000)
@@ -542,7 +541,6 @@ class Table<TC : TableCard> : ObservableObject {
                 self.startNewGame();
             }
             await self.demoStep();
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
         }
     }
 
@@ -554,16 +552,25 @@ class Table<TC : TableCard> : ObservableObject {
     private func demoStep() async {
         if (self.cards.count > 0) {
             let sets: [[TC]] = self.enumerateSets(limit: 1);
-            if (sets.count > 0) {
+            if (sets.count == 1) {
                 let set: [TC] = sets[0];
                 for card in set {
                     self.selectCard(card);
                     try? await Task.sleep(nanoseconds: 500_000_000)
                 }
                 for card in set {
-                    self.cardTouched(card, select: false);
+                    self.cardTouched(card, select: false, delay: 0.5) { cards, set, resolve in
+                        if let set: Bool = set, set {
+                            TableView.blinkCards(cards, times: 5) {
+                                resolve();
+                            }
+                        }
+                        else {
+                            resolve();
+                        }
+                    }
                 }
-                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                try? await Task.sleep(nanoseconds: 500_000_000)
             }
         }
     }
