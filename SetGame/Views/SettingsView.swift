@@ -5,7 +5,6 @@ struct SettingsView: View {
     @EnvironmentObject var table : Table;
     @EnvironmentObject var settings : Settings;
 
-    // @State private var alternateCards: Int = 0
     @State private var showResetConfirmation = false
 
     private let iconWidth: CGFloat = 30;
@@ -170,12 +169,9 @@ struct SettingsView: View {
                 } label: {
                     HStack {
                         Spacer()
-                        // Text("Reset Settings to Original Defaults")
-                        Text("Reset Settings")
-                            .fontWeight(.bold)
+                        Text("Reset Settings").fontWeight(.bold)
                         Spacer()
-                    }
-                    .foregroundColor(.white)
+                    }.foregroundColor(.white)
                 }
                 .listRowBackground(settings.isDefault() ? Color.secondary : Color.red)
                 .disabled(settings.isDefault())
@@ -183,8 +179,7 @@ struct SettingsView: View {
                     settings.isDefault()
                     ? "All settings are already at their default values"
                     : "Resets all settings to their defaults"
-                )
-                .opacity(settings.isDefault() ? 0.5 : 1.0)
+                ).opacity(settings.isDefault() ? 0.5 : 1.0)
             }
             HStack {
                 Text("  Version").font(.footnote)
