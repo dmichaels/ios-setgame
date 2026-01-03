@@ -7,17 +7,19 @@ struct ContentView: View {
     @EnvironmentObject var feedback : Feedback;
 
     @State private var showSettingsView = false;
-
+    @State private var statusResetToken = 0;
     @State private var saveMoveSetFront: Bool = false;
     @State private var saveSimpleDeck: Bool = false;
 
-    let background: Color = Color(.sRGB, red: 0.93, green: 0.96, blue: 1.00, opacity: 1.0);
+    // let background: Color = Color(.sRGB, red: 0.93, green: 0.96, blue: 1.00, opacity: 1.0);
+    // let background: Color = Color(hex: 0xEDF5FF);
+    let background: Color = Color(hex: 0xDCE4EE);
 
     var body: some View {
         NavigationView {
             ZStack {
                 background.ignoresSafeArea()
-                TableView()
+                TableView(statusResetToken: statusResetToken)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .principal) {
@@ -27,7 +29,11 @@ struct ContentView: View {
                         }
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Menu {
-                                Button { self.table.startNewGame(); feedback.trigger(Feedback.NEW); } label: {
+                                Button {
+                                    self.table.startNewGame();
+                                    self.statusResetToken += 1;
+                                    feedback.trigger(Feedback.NEW);
+                               } label: {
                                     Label("New Game" , systemImage: "arrow.counterclockwise")
                                 }.disabled(self.table.state.blinking || self.settings.demoMode)
                                 Button { self.table.addMoreCards(1) } label: {

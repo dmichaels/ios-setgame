@@ -6,6 +6,8 @@ struct TableView: View {
     @EnvironmentObject var settings : Settings;
     @EnvironmentObject var feedback : Feedback;
 
+    let statusResetToken: Int;
+
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack {
@@ -59,7 +61,7 @@ struct TableView: View {
                 }
                 VStack {
                     Spacer(minLength: 24)
-                    StatusBarView()
+                    StatusBarView(resetToken: statusResetToken)
                     Spacer(minLength: 20)
                     if (self.settings.showFoundSets) {
                         FoundSetsView(setsLastFound: table.state.setsLastFound,

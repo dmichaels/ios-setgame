@@ -16,12 +16,16 @@ struct StatusBarView: View {
     let TIMER_SYMBOL        : String = "\u{023F1}";
 
     let FOREGROUND: Color = Color(hex: 0x283028);
-    // let BACKGROUND: Color = Color(hex: 0xD5E9FF);
-    let BACKGROUND: Color = Color(hex: 0xB3D8EE);
+    // let BACKGROUND: Color = Color(hex: 0xB3D8EE);
+    // let BACKGROUND: Color = Color(hex: 0xA2B6DD);
+    // let BACKGROUND: Color = Color(hex: 0x7AC1FF);
+    let BACKGROUND: Color = Color(hex: 0x8BD2CC);
     let SHAPE = RoundedRectangle(cornerRadius: 11, style: .continuous);
 
     @State private var startDate: Date = Date()
     @State private var now: Date = Date()
+
+    let resetToken: Int;
 
     private let timer = Timer.publish(every: 1,
                                       on: .main,
@@ -43,10 +47,10 @@ struct StatusBarView: View {
     }
 
     var body: some View {
+        let squeeze: Bool = self.settings.showTimer;
         HStack(alignment: .firstTextBaseline) {
-            Text("  SETs: \(table.state.setsFoundCount)")
+            Text("  **SET**s: **\(table.state.setsFoundCount)**")
                 .font(.subheadline)
-                .fontWeight(.bold)
                 .frame(alignment: .leading)
                 .foregroundColor(FOREGROUND)
             if (self.table.gameDone()) {
@@ -55,13 +59,13 @@ struct StatusBarView: View {
                     .frame(alignment: .leading)
             }
             else {
-                Text("\(DIAMOND_SYMBOL)  Deck: \(table.remainingCardCount())")
+                Text("\(DIAMOND_SYMBOL)  \(squeeze ? "D" : "Deck"): \(table.remainingCardCount())")
                     .font(.subheadline)
                     .frame(alignment: .leading)
                     .foregroundColor(FOREGROUND)
             }
             if (self.settings.showTimer) {
-                Text("\(DIAMOND_SYMBOL)  Time: \(timeString)")
+                Text("\(DIAMOND_SYMBOL)  \(timeString)")
                     .font(.subheadline)
                     .frame(alignment: .leading)
                     .foregroundColor(FOREGROUND)
@@ -132,7 +136,6 @@ struct StatusBarView: View {
                     .fixedSize()
                     .padding(.horizontal, 5)
                     .padding(.vertical, 1.0)
-                    .offset(y: 0)
                     .overlay(
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
                             .stroke(FOREGROUND, lineWidth: 1)
@@ -189,12 +192,19 @@ struct StatusBarView: View {
                 // .shadow(radius: 1)
                 .shadow(color: .black.opacity(0.3), radius: 4, x: 3, y: 6)
         )
-        .background(BACKGROUND)
-        // .allowsHitTesting(!self.table.state.blinking && !self.settings.demoMode)
+        // .background(BACKGROUND)
         .allowsHitTesting(!self.table.state.disabled && !self.settings.demoMode)
-        .onReceive(timer) { date in
-            now = date
+        .onReceive(timer) { date in now = date }
+        .onChange(of: resetToken) { _ in
+            resetTimer()
         }
+    }
+
+    // ✅ ADD THIS
+    private func resetTimer() {
+        let d = Date()
+        startDate = d
+        now = d
     }
 }
 
