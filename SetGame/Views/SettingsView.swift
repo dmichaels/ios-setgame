@@ -45,6 +45,12 @@ struct SettingsView: View {
                     Spacer()
                     Toggle(isOn: $settings.peekDisjoint) {}
                 }.disabled(!(settings.showSetsPresentCount || settings.showPeekButton))
+                HStack {
+                    Image(systemName: "timer").frame(width: iconWidth)
+                    Text("Show Timer")
+                    Spacer()
+                    Toggle(isOn: $settings.showTimer) {}
+                }
             }
             Section(header: Text("Behavioral")) {
                 HStack {
@@ -156,6 +162,7 @@ struct SettingsView: View {
                               destination: DeckView(cards: settings.simpleDeck
                                                            ? StandardDeck.instanceSimple.cards
                                                            : StandardDeck.instance.cards))
+                navigationRow("Help", icon: "questionmark.circle", destination: HelpView())
             }
             Section {
                 Button {

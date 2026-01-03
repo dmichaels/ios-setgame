@@ -36,6 +36,7 @@
 		989FF92B25F11872002AE44A /* StatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989FF92A25F11872002AE44A /* StatusBarView.swift */; };
 		98A5C7422EFED67E009E708D /* VersionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A5C7412EFED67E009E708D /* VersionInfo.swift */; };
 		98A5C7442F059B8C009E708D /* TableCardArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A5C7432F059B8C009E708D /* TableCardArray.swift */; };
+		98A5C74B2F098D02009E708D /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A5C74A2F098D02009E708D /* HelpView.swift */; };
 		98C2CA8225F3C1E40050ACDC /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2CA8125F3C1E40050ACDC /* StatsView.swift */; };
 		98E4E3232773B0AC000EEC5A /* SetGame.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98E4E3222773B0AC000EEC5A /* SetGame.xcassets */; };
 /* End PBXBuildFile section */
@@ -93,6 +94,7 @@
 		989FF92A25F11872002AE44A /* StatusBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusBarView.swift; sourceTree = "<group>"; };
 		98A5C7412EFED67E009E708D /* VersionInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionInfo.swift; sourceTree = "<group>"; };
 		98A5C7432F059B8C009E708D /* TableCardArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableCardArray.swift; sourceTree = "<group>"; };
+		98A5C74A2F098D02009E708D /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
 		98C2CA8125F3C1E40050ACDC /* StatsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		98E4E3222773B0AC000EEC5A /* SetGame.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SetGame.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -209,6 +211,7 @@
 		9811914F25ED5CFE0083606B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				98A5C74A2F098D02009E708D /* HelpView.swift */,
 				9811915025ED5D0E0083606B /* CardView.swift */,
 				981190F125ED59CC0083606B /* ContentView.swift */,
 				989D93702EF43A8500BE461B /* DeckView.swift */,
@@ -395,6 +398,7 @@
 				9811914B25ED5ACF0083606B /* CardShape.swift in Sources */,
 				989D936F2EF21DEF00BE461B /* Settings.swift in Sources */,
 				9811914A25ED5ACF0083606B /* TableCard.swift in Sources */,
+				98A5C74B2F098D02009E708D /* HelpView.swift in Sources */,
 				989FF8FA25EF3708002AE44A /* StandardDeck.swift in Sources */,
 				989D93712EF43A8500BE461B /* DeckView.swift in Sources */,
 				989D93732EF4BEDB00BE461B /* Feedback.swift in Sources */,

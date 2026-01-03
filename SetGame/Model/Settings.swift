@@ -7,6 +7,7 @@ public class Defaults {
     public static let showPartialSetHint: Bool   = true;
     public static let showSetsPresentCount: Bool = true;
     public static let showPeekButton: Bool       = true;
+    public static let showTimer: Bool            = true;
     public static let peekDisjoint: Bool         = false;
     public static let additionalCards: Int       = 3;
     public static let plantSet: Bool             = false;
@@ -35,6 +36,7 @@ public final class Settings: ObservableObject {
         static let showPartialSetHint   = "showPartialSetHint"
         static let showSetsPresentCount = "showSetsPresentCount"
         static let showPeekButton       = "showPeekButton"
+        static let showTimer            = "showTimer"
         static let peekDisjoint         = "peekDisjoint"
         static let additionalCards      = "additionalCards"
         static let plantSet             = "plantSet"
@@ -59,6 +61,7 @@ public final class Settings: ObservableObject {
         showPartialSetHint   = defaults.object(forKey: Keys.showPartialSetHint)   as? Bool ?? Defaults.showPartialSetHint
         showSetsPresentCount = defaults.object(forKey: Keys.showSetsPresentCount) as? Bool ?? Defaults.showSetsPresentCount
         showPeekButton       = defaults.object(forKey: Keys.showPeekButton)       as? Bool ?? Defaults.showPeekButton
+        showTimer            = defaults.object(forKey: Keys.showTimer)            as? Bool ?? Defaults.showTimer
         peekDisjoint         = defaults.object(forKey: Keys.peekDisjoint)         as? Bool ?? Defaults.peekDisjoint
         additionalCards      = defaults.object(forKey: Keys.additionalCards)      as? Int  ?? Defaults.additionalCards
         plantSet             = defaults.object(forKey: Keys.plantSet)             as? Bool ?? Defaults.plantSet
@@ -82,6 +85,9 @@ public final class Settings: ObservableObject {
             .store(in: &cancellables)
         $showPeekButton
             .sink { self.defaults.set($0, forKey: Keys.showPeekButton) }
+            .store(in: &cancellables)
+        $showTimer
+            .sink { self.defaults.set($0, forKey: Keys.showTimer) }
             .store(in: &cancellables)
         $peekDisjoint
             .sink { self.defaults.set($0, forKey: Keys.peekDisjoint) }
@@ -134,6 +140,7 @@ public final class Settings: ObservableObject {
         defaults.removeObject(forKey: Keys.showPartialSetHint)
         defaults.removeObject(forKey: Keys.showSetsPresentCount)
         defaults.removeObject(forKey: Keys.showPeekButton)
+        defaults.removeObject(forKey: Keys.showTimer)
         defaults.removeObject(forKey: Keys.peekDisjoint)
         defaults.removeObject(forKey: Keys.additionalCards)
         defaults.removeObject(forKey: Keys.plantSet)
@@ -152,6 +159,7 @@ public final class Settings: ObservableObject {
         showPartialSetHint   = Defaults.showPartialSetHint
         showSetsPresentCount = Defaults.showSetsPresentCount
         showPeekButton       = Defaults.showPeekButton
+        showTimer            = Defaults.showTimer
         peekDisjoint         = Defaults.peekDisjoint
         additionalCards      = Defaults.additionalCards
         plantSet             = Defaults.plantSet
@@ -176,6 +184,7 @@ public final class Settings: ObservableObject {
         return ((showPartialSetHint   == Defaults.showPartialSetHint)
             &&  (showSetsPresentCount == Defaults.showSetsPresentCount)
             &&  (showPeekButton       == Defaults.showPeekButton)
+            &&  (showTimer            == Defaults.showTimer)
             &&  (peekDisjoint         == Defaults.peekDisjoint)
             &&  (additionalCards      == Defaults.additionalCards)
             &&  (plantSet             == Defaults.plantSet)
@@ -198,6 +207,7 @@ public final class Settings: ObservableObject {
     @Published var showPartialSetHint: Bool   = Defaults.showPartialSetHint;
     @Published var showSetsPresentCount: Bool = Defaults.showSetsPresentCount;
     @Published var showPeekButton: Bool       = Defaults.showPeekButton;
+    @Published var showTimer: Bool            = Defaults.showTimer;
     @Published var peekDisjoint: Bool         = Defaults.peekDisjoint;
     @Published var additionalCards: Int       = Defaults.additionalCards;
     @Published var plantSet: Bool             = Defaults.plantSet;

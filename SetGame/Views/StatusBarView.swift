@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 struct StatusBarView: View {
     
@@ -12,10 +13,34 @@ struct StatusBarView: View {
     let SAD_FACE_SYMBOL     : String = "\u{1F641}";
     let DIAMOND_SYMBOL      : String = "\u{2756}";
     let CHECK_MARK_SYMBOL   : String = "✅";
+    let TIMER_SYMBOL        : String = "\u{023F1}";
 
     let FOREGROUND: Color = Color(hex: 0x283028);
-    let BACKGROUND: Color = Color(hex: 0xD5E9FF);
+    // let BACKGROUND: Color = Color(hex: 0xD5E9FF);
+    let BACKGROUND: Color = Color(hex: 0xB3D8EE);
     let SHAPE = RoundedRectangle(cornerRadius: 11, style: .continuous);
+
+    @State private var startDate: Date = Date()
+    @State private var now: Date = Date()
+
+    private let timer = Timer.publish(every: 1,
+                                      on: .main,
+                                      in: .common).autoconnect()
+
+    private var elapsedSeconds: Int {
+        Int(now.timeIntervalSince(startDate))
+    }
+
+    private var minutes: Int {
+        elapsedSeconds / 60
+    }
+
+    private var seconds: Int {
+        elapsedSeconds % 60
+    }
+    private var timeString: String {
+        String(format: "%02d:%02d", minutes, seconds)
+    }
 
     var body: some View {
         HStack(alignment: .firstTextBaseline) {
@@ -31,6 +56,12 @@ struct StatusBarView: View {
             }
             else {
                 Text("\(DIAMOND_SYMBOL)  Deck: \(table.remainingCardCount())")
+                    .font(.subheadline)
+                    .frame(alignment: .leading)
+                    .foregroundColor(FOREGROUND)
+            }
+            if (self.settings.showTimer) {
+                Text("\(DIAMOND_SYMBOL)  Time: \(timeString)")
                     .font(.subheadline)
                     .frame(alignment: .leading)
                     .foregroundColor(FOREGROUND)
@@ -161,6 +192,9 @@ struct StatusBarView: View {
         .background(BACKGROUND)
         // .allowsHitTesting(!self.table.state.blinking && !self.settings.demoMode)
         .allowsHitTesting(!self.table.state.disabled && !self.settings.demoMode)
+        .onReceive(timer) { date in
+            now = date
+        }
     }
 }
 

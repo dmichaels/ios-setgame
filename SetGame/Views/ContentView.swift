@@ -11,9 +11,12 @@ struct ContentView: View {
     @State private var saveMoveSetFront: Bool = false;
     @State private var saveSimpleDeck: Bool = false;
 
+    let background: Color = Color(.sRGB, red: 0.93, green: 0.96, blue: 1.00, opacity: 1.0);
+
     var body: some View {
         NavigationView {
             ZStack {
+                background.ignoresSafeArea()
                 TableView()
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
