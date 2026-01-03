@@ -29,7 +29,7 @@ class Table<TC : TableCard> : ObservableObject {
 
         // This blinking flag is ONLY used to disable input while blinking the cards after
         // a SET is found (see allowsHitTesting in TableView); there should be a better way.
-        ///
+        //
         fileprivate var resolving: Bool = false;
         public      var newcomers: Set<TC.ID> = [];
         public      var nonset: Set<TC.ID> = [];
