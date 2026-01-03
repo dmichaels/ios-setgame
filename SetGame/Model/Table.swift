@@ -64,8 +64,10 @@ class Table<TC : TableCard> : ObservableObject {
         if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.settings.simpleDeck)
             for card in magicSquareCards {
-                self.cards.add(TC(card))
-                _ = self.deck.takeCard(TC(card))
+                let card: TC = TC(card);
+                self.cards.add(card)
+                self.noteNewcomers([card]);
+                _ = self.deck.takeCard(card);
             }
             //
             // Only bother making it look good if the cards-per-row is 4 (the default)
@@ -287,7 +289,6 @@ class Table<TC : TableCard> : ObservableObject {
                     existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
                 )
             );
-            print("NEW: \(newCards)")
             var replacementCards: [TC] = extraCards + newCards;
             var deletionIndices: [Int] = []
             for i in 0..<self.cards.count {
@@ -315,9 +316,6 @@ class Table<TC : TableCard> : ObservableObject {
             self.fillTable();
             self.state.setsLastFound.append(selectedCards);
             self.state.setsLastFound.flatMap { $0 }.forEach { $0.selected = false };
-            //
-            // xyzzy
-            //
             self.noteNewcomers(newCards);
         }
         else {
@@ -330,11 +328,24 @@ class Table<TC : TableCard> : ObservableObject {
         }
     }
 
-    private func noteNewcomers(_ cards: [TC]) {
-        let ids: Set<TC.ID> = Set(cards.map(\.id));
-        self.state.newcomers.formUnion(ids);
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            self.state.newcomers.subtract(ids);
+    private func noteNewcomers(_ cards: [TC], randomize: Bool = true) {
+        if (randomize) {
+            for card in cards {
+                let delay: Double = Double.random(in: 0.10...0.40);
+                self.state.newcomers.insert(card.id);
+                print("delay: \(delay)")
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                    self.state.newcomers.remove(card.id);
+                }
+            }
+        }
+        else {
+            let ids: Set<TC.ID> = Set(cards.map(\.id));
+            self.state.newcomers.formUnion(ids);
+            let delay: Double = 0.2;
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                self.state.newcomers.subtract(ids);
+            }
         }
     }
 
@@ -517,47 +528,6 @@ class Table<TC : TableCard> : ObservableObject {
             let cards: [TC] = self.deck.takeRandomCards(ncards);
             self.cards.add(cards);
             self.noteNewcomers(cards);
-        }
-    }
-    func old_addMoreCards(_ ncards: Int, plantSet: Bool? = nil) {
-        guard (ncards > 0) && (self.deck.count > 0) else { return; }
-        let plantSet: Bool = plantSet ?? self.settings.plantSet;
-        if (plantSet && !self.containsSet() && (self.cards.count + min(self.deck.count, ncards)) >= 3) {
-            //
-            // If we want a SET planted, and only if there are not already any
-            // SETs on the table, and only if there are enough cards between
-            // what's on the table and what we're adding and what's left in
-            // the deck, then try to plant a SET with these newly added cards.
-            //
-            if (ncards >= 3) {
-                //
-                // Trivial case; no SETs on the table and adding 3 or more
-                // cards; just try to ensure the random 3+ cards taken
-                // from the deck contain a SET.
-                //
-                self.cards.add(self.deck.takeRandomCards(ncards, plantSet: true));
-            }
-            else {
-                //
-                // Not so trivial case; check each pair (of 2) cards on
-                // the table, see if there's a matching card in the deck,
-                // and if so, include that in the cards added to the table.
-                //
-                for i in 0..<(self.cards.count - 1) {
-                    for j in (i + 1)..<(self.cards.count) {
-                        let a: TC = self.cards[i];
-                        let b: TC = self.cards[j];
-                        let c: TC = TC(TC.matchingSetValue(a, b));
-                        if let c = self.deck.takeCard(c) {
-                            self.cards.add(c);
-                            self.addMoreCards(ncards - 1, plantSet: false);
-                        }
-                    }
-                }
-            }
-        }
-        else {
-            self.cards.add(self.deck.takeRandomCards(ncards));
         }
     }
 
