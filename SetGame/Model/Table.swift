@@ -161,9 +161,9 @@ class Table<TC : TableCard> : ObservableObject {
     }
 
     public func cardTouched(_ card : TC,
-                                  select: Bool = true,
-                                  delay: Double = 0.0,
-                                  callback: (([TC], Bool?, @escaping () -> Void) -> Void)? = nil) {
+                              select: Bool = true,
+                              delay: Double = 0.0,
+                              callback: (([TC], Bool?, @escaping () -> Void) -> Void)? = nil) {
 
         guard !self.state.resolving else {
             //
