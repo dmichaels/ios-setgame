@@ -24,7 +24,7 @@ struct ContentView: View {
                         }
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Menu {
-                                Button { self.table.startNewGame(); feedback.trigger(Feedback.BADING); } label: {
+                                Button { self.table.startNewGame(); feedback.trigger(Feedback.NEW); } label: {
                                     Label("New Game" , systemImage: "arrow.counterclockwise")
                                 }.disabled(self.table.state.blinking || self.settings.demoMode)
                                 Button { self.table.addMoreCards(1) } label: {

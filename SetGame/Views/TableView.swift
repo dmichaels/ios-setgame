@@ -33,18 +33,17 @@ struct TableView: View {
                                         if let set: Bool = set {
                                             if (set) {
                                                 TableView.blinkCards(cards, times: 5) {
-                                                    self.feedback.trigger(Feedback.SWOOSH);
+                                                    self.feedback.trigger(Feedback.SET);
                                                     resolve();
                                                 }
                                             }
                                             else {
-                                                self.feedback.trigger(Feedback.CANCEL);
-                                                self.feedback.triggerErrorHaptic();
+                                                self.feedback.trigger(Feedback.NOSET, Feedback.HAPTIC_NOSET);
                                                 resolve();
                                             }
                                         }
                                         else {
-                                            self.feedback.trigger(Feedback.TAP);
+                                            self.feedback.trigger(Feedback.TAP, Feedback.HAPTIC_TAP);
                                             resolve();
                                         }
                                     }
