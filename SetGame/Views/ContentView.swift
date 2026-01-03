@@ -46,7 +46,7 @@ struct ContentView: View {
                         self.showSettingsView ? self.onGoToSettingsView() : onBackFromSettingsView();
                     }
                     .onChange(of: settings.demoMode) { _ in
-                        Task { /* @MainActor in - dont need this anymore somehow? */
+                        Task {
                             await table.demoCheck()
                         }
                     }

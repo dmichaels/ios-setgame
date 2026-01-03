@@ -557,6 +557,7 @@ class Table<TC : TableCard> : ObservableObject {
         return (self.deck.count == 0) && !self.containsSet();
     }
 
+    @MainActor
     public func demoCheck() async {
         if (self.settings.demoMode) {
             if (self.demoTimer == nil) {
@@ -568,6 +569,7 @@ class Table<TC : TableCard> : ObservableObject {
         }
     }
 
+    @MainActor
     public func demoStart() async {
         if (self.selectedCards().count > 0) {
             self.unselectCards();
@@ -585,11 +587,13 @@ class Table<TC : TableCard> : ObservableObject {
         }
     }
 
+    @MainActor
     private func demoStop() {
         self.demoTimer?.invalidate();
         self.demoTimer = nil;
     }
 
+    @MainActor
     private func demoStep() async {
         if (self.cards.count > 0) {
             let sets: [[TC]] = self.enumerateSets(limit: 1);
