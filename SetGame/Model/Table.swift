@@ -333,7 +333,6 @@ class Table<TC : TableCard> : ObservableObject {
             for card in cards {
                 let delay: Double = Double.random(in: 0.10...0.40);
                 self.state.newcomers.insert(card.id);
-                print("delay: \(delay)")
                 DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                     self.state.newcomers.remove(card.id);
                 }
