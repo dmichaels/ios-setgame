@@ -7,7 +7,7 @@ public class Defaults {
     public static let showPartialSetHint: Bool   = true;
     public static let showSetsPresentCount: Bool = true;
     public static let showPeekButton: Bool       = true;
-    public static let showTimer: Bool            = true;
+    public static let showTimer: Bool            = false;
     public static let peekDisjoint: Bool         = false;
     public static let additionalCards: Int       = 3;
     public static let plantSet: Bool             = false;
