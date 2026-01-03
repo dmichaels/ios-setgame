@@ -2,17 +2,17 @@
 
 ## Objective
 
-To create as many **SET**s as possible.
+Create as many **SET**s as possible.
 A **SET** is 3 cards whose 4 attributes are EITHER/OR:
 - All the **same**
 - All **different**
 
 ## SET Attributes
-The four SET card atttibutes and three values are:
-- Number: one, two, or three
+The 4 SET card atttibutes and 3 values are:
+- Number: one, two, three
 - Color: red, green, blue
 - Filling: hollow, solid, shaded
-- Shape: bar, di-bar, or tri-bar
+- Shape: bar, di-bar, tri-bar
 
 ## Example
 This is a SET because each card has different numbers (1, 2, 3); different colors (red, green, blue); different fillings (hollow, solid, shaded); and different shapes (bar, di-bar, tri-bar).
