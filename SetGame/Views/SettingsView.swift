@@ -110,14 +110,14 @@ struct SettingsView: View {
                     Toggle(isOn: $settings.cardsAskew) {}
                 }
                 HStack {
-                    Image(systemName: "water.waves").frame(width: iconWidth)
+                    Image(systemName: "waveform.path").frame(width: iconWidth)
                     Text("Shake Table").lineLimit(1).layoutPriority(1)
                     Spacer()
                     Toggle(isOn: $settings.shakeTableOnNonSet) {}
                 }
                 HStack {
                     Image(systemName: "photo").frame(width: iconWidth)
-                    Text("Cards").lineLimit(1).layoutPriority(1)
+                    Text("Cards Images").lineLimit(1).layoutPriority(1)
                     Spacer()
                     Picker("", selection: $settings.alternateCards) {
                         ForEach(AlternateCardsChoices, id: \.value) { option in Text(option.label) }
