@@ -39,6 +39,7 @@ struct TableView: View {
                                             }
                                             else {
                                                 self.feedback.trigger(Feedback.CANCEL);
+                                                self.feedback.triggerErrorHaptic();
                                                 resolve();
                                             }
                                         }

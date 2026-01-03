@@ -85,7 +85,7 @@ struct SettingsView: View {
                 }
                 HStack {
                     Image(systemName: "square.on.square").frame(width: iconWidth)
-                    Text("Display Cards").lineLimit(1).layoutPriority(1)
+                    Text("Cards Displayed").lineLimit(1).layoutPriority(1)
                     Spacer()
                     Picker("", selection: $settings.displayCardCount) {
                         ForEach(DisplayCardCountChoices, id: \.self) {

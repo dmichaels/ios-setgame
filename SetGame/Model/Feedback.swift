@@ -2,6 +2,7 @@ import SwiftUI
 import AudioToolbox
 import CoreHaptics
 import AVFoundation
+import UIKit
 
 public class Feedback: ObservableObject
 {
@@ -14,6 +15,7 @@ public class Feedback: ObservableObject
     public static let BADING: SystemSoundID = 1253;
 
     private var haptic: UIImpactFeedbackGenerator? = nil;
+    private var hapticUIKit: UINotificationFeedbackGenerator? = nil;
 
     public init(sounds: Bool = false, haptics: Bool = false) {
         self.sounds = sounds
@@ -24,10 +26,12 @@ public class Feedback: ObservableObject
         if (self.haptic == nil) {
             do {
                 self.haptic = UIImpactFeedbackGenerator(style: .light);
-                haptic?.prepare();
+                self.haptic?.prepare();
                 let session: AVAudioSession = AVAudioSession.sharedInstance()
                 try session.setCategory(.playback, mode: .default, options: [.mixWithOthers]);
                 try session.setActive(true);
+                self.hapticUIKit = UINotificationFeedbackGenerator();
+                self.hapticUIKit?.prepare();
             } catch {}
         }
     }
@@ -36,6 +40,13 @@ public class Feedback: ObservableObject
         if (self.haptics) {
             self.configure();
             self.haptic?.impactOccurred();
+        }
+    }
+
+    public func triggerErrorHaptic() {
+        if (self.haptics) {
+            self.configure();
+            hapticUIKit?.notificationOccurred(.error);
         }
     }
 
