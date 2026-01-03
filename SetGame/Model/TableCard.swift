@@ -54,4 +54,8 @@ class TableCard : Card, ObservableObject {
     public func newcomer(to table: Table<TableCard>) -> Bool {
         return table.state.newcomers.contains(self.id);
     }
+
+    public func nonset(on table: Table<TableCard>) -> Bool {
+        return table.state.nonset.contains(self.id);
+    }
 }

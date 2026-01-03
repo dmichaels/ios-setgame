@@ -110,6 +110,12 @@ struct SettingsView: View {
                     Toggle(isOn: $settings.cardsAskew) {}
                 }
                 HStack {
+                    Image(systemName: "water.waves").frame(width: iconWidth)
+                    Text("Shake Table").lineLimit(1).layoutPriority(1)
+                    Spacer()
+                    Toggle(isOn: $settings.shakeTableOnNonSet) {}
+                }
+                HStack {
                     Image(systemName: "photo").frame(width: iconWidth)
                     Text("Cards").lineLimit(1).layoutPriority(1)
                     Spacer()

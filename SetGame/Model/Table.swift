@@ -13,12 +13,6 @@ class Table<TC : TableCard> : ObservableObject {
 
         private let table: Table;
 
-        public enum Progression { // TODO
-            case selected
-            case nonset
-            case set(cardIDs: [TC.ID], times: Int, interval: Double)
-        }
-
         public init(_ table: Table) {
             self.table = table;
         }
@@ -37,8 +31,9 @@ class Table<TC : TableCard> : ObservableObject {
         // a SET is found (see allowsHitTesting in TableView); there should be a better way.
         ///
         fileprivate var resolving: Bool = false;
-        public      var progression: Progression? = nil;
         public      var newcomers: Set<TC.ID> = [];
+        public      var nonset: Set<TC.ID> = [];
+        public      var nonsetNonce: Int = 0
 
         public var blinking: Bool { self.table.cards.contains(where: { $0.blinking }) }
         public var disabled: Bool { self.table.state.blinking || self.table.state.resolving }
@@ -322,9 +317,22 @@ class Table<TC : TableCard> : ObservableObject {
             //
             // We do NOT have a SET :-(
             //
-            self.state.setJustFoundNot = true;
-            self.state.incorrectGuessCount += 1;
+            self.noteIncorrectGuess(selectedCards);
             self.unselectCards();
+        }
+    }
+
+    private func noteIncorrectGuess(_ cards: [TC]) {
+        self.state.setJustFoundNot = true;
+        self.state.incorrectGuessCount += 1;
+        let ids: Set<TC.ID> = Set(cards.map(\.id));
+        self.state.nonset = ids;
+        self.state.nonsetNonce += 1;
+        let delay: Double = 0.35;
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            if (self.state.nonset == ids) {
+                self.state.nonset.removeAll();
+            }
         }
     }
 

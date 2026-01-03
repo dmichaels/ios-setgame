@@ -10,11 +10,12 @@ public struct CardView : View {
     // changed it won't update immediately in the FoundSetsView.
     //
     @EnvironmentObject var settings: Settings;
-
-    var cardTouchedCallback : ((TableCard) -> Void)?
+    @State private var shake: CGFloat = 0;
+    var cardTouchedCallback : ((TableCard) -> Void)?;
 
     public var body: some View {
         let new: Bool = card.newcomer(to: table);
+        let nonset: Bool = card.nonset(on: table);
         VStack {
             Button(action: { cardTouchedCallback?(card) }) {
                 Image(self.image(card))
@@ -36,6 +37,16 @@ public struct CardView : View {
                     .shadow(color: card.selected ? Color.green : Color.blue, radius: card.selected ? 3 : 1)
                     .padding(1)
                     //
+                    // This qualifier is only needed if we want to shake the entire
+                    // table on an incorrect SET guess (i.e. settings.shakeTableOnNonSet).
+                    //
+                    .modifier(ShakeEffect(animatableData: shake))
+                    //
+                    // These two qualifiers do the shaking of the selected cards on an incorrect SET guess.
+                    //
+                    .modifier(ShakeEffect(animatableData: nonset ? CGFloat(table.state.nonsetNonce) : 0))
+                    .animation(.linear(duration: 0.35), value: table.state.nonsetNonce)
+                    //
                     // Keep this transform always present ...
                     //
                     .rotation3DEffect(
@@ -52,7 +63,6 @@ public struct CardView : View {
                     // Optional: Also ensure blinkout toggles don’t animate (belt+suspenders).
                     //
                     .animation(nil, value: card.blinkout)
-
                     .scaleEffect(new ? 0.05 : 1.0, anchor: .center)
                     //
                     // See comment above about the placement of this .opacity qualifier.
@@ -68,6 +78,14 @@ public struct CardView : View {
                     //   lower is e bouncier and sloppier; higher is stiffer.
                     //
                     .animation(.spring(response: 0.55, dampingFraction: 0.60), value: new)
+            }
+            //
+            // This is only needed if we want to shake the entire table
+            // on an incorrect SET guess (i.e. settings.shakeTableOnNonSet).
+            //
+            .onChange(of: table.state.setJustFoundNot) { wrong in
+                guard wrong && settings.shakeTableOnNonSet else { return }
+                withAnimation(.linear(duration: 0.35)) { shake += 1 }
             }
         }
     }
@@ -103,12 +121,16 @@ private struct SlightRandomRotation: ViewModifier {
     }
 }
 
-extension AnyTransition {
-    static var XYZZY_UNUSED_CURRENTLY_popInCard: AnyTransition {
-        .asymmetric(
-            insertion: .scale(scale: 0.05, anchor: .center)
-                .combined(with: .opacity),
-            removal: .opacity
-        )
+struct ShakeEffect: GeometryEffect {
+    //
+    // Used for shaking the whole table OR just the selected
+    // cards on the table (on an incorrect SET guess).
+    //
+    var amplitude: CGFloat = 10;    // points left/right
+    var shakesPerUnit: CGFloat = 3; // how many oscillations
+    var animatableData: CGFloat;    // drive this from a changing value
+    func effectValue(size: CGSize) -> ProjectionTransform {
+        let translation = amplitude * sin(animatableData * .pi * 2 * shakesPerUnit);
+        return ProjectionTransform(CGAffineTransform(translationX: translation, y: 0));
     }
 }
