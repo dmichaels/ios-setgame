@@ -16,7 +16,6 @@ struct ContentView: View {
     let background: Color = Color(hex: 0xDCE4EE);
 
     var body: some View {
-                HelpView()
         NavigationView {
             ZStack {
                 background.ignoresSafeArea()

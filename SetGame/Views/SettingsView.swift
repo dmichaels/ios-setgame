@@ -6,6 +6,7 @@ struct SettingsView: View {
     @EnvironmentObject var settings : Settings;
 
     @State private var showResetConfirmation = false
+    @State private var showHelpButton: Bool = false;
 
     private let iconWidth: CGFloat = 30;
     private let CardsPerRowChoices: [Int] = [ 2, 3, 4, 5, 6 ];
@@ -14,7 +15,17 @@ struct SettingsView: View {
     private let AlternateCardsChoices: [(label: String, value: Int)] = [ ("Classic", 0),
                                                                          ("Squares", 1),
                                                                          ("Monochrome", 2) ]
-    var body: some View {
+
+    var body: some View { VStack(spacing: 10) {
+
+        HStack {
+            HelpViewButton { showHelpButton = true }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 6)
+        .padding(.horizontal, 30)
+        NavigationLink(destination: HelpView(), isActive: $showHelpButton) { EmptyView() }.hidden()
+
         Form {
             Section(header: Text("Informational")) {
                 HStack {
@@ -199,7 +210,7 @@ struct SettingsView: View {
         } message: {
             Text("This will restore all settings to their original defaults.")
         }
-    }
+    } }
 
     private func navigationRow<Destination: View>(_ title: String, icon: String, destination: Destination) -> some View {
         NavigationLink(destination: destination) {

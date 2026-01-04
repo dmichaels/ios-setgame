@@ -5,8 +5,22 @@ struct FoundSetsView: View {
     let setsLastFound: [[TableCard]];
     let cardsAskew: Bool;
 
+    @State var showHelpButton: Bool = false;
+
     var body: some View {
         let rows: [[TableCard]] = pairCardsListForDisplay(setsLastFound.reversed());
+        if (rows.count == 0) {
+            Spacer()
+            HelpViewButton {
+                showHelpButton = true
+            }
+            NavigationLink(
+                destination: HelpView(),
+                isActive: $showHelpButton
+            ) {
+                EmptyView()
+            }
+        }
         Spacer()
         VStack(alignment: .leading, spacing: 8) {
             ForEach(rows.indices, id: \.self) { i in

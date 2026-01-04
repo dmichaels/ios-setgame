@@ -3,7 +3,7 @@
 ## Objective
 
 Create as many **SET**s as possible.
-A **SET** is 3 cards whose 4 attributes are EITHER/OR:
+A **SET** is 3 cards whose 4 attributes are either/or:
 - All the **same**
 - All **different**
 
