@@ -59,7 +59,7 @@ struct StatusBarView: View {
                     .frame(alignment: .leading)
             }
             else {
-                Text("\(DIAMOND_SYMBOL)  \(squeeze ? "D" : "Deck"): \(table.remainingCardCount())")
+                Text("\(DIAMOND_SYMBOL)  \(squeeze ? "" : "Deck: ")\(table.remainingCardCount())")
                     .font(.subheadline)
                     .frame(alignment: .leading)
                     .foregroundColor(FOREGROUND)
