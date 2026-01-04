@@ -2,11 +2,13 @@ import SwiftUI
 
 public struct VersionInfo {
 
-    public static let version: String =
+    public static var version: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?";
+    }
 
-    public static let build: String =
+    public static var build: String {
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?";
+    }
 
     // To get this commit property to work add the following kind of thing to a new build/run script
     // in Build Phases of Xcode, and move this script before the Compile Sources in the list of phases;
