@@ -35,7 +35,7 @@ public struct CardView : View {
                         RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
                             .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1)
                     )
-                    .shadow(color: card.selected ? Color.green : Color.blue, radius: card.selected ? 3 : 1)
+                    .shadow(color: card.selected ? Color.green : Color.green, radius: card.selected ? 4 : 1)
                     .padding(1)
                     //
                     // This qualifier is only needed if we want to shake the entire
@@ -46,7 +46,7 @@ public struct CardView : View {
                     // These two qualifiers do the shaking of the selected cards on an incorrect SET guess.
                     //
                     .modifier(ShakeEffect(animatableData: nonset ? CGFloat(table.state.nonsetNonce) : 0))
-                    .animation(.linear(duration: 0.35), value: table.state.nonsetNonce)
+                    .animation(.linear(duration: 0.45), value: table.state.nonsetNonce)
                     //
                     // Keep this transform always present ...
                     //

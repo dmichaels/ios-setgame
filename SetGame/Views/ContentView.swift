@@ -14,7 +14,8 @@ struct ContentView: View {
 
     // let background: Color = Color(.sRGB, red: 0.93, green: 0.96, blue: 1.00, opacity: 1.0);
     // let background: Color = Color(hex: 0xEDF5FF);
-    let background: Color = Color(hex: 0xDCE4EE);
+    // let background: Color = Color(hex: 0xDCE4EE);
+    let background: Color = Color(hex: 0xDCEEE4);
 
     var body: some View {
         NavigationView {
