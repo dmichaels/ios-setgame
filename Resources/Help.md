@@ -29,7 +29,7 @@ For any 2 SET cards there is **exactly** 1 other card which will make it a SET.
 ## Status Bar & Settings
 The status bar contains left-to-right:
 - number of SETs found so far
-- number of card left in deck
+- number of cards left in deck
 - emoji SET hint
 - number of SETs currently visible
 - peek button to reveal SETs
