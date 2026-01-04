@@ -22,6 +22,7 @@ public class Defaults {
     public static let sounds: Bool               = false;
     public static let haptics: Bool              = false;
     public static let shakeTableOnNonSet: Bool   = false;
+    public static let hideHelpButton: Bool       = false;
     public static let demoMode: Bool             = false;
     public static let title: String              = "Logicard";
 }
@@ -51,6 +52,7 @@ public final class Settings: ObservableObject {
         static let sounds               = "sounds"
         static let haptics              = "haptics"
         static let shakeTableOnNonSet   = "shakeTableOnNonSet"
+        static let hideHelpButton       = "hideHelpButton"
     }
 
     private let defaults = UserDefaults.standard
@@ -76,6 +78,7 @@ public final class Settings: ObservableObject {
         sounds               = defaults.object(forKey: Keys.sounds)               as? Bool ?? Defaults.sounds
         haptics              = defaults.object(forKey: Keys.haptics)              as? Bool ?? Defaults.haptics
         shakeTableOnNonSet   = defaults.object(forKey: Keys.shakeTableOnNonSet)   as? Bool ?? Defaults.shakeTableOnNonSet
+        hideHelpButton       = defaults.object(forKey: Keys.hideHelpButton)       as? Bool ?? Defaults.hideHelpButton
 
         $showPartialSetHint
             .sink { self.defaults.set($0, forKey: Keys.showPartialSetHint) }
@@ -131,6 +134,9 @@ public final class Settings: ObservableObject {
         $shakeTableOnNonSet
             .sink { self.defaults.set($0, forKey: Keys.shakeTableOnNonSet) }
             .store(in: &cancellables)
+        $hideHelpButton
+            .sink { self.defaults.set($0, forKey: Keys.hideHelpButton) }
+            .store(in: &cancellables)
     }
 
     public func reset() {
@@ -155,6 +161,7 @@ public final class Settings: ObservableObject {
         defaults.removeObject(forKey: Keys.sounds)
         defaults.removeObject(forKey: Keys.haptics)
         defaults.removeObject(forKey: Keys.shakeTableOnNonSet)
+        defaults.removeObject(forKey: Keys.hideHelpButton)
 
         showPartialSetHint   = Defaults.showPartialSetHint
         showSetsPresentCount = Defaults.showSetsPresentCount
@@ -174,6 +181,7 @@ public final class Settings: ObservableObject {
         sounds               = Defaults.sounds
         haptics              = Defaults.haptics
         shakeTableOnNonSet   = Defaults.shakeTableOnNonSet
+        hideHelpButton       = Defaults.hideHelpButton
     }
 
     public func isDefault() -> Bool {
@@ -199,6 +207,7 @@ public final class Settings: ObservableObject {
             &&  (sounds               == Defaults.sounds)
             &&  (haptics              == Defaults.haptics)
             &&  (shakeTableOnNonSet   == Defaults.shakeTableOnNonSet)
+            &&  (hideHelpButton       == Defaults.hideHelpButton)
         )
     }
 
@@ -222,5 +231,6 @@ public final class Settings: ObservableObject {
     @Published var sounds: Bool               = Defaults.sounds;
     @Published var haptics: Bool              = Defaults.haptics;
     @Published var shakeTableOnNonSet: Bool   = Defaults.shakeTableOnNonSet;
+    @Published var hideHelpButton: Bool       = Defaults.hideHelpButton;
     @Published var demoMode: Bool             = Defaults.demoMode;
 }

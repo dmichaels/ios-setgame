@@ -18,13 +18,15 @@ struct SettingsView: View {
 
     var body: some View { VStack(spacing: 10) {
 
-        HStack {
-            HelpViewButton { showHelpButton = true }
+        if (!self.settings.hideHelpButton) {
+            HStack {
+                HelpViewButton { showHelpButton = true }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.top, 6)
+            .padding(.horizontal, 30)
+            NavigationLink(destination: HelpView(), isActive: $showHelpButton) { EmptyView() }.hidden()
         }
-        .frame(maxWidth: .infinity)
-        .padding(.top, 6)
-        .padding(.horizontal, 30)
-        NavigationLink(destination: HelpView(), isActive: $showHelpButton) { EmptyView() }.hidden()
 
         Form {
             Section(header: Text("Informational")) {
@@ -201,6 +203,11 @@ struct SettingsView: View {
                 Text("  Commit ID").font(.footnote)
                 Spacer()
                 Text("\(VersionInfo.commit) ").font(.footnote)
+            }
+            HStack {
+                Text("Hide Help Button").font(.footnote)
+                Spacer()
+                Toggle(isOn: $settings.hideHelpButton) {}
             }
         }
         .navigationTitle("\(Defaults.title) Settings")

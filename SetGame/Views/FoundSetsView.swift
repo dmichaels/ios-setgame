@@ -2,6 +2,8 @@ import SwiftUI
 
 struct FoundSetsView: View {
 
+    @EnvironmentObject var settings : Settings;
+
     let setsLastFound: [[TableCard]];
     let cardsAskew: Bool;
 
@@ -9,7 +11,7 @@ struct FoundSetsView: View {
 
     var body: some View {
         let rows: [[TableCard]] = pairCardsListForDisplay(setsLastFound.reversed());
-        if (rows.count == 0) {
+        if ((rows.count == 0) && !self.settings.hideHelpButton){
             Spacer()
             HelpViewButton {
                 showHelpButton = true

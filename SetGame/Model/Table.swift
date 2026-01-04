@@ -623,7 +623,7 @@ class Table<TC : TableCard> : ObservableObject {
                         }
                     }
                 }
-                try? await Task.sleep(nanoseconds: 500_000_000)
+                try? await Task.sleep(nanoseconds: 800_000_000)
             }
         }
     }
