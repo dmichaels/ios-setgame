@@ -7,9 +7,11 @@ CARD_WIDTH              = 210
 CARD_HEIGHT             = 220
 CARD_BACKGROUND_COLOR   = "white"
 CARD_BORDER_COLOR       = "black"
+NUMBERS                 = [ "0", "1", "2" ]
 NUMBERS                 = [ "0", "2", "1" ] # sic - not 123 - see HelpView.swift
 COLUMNS                 = [ "0", "1", "2" ]
 SHAPES                  = [ "oval", "diamond", "squiggle" ]
+SHAPES                  = [ "oval", "squiggle", "diamond" ] # sic
 FILLINGS                = [ "hollow", "stripe", "solid" ]
 FIGURE_WIDTH            = 55
 FIGURE_HEIGHT           = 55
@@ -148,6 +150,19 @@ def draw_figures():
                 for ifilling, filling in enumerate(FILLINGS):
                     image = draw_card(number, column, shape, filling)
                     code = _normalize_code(f"{inumber}{icolumn}{ishape}{ifilling}", prefix=IMAGE_PREFIX)
+                    directory = DIRECTORY(code)
+                    file = (f"{directory}/{code}.png")
+                    image.save(file)
+                    print(file)
+                    pass
+
+def old_draw_figures():
+    for icolumn, column in enumerate(COLUMNS):
+        for ishape, shape in enumerate(SHAPES):
+            for ifilling, filling in enumerate(FILLINGS):
+                for inumber, number in enumerate(NUMBERS):
+                    image = draw_card(number, column, shape, filling)
+                    code = _normalize_code(f"{icolumn}{ishape}{ifilling}{inumber}", prefix=IMAGE_PREFIX)
                     directory = DIRECTORY(code)
                     file = (f"{directory}/{code}.png")
                     image.save(file)

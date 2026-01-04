@@ -12,6 +12,7 @@ public struct CardView : View {
     @EnvironmentObject var settings: Settings;
     @State private var shake: CGFloat = 0;
     var cardTouchedCallback : ((TableCard) -> Void)?;
+    var alternate : Int?
 
     public var body: some View {
         let new: Bool = card.newcomer(to: table);
@@ -99,7 +100,9 @@ public struct CardView : View {
         // The ALTNC_ cards are the monochrome (no-color) based ones.
         // - See ios-setgame/etc/alternate_cards/alternate_cards_no_colors.py
         //
-        switch self.table.settings.alternateCards {
+        let alternateCards: Int = self.alternate ?? self.table.settings.alternateCards;
+        // switch self.table.settings.alternateCards {
+        switch alternateCards {
             case 0:  return card.codename;
             case 1:  return "ALTD_\(card.codename)";
             case 2:  return "ALTNC_\(card.codename)";

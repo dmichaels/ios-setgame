@@ -81,6 +81,10 @@ struct ContentView: View {
             } // message: { Text("This start a new game .") }
         }
         //
+        // This line deals with larger system font sizes (like Kenna's).
+        //
+        .dynamicTypeSize(.small ... .large)
+        //
         // This line is necessary to make the app
         // look normal and not split screen on iPad.
         //

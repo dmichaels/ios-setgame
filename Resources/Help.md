@@ -10,17 +10,17 @@ Alternatively: If exactly 2 attributes are the same then it is *not* a SET.
 
 ## SET Attributes
 The 4 SET card atttibutes and 3 values are:
-- NUMBER: one, two, three
-- COLOR: RED, GREEN, BLUE
+- number: one, two, three
+- color: RED, GREEN, BLUE
 - filling: HOLLOW, SOLID, SHADED
 - shape: BAR, DI-BAR, TRI-BAR
 
 ## Example
-This is a SET because each card has different NUMBERS (one, two, three); different COLORS (RED, GREEN, BLUE); different fillings (HOLLOW, SOLID, SHADED); and different shapes (BAR, DI-BAR, TRI-BAR).
+This is a SET because each card has different numbers (one, two, three); different colors (RED, GREEN, BLUE); different fillings (HOLLOW, SOLID, SHADED); and different shapes (BAR, DI-BAR, TRI-BAR).
 EXAMPLE-1
 
 ## Another Example
-This is a SET because each card has the same NUMBER (one); the same COLOR (RED); the same filling (HOLLOW); but different shapes (BAR, DI-BAR, TRI-BAR).
+This is a SET because each card has the same number (one); the same color (RED); the same filling (HOLLOW); but different shapes (BAR, DI-BAR, TRI-BAR).
 EXAMPLE-2
 
 ## The Fundamental Theorem
@@ -37,3 +37,8 @@ STATUS-IMAGE-1
 The emoji hint turns to 👌 if the first card tapped is part of a SET; and to 👍 if the second one is.
 The last 3 items, supportive of learning (or cheating), can be turned off in the **Settings** page.
 Also there is a timer option, as well as sundry other options.
+
+## Extra Challange
+For a more taxing cognitive task, choose the **Mono** Card Images on the **Settings** page.
+Same idea as above except instead of color we have number columns (one, two, or three) as an attribute. For example:
+EXAMPLE-3

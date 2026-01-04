@@ -12,9 +12,9 @@ struct SettingsView: View {
     private let CardsPerRowChoices: [Int] = [ 2, 3, 4, 5, 6 ];
     private let DisplayCardCountChoices: [Int] = [ 3, 4, 6, 9, 12, 15, 16, 18, 20 ];
     private let AdditionalCardsChoices: [Int] = [ 0, 1, 2, 3 ];
-    private let AlternateCardsChoices: [(label: String, value: Int)] = [ ("Classic", 0),
-                                                                         ("Squares", 1),
-                                                                         ("Monochrome", 2) ]
+    private let AlternateCardsChoices: [(label: String, value: Int)] = [ ("Squares", 1),
+                                                                         ("Mono", 2),
+                                                                         ("Classic", 0) ]
 
     var body: some View { VStack(spacing: 10) {
 
