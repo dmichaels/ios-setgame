@@ -84,7 +84,7 @@ struct ContentView: View {
         //
         // This line deals with larger system font sizes (like Kenna's).
         //
-        .dynamicTypeSize(.large ... .large)
+        // .dynamicTypeSize(.large ... .large)
         //
         // This line is necessary to make the app
         // look normal and not split screen on iPad.
