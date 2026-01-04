@@ -27,7 +27,6 @@ struct DeckView: View {
     private func organizeCardsForDisplay(_ cards: [Card]) -> [[Card]] {
         let cards: [Card] = cards.sorted();
         var result: [[Card]] = [];
-        var i: Int = 0;
         for i in 0..<cards.count {
             if (i % 6 == 0) {
                 result.append([]);
