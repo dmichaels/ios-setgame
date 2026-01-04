@@ -64,7 +64,7 @@ struct StatusBarView: View {
                     .frame(alignment: .leading)
                     .foregroundColor(FOREGROUND)
             }
-            if (self.settings.showTimer) {
+            if (self.settings.showTimer && !self.settings.demoMode) {
                 Text("\(DIAMOND_SYMBOL)  \(timeString)")
                     .font(.subheadline)
                     .frame(alignment: .leading)

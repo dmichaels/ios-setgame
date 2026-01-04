@@ -6,6 +6,7 @@ struct ContentView: View {
     @EnvironmentObject var settings : Settings;
     @EnvironmentObject var feedback : Feedback;
 
+    @State private var showNewGameConfirmation = false;
     @State private var showSettingsView = false;
     @State private var statusResetToken = 0;
     @State private var saveMoveSetFront: Bool = false;
@@ -30,9 +31,14 @@ struct ContentView: View {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Menu {
                                 Button {
-                                    self.table.startNewGame();
-                                    self.statusResetToken += 1;
-                                    feedback.trigger(Feedback.NEW);
+                                    if ((self.table.gameStart() || self.table.gameDone())) {
+                                        self.table.startNewGame();
+                                        self.statusResetToken += 1;
+                                        feedback.trigger(Feedback.NEW);
+                                    }
+                                    else {
+                                        self.showNewGameConfirmation = true;
+                                    }
                                } label: {
                                     Label("New Game" , systemImage: "arrow.counterclockwise")
                                 }.disabled(self.table.state.blinking || self.settings.demoMode)
@@ -65,6 +71,14 @@ struct ContentView: View {
                         EmptyView()
                     }.hidden()
             }
+            .alert("Start New Game?", isPresented: $showNewGameConfirmation) {
+                Button("Yes", role: .destructive) {
+                    self.table.startNewGame();
+                    self.statusResetToken += 1;
+                    feedback.trigger(Feedback.NEW);
+                }
+                Button("Cancel", role: .cancel) { }
+            } // message: { Text("This start a new game .") }
         }
         //
         // This line is necessary to make the app
