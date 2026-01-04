@@ -77,7 +77,7 @@ public struct CardView : View {
                     //   qualifier controls how flexible/slopping the bounce is;
                     //   lower is e bouncier and sloppier; higher is stiffer.
                     //
-                    .animation(.spring(response: 0.55, dampingFraction: 0.60), value: new)
+                    .animation(.spring(response: 0.58, dampingFraction: 0.54), value: new)
             }
             //
             // This is only needed if we want to shake the entire table
