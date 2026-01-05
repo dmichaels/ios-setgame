@@ -41,10 +41,10 @@ public struct CardView : View {
                     //
                     .modifier(ShakeEffect(
                         amplitude: 16,
-                        cycles: 8,
+                        cycles: 10,
                         animatableData: nonset ? CGFloat(table.state.nonsetNonce) : 0
                     ))
-                    .animation(.easeOut(duration: 1.00), value: table.state.nonsetNonce)
+                    .animation(.easeOut(duration: 0.85), value: table.state.nonsetNonce)
                     //
                     // Keep this transform always present ...
                     //
