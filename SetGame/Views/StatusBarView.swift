@@ -160,7 +160,6 @@ struct StatusBarView: View {
                 }
             }
         }
-        // .dynamicTypeSize(.small ... .large) // deals with larger system font sizes
         .background(
             //
             // The corner-radius controls how rounded the control window corners are;
