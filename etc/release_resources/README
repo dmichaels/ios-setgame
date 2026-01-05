@@ -1,6 +1,6 @@
 o Support URL: https://dmichaels.github.io/ios-setgame/SUPPORT.html
 o Privacy Policy URL: https://dmichaels.github.io/ios-setgame/PRIVACYPOLICY.html
-o Used this site to get nicer screenshot with device frame for App Store Connect:
+o Used this site to get nicer screenshot with device frame for App Store Connect (ASC):
   - https://mockuphone.com
     - Save screenshot from xcode simulator locally via XCode (iPhone) Simulator > File > Save Screen
       E.g. screenshot_app_iphone_16_pro_ios_26_portrait_from_simulator_raw.png
@@ -13,10 +13,24 @@ o Used this site to get nicer screenshot with device frame for App Store Connect
       E.g. Simulator Screenshot - iPhone 15 Pro - 2025-07-23 at 08.27.39-portrait.png
     - Renamed and copied these to this directory
       E.g. mv "Simulator Screenshot - iPhone 15 Pro - 2025-07-23 at 08.27.39-portrait.png" screenshot_app_iphone_16_pro_ios_26_portrait.png
-    - To put on the Previews and Screenshots section of App Store Connect the size needs to be 1242x2688
+    - To put on the Previews and Screenshots section of ASC the size needs to be 1242x2688
       - Do this via MacOS Preview app to resize and save via Export to PNG making sure to turn OFF Alpha option
         E.g. screenshot_app_iphone_16_pro_ios_26_portrait_1242_2688.png
-      - For iPad (13) we want size 2064x2752
+    - The Previews and Screenshots section of the ASC:
+      - iPhone 6.9" Display: 1260 x 2736 px
+      - iPhone 6.5" Display: 1242 x 2688 px
+      - iPhone 6.3" Display: 1206 x 2622 px
+      - iPhone 6.1" Display: 1125 x 2436 px
+      - iPad 13" Display: 2064 × 2752 px
+      - iPad 11" Display: 1668 × 2420 px
+      - iPad Pro (2nd Gen) 12.9"  Display: 2048 x 2732 px
+    - Need screenshots only for devices supported (says ChatGPT)
+      - For iPhone/iPad iOS 15.6+ screenshots for these (says ChatGPT) are (probabably) sufficient:
+        - iPhone 6.5" Display: 1242 x 2688 px
+        - iPad Pro (2nd Gen) 12.9"  Display: 2048 x 2732 px
+      - Maybe also include (just in case) for:
+        - iPhone 6.9" Display: 1260 x 2736 px
+
 
 o Used this site to generate variety of app icons (from 1024x1024 one):
   - https://www.appicon.co
