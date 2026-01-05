@@ -24,7 +24,7 @@ struct SettingsView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 6)
-            .padding(.horizontal, 30)
+            .padding(.horizontal, 26)
             NavigationLink(destination: HelpView(), isActive: $showHelpButton) { EmptyView() }.hidden()
         }
 
@@ -51,7 +51,7 @@ struct SettingsView: View {
                 }
                 HStack {
                     Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
-                    Text("Disjoint Peek ↑")
+                    Text("Peek Disjoint ↑")
                         .foregroundStyle(settings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
                         .lineLimit(1).layoutPriority(1)
                     Spacer()
@@ -128,12 +128,6 @@ struct SettingsView: View {
                     Toggle(isOn: $settings.cardsAskew) {}
                 }
                 HStack {
-                    Image(systemName: "waveform.path").frame(width: iconWidth)
-                    Text("Shake Table").lineLimit(1).layoutPriority(1)
-                    Spacer()
-                    Toggle(isOn: $settings.shakeTableOnNonSet) {}
-                }
-                HStack {
                     Image(systemName: "photo").frame(width: iconWidth)
                     Text("Cards Images").lineLimit(1).layoutPriority(1)
                     Spacer()
@@ -205,7 +199,7 @@ struct SettingsView: View {
                 Text("\(VersionInfo.commit) ").font(.footnote)
             }
             HStack {
-                Text("Hide Help Button").font(.footnote)
+                Text(" Hide Help Button").font(.footnote)
                 Spacer()
                 Toggle(isOn: $settings.hideHelpButton) {}
             }

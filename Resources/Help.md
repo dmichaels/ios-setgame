@@ -6,7 +6,7 @@ Create as many **SET**s as possible.
 A **SET** is 3 cards whose 4 attributes are either/or:
 - All the **same**
 - All **different**
-Alternatively: If exactly 2 attributes are the same then it is *not* a SET.
+Said differently: If exactly 2 attributes are the same then it is *not* a SET.
 
 ## SET Attributes
 The 4 SET card atttibutes and 3 values are:
@@ -39,6 +39,6 @@ The last 3 items, supportive of learning (or cheating), can be turned off in the
 Also there is a timer option, as well as sundry other options.
 
 ## Extra Challange
-For a more taxing cognitive task, choose the **Mono** Card Images on the **Settings** page.
+For a more taxing brain workout, try the **Mono** Card Images on the **Settings** page.
 Same idea as above except instead of color we have number columns (one, two, or three) as an attribute. For example:
 EXAMPLE-3

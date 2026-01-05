@@ -21,7 +21,6 @@ public class Defaults {
     public static let simpleDeck: Bool           = false;
     public static let sounds: Bool               = false;
     public static let haptics: Bool              = false;
-    public static let shakeTableOnNonSet: Bool   = false;
     public static let hideHelpButton: Bool       = false;
     public static let demoMode: Bool             = false;
     public static let title: String              = "Logicard";
@@ -51,7 +50,6 @@ public final class Settings: ObservableObject {
         static let simpleDeck           = "simpleDeck"
         static let sounds               = "sounds"
         static let haptics              = "haptics"
-        static let shakeTableOnNonSet   = "shakeTableOnNonSet"
         static let hideHelpButton       = "hideHelpButton"
     }
 
@@ -77,7 +75,6 @@ public final class Settings: ObservableObject {
         simpleDeck           = defaults.object(forKey: Keys.simpleDeck)           as? Bool ?? Defaults.simpleDeck
         sounds               = defaults.object(forKey: Keys.sounds)               as? Bool ?? Defaults.sounds
         haptics              = defaults.object(forKey: Keys.haptics)              as? Bool ?? Defaults.haptics
-        shakeTableOnNonSet   = defaults.object(forKey: Keys.shakeTableOnNonSet)   as? Bool ?? Defaults.shakeTableOnNonSet
         hideHelpButton       = defaults.object(forKey: Keys.hideHelpButton)       as? Bool ?? Defaults.hideHelpButton
 
         $showPartialSetHint
@@ -131,9 +128,6 @@ public final class Settings: ObservableObject {
         $haptics
             .sink { self.defaults.set($0, forKey: Keys.haptics) }
             .store(in: &cancellables)
-        $shakeTableOnNonSet
-            .sink { self.defaults.set($0, forKey: Keys.shakeTableOnNonSet) }
-            .store(in: &cancellables)
         $hideHelpButton
             .sink { self.defaults.set($0, forKey: Keys.hideHelpButton) }
             .store(in: &cancellables)
@@ -160,7 +154,6 @@ public final class Settings: ObservableObject {
         defaults.removeObject(forKey: Keys.simpleDeck)
         defaults.removeObject(forKey: Keys.sounds)
         defaults.removeObject(forKey: Keys.haptics)
-        defaults.removeObject(forKey: Keys.shakeTableOnNonSet)
         defaults.removeObject(forKey: Keys.hideHelpButton)
 
         showPartialSetHint   = Defaults.showPartialSetHint
@@ -180,7 +173,6 @@ public final class Settings: ObservableObject {
         simpleDeck           = Defaults.simpleDeck
         sounds               = Defaults.sounds
         haptics              = Defaults.haptics
-        shakeTableOnNonSet   = Defaults.shakeTableOnNonSet
         hideHelpButton       = Defaults.hideHelpButton
     }
 
@@ -206,7 +198,6 @@ public final class Settings: ObservableObject {
             &&  (simpleDeck           == Defaults.simpleDeck)
             &&  (sounds               == Defaults.sounds)
             &&  (haptics              == Defaults.haptics)
-            &&  (shakeTableOnNonSet   == Defaults.shakeTableOnNonSet)
             &&  (hideHelpButton       == Defaults.hideHelpButton)
         )
     }
@@ -230,7 +221,6 @@ public final class Settings: ObservableObject {
     @Published var simpleDeck: Bool           = Defaults.simpleDeck;
     @Published var sounds: Bool               = Defaults.sounds;
     @Published var haptics: Bool              = Defaults.haptics;
-    @Published var shakeTableOnNonSet: Bool   = Defaults.shakeTableOnNonSet;
     @Published var hideHelpButton: Bool       = Defaults.hideHelpButton;
     @Published var demoMode: Bool             = Defaults.demoMode;
 }

@@ -10,7 +10,6 @@ public struct CardView : View {
     // changed it won't update immediately in the FoundSetsView.
     //
     @EnvironmentObject var settings: Settings;
-    @State private var shake: CGFloat = 0;
     var cardTouchedCallback : ((TableCard) -> Void)?;
     var alternate : Int?
 
@@ -38,26 +37,14 @@ public struct CardView : View {
                     .shadow(color: card.selected ? Color.green : Color.green, radius: card.selected ? 4 : 1)
                     .padding(1)
                     //
-                    // This qualifier is only needed if we want to shake the entire
-                    // table on an incorrect SET guess (i.e. settings.shakeTableOnNonSet).
+                    // These two qualifiers are needed to shake the cards on incorrect SET guess.
                     //
-/*
-                    .modifier(ShakeEffect(animatableData: shake))
-                    //
-                    // These two qualifiers do the shaking of the selected cards on an incorrect SET guess.
-                    //
-                    .modifier(ShakeEffect(animatableData: nonset ? CGFloat(table.state.nonsetNonce) : 0))
-                    .animation(.linear(duration: 0.45), value: table.state.nonsetNonce)
-*/
-.modifier(
-    CenteredRotationalShakeEffect(
-        maxAngle: 2.8,
-        maxTranslation: 8.0,
-        shakesPerUnit: 10.0,
-        animatableData: nonset ? CGFloat(table.state.nonsetNonce) : 0
-    )
-)
-.animation(.easeOut(duration: 1.1), value: table.state.nonsetNonce)
+                    .modifier(ShakeEffect(
+                        amplitude: 16,
+                        cycles: 8,
+                        animatableData: nonset ? CGFloat(table.state.nonsetNonce) : 0
+                    ))
+                    .animation(.easeOut(duration: 1.00), value: table.state.nonsetNonce)
                     //
                     // Keep this transform always present ...
                     //
@@ -90,14 +77,6 @@ public struct CardView : View {
                     //   lower is e bouncier and sloppier; higher is stiffer.
                     //
                     .animation(.spring(response: 0.58, dampingFraction: 0.54), value: new)
-            }
-            //
-            // This is only needed if we want to shake the entire table
-            // on an incorrect SET guess (i.e. settings.shakeTableOnNonSet).
-            //
-            .onChange(of: table.state.setJustFoundNot) { wrong in
-                guard wrong && settings.shakeTableOnNonSet else { return }
-                withAnimation(.linear(duration: 0.35)) { shake += 1 }
             }
         }
     }
@@ -135,70 +114,25 @@ private struct SlightRandomRotation: ViewModifier {
     }
 }
 
-struct ShakeEffect: GeometryEffect {
+private struct ShakeEffect: GeometryEffect {
     //
-    // Used for shaking the whole table OR just the selected
-    // cards on the table (on an incorrect SET guess).
+    // With help from ChatGPT.
     //
-    var amplitude: CGFloat = 10;    // points left/right
-    var shakesPerUnit: CGFloat = 3; // how many oscillations
-    var animatableData: CGFloat;    // drive this from a changing value
+    var amplitude: CGFloat = 7
+    var cycles: CGFloat = 3
+    var animatableData: CGFloat // pass CGFloat(table.state.nonsetNonce)
     func effectValue(size: CGSize) -> ProjectionTransform {
-        let translation = amplitude * sin(animatableData * .pi * 2 * shakesPerUnit);
-        return ProjectionTransform(CGAffineTransform(translationX: translation, y: 0));
-    }
-}
-
-struct RotationalShakeEffect: GeometryEffect {
-
-    var maxAngle: CGFloat = 6        // degrees left/right
-    var maxTranslation: CGFloat = 4  // optional, subtle
-    var shakesPerUnit: CGFloat = 3
-    var animatableData: CGFloat
-
-    func effectValue(size: CGSize) -> ProjectionTransform {
-        let phase = animatableData * .pi * 2 * shakesPerUnit
-        let rotation = sin(phase) * maxAngle
-        let translation = sin(phase) * maxTranslation
-
+        // Turn animatableData into a 0→1 ramp each time the nonce increments.
+        let t = animatableData.truncatingRemainder(dividingBy: 1)
+        let envelope = (cos(t * .pi) + 1) / 2   // smooth 1→0
+        let angleDeg = sin(t * .pi * 2 * cycles) * amplitude * envelope
+        let angle = angleDeg * .pi / 180
+        let cx = size.width / 2
+        let cy = size.height / 2
         var transform = CGAffineTransform.identity
-        transform = transform.translatedBy(x: translation, y: 0)
-        transform = transform.rotated(by: rotation * .pi / 180)
-
-        return ProjectionTransform(transform)
-    }
-}
-
-struct CenteredRotationalShakeEffect: GeometryEffect {
-
-    var maxAngle: CGFloat = 6        // degrees
-    var maxTranslation: CGFloat = 3  // subtle lateral motion
-    var shakesPerUnit: CGFloat = 3
-    var animatableData: CGFloat
-
-    func effectValue(size: CGSize) -> ProjectionTransform {
-
-        let phase = animatableData * .pi * 2 * shakesPerUnit
-        let angle = sin(phase) * maxAngle * .pi / 180
-        let translation = sin(phase) * maxTranslation
-
-        let centerX = size.width / 2
-        let centerY = size.height / 2
-
-        var transform = CGAffineTransform.identity
-
-        // Move origin to center
-        transform = transform.translatedBy(x: centerX, y: centerY)
-
-        // Rotate around center
+        transform = transform.translatedBy(x: cx, y: cy)
         transform = transform.rotated(by: angle)
-
-        // Optional micro-translation (still feels physical)
-        transform = transform.translatedBy(x: translation, y: 0)
-
-        // Move back
-        transform = transform.translatedBy(x: -centerX, y: -centerY)
-
+        transform = transform.translatedBy(x: -cx, y: -cy)
         return ProjectionTransform(transform)
     }
 }
