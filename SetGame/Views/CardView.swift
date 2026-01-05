@@ -41,12 +41,23 @@ public struct CardView : View {
                     // This qualifier is only needed if we want to shake the entire
                     // table on an incorrect SET guess (i.e. settings.shakeTableOnNonSet).
                     //
+/*
                     .modifier(ShakeEffect(animatableData: shake))
                     //
                     // These two qualifiers do the shaking of the selected cards on an incorrect SET guess.
                     //
                     .modifier(ShakeEffect(animatableData: nonset ? CGFloat(table.state.nonsetNonce) : 0))
                     .animation(.linear(duration: 0.45), value: table.state.nonsetNonce)
+*/
+.modifier(
+    CenteredRotationalShakeEffect(
+        maxAngle: 2.8,
+        maxTranslation: 8.0,
+        shakesPerUnit: 10.0,
+        animatableData: nonset ? CGFloat(table.state.nonsetNonce) : 0
+    )
+)
+.animation(.easeOut(duration: 1.1), value: table.state.nonsetNonce)
                     //
                     // Keep this transform always present ...
                     //
@@ -135,5 +146,59 @@ struct ShakeEffect: GeometryEffect {
     func effectValue(size: CGSize) -> ProjectionTransform {
         let translation = amplitude * sin(animatableData * .pi * 2 * shakesPerUnit);
         return ProjectionTransform(CGAffineTransform(translationX: translation, y: 0));
+    }
+}
+
+struct RotationalShakeEffect: GeometryEffect {
+
+    var maxAngle: CGFloat = 6        // degrees left/right
+    var maxTranslation: CGFloat = 4  // optional, subtle
+    var shakesPerUnit: CGFloat = 3
+    var animatableData: CGFloat
+
+    func effectValue(size: CGSize) -> ProjectionTransform {
+        let phase = animatableData * .pi * 2 * shakesPerUnit
+        let rotation = sin(phase) * maxAngle
+        let translation = sin(phase) * maxTranslation
+
+        var transform = CGAffineTransform.identity
+        transform = transform.translatedBy(x: translation, y: 0)
+        transform = transform.rotated(by: rotation * .pi / 180)
+
+        return ProjectionTransform(transform)
+    }
+}
+
+struct CenteredRotationalShakeEffect: GeometryEffect {
+
+    var maxAngle: CGFloat = 6        // degrees
+    var maxTranslation: CGFloat = 3  // subtle lateral motion
+    var shakesPerUnit: CGFloat = 3
+    var animatableData: CGFloat
+
+    func effectValue(size: CGSize) -> ProjectionTransform {
+
+        let phase = animatableData * .pi * 2 * shakesPerUnit
+        let angle = sin(phase) * maxAngle * .pi / 180
+        let translation = sin(phase) * maxTranslation
+
+        let centerX = size.width / 2
+        let centerY = size.height / 2
+
+        var transform = CGAffineTransform.identity
+
+        // Move origin to center
+        transform = transform.translatedBy(x: centerX, y: centerY)
+
+        // Rotate around center
+        transform = transform.rotated(by: angle)
+
+        // Optional micro-translation (still feels physical)
+        transform = transform.translatedBy(x: translation, y: 0)
+
+        // Move back
+        transform = transform.translatedBy(x: -centerX, y: -centerY)
+
+        return ProjectionTransform(transform)
     }
 }
