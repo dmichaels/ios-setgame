@@ -16,6 +16,7 @@ o Used this site to get nicer screenshot with device frame for App Store Connect
     - To put on the Previews and Screenshots section of App Store Connect the size needs to be 1242x2688
       - Do this via MacOS Preview app to resize and save via Export to PNG making sure to turn OFF Alpha option
         E.g. screenshot_app_iphone_16_pro_ios_26_portrait_1242_2688.png
+      - For iPad (13) we want size 2064x2752
 
 o Used this site to generate variety of app icons (from 1024x1024 one):
   - https://www.appicon.co
