@@ -39,7 +39,7 @@ struct SettingsView: View {
                 }
                 HStack {
                     Image(systemName: "number.square").frame(width: iconWidth)
-                    Text("Available SET Count").lineLimit(1).layoutPriority(1)
+                    Text("Peek SET Count").lineLimit(1).layoutPriority(1)
                     Spacer()
                     Toggle(isOn: $settings.showSetsPresentCount) {}
                 }
@@ -51,7 +51,7 @@ struct SettingsView: View {
                 }
                 HStack {
                     Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
-                    Text("Disjoint Peek & Count ↑")
+                    Text("Disjoint Peek ↑")
                         .foregroundStyle(settings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
                         .lineLimit(1).layoutPriority(1)
                     Spacer()
