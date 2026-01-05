@@ -199,7 +199,7 @@ struct SettingsView: View {
                 Text("\(VersionInfo.commit) ").font(.footnote)
             }
             HStack {
-                Text(" Hide Help Button").font(.footnote)
+                Text("  Hide Help Button").font(.footnote)
                 Spacer()
                 Toggle(isOn: $settings.hideHelpButton) {}
             }
