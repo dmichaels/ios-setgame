@@ -39,12 +39,8 @@ public struct CardView : View {
                     //
                     // These two qualifiers are needed to shake the cards on incorrect SET guess.
                     //
-                    .modifier(ShakeEffect(
-                        amplitude: 16,
-                        cycles: 8,
-                        animatableData: nonset ? CGFloat(table.state.nonsetNonce) : 0
-                    ))
-                    .animation(.easeOut(duration: 0.85), value: table.state.nonsetNonce)
+                    .modifier(ShakeEffect(animatableData: nonset ? CGFloat(table.state.nonsetNonce) : 0))
+                    .animation(.linear(duration: 0.85), value: table.state.nonsetNonce)
                     //
                     // Keep this transform always present ...
                     //
@@ -74,9 +70,9 @@ public struct CardView : View {
                     //   lower is faster; higher is slower.
                     // - The dampingFraction argument to .spring qualifier
                     //   qualifier controls how flexible/slopping the bounce is;
-                    //   lower is e bouncier and sloppier; higher is stiffer.
+                    //   lower is bouncier and sloppier; higher is stiffer.
                     //
-                    .animation(.spring(response: 0.58, dampingFraction: 0.54), value: new)
+                    .animation(.spring(response: 0.62, dampingFraction: 0.52), value: new)
             }
         }
     }
@@ -115,8 +111,37 @@ private struct SlightRandomRotation: ViewModifier {
 }
 
 private struct ShakeEffect: GeometryEffect {
+    var angle: CGFloat = 8.0
+    var shakesPerUnit: CGFloat = 9.0
+    var animatableData: CGFloat
+    func effectValue(size: CGSize) -> ProjectionTransform {
+        let a = angle * sin(animatableData * .pi * 2 * shakesPerUnit)
+        let t = CGAffineTransform(translationX: size.width/2, y: size.height/2)
+            .rotated(by: a * (.pi / 180))
+            .translatedBy(x: -size.width/2, y: -size.height/2)
+        return ProjectionTransform(t)
+    }
+}
+
+private struct HorizontalShakeEffect: GeometryEffect {
+    var amplitude: CGFloat = 10      // points left/right
+    var shakesPerUnit: CGFloat = 8   // how many oscillations
+    var animatableData: CGFloat      // drive this from a changing value
+    func effectValue(size: CGSize) -> ProjectionTransform {
+        let translation = amplitude * sin(animatableData * .pi * 2 * shakesPerUnit)
+        return ProjectionTransform(CGAffineTransform(translationX: translation, y: 0))
+    }
+}
+
+private struct RotationalShakeEffect: GeometryEffect {
     //
-    // With help from ChatGPT.
+    // Usage:
+    //  .modifier(ShakeEffect(
+    //      amplitude: 16,
+    //      cycles: 8,
+    //      animatableData: nonset ? CGFloat(table.state.nonsetNonce) : 0
+    //  ))
+    //  .animation(.easeOut(duration: 0.85), value: table.state.nonsetNonce)
     //
     var amplitude: CGFloat = 7
     var cycles: CGFloat = 3
