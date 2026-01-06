@@ -8,7 +8,23 @@ struct HelpView: View  {
     private let lines: [String];
 
     @State private var resetMagicSquare: Bool = false;
-    @State private var magicSquare: [TableCard] = Deck.randomMagicSquare().map { TableCard($0) }
+    // @State private var magicSquare: [TableCard] = Deck.randomMagicSquare().map { TableCard($0) }
+    @State private var magicSquare: [TableCard] = HelpView.createMagicSquare();
+    @State private var magicSquareCurrent: Int? = nil;
+    let magicSquareIndices: [[Int]] = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+        [3, 7, 2],
+        [5, 7, 0],
+        [1, 3, 8],
+        [1, 5, 6]
+    ]
 
     init() {
         let text = (try? String(contentsOf: Bundle.main.url(forResource: "Help", withExtension: "md")!))
@@ -78,43 +94,35 @@ struct HelpView: View  {
                                     }
                                 }
                                 Spacer()
-                                VStack {
-                                    Button(action: { magicSquare = Deck.randomMagicSquare().map { TableCard($0) } }) {
-                                        HStack(spacing: 3) {
-                                            // Image(systemName: "arrow.counterclockwise").font(.subheadline)
-                                            Text(" Refresh ").font(.subheadline)
-                                                .lineLimit(1)
-                                                .fixedSize(horizontal: true, vertical: false)
-                                        }
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                                .fill(Color(hex: 0x104D2F).opacity(0.85))
-                                        )
+                                VStack(spacing: 6) {
+                                    Button {
+                                        showMagicSquare()
+                                    } label: {
+                                        Text("Show SET")
+                                            .font(.subheadline)
+                                            .frame(width: 100)
+                                            .padding(.vertical, 5)
+                                            .foregroundColor(.white)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 6)
+                                                    .fill(Color(hex: 0x104D2F).opacity(0.85))
+                                            )
                                     }
                                     .buttonStyle(.plain)
-                                    .contentShape(Rectangle())
-                                    /*
-                                    Button(action: { magicSquare[0].selected = true }) {
-                                        HStack(spacing: 3) {
-                                            Image(systemName: "arrow.counterclockwise").font(.subheadline)
-                                            Text(" Show SET ").font(.subheadline)
-                                                .lineLimit(1)
-                                                .fixedSize(horizontal: true, vertical: false)
-                                        }
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 6)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                                .fill(Color(hex: 0x104D2F).opacity(0.85))
-                                        )
+                                    Button {
+                                        self.magicSquare = HelpView.createMagicSquare();
+                                    } label: {
+                                        Text("Refresh")
+                                            .font(.subheadline)
+                                            .frame(width: 100)
+                                            .padding(.vertical, 5)
+                                            .foregroundColor(.white)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 6)
+                                                    .fill(Color(hex: 0x104D2F).opacity(0.85))
+                                            )
                                     }
                                     .buttonStyle(.plain)
-                                    .contentShape(Rectangle())
-                                    */
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -168,6 +176,33 @@ struct HelpView: View  {
         }
         else {
             return line;
+        }
+    }
+
+    private static func createMagicSquare() -> [TableCard] {
+        return Deck.randomMagicSquare().map { TableCard($0) };
+    }
+
+    private func showMagicSquare() {
+        if (self.magicSquareCurrent != nil) {
+            for i in self.magicSquareIndices[self.magicSquareCurrent!] {
+                self.magicSquare[i].selected = false;
+            }
+           self.magicSquareCurrent = self.magicSquareCurrent! + 1;
+            if (self.magicSquareCurrent! == magicSquareIndices.count) {
+                self.magicSquareCurrent = nil;
+            }
+            else {
+                for i in self.magicSquareIndices[self.magicSquareCurrent!] {
+                    self.magicSquare[i].selected = true;
+                }
+            }
+        }
+        else {
+            self.magicSquareCurrent = 0;
+            for i in magicSquareIndices[self.magicSquareCurrent!] {
+                self.magicSquare[i].selected = true;
+            }
         }
     }
 }
