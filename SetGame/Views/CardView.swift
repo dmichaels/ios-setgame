@@ -10,6 +10,7 @@ public struct CardView : View {
     // changed it won't update immediately in the FoundSetsView.
     //
     @EnvironmentObject var settings: Settings;
+    @State private var shakeToken: CGFloat = 0;
     var cardTouchedCallback : ((TableCard) -> Void)?;
     var alternate : Int?
 
@@ -39,8 +40,14 @@ public struct CardView : View {
                     //
                     // These two qualifiers are needed to shake the cards on incorrect SET guess.
                     //
-                    .modifier(ShakeEffect(animatableData: nonset ? CGFloat(table.state.nonsetNonce) : 0))
-                    .animation(.linear(duration: 0.85), value: table.state.nonsetNonce)
+                    .modifier(ShakeEffect(animatableData: nonset ? CGFloat(shakeToken) : 0))
+                    .onChange(of: table.state.nonsetNonce) { _ in
+                        var t = Transaction()
+                        t.animation = .linear(duration: 0.85)
+                        withTransaction(t) {
+                            shakeToken += 1
+                        }
+                    }
                     //
                     // Keep this transform always present ...
                     //
