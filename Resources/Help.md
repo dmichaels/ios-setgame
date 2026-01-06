@@ -39,6 +39,11 @@ The last 3 items, supportive of learning (or cheating), can be turned off in the
 Also there is a timer option, as well as sundry other options.
 
 ## Extra Challange
-For a more taxing brain workout, try the **Mono** Card Images on the **Settings** page.
+For a more taxing brain workout, try the **Mono** **Card Images** on the **Settings** page.
 Same idea as above except instead of color we have number columns (one, two, or three) as an attribute. For example:
 EXAMPLE-3
+
+## Just for Fun
+Check out this magic square. 12 distinct SETs among these 9 cards. See if you can find them all.
+Use the **Plant Magic Square** option on the **Settings** page to have this placed on the initial game table.
+MAGIC-SQUARE-1
