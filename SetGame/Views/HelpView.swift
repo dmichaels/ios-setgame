@@ -81,7 +81,7 @@ struct HelpView: View  {
                                 VStack {
                                     Button(action: { magicSquare = Deck.randomMagicSquare().map { TableCard($0) } }) {
                                         HStack(spacing: 3) {
-                                            Image(systemName: "arrow.counterclockwise").font(.subheadline)
+                                            // Image(systemName: "arrow.counterclockwise").font(.subheadline)
                                             Text(" Refresh ").font(.subheadline)
                                                 .lineLimit(1)
                                                 .fixedSize(horizontal: true, vertical: false)
