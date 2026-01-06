@@ -79,7 +79,7 @@ public struct CardView : View {
                     //   qualifier controls how flexible/slopping the bounce is;
                     //   lower is bouncier and sloppier; higher is stiffer.
                     //
-                    .animation(.spring(response: 0.62, dampingFraction: 0.52), value: new)
+                    .animation(.spring(response: 0.65, dampingFraction: 0.45), value: new)
             }
         }
     }
