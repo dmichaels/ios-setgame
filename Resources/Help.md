@@ -6,7 +6,7 @@ Create as many **SET**s as possible.
 A **SET** is 3 cards whose 4 attributes are either/or:
 - All the **same**
 - All **different**
-Said differently: If exactly 2 attributes are the same then it is *not* a SET.
+Said differently: If exactly 2 attributes are the same then it is **not** a SET.
 
 ## SET Attributes
 The 4 SET card atttibutes and 3 values are:
