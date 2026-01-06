@@ -41,7 +41,7 @@ public struct CardView : View {
                     //
                     .modifier(ShakeEffect(
                         amplitude: 16,
-                        cycles: 10,
+                        cycles: 8,
                         animatableData: nonset ? CGFloat(table.state.nonsetNonce) : 0
                     ))
                     .animation(.easeOut(duration: 0.85), value: table.state.nonsetNonce)
