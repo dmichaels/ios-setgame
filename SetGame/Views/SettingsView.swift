@@ -193,10 +193,12 @@ struct SettingsView: View {
                 Spacer()
                 Text("\(VersionInfo.version).\(VersionInfo.build) ").font(.footnote)
             }
-            HStack {
-                Text("  Commit ID").font(.footnote)
-                Spacer()
-                Text("\(VersionInfo.commit) ").font(.footnote)
+            if (VersionInfo.commit != "") {
+                HStack {
+                    Text("  Commit ID").font(.footnote)
+                    Spacer()
+                    Text("\(VersionInfo.commit) ").font(.footnote)
+                }
             }
             HStack {
                 Text("  Hide Help Button").font(.footnote)
