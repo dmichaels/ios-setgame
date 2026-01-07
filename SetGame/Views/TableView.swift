@@ -19,7 +19,6 @@ struct TableView: View {
                             if (index < table.cards.count) {
                                 CardView(card: table.cards[index]) {
                                     self.table.cardTouched($0, delay: 0.9) { cards, set, resolve in
-                                    print("BLINK")
                                         //
                                         // The given cards argument will always
                                         // be the list of cards now selected.
