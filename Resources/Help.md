@@ -44,6 +44,6 @@ Same idea as above except instead of color we have number columns (one, two, or 
 EXAMPLE-3
 
 ## Just for Fun
-Check out this magic square. 12 distinct SETs among these 9 cards. See if you can find them all.
-Use the **Plant Magic Square** option on the **Settings** page to have this placed on the initial game table.
+Check out this magic square. There are 12 distinct SETs among these 9 cards. Find them all.
 MAGIC-SQUARE-1
+Use the **Plant Magic Square** option on the **Settings** page to have this placed on the initial game table.

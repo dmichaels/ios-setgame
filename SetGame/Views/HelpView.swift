@@ -94,13 +94,14 @@ struct HelpView: View  {
                                     }
                                 }
                                 Spacer()
-                                VStack(spacing: 6) {
+                                VStack(spacing: 10) {
                                     Button {
                                         showMagicSquare()
                                     } label: {
                                         Text("Show SET")
                                             .font(.subheadline)
-                                            .frame(width: 100)
+                                            .frame(width: 110)
+                                            .padding(.horizontal, 2)
                                             .padding(.vertical, 5)
                                             .foregroundColor(.white)
                                             .background(
@@ -114,7 +115,8 @@ struct HelpView: View  {
                                     } label: {
                                         Text("Refresh")
                                             .font(.subheadline)
-                                            .frame(width: 100)
+                                            .frame(width: 110)
+                                            .padding(.horizontal, 2)
                                             .padding(.vertical, 5)
                                             .foregroundColor(.white)
                                             .background(
