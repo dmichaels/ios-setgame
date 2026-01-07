@@ -45,21 +45,20 @@ struct SettingsView: View {
                 }
                 HStack {
                     Image(systemName: "eyes").frame(width: iconWidth)
-                    Text("Peek SET Button")
+                    Text("Peek SET Button").lineLimit(1).layoutPriority(1)
                     Spacer()
                     Toggle(isOn: $settings.showPeekButton) {}
                 }
                 HStack {
                     Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
-                    Text("Peek Disjoint ↑")
+                    Text("Peek Disjoint ↑").lineLimit(1).layoutPriority(1)
                         .foregroundStyle(settings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
-                        .lineLimit(1).layoutPriority(1)
                     Spacer()
                     Toggle(isOn: $settings.peekDisjoint) {}
                 }.disabled(!(settings.showSetsPresentCount || settings.showPeekButton))
                 HStack {
                     Image(systemName: "timer").frame(width: iconWidth)
-                    Text("Show Timer")
+                    Text("Show Timer").lineLimit(1).layoutPriority(1)
                     Spacer()
                     Toggle(isOn: $settings.showTimer) {}
                 }
