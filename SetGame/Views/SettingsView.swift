@@ -7,6 +7,7 @@ struct SettingsView: View {
 
     @State private var showResetConfirmation = false
     @State private var showHelpButton: Bool = false;
+    @State private var showCommitID: Bool = false;
 
     private let iconWidth: CGFloat = 30;
     private let CardsPerRowChoices: [Int] = [ 2, 3, 4, 5, 6 ];
@@ -188,21 +189,26 @@ struct SettingsView: View {
                 ).opacity(settings.isDefault() ? 0.5 : 1.0)
             }
             HStack {
-                Text("  Version").font(.footnote)
-                Spacer()
-                Text("\(VersionInfo.version).\(VersionInfo.build) ").font(.footnote)
-            }
-            if (VersionInfo.commit != "") {
-                HStack {
-                    Text("  Commit ID").font(.footnote)
-                    Spacer()
-                    Text("\(VersionInfo.commit) ").font(.footnote)
-                }
-            }
-            HStack {
                 Text("  Hide Help Button").font(.footnote)
                 Spacer()
                 Toggle(isOn: $settings.hideHelpButton) {}
+            }
+            if (VersionInfo.commit != "") {
+                HStack {
+                    if (showCommitID) {
+                        Text("  Commit ID").font(.footnote)
+                        Spacer()
+                        Text("\(VersionInfo.commit) ").font(.footnote)
+                    }
+                    else {
+                        Text("  Version").font(.footnote)
+                        Spacer()
+                        Text("\(VersionInfo.version).\(VersionInfo.build) ").font(.footnote)
+                    }
+                }
+                .onTapGesture {
+                    showCommitID.toggle();
+                }
             }
         }
         .navigationTitle("\(Defaults.title) Settings")

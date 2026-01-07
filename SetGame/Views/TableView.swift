@@ -18,7 +18,8 @@ struct TableView: View {
                             let index = row * settings.cardsPerRow + column;
                             if (index < table.cards.count) {
                                 CardView(card: table.cards[index]) {
-                                    self.table.cardTouched($0, delay: 0.6) { cards, set, resolve in
+                                    self.table.cardTouched($0, delay: 0.9) { cards, set, resolve in
+                                    print("BLINK")
                                         //
                                         // The given cards argument will always
                                         // be the list of cards now selected.

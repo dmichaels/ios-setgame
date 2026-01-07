@@ -219,7 +219,7 @@ class Table<TC : TableCard> : ObservableObject {
         // MUST call the given resolve function at the end of its processing.
 
         if (delay > 0) {
-            let delay: Double = selectedCards.isSet() ? delay / 2.0 : delay;
+            // let delay: Double = selectedCards.isSet() ? delay / 2.0 : delay;
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 if let callback = callback {
                     callback(selectedCards, selectedCards.isSet(), resolve);
@@ -339,7 +339,7 @@ class Table<TC : TableCard> : ObservableObject {
     private func noteNewcomers(_ cards: [TC], randomize: Bool = true) {
         if (randomize) {
             for card in cards {
-                let delay: Double = Double.random(in: 0.10...0.40);
+                let delay: Double = Double.random(in: 0.20...0.60);
                 self.state.newcomers.insert(card.id);
                 DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                     self.state.newcomers.remove(card.id);
