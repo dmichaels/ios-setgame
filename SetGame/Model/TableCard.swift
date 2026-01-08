@@ -8,9 +8,10 @@ class TableCard : Card, ObservableObject {
     @Published var selected: Bool = false;
     @Published var set: Bool      = false;
     //
-    // These blink/blinking properties are used only for blinking the cards when a SET is found;
-    // the blinking property means that we are in the processing of doing the blinking, and the
-    // blink property means we are either blinked on or off at any one moment; see CardView.
+    // These blinking/blinkout properties are used ONLY for blinking the 3 cards when a
+    // SET is found; the blinking property means that we are in the processing of doing
+    // the 3-card blinking; the blinkout property means we are either blinked off (when
+    // blinkout is true) or on (when blinkout is false) at any one moment; see CardView.
     //
     @Published var blinkout: Bool = false;
     @Published var blinking: Bool = false;
