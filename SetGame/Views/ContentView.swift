@@ -83,8 +83,8 @@ struct ContentView: View {
             .simultaneousGesture(
                 DragGesture(minimumDistance: 200)
                     .onEnded { value in
-                        let dx = abs(value.predictedEndTranslation.width);
-                        let dy = abs(value.predictedEndTranslation.height);
+                        let dx: CGFloat = abs(value.predictedEndTranslation.width);
+                        let dy: CGFloat = abs(value.predictedEndTranslation.height);
                         if ((dx > 150) && (dx > (dy * 1.5))) {
                             showSettingsView = true;
                         }
