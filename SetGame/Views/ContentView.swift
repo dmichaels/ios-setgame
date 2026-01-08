@@ -79,7 +79,15 @@ struct ContentView: View {
                     feedback.trigger(Feedback.NEW);
                 }
                 Button("Cancel", role: .cancel) { }
-            } // message: { Text("This start a new game .") }
+            }
+            .gesture(
+                DragGesture(minimumDistance: 20)
+                    .onEnded { value in
+                        if (value.translation.width < -80) {
+                            self.showSettingsView = true;
+                        }
+                    }
+            )
         }
         //
         // This line deals with larger system font sizes (like Kenna's).
