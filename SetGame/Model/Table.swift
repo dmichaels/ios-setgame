@@ -493,7 +493,6 @@ class Table<TC : TableCard> : ObservableObject {
     func addMoreCards(_ ncards: Int, plantSet: Bool? = nil) {
         guard (ncards > 0) && (self.deck.count > 0) else { return; }
         let plantSet: Bool = plantSet ?? self.settings.plantSet;
-        let newcomers: [TC] = [];
         if (plantSet && !self.containsSet() && (self.cards.count + min(self.deck.count, ncards)) >= 3) {
             //
             // If we want a SET planted, and only if there are not already any
