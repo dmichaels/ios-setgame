@@ -50,13 +50,15 @@ struct SettingsView: View {
                     Spacer()
                     Toggle(isOn: $settings.showPeekButton) {}
                 }
-                HStack {
-                    Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
-                    Text("Peek Disjoint ↑").lineLimit(1).layoutPriority(1)
-                        .foregroundStyle(settings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
-                    Spacer()
-                    Toggle(isOn: $settings.peekDisjoint) {}
-                }.disabled(!(settings.showSetsPresentCount || settings.showPeekButton))
+                if (false) {
+                    HStack {
+                        Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
+                        Text("Peek Disjoint ↑").lineLimit(1).layoutPriority(1)
+                            .foregroundStyle(settings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
+                        Spacer()
+                        Toggle(isOn: $settings.peekDisjoint) {}
+                    }.disabled(!(settings.showSetsPresentCount || settings.showPeekButton))
+                }
                 HStack {
                     Image(systemName: "timer").frame(width: iconWidth)
                     Text("Show Timer").lineLimit(1).layoutPriority(1)
@@ -81,11 +83,25 @@ struct SettingsView: View {
                     Spacer()
                     Toggle(isOn: $settings.plantSet) {}
                 }
-                HStack {
-                    Image(systemName: "arrow.up.left.square").frame(width: iconWidth)
-                    Text("Move SET Front").lineLimit(1).layoutPriority(1)
-                    Spacer()
-                    Toggle(isOn: $settings.moveSetFront) {}
+                if (false) {
+                    //
+                    // Questionable utility.
+                    //
+                    HStack {
+                        Image(systemName: "arrow.up.left.square").frame(width: iconWidth)
+                        Text("Move SET Front").lineLimit(1).layoutPriority(1)
+                        Spacer()
+                        Toggle(isOn: $settings.moveSetFront) {}
+                    }
+                }
+                if (true) {
+                    HStack {
+                        Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
+                        Text("Peek Disjoint").lineLimit(1).layoutPriority(1)
+                            .foregroundStyle(settings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
+                        Spacer()
+                        Toggle(isOn: $settings.peekDisjoint) {}
+                    }.disabled(!(settings.showSetsPresentCount || settings.showPeekButton))
                 }
                 HStack {
                     Image(systemName: "wand.and.rays").frame(width: iconWidth)
