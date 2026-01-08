@@ -80,13 +80,18 @@ struct ContentView: View {
                 }
                 Button("Cancel", role: .cancel) { }
             }
+            //
+            // Swipe-left for settings.
+            //
             .simultaneousGesture(
                 DragGesture(minimumDistance: 200)
                     .onEnded { value in
-                        let dx: CGFloat = abs(value.predictedEndTranslation.width);
-                        let dy: CGFloat = abs(value.predictedEndTranslation.height);
-                        if ((dx > 150) && (dx > (dy * 1.5))) {
-                            showSettingsView = true;
+                        let dx: CGFloat = value.predictedEndTranslation.width;
+                        if (dx < -150) {
+                            let dy: CGFloat = value.predictedEndTranslation.height;
+                            if (abs(dx) > (abs(dy) * 2)) {
+                                showSettingsView = true;
+                            }
                         }
                     }
             )
