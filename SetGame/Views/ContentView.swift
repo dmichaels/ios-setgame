@@ -80,11 +80,16 @@ struct ContentView: View {
                 }
                 Button("Cancel", role: .cancel) { }
             }
-            .gesture(
-                DragGesture(minimumDistance: 20)
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 200)
                     .onEnded { value in
-                        if (value.translation.width < -80) {
-                            self.showSettingsView = true;
+                        let dx = abs(value.predictedEndTranslation.width);
+                        let dy = abs(value.predictedEndTranslation.height);
+                        // guard dx > 150, dx > (dy * 1.5) else {
+                            // return
+                        // }
+                        if ((dx > 150) && (dx > (dy * 1.5))) {
+                            showSettingsView = true;
                         }
                     }
             )
