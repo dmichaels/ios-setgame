@@ -85,9 +85,6 @@ struct ContentView: View {
                     .onEnded { value in
                         let dx = abs(value.predictedEndTranslation.width);
                         let dy = abs(value.predictedEndTranslation.height);
-                        // guard dx > 150, dx > (dy * 1.5) else {
-                            // return
-                        // }
                         if ((dx > 150) && (dx > (dy * 1.5))) {
                             showSettingsView = true;
                         }
