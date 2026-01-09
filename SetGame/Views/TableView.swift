@@ -18,7 +18,13 @@ struct TableView: View {
                             let index = row * settings.cardsPerRow + column;
                             if (index < table.cards.count) {
                                 CardView(card: table.cards[index]) {
-                                    self.table.cardTouched($0, delay: 0.8) { cards, set, resolve in
+                                    //
+                                    // Note that this delay here on cardTouched is the  amount
+                                    // of time that the cards will remain visually highlighted
+                                    // when 3 cards are selected, before they either blink, because
+                                    // they form a SET; or before they shake, because they do not.
+                                    //
+                                    self.table.cardTouched($0, delay: 0.70) { cards, set, resolve in
                                         //
                                         // The given cards argument will always
                                         // be the list of cards now selected.

@@ -94,6 +94,12 @@ struct SettingsView: View {
                         Toggle(isOn: $settings.moveSetFront) {}
                     }
                 }
+                HStack {
+                    Image(systemName: "wand.and.rays").frame(width: iconWidth)
+                    Text("Plant Magic Square").lineLimit(1).layoutPriority(1)
+                    Spacer()
+                    Toggle(isOn: $settings.plantMagicSquare) {}
+                }
                 if (true) {
                     HStack {
                         Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
@@ -102,12 +108,6 @@ struct SettingsView: View {
                         Spacer()
                         Toggle(isOn: $settings.peekDisjoint) {}
                     }.disabled(!(settings.showSetsPresentCount || settings.showPeekButton))
-                }
-                HStack {
-                    Image(systemName: "wand.and.rays").frame(width: iconWidth)
-                    Text("Plant Magic Square").lineLimit(1).layoutPriority(1)
-                    Spacer()
-                    Toggle(isOn: $settings.plantMagicSquare) {}
                 }
             }
             Section(header: Text("Visual")) {
