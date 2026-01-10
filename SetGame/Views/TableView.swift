@@ -8,6 +8,11 @@ struct TableView: View {
 
     let statusResetToken: Int;
 
+    @State private var gcStatus: String = "—"
+    @State private var lastMessage: String = "—"
+    // @ObservedObject private var gc = GameCenterManager.shared
+    @StateObject private var gc = GameCenterManager.shared
+
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack {
@@ -74,7 +79,27 @@ struct TableView: View {
                                       cardsAskew: settings.cardsAskew)
                     }
                 }
+                /*
+            GameCenterButtonsView(
+                gc: gc,
+                onPlayWithFriends: {
+                    // you likely call your “invite friends” / matchmaking UI here
+                    print("Play with Friends tapped")
+                    GameCenterManager.shared.startMatchmaking(minPlayers: 2, maxPlayers: 4)
+                },
+                onSignIn: {
+                    // re-trigger auth flow
+                    // GameCenterManager.shared.authenticatePlayer()
+                    print("CALL SIGNIN")
+                    GameCenterManager.shared.signIn()
+                }
+            )
+            */
+            GameCenterButtonsView(gc: gc)
             }.padding().offset(y: -12)
+        .onAppear {
+            gc.refreshAuthState(tag: "onAppear")
+        }
         }
     }
 
@@ -110,5 +135,33 @@ struct TableView: View {
         }
 
         tick();
+    }
+}
+struct GameCenterButtonsView: View {
+    @ObservedObject var gc: GameCenterManager
+
+    var body: some View {
+        VStack(spacing: 10) {
+            Button("Sign In to Game Center") {
+                gc.signInUserInitiated()
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(gc.isAuthenticated)
+
+            HStack {
+                Text(gc.isAuthenticated ? "Signed in as:" : "Not signed in")
+                Spacer()
+                Text(gc.displayName).lineLimit(1)
+            }
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+        }
+        .alert("Game Center Sign-In", isPresented: $gc.showOpenSettingsAlert) {
+            Button("Open Settings") { gc.openSettings() }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("iOS didn’t present the Game Center sign-in dialog. Please sign in in Settings ▸ Game Center, then return to the app.\n\nLast error: \(gc.lastAuthError)")
+        }
+        .padding(.horizontal)
     }
 }

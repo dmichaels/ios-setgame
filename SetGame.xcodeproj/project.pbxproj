@@ -23,6 +23,8 @@
 		9811914A25ED5ACF0083606B /* TableCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811914025ED5ACF0083606B /* TableCard.swift */; };
 		9811914B25ED5ACF0083606B /* CardShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811914125ED5ACF0083606B /* CardShape.swift */; };
 		9811915125ED5D0E0083606B /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811915025ED5D0E0083606B /* CardView.swift */; };
+		981B004C2F113FCF00875920 /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981B004A2F113FCF00875920 /* GameCenterManager.swift */; };
+		981B004E2F11428900875920 /* UIApplication+TopMostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981B004D2F11428900875920 /* UIApplication+TopMostViewController.swift */; };
 		989D93692EE8B01D00BE461B /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D93682EE8B01D00BE461B /* Stats.swift */; };
 		989D936B2EEDABC600BE461B /* FoundSetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D936A2EEDABC600BE461B /* FoundSetsView.swift */; };
 		989D936F2EF21DEF00BE461B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D936E2EF21DEF00BE461B /* Settings.swift */; };
@@ -82,6 +84,9 @@
 		9811914025ED5ACF0083606B /* TableCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableCard.swift; sourceTree = "<group>"; };
 		9811914125ED5ACF0083606B /* CardShape.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardShape.swift; sourceTree = "<group>"; };
 		9811915025ED5D0E0083606B /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
+		981B00492F113ABF00875920 /* SetGame.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SetGame.entitlements; sourceTree = "<group>"; };
+		981B004A2F113FCF00875920 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
+		981B004D2F11428900875920 /* UIApplication+TopMostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+TopMostViewController.swift"; sourceTree = "<group>"; };
 		989D93682EE8B01D00BE461B /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		989D936A2EEDABC600BE461B /* FoundSetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundSetsView.swift; sourceTree = "<group>"; };
 		989D936E2EF21DEF00BE461B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -151,9 +156,11 @@
 		981190EE25ED59CC0083606B /* SetGame */ = {
 			isa = PBXGroup;
 			children = (
-				9811914F25ED5CFE0083606B /* Views */,
-				9811911D25ED5A0C0083606B /* Model */,
+				981B00492F113ABF00875920 /* SetGame.entitlements */,
 				981190EF25ED59CC0083606B /* SetGameApp.swift */,
+				9811911D25ED5A0C0083606B /* Model */,
+				981B004B2F113FCF00875920 /* Services */,
+				9811914F25ED5CFE0083606B /* Views */,
 				981190F325ED59CD0083606B /* Assets.xcassets */,
 				981190F825ED59CD0083606B /* Info.plist */,
 				981190F525ED59CD0083606B /* Preview Content */,
@@ -225,6 +232,15 @@
 				989FF92025F10BA7002AE44A /* TableView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		981B004B2F113FCF00875920 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				981B004D2F11428900875920 /* UIApplication+TopMostViewController.swift */,
+				981B004A2F113FCF00875920 /* GameCenterManager.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		98A5C74D2F09BBC7009E708D /* Resources */ = {
@@ -397,6 +413,7 @@
 				9811914925ED5ACF0083606B /* String.swift in Sources */,
 				98A5C7442F059B8C009E708D /* TableCardArray.swift in Sources */,
 				9811914425ED5ACF0083606B /* Card.swift in Sources */,
+				981B004C2F113FCF00875920 /* GameCenterManager.swift in Sources */,
 				989D93692EE8B01D00BE461B /* Stats.swift in Sources */,
 				9811914825ED5ACF0083606B /* CardNumber.swift in Sources */,
 				989D936B2EEDABC600BE461B /* FoundSetsView.swift in Sources */,
@@ -407,6 +424,7 @@
 				989FF92625F10F08002AE44A /* SettingsView.swift in Sources */,
 				9811915125ED5D0E0083606B /* CardView.swift in Sources */,
 				9811914325ED5ACF0083606B /* CardColor.swift in Sources */,
+				981B004E2F11428900875920 /* UIApplication+TopMostViewController.swift in Sources */,
 				9811914725ED5ACF0083606B /* Table.swift in Sources */,
 				9811914B25ED5ACF0083606B /* CardShape.swift in Sources */,
 				989D936F2EF21DEF00BE461B /* Settings.swift in Sources */,
@@ -579,6 +597,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = LogicardIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = SetGame/SetGame.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 54;
 				DEVELOPMENT_ASSET_PATHS = "\"SetGame/Preview Content\"";
@@ -609,6 +628,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = LogicardIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = SetGame/SetGame.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 54;
 				DEVELOPMENT_ASSET_PATHS = "\"SetGame/Preview Content\"";
