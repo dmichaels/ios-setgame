@@ -6,6 +6,8 @@ struct TableView: View {
     @EnvironmentObject var settings : Settings;
     @EnvironmentObject var feedback : Feedback;
 
+    @ObservedObject private var gameCenter = GameCenterManager.shared;
+
     let statusResetToken: Int;
 
     var body: some View {
@@ -24,7 +26,7 @@ struct TableView: View {
                                     // when 3 cards are selected, before they either blink, because
                                     // they form a SET; or before they shake, because they do not.
                                     //
-                                    self.table.cardTouched($0, delay: 0.70) { cards, set, resolve in
+                                    self.table.cardTouched($0, delay: 0.75) { cards, set, resolve in
                                         //
                                         // The given cards argument will always
                                         // be the list of cards now selected.
@@ -73,6 +75,8 @@ struct TableView: View {
                         FoundSetsView(setsLastFound: table.state.setsLastFound,
                                       cardsAskew: settings.cardsAskew)
                     }
+                    PlayButtonView(gc: gameCenter)
+                        .padding(.horizontal)
                 }
             }.padding().offset(y: -12)
         }

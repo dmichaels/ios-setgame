@@ -21,6 +21,9 @@ struct SetGameApp: App {
                 .environmentObject(self.table)
                 .environmentObject(self.settings)
                 .environmentObject(self.feedback)
+                // .task {
+                //     await GameCenterAuthentication.authenticate()
+                // }
         }
     }
 }
