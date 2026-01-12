@@ -9,7 +9,7 @@ public struct CardView : View {
     // be here otherwise when the Settings.alternateCards property is
     // changed it won't update immediately in the FoundSetsView.
     //
-    @EnvironmentObject var settings: Settings;
+    // @EnvironmentObject var settings: Settings;
     @State private var shakeToken: CGFloat = 0;
     var cardTouchedCallback : ((TableCard) -> Void)?;
     var alternate : Int?
@@ -94,7 +94,6 @@ public struct CardView : View {
         // - See ios-setgame/etc/alternate_cards/alternate_cards_no_colors.py
         //
         let alternateCards: Int = self.alternate ?? self.table.settings.alternateCards;
-        // switch self.table.settings.alternateCards {
         switch alternateCards {
             case 0:  return card.codename;
             case 1:  return "ALTD_\(card.codename)";
@@ -127,16 +126,6 @@ private struct ShakeEffect: GeometryEffect {
             .rotated(by: a * (.pi / 180))
             .translatedBy(x: -size.width/2, y: -size.height/2)
         return ProjectionTransform(t)
-    }
-}
-
-private struct HorizontalShakeEffect: GeometryEffect {
-    var amplitude: CGFloat = 10      // points left/right
-    var shakesPerUnit: CGFloat = 8   // how many oscillations
-    var animatableData: CGFloat      // drive this from a changing value
-    func effectValue(size: CGSize) -> ProjectionTransform {
-        let translation = amplitude * sin(animatableData * .pi * 2 * shakesPerUnit)
-        return ProjectionTransform(CGAffineTransform(translationX: translation, y: 0))
     }
 }
 

@@ -613,7 +613,7 @@ class Table<TC : TableCard> : ObservableObject {
                 for card in set {
                     self.cardTouched(card, select: false, delay: 0.5) { cards, set, resolve in
                         if let set: Bool = set, set {
-                            TableView.blinkCards(cards, times: 5) {
+                            TableCardEffects.blinkCards(cards, times: 5) {
                                 resolve();
                             }
                         }
