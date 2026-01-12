@@ -8,6 +8,7 @@ struct FoundSetsView: View {
     let cardsAskew: Bool;
 
     @State var showHelpButton: Bool = false;
+    @State var xyzzynew: Bool = true;
 
     var body: some View {
         let rows: [[TableCard]] = pairCardsListForDisplay(setsLastFound.reversed());
@@ -31,8 +32,16 @@ struct FoundSetsView: View {
                     ForEach(row.indices, id: \.self) { j in
                         let card: TableCard = row[j];
                         if (j == 3) { separator(visible: true) }
-                        CardView(card: card)
-                            .slightlyRotated(cardsAskew)
+                        /*
+                        CardUI(card: card,
+                               new: true,
+                               askew: settings.cardsAskew,
+                               alternate: settings.alternateCards)
+                        */
+                        CardUI(card: card,
+                               new: xyzzynew,
+                               askew: settings.cardsAskew,
+                               alternate: 2 /*settings.alternateCards*/)
                         if ((j == 2) && (row.count == 3)) { separator(visible: false) }
                     }
                     if (row.count == 3) {
@@ -50,6 +59,12 @@ struct FoundSetsView: View {
                 if (setsLastFound.count == 3){
                     TableCardEffects.blinkCards(Array(setsLastFound.prefix(3)), times: 2)
                 }
+                print("xyzzy: \(xyzzynew)")
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                print("xyzzy-set-false: \(xyzzynew)")
+                                xyzzynew = false
+                print("xyzzy-set-false-done: \(xyzzynew)")
+                            }
             }
         }
     }

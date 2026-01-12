@@ -47,6 +47,7 @@
 		98A5C74F2F09BBF6009E708D /* Help.md in Resources */ = {isa = PBXBuildFile; fileRef = 98A5C74E2F09BBF6009E708D /* Help.md */; };
 		98C2CA8225F3C1E40050ACDC /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2CA8125F3C1E40050ACDC /* StatsView.swift */; };
 		98E4E3232773B0AC000EEC5A /* SetGame.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98E4E3222773B0AC000EEC5A /* SetGame.xcassets */; };
+		98EF7E0A2F1534D700A45F63 /* CardUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E092F1534D700A45F63 /* CardUI.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,6 +115,7 @@
 		98A5C74E2F09BBF6009E708D /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Help.md; sourceTree = "<group>"; };
 		98C2CA8125F3C1E40050ACDC /* StatsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		98E4E3222773B0AC000EEC5A /* SetGame.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SetGame.xcassets; sourceTree = "<group>"; };
+		98EF7E092F1534D700A45F63 /* CardUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardUI.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -232,6 +234,7 @@
 		9811914F25ED5CFE0083606B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				98EF7E092F1534D700A45F63 /* CardUI.swift */,
 				98A5C74A2F098D02009E708D /* HelpView.swift */,
 				9811915025ED5D0E0083606B /* CardView.swift */,
 				981190F125ED59CC0083606B /* ContentView.swift */,
@@ -437,6 +440,7 @@
 				98A5C7442F059B8C009E708D /* TableCardArray.swift in Sources */,
 				9811914425ED5ACF0083606B /* Card.swift in Sources */,
 				989D93692EE8B01D00BE461B /* Stats.swift in Sources */,
+				98EF7E0A2F1534D700A45F63 /* CardUI.swift in Sources */,
 				9811914825ED5ACF0083606B /* CardNumber.swift in Sources */,
 				989D936B2EEDABC600BE461B /* FoundSetsView.swift in Sources */,
 				9811914525ED5ACF0083606B /* CardFilling.swift in Sources */,
