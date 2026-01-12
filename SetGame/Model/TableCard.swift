@@ -7,6 +7,7 @@ class TableCard : Card, ObservableObject {
 
     @Published var selected: Bool = false;
     @Published var set: Bool      = false;
+    @Published var new: Bool      = false; // xyzzy/experiment
     //
     // These blinking/blinkout properties are used ONLY for blinking the 3 cards when a
     // SET is found; the blinking property means that we are in the processing of doing

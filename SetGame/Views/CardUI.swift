@@ -2,15 +2,38 @@ import SwiftUI
 
 public struct CardUI : View {
     
-    @ObservedObject var card : TableCard;
-                    var new: Bool                                    = false;
-                    var nonset: Bool                                 = false;
-                    var nonsetNonce: Int                             = 0;
-                    var askew: Bool                                  = false;
-                    var alternate: Int?                              = nil;
-                    var cardTouchedCallback : ((TableCard) -> Void)? = nil;
+    @ObservedObject var card: TableCard;
+                    var new: Bool                                   = false;
+                    var nonset: Bool                                = false;
+                    var nonsetNonce: Int                            = 0;
+                    var askew: Bool                                 = false;
+                    var alternate: Int?                             = nil;
+                    var cardTouchedCallback: ((TableCard) -> Void)? = nil;
 
-    @State private var shakeToken: CGFloat = 0;
+    @State private var fadeInActive: Bool;
+    @State private var fadeInDone: Bool;
+    @State private var shakeToken: CGFloat;
+
+    init(card: TableCard,
+                new: Bool = false,
+                nonset: Bool = false,
+                nonsetNonce: Int = 0,
+                askew: Bool = false,
+                alternate: Int? = nil,
+                cardTouchedCallback: ((TableCard) -> Void)? = nil) {
+
+        self.card = card;
+        self.new = new;
+        self.nonset = nonset;
+        self.nonsetNonce = nonsetNonce;
+        self.askew = askew;
+        self.alternate = alternate;
+        self.cardTouchedCallback = cardTouchedCallback;
+
+        self.fadeInActive = new;
+        self.fadeInDone = false;
+        self.shakeToken = 0;
+    }
 
     public var body: some View {
         VStack {
@@ -25,7 +48,8 @@ public struct CardUI : View {
                     // whole card including the border to blink in/out on SET.
                     // Not sure which is better visually; just FYI.
                     //
-                    .opacity(new || card.blinkout ? 0.0 : 1.0)
+                    // xyzzy .opacity(new || card.blinkout ? 0.0 : 1.0)
+                    .opacity(fadeInActive || card.blinkout ? 0.0 : 1.0)
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
@@ -61,11 +85,13 @@ public struct CardUI : View {
                     // Optional: Also ensure blinkout toggles don’t animate (belt+suspenders).
                     //
                     .animation(nil, value: card.blinkout)
-                    .scaleEffect(new ? 0.05 : 1.0, anchor: .center)
+                    // xyzzy .scaleEffect(new ? 0.05 : 1.0, anchor: .center)
+                    .scaleEffect(fadeInActive ? 0.05 : 1.0, anchor: .center)
                     //
                     // See comment above about the placement of this .opacity qualifier.
                     //
-                    .opacity(new || card.blinkout ? 0.0 : 1.0)
+                    // xyzzy .opacity(new || card.blinkout ? 0.0 : 1.0)
+                    .opacity(fadeInActive || card.blinkout ? 0.0 : 1.0)
                     //
                     // Animation for newly added cards.
                     // - The response argument to the .spring qualifier
@@ -75,11 +101,24 @@ public struct CardUI : View {
                     //   qualifier controls how flexible/slopping the bounce is;
                     //   lower is bouncier and sloppier; higher is stiffer.
                     //
-                    .animation(.spring(response: 0.70, dampingFraction: 0.40), value: new)
+                    // .animation(.spring(response: 0.70, dampingFraction: 0.40), value: new)
+                    .animation(.spring(response: 0.70, dampingFraction: 0.40), value: fadeInActive)
             }
             .skew(askew)
+            .onAppear {
+                // fadeInActive = new;
+                // if (new && !fadeInDone) {
+                if (fadeInActive && !fadeInDone) {
+                    fadeInDone = true;
+                    fadeInActive = true;
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        fadeInActive = false;
+                    }
+                }
+            }
         }
     }
+    
 
     private func image(_ card: TableCard, _ alternate: Int? = nil) -> String {
         //
