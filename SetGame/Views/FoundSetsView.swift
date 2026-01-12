@@ -60,7 +60,7 @@ struct FoundSetsView: View {
                     TableCardEffects.blinkCards(Array(setsLastFound.prefix(3)), times: 2)
                 }
                 print("xyzzy: \(xyzzynew)")
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 print("xyzzy-set-false: \(xyzzynew)")
                                 xyzzynew = false
                 print("xyzzy-set-false-done: \(xyzzynew)")
