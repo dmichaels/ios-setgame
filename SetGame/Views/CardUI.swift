@@ -107,7 +107,7 @@ public struct CardUI : View {
             .skew(askew)
             .onAppear {
                 // fadeInActive = new;
-                // if (new && !fadeInDone) {
+                // if (new && !fadeInDone) 
                 if (fadeInActive && !fadeInDone) {
                     fadeInDone = true;
                     fadeInActive = true;
@@ -116,6 +116,9 @@ public struct CardUI : View {
                     }
                 }
             }
+        }
+        .onChange(of: card.new) { _ in
+            print("CARDUI-ONCHANGE-CARD-NEW")
         }
     }
     

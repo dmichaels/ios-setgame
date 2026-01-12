@@ -25,6 +25,16 @@ struct FoundSetsView: View {
             }
         }
         Spacer()
+
+        Button(action: {
+            print("BUTTON-A")
+            if ((setsLastFound.count > 0) && (setsLastFound[0].count > 0)) {
+            print("BUTTON-B")
+                setsLastFound[0][0].new = true
+                setsLastFound[0][0].new = false
+            }
+        }) { Text("HELLO") }
+
         VStack(alignment: .leading, spacing: 8) {
             ForEach(rows.indices, id: \.self) { i in
                 let row: [TableCard] = rows[i];
@@ -40,7 +50,7 @@ struct FoundSetsView: View {
                         */
                         CardUI(card: card,
                                // xyzzy new: xyzzynew,
-                               new: false,
+                               new: true,
                                askew: settings.cardsAskew,
                                alternate: 2 /*settings.alternateCards*/)
                         if ((j == 2) && (row.count == 3)) { separator(visible: false) }
