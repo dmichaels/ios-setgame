@@ -112,7 +112,13 @@ private struct TestView: View {
         VStack {
             HStack {
                 ForEach(cards.indices, id: \.self) { i in
-                    CardUI(cards[i], materialize: true, alternate: settings.alternateCards).frame(width: 100)
+                    CardUI(
+                        cards[i],
+                        // materialize: true,
+                        materialize: i == 0 || i == 2 ,
+                        alternate: settings.alternateCards
+                    )
+                    .frame(width: 100)
                 }
             }
             HStack {
