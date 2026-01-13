@@ -113,7 +113,7 @@ public struct CardUI : View {
                     //
                     // .animation(.spring(response: 0.70, dampingFraction: 0.40), value: materializing)
                     .animation(
-                        .spring(response: self.materializeSpeed, dampingFraction: self.materializeElasticity),
+                        .spring(response: card.materializeSpeed, dampingFraction: card.materializeElasticity),
                          value: materializing
                     )
             }
@@ -131,6 +131,7 @@ public struct CardUI : View {
         }
         .onChange(of: card.materializing) { value in
             if (value) {
+                print("card-ui-on-change-materializing> materializing: \(materializing) materialized: \(materialized) speed: \(card.materializeSpeed) elast: \(card.materializeElasticity)")
                 self.materializing = true;
                 DispatchQueue.main.asyncAfter(deadline: .now() + self.materializeDelay) {
                     self.materializing = false;

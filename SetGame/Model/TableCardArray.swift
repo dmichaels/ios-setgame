@@ -56,9 +56,9 @@ extension Array where Element : TableCard
         }
     }
 
-    func materialize() {
+    func materialize(speed: Double = 0, elasticity: Double = 0) {
         for card in self {
-            card.materialize();
+            card.materialize(speed: speed, elasticity: elasticity);
         }
     }
 }

@@ -107,7 +107,7 @@ private struct DummyCardView: View {
 
 private struct TestView: View {
     @EnvironmentObject var settings : Settings;
-    let cards: [TableCard] = [ TableCard("1RHO")!, TableCard("2GSD")!, TableCard("3PTQ")!]
+    @State var cards: [TableCard] = [ TableCard("1RHO")!, TableCard("2GSD")!, TableCard("3PTQ")!]
     public var body: some View {
         VStack {
             HStack {
@@ -123,21 +123,24 @@ private struct TestView: View {
             }
             HStack {
                 Button {
+                    print("button-select> selected: \(cards[0].selected) \(cards[1].selected) \(cards[2].selected)")
                     cards.select(toggle: true);
                 } label: { Text("Select") }.buttonStyle(.borderedProminent)
 
                 Button {
-                    cards.blink(count: 4, interval: 0.1) {
+                    cards.blink(count: 5, interval: 0.15) {
                         print("CARD BLINKING DONE!")
                     }
                 } label: { Text("Blink") }.buttonStyle(.borderedProminent)
 
                 Button {
-                    cards.materialize();
+                    cards.materialize(speed: 0.9);
                 } label: { Text("Materialize") }.buttonStyle(.borderedProminent)
 
                 Button {
+                    print("button-shake-a> shaking: \(cards[0].shaking) \(cards[1].shaking) \(cards[2].shaking)")
                     cards.shake();
+                    print("button-shake-b> shaking: \(cards[0].shaking) \(cards[1].shaking) \(cards[2].shaking)")
                 } label: { Text("Shake") }.buttonStyle(.borderedProminent)
             }
         }

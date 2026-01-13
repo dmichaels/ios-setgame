@@ -10,11 +10,12 @@ class TableCard : Card, ObservableObject {
         fileprivate static let blinkInterval: Double = 0.12;
         fileprivate static let shakeCount: Int = 9;
         fileprivate static let shakeSpeed: Double = 0.55;
+        fileprivate static let materializeSpeed: Double = 0.70;
+        fileprivate static let materializeElasticity: Double = 0.40;
     }
 
-    @Published var set: Bool           = false;
-    @Published var selected: Bool      = false;
-    @Published var materializing: Bool = false;
+    @Published var set: Bool                     = false;
+    @Published var selected: Bool                = false;
     //
     // These blinking/blinkoff properties are used ONLY for blinking the 3 cards when a
     // SET is found; the blinking property means that we are in the processing of doing
@@ -28,8 +29,11 @@ class TableCard : Card, ObservableObject {
                var blinkoffInterval: Double         = 0;
                var blinkDoneCallback: (() -> Void)? = nil;
     @Published var shaking: Bool                    = false;
-    @Published var shakeCount: Int                  = Defaults.shakeCount;
-    @Published var shakeSpeed: Double               = Defaults.shakeSpeed;
+               var shakeCount: Int                  = Defaults.shakeCount;
+               var shakeSpeed: Double               = Defaults.shakeSpeed;
+    @Published var materializing: Bool              = false;
+               var materializeSpeed: Double         = Defaults.materializeSpeed;
+               var materializeElasticity: Double    = Defaults.materializeElasticity;
 
     required init() {
         super.init(color: .random, shape: .random, filling: .random, number: .random);
@@ -105,7 +109,9 @@ class TableCard : Card, ObservableObject {
         self.shaking = true;
     }
 
-    public func materialize() {
+    public func materialize(speed: Double = 0, elasticity: Double = 0) {
+        self.materializeSpeed = speed > 0 ? speed : Defaults.materializeSpeed;
+        self.materializeElasticity = elasticity > 0 ? elasticity : Defaults.materializeElasticity;
         self.materializing = true;
     }
 }
