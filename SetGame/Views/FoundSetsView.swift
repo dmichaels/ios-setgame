@@ -107,26 +107,28 @@ private struct DummyCardView: View {
 
 private struct TestView: View {
     @EnvironmentObject var settings : Settings;
-    let cardA: TableCard = TableCard("1RHO")!
-    let cardB: TableCard = TableCard("2GSD")!
-    let cardC: TableCard = TableCard("3PTQ")!
+    let cards: [TableCard] = [ TableCard("1RHO")!, TableCard("2GSD")!, TableCard("3PTQ")!]
     public var body: some View {
         VStack {
             HStack {
-                CardUI(cardA, fadein: true, alternate: settings.alternateCards).frame(width: 100)
-                CardUI(cardC, fadein: false, alternate: settings.alternateCards).frame(width: 100)
-                CardUI(cardB, fadein: true, alternate: settings.alternateCards).frame(width: 100)
+                ForEach(cards.indices, id: \.self) { i in
+                    CardUI(cards[i], fadein: true, alternate: settings.alternateCards).frame(width: 100)
+                }
             }
+
             Button {
-                cardA.fadein();
-                cardB.fadein();
-                cardC.fadein();
+                cards.fadein();
             } label: { Text("Fade In") }.buttonStyle(.borderedProminent)
+
             Button {
-                [cardA, cardB, cardC].blink(interval: 0.2) {
+                cards.blink(interval: 0.12) {
                     print("CARD BLINKING DONE!")
                 }
             } label: { Text("Blink") }.buttonStyle(.borderedProminent)
+
+            Button {
+                cards.select(toggle: true);
+            } label: { Text("Select") }.buttonStyle(.borderedProminent)
         }
     }
 }

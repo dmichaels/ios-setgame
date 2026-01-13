@@ -43,4 +43,16 @@ extension Array where Element : TableCard
             card.blink(interval: interval, intervalOff, blinkDone);
         }
     }
+
+    func fadein() {
+        for card in self {
+            card.fadein();
+        }
+    }
+
+    func select(_ value: Bool? = nil, toggle: Bool? = nil) {
+        for card in self {
+            card.select(value, toggle: toggle);
+        }
+    }
 }

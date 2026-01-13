@@ -20,13 +20,6 @@ class TableCard : Card, ObservableObject {
                var blinkoffInterval: Double         = 0.1;
                var blinkDoneCallback: (() -> Void)? = nil;
 
-    func blink(interval: Double = 0.2, _ intervalOff: Double = 0.0, _ blinkDoneCallback: (() -> Void)? = nil) {
-        self.blinkInterval = interval > 0.0 ? interval : 0.01;
-        self.blinkoffInterval = intervalOff > 0.0 ? intervalOff : self.blinkInterval;
-        self.blinkDoneCallback = blinkDoneCallback;
-        self.blinking = true;
-    }
-
     required init() {
         super.init(color: .random, shape: .random, filling: .random, number: .random);
     }
@@ -73,5 +66,26 @@ class TableCard : Card, ObservableObject {
 
     public func fadein() {
         self.new = true;
+    }
+
+    public func blink(interval: Double = 0.2, _ intervalOff: Double = 0.0, _ blinkDoneCallback: (() -> Void)? = nil) {
+        self.blinkInterval = interval > 0.0 ? interval : 0.01;
+        self.blinkoffInterval = intervalOff > 0.0 ? intervalOff : self.blinkInterval;
+        self.blinkDoneCallback = blinkDoneCallback;
+        self.blinking = true;
+    }
+
+    public func select(_ value: Bool? = nil, toggle: Bool? = nil) {
+        if let value = value {
+            self.selected = value;
+        }
+        else if let toggle = toggle {
+            if (toggle) {
+                self.selected.toggle();
+            }
+        }
+        else {
+            self.selected = true;
+        }
     }
 }
