@@ -108,7 +108,9 @@ public struct CardUI : View {
             .onAppear {
                 // fadeInActive = new;
                 // if (new && !fadeInDone) 
+                print("CARD-UI-ONAPPEAR")
                 if (fadeInActive && !fadeInDone) {
+                    print("CARD-UI-ONAPPEAR: fadeInActive && !fadeInDone")
                     fadeInDone = true;
                     fadeInActive = true;
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -117,8 +119,22 @@ public struct CardUI : View {
                 }
             }
         }
-        .onChange(of: card.new) { _ in
-            print("CARDUI-ONCHANGE-CARD-NEW")
+        .onChange(of: card.new) { value in
+            if (value) {
+                print("CARDUI-ONCHANGE-CARD-NEW> value is now TRUE")
+                fadeInActive = true;
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    print("CARDUI-ONCHANGE-CARD-NEW> value is now TRUE -> IN DISPATCH BEGIN")
+                    fadeInActive = false;
+                    card.new = false;
+                    print("CARDUI-ONCHANGE-CARD-NEW> value is now TRUE -> IN DISPATCH END")
+                }
+                // card.new = false;
+                print("CARDUI-ONCHANGE-CARD-NEW> value is now TRUE -> DONE")
+            }
+            else {
+                print("CARDUI-ONCHANGE-CARD-NEW> value is now FALSE")
+            }
         }
     }
     

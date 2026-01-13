@@ -27,11 +27,17 @@ struct FoundSetsView: View {
         Spacer()
 
         Button(action: {
-            print("BUTTON-A")
             if ((setsLastFound.count > 0) && (setsLastFound[0].count > 0)) {
-            print("BUTTON-B")
-                setsLastFound[0][0].new = true
-                setsLastFound[0][0].new = false
+                print("BUTTON")
+                // setsLastFound[0][0].new = true
+                setsLastFound[0][0].fadein();
+                /*
+                for cards in setsLastFound {
+                    for card in cards {
+                        card.new = true
+                    }
+                }
+                */
             }
         }) { Text("HELLO") }
 

@@ -60,4 +60,8 @@ class TableCard : Card, ObservableObject {
     public func nonset(on table: Table<TableCard>) -> Bool {
         return table.state.nonset.contains(self.id);
     }
+
+    public func fadein() {
+        self.new = true;
+    }
 }
