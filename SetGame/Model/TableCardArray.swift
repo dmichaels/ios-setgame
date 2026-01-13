@@ -30,7 +30,7 @@ extension Array where Element : TableCard
         }
     }
 
-    func blink(interval: Double = 0.2, _ intervalOff: Double = 0.0, _ blinkDoneCallback: (() -> Void)? = nil)  {
+    func blink(count: Int = 0, interval: Double = 0.2, _ intervalOff: Double = 0.0, _ blinkDoneCallback: (() -> Void)? = nil)  {
         let ncards: Int = self.count;
         var ndone: Int = 0;
         func blinkDone() {
@@ -40,7 +40,7 @@ extension Array where Element : TableCard
             }
         }
         for card in self {
-            card.blink(interval: interval, intervalOff, blinkDone);
+            card.blink(count: count, interval: interval, intervalOff, blinkDone);
         }
     }
 

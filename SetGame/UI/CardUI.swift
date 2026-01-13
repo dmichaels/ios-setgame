@@ -150,7 +150,7 @@ public struct CardUI : View {
         }
         .onChange(of: card.blinking) { value in
             if (value) {
-                var nblinks: Int = 8;
+                var nblinks: Int = card.blinkCount;
                 var niterations: Int = nblinks * 2;
                 print("BLINK: \(card.blinkInterval) \(card.blinkoffInterval)")
                 func blink() {

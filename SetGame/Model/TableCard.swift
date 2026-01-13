@@ -14,10 +14,16 @@ class TableCard : Card, ObservableObject {
     // the 3-card blinking; the blinkoff property means we are either blinked off (when
     // blinkoff is true) or on (when blinkoff is false) at any one moment; see CardView.
     //
+    private struct Defaults {
+        fileprivate static let blinkCount: Int = 3;
+        fileprivate static let blinkInterval: Double = 0.12;
+        fileprivate static let blinkoffInterval: Double = 0.12;
+    }
     @Published var blinking: Bool                   = false;
     @Published var blinkoff: Bool                   = false;
-               var blinkInterval: Double            = 0.9;
-               var blinkoffInterval: Double         = 0.1;
+               var blinkCount: Int                  = Defaults.blinkCount;
+               var blinkInterval: Double            = Defaults.blinkInterval;
+               var blinkoffInterval: Double         = Defaults.blinkoffInterval;
                var blinkDoneCallback: (() -> Void)? = nil;
 
     required init() {
@@ -68,8 +74,9 @@ class TableCard : Card, ObservableObject {
         self.new = true;
     }
 
-    public func blink(interval: Double = 0.2, _ intervalOff: Double = 0.0, _ blinkDoneCallback: (() -> Void)? = nil) {
-        self.blinkInterval = interval > 0.0 ? interval : 0.01;
+    public func blink(count: Int = 0, interval: Double = 0.2, _ intervalOff: Double = 0.0, _ blinkDoneCallback: (() -> Void)? = nil) {
+        self.blinkCount = count > 0 ? count : Defaults.blinkCount;
+        self.blinkInterval = interval > 0.0 ? interval : Defaults.blinkInterval;
         self.blinkoffInterval = intervalOff > 0.0 ? intervalOff : self.blinkInterval;
         self.blinkDoneCallback = blinkDoneCallback;
         self.blinking = true;
