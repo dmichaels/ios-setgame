@@ -50,9 +50,15 @@ extension Array where Element : TableCard
         }
     }
 
-    func fadein() {
+    func shake() {
         for card in self {
-            card.fadein();
+            card.shake();
+        }
+    }
+
+    func materialize() {
+        for card in self {
+            card.materialize();
         }
     }
 }

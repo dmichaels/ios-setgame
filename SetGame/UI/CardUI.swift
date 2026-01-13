@@ -3,19 +3,19 @@ import SwiftUI
 public struct CardUI : View {
     
     @ObservedObject var card: TableCard;
-                    var fadein: Bool                                   = false;
+                    var materialize: Bool                                   = false;
                     var nonset: Bool                                = false;
                     var nonsetNonce: Int                            = 0;
                     var askew: Bool                                 = false;
                     var alternate: Int?                             = nil;
                     var touchedCallback: ((TableCard) -> Void)? = nil;
 
-    @State private var fadeInActive: Bool;
-    @State private var fadeInDone: Bool;
+    @State private var materializing: Bool;
+    @State private var materialized: Bool;
     @State private var shakeToken: CGFloat;
 
     init(_ card: TableCard,
-         fadein: Bool = false,
+         materialize: Bool = false,
          nonset: Bool = false,
          nonsetNonce: Int = 0,
          askew: Bool = false,
@@ -23,20 +23,20 @@ public struct CardUI : View {
          _ touchedCallback: ((TableCard) -> Void)? = nil) {
 
         self.card = card;
-        self.fadein = fadein;
+        self.materialize = materialize;
         self.nonset = nonset;
         self.nonsetNonce = nonsetNonce;
         self.askew = askew;
         self.alternate = alternate;
         self.touchedCallback = touchedCallback;
 
-        self.fadeInActive = fadein;
-        self.fadeInDone = false;
+        self.materializing = materialize;
+        self.materialized = false;
         self.shakeToken = 0;
     }
 
     init(_ card: String,
-         fadein: Bool = false,
+         materialize: Bool = false,
          nonset: Bool = false,
          nonsetNonce: Int = 0,
          askew: Bool = false,
@@ -44,7 +44,7 @@ public struct CardUI : View {
          _ touchedCallback: ((TableCard) -> Void)? = nil) {
 
         self.init(TableCard(card) ?? TableCard("DUMMY")!,
-                  fadein: fadein,
+                  materialize: materialize,
                   nonset: nonset,
                   nonsetNonce: nonsetNonce,
                   askew: askew,
@@ -65,8 +65,8 @@ public struct CardUI : View {
                     // whole card including the border to blink in/out on SET.
                     // Not sure which is better visually; just FYI.
                     //
-                    // xyzzy .opacity(fadein || card.blinkoff ? 0.0 : 1.0)
-                    .opacity(fadeInActive || card.blinkoff ? 0.0 : 1.0)
+                    // xyzzy .opacity(materialize || card.blinkoff ? 0.0 : 1.0)
+                    .opacity(materializing || card.blinkoff ? 0.0 : 1.0)
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
@@ -104,13 +104,12 @@ public struct CardUI : View {
                     // Optional: Also ensure blinkoff toggles don’t animate (belt+suspenders).
                     //
                     .animation(nil, value: card.blinkoff)
-                    // xyzzy .scaleEffect(nefadein ? 0.05 : 1.0, anchor: .center)
-                    .scaleEffect(fadeInActive ? 0.05 : 1.0, anchor: .center)
+                    .scaleEffect(materializing ? 0.05 : 1.0, anchor: .center)
                     //
                     // See comment above about the placement of this .opacity qualifier.
                     //
-                    // xyzzy .opacity(fadein || card.blinkoff ? 0.0 : 1.0)
-                    .opacity(fadeInActive || card.blinkoff ? 0.0 : 1.0)
+                    // xyzzy .opacity(materialize || card.blinkoff ? 0.0 : 1.0)
+                    .opacity(materializing || card.blinkoff ? 0.0 : 1.0)
                     //
                     // Animation for newly added cards.
                     // - The response argument to the .spring qualifier
@@ -120,27 +119,27 @@ public struct CardUI : View {
                     //   qualifier controls how flexible/slopping the bounce is;
                     //   lower is bouncier and sloppier; higher is stiffer.
                     //
-                    // .animation(.spring(response: 0.70, dampingFraction: 0.40), value: fadein)
-                    .animation(.spring(response: 0.70, dampingFraction: 0.40), value: fadeInActive)
+                    // .animation(.spring(response: 0.70, dampingFraction: 0.40), value: materialize)
+                    .animation(.spring(response: 0.70, dampingFraction: 0.40), value: materializing)
             }
             .skew(askew)
             .onAppear {
-                // fadeInActive = fadein;
-                // if (fadein && !fadeInDone) 
-                if (fadeInActive && !fadeInDone) {
-                    fadeInDone = true;
-                    fadeInActive = true;
+                // materializing = materialize;
+                // if (materialize && !materialized) 
+                if (materializing && !materialized) {
+                    materialized = true;
+                    materializing = true;
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        fadeInActive = false;
+                        materializing = false;
                     }
                 }
             }
         }
         .onChange(of: card.materializing) { value in
             if (value) {
-                fadeInActive = true;
+                materializing = true;
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    fadeInActive = false;
+                    materializing = false;
                     card.materializing = false;
                 }
                 // card.materializing = false;
@@ -152,7 +151,6 @@ public struct CardUI : View {
             if (value) {
                 var nblinks: Int = card.blinkCount;
                 var niterations: Int = nblinks * 2;
-                print("BLINK: \(card.blinkInterval) \(card.blinkoffInterval)")
                 func blink() {
                     niterations -= 1 ; if (niterations <= 0) {
                         card.blinkoff = false;
@@ -179,12 +177,6 @@ public struct CardUI : View {
                 }
                 blink();
 
-/*
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    card.blinkoff = false;
-                    card.blinking = false;
-                }
-*/
             }
         }
     }
@@ -218,24 +210,6 @@ private struct ShakeEffect: GeometryEffect {
             .rotated(by: a * (.pi / 180))
             .translatedBy(x: -size.width/2, y: -size.height/2)
         return ProjectionTransform(t)
-    }
-}
-
-private struct FadeInOnAppear: ViewModifier {
-    let enabled: Bool
-    let delay: Double
-    @State private var active = false
-    func body(content: Content) -> some View {
-        content
-            .scaleEffect(active ? 0.05 : 1.0)
-            .animation(.spring(response: 0.7, dampingFraction: 0.4), value: active)
-            .onAppear {
-                guard enabled else { return }
-                active = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                    active = false
-                }
-            }
     }
 }
 

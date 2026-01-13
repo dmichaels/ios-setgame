@@ -35,13 +35,13 @@ struct FoundSetsView: View {
                         if (j == 3) { separator(visible: true) }
                         /*
                         CardUI(card: card,
-                               fadein: true,
+                               materialize: true,
                                askew: settings.cardsAskew,
                                alternate: settings.alternateCards)
                         */
                         CardUI(card,
                                // xyzzy new: xyzzynew,
-                               fadein: true,
+                               materialize: true,
                                askew: settings.cardsAskew,
                                alternate: 2 /*settings.alternateCards*/)
                         if ((j == 2) && (row.count == 3)) { separator(visible: false) }
@@ -112,12 +112,12 @@ private struct TestView: View {
         VStack {
             HStack {
                 ForEach(cards.indices, id: \.self) { i in
-                    CardUI(cards[i], fadein: true, alternate: settings.alternateCards).frame(width: 100)
+                    CardUI(cards[i], materialize: true, alternate: settings.alternateCards).frame(width: 100)
                 }
             }
 
             Button {
-                cards.fadein();
+                cards.materialize();
             } label: { Text("Fade In") }.buttonStyle(.borderedProminent)
 
             Button {

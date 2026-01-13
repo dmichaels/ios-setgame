@@ -5,20 +5,21 @@ import SwiftUI
 ///
 class TableCard : Card, ObservableObject {
 
-    @Published var selected: Bool = false;
-    @Published var set: Bool      = false;
-    @Published var materializing: Bool      = false; // xyzzy/experiment
+    private struct Defaults {
+        fileprivate static let blinkCount: Int = 3;
+        fileprivate static let blinkInterval: Double = 0.12;
+        fileprivate static let blinkoffInterval: Double = 0.12;
+    }
+
+    @Published var selected: Bool      = false;
+    @Published var set: Bool           = false;
+    @Published var materializing: Bool = false;
     //
     // These blinking/blinkoff properties are used ONLY for blinking the 3 cards when a
     // SET is found; the blinking property means that we are in the processing of doing
     // the 3-card blinking; the blinkoff property means we are either blinked off (when
     // blinkoff is true) or on (when blinkoff is false) at any one moment; see CardView.
     //
-    private struct Defaults {
-        fileprivate static let blinkCount: Int = 3;
-        fileprivate static let blinkInterval: Double = 0.12;
-        fileprivate static let blinkoffInterval: Double = 0.12;
-    }
     @Published var blinking: Bool                   = false;
     @Published var blinkoff: Bool                   = false;
                var blinkCount: Int                  = Defaults.blinkCount;
@@ -92,7 +93,13 @@ class TableCard : Card, ObservableObject {
         self.blinking = true;
     }
 
-    public func fadein() {
+    public func shake() {
+        //
+        // TODO
+        //
+    }
+
+    public func materialize() {
         self.materializing = true;
     }
 }
