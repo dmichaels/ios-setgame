@@ -7,7 +7,7 @@ class TableCard : Card, ObservableObject {
 
     @Published var selected: Bool = false;
     @Published var set: Bool      = false;
-    @Published var new: Bool      = false; // xyzzy/experiment
+    @Published var materializing: Bool      = false; // xyzzy/experiment
     //
     // These blinking/blinkoff properties are used ONLY for blinking the 3 cards when a
     // SET is found; the blinking property means that we are in the processing of doing
@@ -70,18 +70,6 @@ class TableCard : Card, ObservableObject {
         return table.state.nonset.contains(self.id);
     }
 
-    public func fadein() {
-        self.new = true;
-    }
-
-    public func blink(count: Int = 0, interval: Double = 0.2, _ intervalOff: Double = 0.0, _ blinkDoneCallback: (() -> Void)? = nil) {
-        self.blinkCount = count > 0 ? count : Defaults.blinkCount;
-        self.blinkInterval = interval > 0.0 ? interval : Defaults.blinkInterval;
-        self.blinkoffInterval = intervalOff > 0.0 ? intervalOff : self.blinkInterval;
-        self.blinkDoneCallback = blinkDoneCallback;
-        self.blinking = true;
-    }
-
     public func select(_ value: Bool? = nil, toggle: Bool? = nil) {
         if let value = value {
             self.selected = value;
@@ -94,5 +82,17 @@ class TableCard : Card, ObservableObject {
         else {
             self.selected = true;
         }
+    }
+
+    public func blink(count: Int = 0, interval: Double = 0.2, _ intervalOff: Double = 0.0, _ blinkDoneCallback: (() -> Void)? = nil) {
+        self.blinkCount = count > 0 ? count : Defaults.blinkCount;
+        self.blinkInterval = interval > 0.0 ? interval : Defaults.blinkInterval;
+        self.blinkoffInterval = intervalOff > 0.0 ? intervalOff : self.blinkInterval;
+        self.blinkDoneCallback = blinkDoneCallback;
+        self.blinking = true;
+    }
+
+    public func fadein() {
+        self.materializing = true;
     }
 }

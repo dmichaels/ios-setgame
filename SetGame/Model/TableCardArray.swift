@@ -30,6 +30,12 @@ extension Array where Element : TableCard
         }
     }
 
+    func select(_ value: Bool? = nil, toggle: Bool? = nil) {
+        for card in self {
+            card.select(value, toggle: toggle);
+        }
+    }
+
     func blink(count: Int = 0, interval: Double = 0.2, _ intervalOff: Double = 0.0, _ blinkDoneCallback: (() -> Void)? = nil)  {
         let ncards: Int = self.count;
         var ndone: Int = 0;
@@ -47,12 +53,6 @@ extension Array where Element : TableCard
     func fadein() {
         for card in self {
             card.fadein();
-        }
-    }
-
-    func select(_ value: Bool? = nil, toggle: Bool? = nil) {
-        for card in self {
-            card.select(value, toggle: toggle);
         }
     }
 }

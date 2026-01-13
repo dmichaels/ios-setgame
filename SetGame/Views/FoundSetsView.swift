@@ -121,7 +121,7 @@ private struct TestView: View {
             } label: { Text("Fade In") }.buttonStyle(.borderedProminent)
 
             Button {
-                cards.blink(count: 4, interval: 0.92) {
+                cards.blink(count: 4, interval: 0.1) {
                     print("CARD BLINKING DONE!")
                 }
             } label: { Text("Blink") }.buttonStyle(.borderedProminent)

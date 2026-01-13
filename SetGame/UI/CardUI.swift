@@ -136,14 +136,14 @@ public struct CardUI : View {
                 }
             }
         }
-        .onChange(of: card.new) { value in
+        .onChange(of: card.materializing) { value in
             if (value) {
                 fadeInActive = true;
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     fadeInActive = false;
-                    card.new = false;
+                    card.materializing = false;
                 }
-                // card.new = false;
+                // card.materializing = false;
             }
             else {
             }
