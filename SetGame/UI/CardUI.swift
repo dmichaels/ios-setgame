@@ -161,7 +161,9 @@ public struct CardUI : View {
                 var nblinks: Int = 8;
                 var niterations: Int = nblinks * 2;
                 let interval: Double = 0.9;
-                func blink() {
+                let intervalOn: Double = 0.15;
+                let intervalOff: Double = 0.95;
+                func old_blink() {
                     niterations -= 1 ; if (niterations <= 0) {
                         card.blinkout = false;
                         card.blinking = false;
@@ -176,6 +178,30 @@ public struct CardUI : View {
                     card.blinkout.toggle();
                     DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
                         blink();
+                    }
+                }
+                func blink() {
+                    niterations -= 1 ; if (niterations <= 0) {
+                        card.blinkout = false;
+                        card.blinking = false;
+                        if let blinkDoneCallback = card.blinkDoneCallback {
+                            DispatchQueue.main.async {
+                                blinkDoneCallback();
+                            }
+                        }
+                        return;
+                    }
+                    if (card.blinkout) {
+                        card.blinkout = false;
+                        DispatchQueue.main.asyncAfter(deadline: .now() + intervalOn) {
+                            blink();
+                        }
+                    }
+                    else {
+                        card.blinkout = true;
+                        DispatchQueue.main.asyncAfter(deadline: .now() + intervalOff) {
+                            blink();
+                        }
                     }
                 }
                 blink();
