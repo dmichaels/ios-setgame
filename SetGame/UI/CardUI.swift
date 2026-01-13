@@ -3,7 +3,7 @@ import SwiftUI
 public struct CardUI : View {
     
     @ObservedObject var card: TableCard;
-                    var new: Bool                                   = false;
+                    var fadein: Bool                                   = false;
                     var nonset: Bool                                = false;
                     var nonsetNonce: Int                            = 0;
                     var askew: Bool                                 = false;
@@ -15,7 +15,7 @@ public struct CardUI : View {
     @State private var shakeToken: CGFloat;
 
     init(_ card: TableCard,
-         new: Bool = false,
+         fadein: Bool = false,
          nonset: Bool = false,
          nonsetNonce: Int = 0,
          askew: Bool = false,
@@ -23,20 +23,20 @@ public struct CardUI : View {
          _ touchedCallback: ((TableCard) -> Void)? = nil) {
 
         self.card = card;
-        self.new = new;
+        self.fadein = fadein;
         self.nonset = nonset;
         self.nonsetNonce = nonsetNonce;
         self.askew = askew;
         self.alternate = alternate;
         self.touchedCallback = touchedCallback;
 
-        self.fadeInActive = new;
+        self.fadeInActive = fadein;
         self.fadeInDone = false;
         self.shakeToken = 0;
     }
 
     init(_ card: String,
-         new: Bool = false,
+         fadein: Bool = false,
          nonset: Bool = false,
          nonsetNonce: Int = 0,
          askew: Bool = false,
@@ -44,7 +44,7 @@ public struct CardUI : View {
          _ touchedCallback: ((TableCard) -> Void)? = nil) {
 
         self.init(TableCard(card) ?? TableCard("DUMMY")!,
-                  new: new,
+                  fadein: fadein,
                   nonset: nonset,
                   nonsetNonce: nonsetNonce,
                   askew: askew,
@@ -65,8 +65,8 @@ public struct CardUI : View {
                     // whole card including the border to blink in/out on SET.
                     // Not sure which is better visually; just FYI.
                     //
-                    // xyzzy .opacity(new || card.blinkout ? 0.0 : 1.0)
-                    .opacity(fadeInActive || card.blinkout ? 0.0 : 1.0)
+                    // xyzzy .opacity(fadein || card.blinkoff ? 0.0 : 1.0)
+                    .opacity(fadeInActive || card.blinkoff ? 0.0 : 1.0)
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
@@ -101,16 +101,16 @@ public struct CardUI : View {
                     //
                     .animation(card.blinking ? nil : .linear(duration: 0.20), value: card.selected)
                     //
-                    // Optional: Also ensure blinkout toggles don’t animate (belt+suspenders).
+                    // Optional: Also ensure blinkoff toggles don’t animate (belt+suspenders).
                     //
-                    .animation(nil, value: card.blinkout)
-                    // xyzzy .scaleEffect(new ? 0.05 : 1.0, anchor: .center)
+                    .animation(nil, value: card.blinkoff)
+                    // xyzzy .scaleEffect(nefadein ? 0.05 : 1.0, anchor: .center)
                     .scaleEffect(fadeInActive ? 0.05 : 1.0, anchor: .center)
                     //
                     // See comment above about the placement of this .opacity qualifier.
                     //
-                    // xyzzy .opacity(new || card.blinkout ? 0.0 : 1.0)
-                    .opacity(fadeInActive || card.blinkout ? 0.0 : 1.0)
+                    // xyzzy .opacity(fadein || card.blinkoff ? 0.0 : 1.0)
+                    .opacity(fadeInActive || card.blinkoff ? 0.0 : 1.0)
                     //
                     // Animation for newly added cards.
                     // - The response argument to the .spring qualifier
@@ -120,16 +120,14 @@ public struct CardUI : View {
                     //   qualifier controls how flexible/slopping the bounce is;
                     //   lower is bouncier and sloppier; higher is stiffer.
                     //
-                    // .animation(.spring(response: 0.70, dampingFraction: 0.40), value: new)
+                    // .animation(.spring(response: 0.70, dampingFraction: 0.40), value: fadein)
                     .animation(.spring(response: 0.70, dampingFraction: 0.40), value: fadeInActive)
             }
             .skew(askew)
             .onAppear {
-                // fadeInActive = new;
-                // if (new && !fadeInDone) 
-                print("CARD-UI-ONAPPEAR")
+                // fadeInActive = fadein;
+                // if (fadein && !fadeInDone) 
                 if (fadeInActive && !fadeInDone) {
-                    print("CARD-UI-ONAPPEAR: fadeInActive && !fadeInDone")
                     fadeInDone = true;
                     fadeInActive = true;
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -140,49 +138,24 @@ public struct CardUI : View {
         }
         .onChange(of: card.new) { value in
             if (value) {
-                print("CARDUI-ONCHANGE-CARD-NEW> value is now TRUE")
                 fadeInActive = true;
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    print("CARDUI-ONCHANGE-CARD-NEW> value is now TRUE -> IN DISPATCH BEGIN")
                     fadeInActive = false;
                     card.new = false;
-                    print("CARDUI-ONCHANGE-CARD-NEW> value is now TRUE -> IN DISPATCH END")
                 }
                 // card.new = false;
-                print("CARDUI-ONCHANGE-CARD-NEW> value is now TRUE -> DONE")
             }
             else {
-                print("CARDUI-ONCHANGE-CARD-NEW> value is now FALSE")
             }
         }
         .onChange(of: card.blinking) { value in
             if (value) {
-                print("CARDUI-ONCHANGE-CARD-BLINK> value is now TRUE")
                 var nblinks: Int = 8;
                 var niterations: Int = nblinks * 2;
-                let interval: Double = 0.9;
-                let intervalOn: Double = 0.15;
-                let intervalOff: Double = 0.95;
-                func old_blink() {
-                    niterations -= 1 ; if (niterations <= 0) {
-                        card.blinkout = false;
-                        card.blinking = false;
-                        if let blinkDoneCallback = card.blinkDoneCallback {
-                            DispatchQueue.main.async {
-                                blinkDoneCallback();
-                            }
-                        }
-                        return;
-                    }
-                    // cards.blinkoutToggle();
-                    card.blinkout.toggle();
-                    DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
-                        blink();
-                    }
-                }
+                print("BLINK: \(card.blinkInterval) \(card.blinkoffInterval)")
                 func blink() {
                     niterations -= 1 ; if (niterations <= 0) {
-                        card.blinkout = false;
+                        card.blinkoff = false;
                         card.blinking = false;
                         if let blinkDoneCallback = card.blinkDoneCallback {
                             DispatchQueue.main.async {
@@ -191,15 +164,15 @@ public struct CardUI : View {
                         }
                         return;
                     }
-                    if (card.blinkout) {
-                        card.blinkout = false;
-                        DispatchQueue.main.asyncAfter(deadline: .now() + intervalOn) {
+                    if (card.blinkoff) {
+                        card.blinkoff = false;
+                        DispatchQueue.main.asyncAfter(deadline: .now() + card.blinkInterval) {
                             blink();
                         }
                     }
                     else {
-                        card.blinkout = true;
-                        DispatchQueue.main.asyncAfter(deadline: .now() + intervalOff) {
+                        card.blinkoff = true;
+                        DispatchQueue.main.asyncAfter(deadline: .now() + card.blinkoffInterval) {
                             blink();
                         }
                     }
@@ -208,7 +181,7 @@ public struct CardUI : View {
 
 /*
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    card.blinkout = false;
+                    card.blinkoff = false;
                     card.blinking = false;
                 }
 */

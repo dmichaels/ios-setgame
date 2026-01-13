@@ -27,7 +27,7 @@ struct TableCardEffects {
                 completion();
                 return;
             }
-            cards.blinkoutToggle();
+            cards.blinkoffToggle();
             DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
                 tick();
             }

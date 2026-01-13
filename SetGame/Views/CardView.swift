@@ -37,7 +37,7 @@ public struct CardView : View {
                     // whole card including the border to blink in/out on SET.
                     // Not sure which is better visually; just FYI.
                     //
-                    .opacity(new || card.blinkout ? 0.0 : 1.0)
+                    .opacity(new || card.blinkoff ? 0.0 : 1.0)
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: card.selected ? 10 : 6)
@@ -72,14 +72,14 @@ public struct CardView : View {
                     //
                     .animation(card.blinking ? nil : .linear(duration: 0.20), value: card.selected)
                     //
-                    // Optional: Also ensure blinkout toggles don’t animate (belt+suspenders).
+                    // Optional: Also ensure blinkoff toggles don’t animate (belt+suspenders).
                     //
-                    .animation(nil, value: card.blinkout)
+                    .animation(nil, value: card.blinkoff)
                     .scaleEffect(new ? 0.05 : 1.0, anchor: .center)
                     //
                     // See comment above about the placement of this .opacity qualifier.
                     //
-                    .opacity(new || card.blinkout ? 0.0 : 1.0)
+                    .opacity(new || card.blinkoff ? 0.0 : 1.0)
                     //
                     // Animation for newly added cards.
                     // - The response argument to the .spring qualifier

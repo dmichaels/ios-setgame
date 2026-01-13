@@ -35,13 +35,13 @@ struct FoundSetsView: View {
                         if (j == 3) { separator(visible: true) }
                         /*
                         CardUI(card: card,
-                               new: true,
+                               fadein: true,
                                askew: settings.cardsAskew,
                                alternate: settings.alternateCards)
                         */
                         CardUI(card,
                                // xyzzy new: xyzzynew,
-                               new: true,
+                               fadein: true,
                                askew: settings.cardsAskew,
                                alternate: 2 /*settings.alternateCards*/)
                         if ((j == 2) && (row.count == 3)) { separator(visible: false) }
@@ -113,9 +113,9 @@ private struct TestView: View {
     public var body: some View {
         VStack {
             HStack {
-                CardUI(cardA, alternate: settings.alternateCards).frame(width: 100)
-                CardUI(cardC, alternate: settings.alternateCards).frame(width: 100)
-                CardUI(cardB, alternate: settings.alternateCards).frame(width: 100)
+                CardUI(cardA, fadein: true, alternate: settings.alternateCards).frame(width: 100)
+                CardUI(cardC, fadein: false, alternate: settings.alternateCards).frame(width: 100)
+                CardUI(cardB, fadein: true, alternate: settings.alternateCards).frame(width: 100)
             }
             Button {
                 cardA.fadein();
@@ -123,7 +123,7 @@ private struct TestView: View {
                 cardC.fadein();
             } label: { Text("Fade In") }.buttonStyle(.borderedProminent)
             Button {
-                [cardA, cardB, cardC].blink() {
+                [cardA, cardB, cardC].blink(interval: 0.2) {
                     print("CARD BLINKING DONE!")
                 }
             } label: { Text("Blink") }.buttonStyle(.borderedProminent)

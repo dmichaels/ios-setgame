@@ -19,18 +19,18 @@ extension Array where Element : TableCard
     func blinkingEnd() {
         for card in self {
             card.blinking = false;
-            card.blinkout = false; // just in case
+            card.blinkoff = false; // just in case
         }
     }
 
-    func blinkoutToggle()
+    func blinkoffToggle()
     {
         for card in self {
-            card.blinkout.toggle();
+            card.blinkoff.toggle();
         }
     }
 
-    func blink(_ blinkDoneCallback: (() -> Void)? = nil)  {
+    func blink(interval: Double = 0.2, _ intervalOff: Double = 0.0, _ blinkDoneCallback: (() -> Void)? = nil)  {
         let ncards: Int = self.count;
         var ndone: Int = 0;
         func blinkDone() {
@@ -40,7 +40,7 @@ extension Array where Element : TableCard
             }
         }
         for card in self {
-            card.blink(blinkDone);
+            card.blink(interval: interval, intervalOff, blinkDone);
         }
     }
 }

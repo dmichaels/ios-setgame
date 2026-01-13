@@ -9,18 +9,22 @@ class TableCard : Card, ObservableObject {
     @Published var set: Bool      = false;
     @Published var new: Bool      = false; // xyzzy/experiment
     //
-    // These blinking/blinkout properties are used ONLY for blinking the 3 cards when a
+    // These blinking/blinkoff properties are used ONLY for blinking the 3 cards when a
     // SET is found; the blinking property means that we are in the processing of doing
-    // the 3-card blinking; the blinkout property means we are either blinked off (when
-    // blinkout is true) or on (when blinkout is false) at any one moment; see CardView.
+    // the 3-card blinking; the blinkoff property means we are either blinked off (when
+    // blinkoff is true) or on (when blinkoff is false) at any one moment; see CardView.
     //
-    @Published var blinkout: Bool = false;
-    @Published var blinking: Bool = false;
+    @Published var blinking: Bool                   = false;
+    @Published var blinkoff: Bool                   = false;
+               var blinkInterval: Double            = 0.9;
+               var blinkoffInterval: Double         = 0.1;
                var blinkDoneCallback: (() -> Void)? = nil;
 
-    func blink(_ blinkDoneCallback: (() -> Void)? = nil) { // xyzzy/new
-        self.blinking = true;
+    func blink(interval: Double = 0.2, _ intervalOff: Double = 0.0, _ blinkDoneCallback: (() -> Void)? = nil) {
+        self.blinkInterval = interval > 0.0 ? interval : 0.01;
+        self.blinkoffInterval = intervalOff > 0.0 ? intervalOff : self.blinkInterval;
         self.blinkDoneCallback = blinkDoneCallback;
+        self.blinking = true;
     }
 
     required init() {
