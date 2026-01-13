@@ -136,6 +136,16 @@ public struct CardUI : View {
                 print("CARDUI-ONCHANGE-CARD-NEW> value is now FALSE")
             }
         }
+        .onChange(of: card.blinkout) { value in
+            if (value) {
+                print("CARDUI-ONCHANGE-CARD-BLINK> value is now TRUE")
+                let nblinks: Int = 3;
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    card.blinkout = false;
+                    card.blinking = false;
+                }
+            }
+        }
     }
     
 

@@ -39,7 +39,13 @@ struct FoundSetsView: View {
                 }
                 */
             }
-        }) { Text("HELLO") }
+        }) { Text("FADE IN") }
+        Button(action: {
+            if ((setsLastFound.count > 0) && (setsLastFound[0].count > 0)) {
+                setsLastFound[0][0].blinking = true;
+                setsLastFound[0][0].blinkout = true;
+            }
+        }) { Text("BLINK") }
 
         VStack(alignment: .leading, spacing: 8) {
             ForEach(rows.indices, id: \.self) { i in
