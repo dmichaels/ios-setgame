@@ -8,11 +8,12 @@ class TableCard : Card, ObservableObject {
     private struct Defaults {
         fileprivate static let blinkCount: Int = 3;
         fileprivate static let blinkInterval: Double = 0.12;
-        fileprivate static let blinkoffInterval: Double = 0.12;
+        fileprivate static let shakeCount: Int = 9;
+        fileprivate static let shakeSpeed: Double = 0.55;
     }
 
-    @Published var selected: Bool      = false;
     @Published var set: Bool           = false;
+    @Published var selected: Bool      = false;
     @Published var materializing: Bool = false;
     //
     // These blinking/blinkoff properties are used ONLY for blinking the 3 cards when a
@@ -24,8 +25,11 @@ class TableCard : Card, ObservableObject {
     @Published var blinkoff: Bool                   = false;
                var blinkCount: Int                  = Defaults.blinkCount;
                var blinkInterval: Double            = Defaults.blinkInterval;
-               var blinkoffInterval: Double         = Defaults.blinkoffInterval;
+               var blinkoffInterval: Double         = 0;
                var blinkDoneCallback: (() -> Void)? = nil;
+    @Published var shaking: Bool                    = false;
+    @Published var shakeCount: Int                  = Defaults.shakeCount;
+    @Published var shakeSpeed: Double               = Defaults.shakeSpeed;
 
     required init() {
         super.init(color: .random, shape: .random, filling: .random, number: .random);
@@ -85,7 +89,9 @@ class TableCard : Card, ObservableObject {
         }
     }
 
-    public func blink(count: Int = 0, interval: Double = 0.2, _ intervalOff: Double = 0.0, _ blinkDoneCallback: (() -> Void)? = nil) {
+    public func blink(count: Int = 0,
+                      interval: Double = 0, _ intervalOff: Double = 0,
+                    _ blinkDoneCallback: (() -> Void)? = nil) {
         self.blinkCount = count > 0 ? count : Defaults.blinkCount;
         self.blinkInterval = interval > 0.0 ? interval : Defaults.blinkInterval;
         self.blinkoffInterval = intervalOff > 0.0 ? intervalOff : self.blinkInterval;
@@ -93,10 +99,10 @@ class TableCard : Card, ObservableObject {
         self.blinking = true;
     }
 
-    public func shake() {
-        //
-        // TODO
-        //
+    public func shake(count: Int = 0, speed: Double = 0) {
+        self.shakeCount = count > 0 ? count : Defaults.shakeCount;
+        self.shakeSpeed = speed > 0 ? speed : Defaults.shakeSpeed;
+        self.shaking = true;
     }
 
     public func materialize() {

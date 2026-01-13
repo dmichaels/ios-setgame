@@ -115,20 +115,25 @@ private struct TestView: View {
                     CardUI(cards[i], materialize: true, alternate: settings.alternateCards).frame(width: 100)
                 }
             }
+            HStack {
+                Button {
+                    cards.select(toggle: true);
+                } label: { Text("Select") }.buttonStyle(.borderedProminent)
 
-            Button {
-                cards.materialize();
-            } label: { Text("Fade In") }.buttonStyle(.borderedProminent)
+                Button {
+                    cards.blink(count: 4, interval: 0.1) {
+                        print("CARD BLINKING DONE!")
+                    }
+                } label: { Text("Blink") }.buttonStyle(.borderedProminent)
 
-            Button {
-                cards.blink(count: 4, interval: 0.1) {
-                    print("CARD BLINKING DONE!")
-                }
-            } label: { Text("Blink") }.buttonStyle(.borderedProminent)
+                Button {
+                    cards.materialize();
+                } label: { Text("Materialize") }.buttonStyle(.borderedProminent)
 
-            Button {
-                cards.select(toggle: true);
-            } label: { Text("Select") }.buttonStyle(.borderedProminent)
+                Button {
+                    cards.shake();
+                } label: { Text("Shake") }.buttonStyle(.borderedProminent)
+            }
         }
     }
 }

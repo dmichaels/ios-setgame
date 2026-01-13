@@ -15,11 +15,11 @@ public struct CardUI : View {
     @State private var shakeToken: CGFloat;
 
     init(_ card: TableCard,
-         materialize: Bool = false,
-         nonset: Bool = false,
-         nonsetNonce: Int = 0,
-         askew: Bool = false,
-         alternate: Int? = nil,
+           materialize: Bool = false,
+           nonset: Bool = false,
+           nonsetNonce: Int = 0,
+           askew: Bool = false,
+           alternate: Int? = nil,
          _ touchedCallback: ((TableCard) -> Void)? = nil) {
 
         self.card = card;
@@ -36,11 +36,11 @@ public struct CardUI : View {
     }
 
     init(_ card: String,
-         materialize: Bool = false,
-         nonset: Bool = false,
-         nonsetNonce: Int = 0,
-         askew: Bool = false,
-         alternate: Int? = nil,
+           materialize: Bool = false,
+           nonset: Bool = false,
+           nonsetNonce: Int = 0,
+           askew: Bool = false,
+           alternate: Int? = nil,
          _ touchedCallback: ((TableCard) -> Void)? = nil) {
 
         self.init(TableCard(card) ?? TableCard("DUMMY")!,
@@ -73,18 +73,25 @@ public struct CardUI : View {
                             .stroke(card.selected ? Color.red : Color.gray, lineWidth: card.selected ? 3 : 1)
                     )
                     .shadow(color: card.selected ? Color.green : Color.green, radius: card.selected ? 4 : 1)
-                    .padding(1)
+                    .padding(0)
                     //
                     // These two qualifiers are needed to shake the cards on incorrect SET guess.
                     //
-                    .modifier(ShakeEffect(animatableData: nonset ? CGFloat(shakeToken) : 0))
-                    .onChange(of: nonsetNonce) { _ in
-                        var t = Transaction()
-                        t.animation = .linear(duration: 0.85)
-                        withTransaction(t) {
-                            shakeToken += 1
+                    // xyzzy .modifier(ShakeEffect(animatableData: nonset || card.shaking ? CGFloat(shakeToken) : 0))
+                    .modifier(ShakeEffect(shakesPerUnit: CGFloat(card.shakeCount), animatableData: nonset || card.shaking ? CGFloat(shakeToken) : 0))
+                    // xyzzy/new
+                    .onChange(of: card.shaking) { value in
+                        if (value) {
+                            print("on-change-shaking> count: \(card.shakeCount) speed: \(card.shakeSpeed)")
+                            var t = Transaction();
+                            t.animation = .linear(duration: card.shakeSpeed);
+                            withTransaction(t) {
+                                self.shakeToken += 1;
+                            }
+                            card.shaking = false;
                         }
                     }
+                    // xyzzy/new
                     //
                     // Keep this transform always present ...
                     //

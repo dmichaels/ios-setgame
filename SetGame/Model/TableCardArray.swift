@@ -50,9 +50,9 @@ extension Array where Element : TableCard
         }
     }
 
-    func shake() {
+    func shake(count: Int = 0, speed: Double = 0) {
         for card in self {
-            card.shake();
+            card.shake(count: count, speed: speed);
         }
     }
 
