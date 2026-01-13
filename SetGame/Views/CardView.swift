@@ -2,17 +2,25 @@ import SwiftUI
 
 public struct CardView : View {
     
-    @ObservedObject var card : TableCard;
     @EnvironmentObject var table: Table;
+
+    @ObservedObject var card : TableCard;
     //
     // Note that this @EnvironmentObject Settings declaration needs to
     // be here otherwise when the Settings.alternateCards property is
     // changed it won't update immediately in the FoundSetsView.
     //
     // @EnvironmentObject var settings: Settings;
-    @State private var shakeToken: CGFloat = 0;
     var cardTouchedCallback : ((TableCard) -> Void)?;
     var alternate : Int?
+
+    @State private var shakeToken: CGFloat = 0;
+
+    init(card: TableCard, alternate: Int? = nil, cardTouchedCallback: ((TableCard) -> Void)? = nil) {
+        self.card = card;
+        self.alternate = alternate;
+        self.cardTouchedCallback = cardTouchedCallback;
+    }
 
     public var body: some View {
         let new: Bool = card.newcomer(to: table);
@@ -58,7 +66,9 @@ public struct CardView : View {
                                z: CGFloat(card.selected ? 1 : 0))
                     )
                     //
-                    // ... but only animate selection changes, and NEVER during blinking.
+                    // This controls the card animation for selecting, i.e. twirling the card around,
+                    // per the above rotation; the duration here controls how long that twirling takes;
+                    // and note that this is not done while blinking.
                     //
                     .animation(card.blinking ? nil : .linear(duration: 0.20), value: card.selected)
                     //

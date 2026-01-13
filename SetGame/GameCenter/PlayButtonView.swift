@@ -20,6 +20,7 @@ struct PlayButtonView: View {
         }
         .buttonStyle(.borderedProminent)
         // .disabled(!GKLocalPlayer.local.isAuthenticated)
+        /* xyzzy
         .alert("Game Center Required",
                isPresented: $gameCenter.showSettingsAlert) {
             Button("Open Settings") { gameCenter.openGameCenterSettings() }
@@ -27,5 +28,6 @@ struct PlayButtonView: View {
         } message: {
             Text(gameCenter.settingsAlertMessage)
         }
+        */
     }
 }

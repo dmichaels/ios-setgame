@@ -29,4 +29,18 @@ extension Array where Element : TableCard
             card.blinkout.toggle();
         }
     }
+
+    func blink(_ blinkDoneCallback: (() -> Void)? = nil)  {
+        let ncards: Int = self.count;
+        var ndone: Int = 0;
+        func blinkDone() {
+            ndone += 1;
+            if (ndone == ncards) {
+                blinkDoneCallback?();
+            }
+        }
+        for card in self {
+            card.blink(blinkDone);
+        }
+    }
 }

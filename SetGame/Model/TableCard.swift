@@ -16,6 +16,12 @@ class TableCard : Card, ObservableObject {
     //
     @Published var blinkout: Bool = false;
     @Published var blinking: Bool = false;
+               var blinkDoneCallback: (() -> Void)? = nil;
+
+    func blink(_ blinkDoneCallback: (() -> Void)? = nil) { // xyzzy/new
+        self.blinking = true;
+        self.blinkDoneCallback = blinkDoneCallback;
+    }
 
     required init() {
         super.init(color: .random, shape: .random, filling: .random, number: .random);

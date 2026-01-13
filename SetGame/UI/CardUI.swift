@@ -8,19 +8,19 @@ public struct CardUI : View {
                     var nonsetNonce: Int                            = 0;
                     var askew: Bool                                 = false;
                     var alternate: Int?                             = nil;
-                    var cardTouchedCallback: ((TableCard) -> Void)? = nil;
+                    var touchedCallback: ((TableCard) -> Void)? = nil;
 
     @State private var fadeInActive: Bool;
     @State private var fadeInDone: Bool;
     @State private var shakeToken: CGFloat;
 
-    init(card: TableCard,
-                new: Bool = false,
-                nonset: Bool = false,
-                nonsetNonce: Int = 0,
-                askew: Bool = false,
-                alternate: Int? = nil,
-                cardTouchedCallback: ((TableCard) -> Void)? = nil) {
+    init(_ card: TableCard,
+         new: Bool = false,
+         nonset: Bool = false,
+         nonsetNonce: Int = 0,
+         askew: Bool = false,
+         alternate: Int? = nil,
+         _ touchedCallback: ((TableCard) -> Void)? = nil) {
 
         self.card = card;
         self.new = new;
@@ -28,16 +28,33 @@ public struct CardUI : View {
         self.nonsetNonce = nonsetNonce;
         self.askew = askew;
         self.alternate = alternate;
-        self.cardTouchedCallback = cardTouchedCallback;
+        self.touchedCallback = touchedCallback;
 
         self.fadeInActive = new;
         self.fadeInDone = false;
         self.shakeToken = 0;
     }
 
+    init(_ card: String,
+         new: Bool = false,
+         nonset: Bool = false,
+         nonsetNonce: Int = 0,
+         askew: Bool = false,
+         alternate: Int? = nil,
+         _ touchedCallback: ((TableCard) -> Void)? = nil) {
+
+        self.init(TableCard(card) ?? TableCard("DUMMY")!,
+                  new: new,
+                  nonset: nonset,
+                  nonsetNonce: nonsetNonce,
+                  askew: askew,
+                  alternate: alternate,
+                  touchedCallback);
+    }
+
     public var body: some View {
         VStack {
-            Button(action: { cardTouchedCallback?(card) }) {
+            Button(action: { touchedCallback?(card) }) {
                 Image(self.image(card, alternate))
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -78,7 +95,9 @@ public struct CardUI : View {
                                z: CGFloat(card.selected ? 1 : 0))
                     )
                     //
-                    // ... but only animate selection changes, and NEVER during blinking.
+                    // This controls the card animation for selecting, i.e. twirling the card around,
+                    // per the above rotation; the duration here controls how long that twirling takes;
+                    // and note that this is not done while blinking.
                     //
                     .animation(card.blinking ? nil : .linear(duration: 0.20), value: card.selected)
                     //
@@ -136,14 +155,37 @@ public struct CardUI : View {
                 print("CARDUI-ONCHANGE-CARD-NEW> value is now FALSE")
             }
         }
-        .onChange(of: card.blinkout) { value in
+        .onChange(of: card.blinking) { value in
             if (value) {
                 print("CARDUI-ONCHANGE-CARD-BLINK> value is now TRUE")
-                let nblinks: Int = 3;
+                var nblinks: Int = 8;
+                var niterations: Int = nblinks * 2;
+                let interval: Double = 0.9;
+                func blink() {
+                    niterations -= 1 ; if (niterations <= 0) {
+                        card.blinkout = false;
+                        card.blinking = false;
+                        if let blinkDoneCallback = card.blinkDoneCallback {
+                            DispatchQueue.main.async {
+                                blinkDoneCallback();
+                            }
+                        }
+                        return;
+                    }
+                    // cards.blinkoutToggle();
+                    card.blinkout.toggle();
+                    DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
+                        blink();
+                    }
+                }
+                blink();
+
+/*
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     card.blinkout = false;
                     card.blinking = false;
                 }
+*/
             }
         }
     }

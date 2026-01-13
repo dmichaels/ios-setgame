@@ -25,29 +25,8 @@ struct FoundSetsView: View {
             }
         }
         Spacer()
-
-        Button(action: {
-            if ((setsLastFound.count > 0) && (setsLastFound[0].count > 0)) {
-                print("BUTTON")
-                // setsLastFound[0][0].new = true
-                setsLastFound[0][0].fadein();
-                /*
-                for cards in setsLastFound {
-                    for card in cards {
-                        card.new = true
-                    }
-                }
-                */
-            }
-        }) { Text("FADE IN") }
-        Button(action: {
-            if ((setsLastFound.count > 0) && (setsLastFound[0].count > 0)) {
-                setsLastFound[0][0].blinking = true;
-                setsLastFound[0][0].blinkout = true;
-            }
-        }) { Text("BLINK") }
-
         VStack(alignment: .leading, spacing: 8) {
+            TestView()
             ForEach(rows.indices, id: \.self) { i in
                 let row: [TableCard] = rows[i];
                 HStack {
@@ -60,7 +39,7 @@ struct FoundSetsView: View {
                                askew: settings.cardsAskew,
                                alternate: settings.alternateCards)
                         */
-                        CardUI(card: card,
+                        CardUI(card,
                                // xyzzy new: xyzzynew,
                                new: true,
                                askew: settings.cardsAskew,
@@ -123,5 +102,31 @@ private struct DummyCardView: View {
         Image("DUMMY")
             .resizable()
             .aspectRatio(contentMode: .fit)
+    }
+}
+
+private struct TestView: View {
+    @EnvironmentObject var settings : Settings;
+    let cardA: TableCard = TableCard("1RHO")!
+    let cardB: TableCard = TableCard("2GSD")!
+    let cardC: TableCard = TableCard("3PTQ")!
+    public var body: some View {
+        VStack {
+            HStack {
+                CardUI(cardA, alternate: settings.alternateCards).frame(width: 100)
+                CardUI(cardC, alternate: settings.alternateCards).frame(width: 100)
+                CardUI(cardB, alternate: settings.alternateCards).frame(width: 100)
+            }
+            Button {
+                cardA.fadein();
+                cardB.fadein();
+                cardC.fadein();
+            } label: { Text("Fade In") }.buttonStyle(.borderedProminent)
+            Button {
+                [cardA, cardB, cardC].blink() {
+                    print("CARD BLINKING DONE!")
+                }
+            } label: { Text("Blink") }.buttonStyle(.borderedProminent)
+        }
     }
 }
