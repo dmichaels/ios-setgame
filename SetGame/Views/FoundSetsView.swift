@@ -13,12 +13,12 @@ struct FoundSetsView: View {
         VStack(alignment: .leading, spacing: 8) {
             TestView()
             ForEach(sets.indices, id: \.self) { i in
-                let left: [TableCard]  = Array(sets[i].prefix(3));
+                let left: [TableCard] = Array(sets[i].prefix(3));
                 let right: [TableCard] = Array(sets[i].dropFirst(3));
                 HStack {
                     SetView(set: left, recent: mostRecentSet, settings: settings)
                     Separator(visible: !right.isEmpty)
-                    SetView(set: right, recent: mostRecentSet, settings: settings)
+                    SetView(set: right, recent: [], settings: settings)
                     DummySetView(visible: right.isEmpty)
                 }
             }
@@ -138,8 +138,7 @@ private struct TestView: View {
                 } label: { Text("Blink") }.buttonStyle(.borderedProminent)
 
                 Button {
-                    // cards.materialize(speed: 0.9);
-                    cards[0].materialize(speed: 0.9);
+                    cards.materialize(speed: 0.9);
                 } label: { Text("Materialize") }.buttonStyle(.borderedProminent)
 
                 Button {
