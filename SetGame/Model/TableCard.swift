@@ -6,11 +6,11 @@ import SwiftUI
 class TableCard : Card, ObservableObject {
 
     private struct Defaults {
-        fileprivate static let blinkCount: Int = 3;
-        fileprivate static let blinkInterval: Double = 0.12;
-        fileprivate static let shakeCount: Int = 9;
-        fileprivate static let shakeSpeed: Double = 0.55;
-        fileprivate static let materializeSpeed: Double = 0.70;
+        fileprivate static let blinkCount: Int               = 3;
+        fileprivate static let blinkInterval: Double         = 0.12;
+        fileprivate static let shakeCount: Int               = 9;
+        fileprivate static let shakeSpeed: Double            = 0.55;
+        fileprivate static let materializeSpeed: Double      = 0.70;
         fileprivate static let materializeElasticity: Double = 0.40;
     }
 
@@ -97,8 +97,8 @@ class TableCard : Card, ObservableObject {
                       interval: Double = 0, _ intervalOff: Double = 0,
                     _ blinkDoneCallback: (() -> Void)? = nil) {
         self.blinkCount = count > 0 ? count : Defaults.blinkCount;
-        self.blinkInterval = interval > 0.0 ? interval : Defaults.blinkInterval;
-        self.blinkoffInterval = intervalOff > 0.0 ? intervalOff : self.blinkInterval;
+        self.blinkInterval = interval > 0 ? interval : Defaults.blinkInterval;
+        self.blinkoffInterval = intervalOff > 0 ? intervalOff : self.blinkInterval;
         self.blinkDoneCallback = blinkDoneCallback;
         self.blinking = true;
     }

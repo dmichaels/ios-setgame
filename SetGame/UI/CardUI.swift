@@ -119,7 +119,7 @@ public struct CardUI : View {
             }
             .skew(askew)
             .onAppear {
-                print("card-ui-on-appear> materializing: \(materializing) materialized: \(materialized)")
+                print("card-ui-on-appear> materializing: \(materializing) materialized: \(materialized) card: \(card.codename)")
                 if (materializing && !materialized) {
                     self.materializing = true;
                     DispatchQueue.main.asyncAfter(deadline: .now() + self.materializeDelay) {

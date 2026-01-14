@@ -14,6 +14,10 @@ struct TableUI: View {
 
     let statusResetToken: Int;
 
+    private struct Defaults {
+        fileprivate static let threeCardSelectDelay: Double = 0.75;
+    }
+
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack {
@@ -30,7 +34,7 @@ struct TableUI: View {
                                     // when 3 cards are selected, before they either blink, because
                                     // they form a SET; or before they shake, because they do not.
                                     //
-                                    self.table.cardTouched($0, delay: 0.75) { cards, set, resolve in
+                                    self.table.cardTouched($0, delay: Defaults.threeCardSelectDelay) { cards, set, resolve in
                                         //
                                         // The given cards argument will always
                                         // be the list of cards now selected.
@@ -47,16 +51,19 @@ struct TableUI: View {
                                         if let set: Bool = set {
                                             if (set) {
                                                 TableCardEffects.blinkCards(cards, times: 5) {
+                                                    print("SET")
                                                     self.feedback.trigger(Feedback.SET);
                                                     resolve();
                                                 }
                                             }
                                             else {
+                                                print("NOSET")
                                                 self.feedback.trigger(Feedback.NOSET, Feedback.HAPTIC_NOSET);
                                                 resolve();
                                             }
                                         }
                                         else {
+                                            print("TAP")
                                             self.feedback.trigger(Feedback.TAP, Feedback.HAPTIC_TAP);
                                             resolve();
                                         }

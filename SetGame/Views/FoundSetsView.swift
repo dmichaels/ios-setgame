@@ -8,11 +8,10 @@ struct FoundSetsView: View {
     let cardsAskew: Bool;
 
     @State var showHelpButton: Bool = false;
-    @State var xyzzynew: Bool = true;
 
     var body: some View {
         let rows: [[TableCard]] = pairCardsListForDisplay(setsLastFound.reversed());
-        if ((rows.count == 0) && !self.settings.hideHelpButton){
+        if ((rows.count == 0) && !self.settings.hideHelpButton) {
             Spacer()
             HelpViewButton {
                 showHelpButton = true
@@ -25,50 +24,35 @@ struct FoundSetsView: View {
             }
         }
         Spacer()
+        let first: [TableCard] = (rows.count > 0) && (rows[0].count > 0) ? Array(rows[0].prefix(3)) : []
         VStack(alignment: .leading, spacing: 8) {
             TestView()
             ForEach(rows.indices, id: \.self) { i in
-                let row: [TableCard] = rows[i];
+                let row: [TableCard] = rows[i]
+                let left: [TableCard]  = Array(row.prefix(3))
+                let right: [TableCard] = Array(row.dropFirst(3)) 
                 HStack {
-                    ForEach(row.indices, id: \.self) { j in
-                        let card: TableCard = row[j];
-                        if (j == 3) { separator(visible: true) }
-                        /*
-                        CardUI(card: card,
-                               materialize: true,
+                    ForEach(left, id: \.id) { card in
+                        CardUI(card,
+                               materialize: first.contains(card),
                                askew: settings.cardsAskew,
                                alternate: settings.alternateCards)
-                        */
+                    }
+                    separator(
+                        visible: !right.isEmpty
+                    )
+                    ForEach(right, id: \.id) { card in
                         CardUI(card,
-                               // xyzzy new: xyzzynew,
-                               materialize: true,
+                               materialize: first.contains(card),
                                askew: settings.cardsAskew,
-                               alternate: 2 /*settings.alternateCards*/)
-                        if ((j == 2) && (row.count == 3)) { separator(visible: false) }
+                               alternate: settings.alternateCards)
                     }
-                    if (row.count == 3) {
-                        DummyCardView()
-                        DummyCardView()
-                        DummyCardView()
-                    }
+            		if (right.isEmpty) {
+                		DummyCardView()
+                		DummyCardView()
+                		DummyCardView()
+            		}
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-        }
-        .onChange(of: self.setsLastFound) { setsLastFound in
-            if (setsLastFound.count > 0) {
-                let setsLastFound: [TableCard] = setsLastFound[setsLastFound.count - 1];
-                if (setsLastFound.count == 3){
-                    TableCardEffects.blinkCards(Array(setsLastFound.prefix(3)), times: 2)
-                }
-/*
-                print("xyzzy: \(xyzzynew)")
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                print("xyzzy-set-false: \(xyzzynew)")
-                                xyzzynew = false
-                print("xyzzy-set-false-done: \(xyzzynew)")
-                            }
-*/
             }
         }
     }
