@@ -12,7 +12,7 @@ public struct CardUI : View {
     @State private var materialized: Bool;
     @State private var shakeToken: CGFloat;
 
-    let materializeDelay: Double = 0.5;
+    let materializeDelay: Double = 0.4;
 
     init(_ card: TableCard,
            materialize: Bool = false,
@@ -54,7 +54,6 @@ public struct CardUI : View {
                     )
                     .onChange(of: card.shaking) { value in
                         if (value) {
-                            print("on-change-shaking> count: \(card.shakeCount) speed: \(card.shakeSpeed)")
                             var t = Transaction();
                             t.animation = .linear(duration: card.shakeSpeed);
                             withTransaction(t) {
@@ -105,9 +104,7 @@ public struct CardUI : View {
             }
             .skew(askew)
             .onAppear {
-                print("card-ui-on-appear> materializing: \(materializing) materialized: \(materialized) card: \(card.codename)")
-                if (materializing && !materialized) {
-                    self.materializing = true;
+                if (self.materializing && !self.materialized) {
                     DispatchQueue.main.asyncAfter(deadline: .now() + self.materializeDelay) {
                         self.materializing = false;
                         self.materialized = true;
@@ -116,8 +113,8 @@ public struct CardUI : View {
             }
         }
         .onChange(of: card.materializing) { value in
+            print("cardui-onchange-materializing> value: \(value) card.materializing: \(card.materializing)")
             if (value) {
-                print("card-ui-on-change-materializing> materializing: \(materializing) materialized: \(materialized) speed: \(card.materializeSpeed) elast: \(card.materializeElasticity)")
                 self.materializing = true;
                 DispatchQueue.main.asyncAfter(deadline: .now() + self.materializeDelay) {
                     self.materializing = false;

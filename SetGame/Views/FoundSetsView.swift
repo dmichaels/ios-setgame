@@ -120,8 +120,7 @@ private struct TestView: View {
                 ForEach(cards.indices, id: \.self) { i in
                     CardUI(
                         cards[i],
-                        // materialize: true,
-                        materialize: i == 0 || i == 2 ,
+                        materialize: i == 0 || i == 2,
                         alternate: settings.alternateCards
                     )
                     .frame(width: 100)
@@ -129,7 +128,6 @@ private struct TestView: View {
             }
             HStack {
                 Button {
-                    print("button-select> selected: \(cards[0].selected) \(cards[1].selected) \(cards[2].selected)")
                     cards.select(toggle: true);
                 } label: { Text("Select") }.buttonStyle(.borderedProminent)
 
@@ -140,13 +138,12 @@ private struct TestView: View {
                 } label: { Text("Blink") }.buttonStyle(.borderedProminent)
 
                 Button {
-                    cards.materialize(speed: 0.9);
+                    // cards.materialize(speed: 0.9);
+                    cards[0].materialize(speed: 0.9);
                 } label: { Text("Materialize") }.buttonStyle(.borderedProminent)
 
                 Button {
-                    print("button-shake-a> shaking: \(cards[0].shaking) \(cards[1].shaking) \(cards[2].shaking)")
                     cards.shake();
-                    print("button-shake-b> shaking: \(cards[0].shaking) \(cards[1].shaking) \(cards[2].shaking)")
                 } label: { Text("Shake") }.buttonStyle(.borderedProminent)
             }
         }
