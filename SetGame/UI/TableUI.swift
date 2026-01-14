@@ -83,8 +83,7 @@ struct TableUI: View {
                     StatusBarView(resetToken: statusResetToken)
                     Spacer(minLength: 20)
                     if (self.settings.showFoundSets) {
-                        FoundSetsView(setsLastFound: table.state.setsLastFound,
-                                      cardsAskew: settings.cardsAskew)
+                        FoundSetsView(setsLastFound: table.state.setsLastFound, settings: settings)
                     }
                     PlayButtonView(gameCenter: gameCenter)
                         .padding(.horizontal)

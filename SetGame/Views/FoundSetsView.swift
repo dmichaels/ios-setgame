@@ -2,13 +2,11 @@ import SwiftUI
 
 struct FoundSetsView: View {
 
-    @EnvironmentObject var settings : Settings;
-
-    let setsLastFound: [[TableCard]];
-    let cardsAskew: Bool;
+                    let setsLastFound: [[TableCard]];
+    @ObservedObject var settings: Settings;
 
     var body: some View {
-        let sets: [[TableCard]] = organizeCardsForDisplay(setsLastFound.reversed());
+        let sets: [[TableCard]] = organizeSetsForDisplay(setsLastFound.reversed());
         let mostRecentSet: Set<String> = mostRecentSet(setsLastFound);
         HelpBar(visible: sets.isEmpty && !self.settings.hideHelpButton)
         Spacer()
@@ -18,26 +16,16 @@ struct FoundSetsView: View {
                 let left: [TableCard]  = Array(sets[i].prefix(3));
                 let right: [TableCard] = Array(sets[i].dropFirst(3));
                 HStack {
-                    ForEach(left, id: \.id) { card in
-                        CardUI(card,
-                               materialize: mostRecentSet.contains(card.id),
-                               askew: settings.cardsAskew,
-                               alternate: settings.alternateCards)
-                    }
+                    SetView(set: left, recent: mostRecentSet, settings: settings)
                     Separator(visible: !right.isEmpty)
-                    ForEach(right, id: \.id) { card in
-                        CardUI(card,
-                               materialize: mostRecentSet.contains(card.id),
-                               askew: settings.cardsAskew,
-                               alternate: settings.alternateCards)
-                    }
+                    SetView(set: right, recent: mostRecentSet, settings: settings)
                     DummySetView(visible: right.isEmpty)
                 }
             }
         }
     }
 
-    private func organizeCardsForDisplay(_ setsLastFound: [[TableCard]]) -> [[TableCard]] {
+    private func organizeSetsForDisplay(_ setsLastFound: [[TableCard]]) -> [[TableCard]] {
         var result: [[TableCard]] = [];
         var i: Int = 0;
         while (i < setsLastFound.count) {
@@ -77,6 +65,20 @@ struct FoundSetsView: View {
         }
     }
 
+    private struct SetView: View {
+        let set: [TableCard];
+        let recent: Set<String>;
+        @ObservedObject var settings: Settings;
+        public var body: some View {
+            ForEach(set, id: \.id) { card in
+                CardUI(card,
+                       materialize: recent.contains(card.id),
+                       askew: settings.cardsAskew,
+                       alternate: settings.alternateCards)
+            }
+        }
+    }
+
     private struct Separator: View {
         var visible: Bool = true;
         public var body: some View {
@@ -110,8 +112,8 @@ struct FoundSetsView: View {
 }
 
 private struct TestView: View {
-    @EnvironmentObject var settings : Settings;
-    @State var cards: [TableCard] = [ TableCard("1RHO")!, TableCard("2GSD")!, TableCard("3PTQ")!]
+    @EnvironmentObject private var settings : Settings;
+    @State private var cards: [TableCard] = [ TableCard("1RHO")!, TableCard("2GSD")!, TableCard("3PTQ")!]
     public var body: some View {
         VStack {
             HStack {
