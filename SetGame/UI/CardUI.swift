@@ -13,8 +13,6 @@ public struct CardUI : View {
     @State private var shakeToken: CGFloat;
 
     let materializeDelay: Double = 0.5;
-    let materializeSpeed: Double = 0.7;
-    let materializeElasticity: Double = 0.4;
 
     init(_ card: TableCard,
            materialize: Bool = false,
@@ -31,18 +29,6 @@ public struct CardUI : View {
         self.materializing = materialize;
         self.materialized = false;
         self.shakeToken = 0;
-    }
-
-    init(_ card: String,
-           materialize: Bool = false,
-           askew: Bool = false,
-           alternate: Int? = nil,
-         _ touchedCallback: ((TableCard) -> Void)? = nil) {
-        self.init(TableCard(card) ?? TableCard("DUMMY")!,
-                  materialize: materialize,
-                  askew: askew,
-                  alternate: alternate,
-                  touchedCallback);
     }
 
     public var body: some View {
