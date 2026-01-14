@@ -7,85 +7,105 @@ struct FoundSetsView: View {
     let setsLastFound: [[TableCard]];
     let cardsAskew: Bool;
 
-    @State var showHelpButton: Bool = false;
-
     var body: some View {
-        let rows: [[TableCard]] = pairCardsListForDisplay(setsLastFound.reversed());
-        if ((rows.count == 0) && !self.settings.hideHelpButton) {
-            Spacer()
-            HelpViewButton {
-                showHelpButton = true
-            }
-            NavigationLink(
-                destination: HelpView(),
-                isActive: $showHelpButton
-            ) {
-                EmptyView()
-            }
-        }
+        let sets: [[TableCard]] = organizeCardsForDisplay(setsLastFound.reversed());
+        let mostRecentSet: Set<String> = mostRecentSet(setsLastFound);
+        HelpBar(visible: sets.isEmpty && !self.settings.hideHelpButton)
         Spacer()
-        let first: [TableCard] = (rows.count > 0) && (rows[0].count > 0) ? Array(rows[0].prefix(3)) : []
         VStack(alignment: .leading, spacing: 8) {
             TestView()
-            ForEach(rows.indices, id: \.self) { i in
-                let row: [TableCard] = rows[i]
-                let left: [TableCard]  = Array(row.prefix(3))
-                let right: [TableCard] = Array(row.dropFirst(3)) 
+            ForEach(sets.indices, id: \.self) { i in
+                let left: [TableCard]  = Array(sets[i].prefix(3));
+                let right: [TableCard] = Array(sets[i].dropFirst(3));
                 HStack {
                     ForEach(left, id: \.id) { card in
                         CardUI(card,
-                               materialize: first.contains(card),
+                               materialize: mostRecentSet.contains(card.id),
                                askew: settings.cardsAskew,
                                alternate: settings.alternateCards)
                     }
-                    separator(
-                        visible: !right.isEmpty
-                    )
+                    Separator(visible: !right.isEmpty)
                     ForEach(right, id: \.id) { card in
                         CardUI(card,
-                               materialize: first.contains(card),
+                               materialize: mostRecentSet.contains(card.id),
                                askew: settings.cardsAskew,
                                alternate: settings.alternateCards)
                     }
-            		if (right.isEmpty) {
-                		DummyCardView()
-                		DummyCardView()
-                		DummyCardView()
-            		}
+                    DummySetView(visible: right.isEmpty)
                 }
             }
         }
     }
 
-    @ViewBuilder
-    private func separator(visible: Bool) -> some View {
-        let diamondWidth: CGFloat = 6;
-        Text("\u{2756} ")
-            .font(.system(size: 8))
-            .frame(width: diamondWidth)
-            .foregroundColor(visible ? .secondary : .clear);
-    }
-
-    private func pairCardsListForDisplay(_ cardsList: [[TableCard]]) -> [[TableCard]] {
+    private func organizeCardsForDisplay(_ setsLastFound: [[TableCard]]) -> [[TableCard]] {
         var result: [[TableCard]] = [];
         var i: Int = 0;
-        while (i < cardsList.count) {
-            if ((i + 1) < cardsList.count) {
-                result.append(cardsList[i].sorted() + cardsList[i + 1].sorted());
+        while (i < setsLastFound.count) {
+            if ((i + 1) < setsLastFound.count) {
+                result.append(setsLastFound[i].sorted() + setsLastFound[i + 1].sorted());
             } else {
-                result.append(cardsList[i].sorted());
+                result.append(setsLastFound[i].sorted());
             }
             i += 2;
         }
         return result;
     }
-}
 
-private struct DummyCardView: View {
-    public var body: some View {
-        Image("DUMMY")
-            .resizable()
-            .aspectRatio(contentMode: .fit)
+    private func mostRecentSet(_ setsLastFound: [[TableCard]]) -> Set<String> {
+        if let mostRecent: [TableCard] = setsLastFound.last {
+            return Set(mostRecent.prefix(3).map(\.id))
+        }
+        return [];
+    }
+
+    private struct HelpBar: View {
+        var visible: Bool = true;
+        @State private var showHelpButton: Bool = false;
+        public var body: some View {
+            if (visible) {
+                Spacer()
+                HelpViewButton {
+                    showHelpButton = true
+                }
+                NavigationLink(
+                    destination: HelpView(),
+                    isActive: $showHelpButton
+                ) {
+                    EmptyView()
+                }
+            }
+        }
+    }
+
+    private struct Separator: View {
+        var visible: Bool = true;
+        public var body: some View {
+            if (visible) {
+                let diamondWidth: CGFloat = 6;
+                Text("\u{2756} ")
+                    .font(.system(size: 8))
+                    .frame(width: diamondWidth)
+                    .foregroundColor(visible ? .secondary : .clear);
+            }
+        }
+    }
+
+    private struct DummySetView: View {
+        private struct DummyCardView: View {
+            public var body: some View {
+                Image("DUMMY")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+            }
+        }
+        var visible: Bool = true;
+        public var body: some View {
+            if (visible) {
+                DummyCardView()
+                DummyCardView()
+                DummyCardView()
+            }
+        }
     }
 }
 
