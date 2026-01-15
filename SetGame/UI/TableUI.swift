@@ -64,9 +64,9 @@ struct TableUI: View {
                 Spacer()
                 LazyVGrid(columns: columns, spacing: spacing) {
                     ForEach(table.cards, id: \.id) { card in
-                        CardUI(card, materialize: table.state.newcomers.contains(card.id)) { card in
+                        CardUI(card, materialize: true /*table.state.newcomers.contains(card.id)*/) { card in
                             self.table.cardTouched(card, delay: Defaults.threeCardSelectDelay) { cards, set, resolve in
-                                print("CARD-TOUCHED> newcomers: \(table.state.newcomers) materializing: \(card.materializing)")
+                                print("CARD-TOUCHED> newcomers: \(table.state.newcomers) materializeNonce: \(card.materializeNonce)")
                                 if let set: Bool = set {
                                     if (set) {
                                         cards.blink() {

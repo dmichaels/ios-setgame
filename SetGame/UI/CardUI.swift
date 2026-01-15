@@ -10,7 +10,6 @@ public struct CardUI : View {
                     var touchedCallback: ((TableCard) -> Void)? = nil;
 
     @State private var materializing: Bool;
-    @State private var materialized: Bool;
     @State private var shakeToken: CGFloat;
 
     private var uid: ID = ID(short: true);
@@ -32,9 +31,15 @@ public struct CardUI : View {
         self.alternate = alternate;
         self.touchedCallback = touchedCallback;
 
-        self.materializing = materialize;
-        self.materialized = false;
+        self._materializing = State(initialValue: materialize)
         self.shakeToken = 0;
+
+        if (materialize && !card.materializedInit) {
+            card.materializedInit = true;
+            DispatchQueue.main.async {
+                card.materialize();
+            }
+        }
     }
 
     public var body: some View {
@@ -92,12 +97,12 @@ public struct CardUI : View {
                     //
                     // Optional: Also ensure blinkoff toggles don’t animate (belt+suspenders).
                     //
-                    .scaleEffect(materializing ? 0.05 : 1.0, anchor: .center)
+                    .scaleEffect(self.materializing ? 0.05 : 1.0, anchor: .center)
                     //
                     // Placing this opacity qualifier here (rather than higher up above) ensures
                     // that the entire card - including it selection border if present - blinks.
                     //
-                    .opacity(materializing || card.blinkoff ? 0.0 : 1.0)
+                    .opacity(self.materializing || card.blinkoff ? 0.0 : 1.0)
                     //
                     // Animation for newly added "materialized" cards.
                     // - The response argument to the .spring qualifier
@@ -110,34 +115,22 @@ public struct CardUI : View {
                     // .animation(.spring(response: 0.70, dampingFraction: 0.40), value: materializing)
                     .animation(
                         .spring(response: card.materializeSpeed, dampingFraction: card.materializeElasticity),
-                         value: materializing
+                         value: self.materializing
                     )
             }
             .skew(askew)
-            .onAppear {
-                print("CARDUI-ONAPPEAR> card: \(card.vid) \(card.codename) self.materialized: \(self.materialized) self.materializing: \(self.materializing)")
-                if (self.materializing && !self.materialized) {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + self.materializeDelay) {
-                        print("CARDUI-ONAPPEAR-DISPATCH> card: \(card.vid) \(card.codename) self.materialized: \(self.materialized) self.materializing: \(self.materializing)")
-                        self.materializing = false;
-                        self.materialized = true;
-                        print("CARDUI-ONAPPEAR-DISPATCH-END> card: \(card.vid) \(card.codename) self.materialized: \(self.materialized) self.materializing: \(self.materializing)")
-                    }
-                }
-            }
-            Text("\(self.uid)/\(card.vid):\(card.materializing ? "CM": "cm"):\(self.materializing ? "SM": "sm"):\(self.materialized ? "SD": "sd")").font(.system(size: 11))
+            // Text("\(self.uid)/\(card.vid):\(card.materializing ? "CM": "cm"):\(self.materializing ? "SM": "sm"):\(self.materialized ? "SD": "sd")").font(.system(size: 11))
         }
-        .onChange(of: card.materializing) { value in
-            print("CARDUI-ONCHANGE-MATERIALIZING> card: \(card.vid) \(card.codename) value: \(value) card.materializing: \(card.materializing)")
-            if (value) {
+        .onChange(of: card.materializeNonce) { value in
+            print("CARDUI-ONCHANGE-MATERIALIZE-NONCE> card: \(card.vid) \(card.codename) value: \(value) card.materializeNonce: \(card.materializeNonce)")
+            // if (value) ...
                 self.materializing = true;
                 DispatchQueue.main.asyncAfter(deadline: .now() + self.materializeDelay) {
-                    print("CARDUI-ONCHANGE-MATERIALIZING-DISPATCH> card: \(card.vid) \(card.codename) card.materializing: \(card.materializing)")
+                    print("CARDUI-ONCHANGE-MATERIALIZE-NONCE-DISPATCH> card: \(card.vid) \(card.codename) card.materializeNonce: \(card.materializeNonce)")
                     self.materializing = false;
-                    card.materializing = false;
-                    print("CARDUI-ONCHANGE-MATERIALIZING-DISPATCH-END> card: \(card.vid) \(card.codename) card.materializing: \(card.materializing)")
+                    // card.materializing = false;
+                    print("CARDUI-ONCHANGE-MATERIALIZE-NONCE-DISPATCH-END> card: \(card.vid) \(card.codename) card.materializeNonce: \(card.materializeNonce)")
                 }
-            }
         }
         .onChange(of: card.blinking) { value in
             if (value) {
@@ -173,6 +166,17 @@ public struct CardUI : View {
         }
     }
     
+    /*
+    private func doMaterialize() {
+        print("CARDUI-MATERIALIZE-NONCE> card: \(card.vid) \(card.codename) card.materializeNonce: \(card.materializeNonce)")
+        self.materializing = true;
+        DispatchQueue.main.asyncAfter(deadline: .now() + self.materializeDelay) {
+            print("CARDUI-MATERIALIZE-NONCE-DISPATCH> card: \(card.vid) \(card.codename) card.materializeNonce: \(card.materializeNonce)")
+            self.materializing = false;
+            print("CARDUI-MATERIALIZE-NONCE-DISPATCH-END> card: \(card.vid) \(card.codename) card.materializeNonce: \(card.materializeNonce)")
+        }
+    }
+    */
 
     private func image(_ card: TableCard, _ alternate: Int? = nil) -> String {
         //

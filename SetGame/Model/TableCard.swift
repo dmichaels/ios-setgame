@@ -31,7 +31,8 @@ class TableCard : Card, ObservableObject {
     @Published var shaking: Bool                    = false;
                var shakeCount: Int                  = Defaults.shakeCount;
                var shakeSpeed: Double               = Defaults.shakeSpeed;
-    @Published var materializing: Bool              = false;
+    @Published var materializeNonce: Int            = 1;
+    @Published var materializedInit: Bool           = false;
                var materializeSpeed: Double         = Defaults.materializeSpeed;
                var materializeElasticity: Double    = Defaults.materializeElasticity;
 
@@ -73,7 +74,8 @@ class TableCard : Card, ObservableObject {
         self.shaking = card.shaking;
         self.shakeCount = card.shakeCount;
         self.shakeSpeed = card.shakeSpeed;
-        self.materializing = card.materializing;
+        self.materializeNonce = card.materializeNonce;
+        self.materializedInit = card.materializedInit;
         self.materializeSpeed = card.materializeSpeed;
         self.materializeElasticity = card.materializeElasticity;
     }
@@ -130,6 +132,6 @@ class TableCard : Card, ObservableObject {
     public func materialize(speed: Double = 0, elasticity: Double = 0) {
         self.materializeSpeed = speed > 0 ? speed : Defaults.materializeSpeed;
         self.materializeElasticity = elasticity > 0 ? elasticity : Defaults.materializeElasticity;
-        self.materializing = true;
+        self.materializeNonce += 1;
     }
 }
