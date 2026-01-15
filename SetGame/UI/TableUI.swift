@@ -10,7 +10,7 @@ struct TableUI: View {
     @ObservedObject var settings : Settings;
     @ObservedObject var feedback : Feedback;
 
-    @ObservedObject private var gameCenter = GameCenterManager.shared;
+    // @ObservedObject private var gameCenter = GameCenterManager.shared;
 
     let statusResetToken: Int;
 
@@ -18,77 +18,120 @@ struct TableUI: View {
         fileprivate static let threeCardSelectDelay: Double = 0.75;
     }
 
+    let marginx: CGFloat = 6;
+    let spacing: CGFloat = 6;
+
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            VStack {
-                let nrows = Int(ceil(Float(table.cards.count) / Float(settings.cardsPerRow)));
-                ForEach (0..<nrows, id: \.self) { row in
-                    HStack {
-                        ForEach(0..<settings.cardsPerRow, id: \.self) { column in
-                            let index = row * settings.cardsPerRow + column;
-                            if (index < table.cards.count) {
-                                CardView(card: table.cards[index]) {
-                                    //
-                                    // Note that this delay here on cardTouched is the  amount
-                                    // of time that the cards will remain visually highlighted
-                                    // when 3 cards are selected, before they either blink, because
-                                    // they form a SET; or before they shake, because they do not.
-                                    //
-                                    self.table.cardTouched($0, delay: Defaults.threeCardSelectDelay) { cards, set, resolve in
-                                        //
-                                        // The given cards argument will always
-                                        // be the list of cards now selected.
-                                        //
-                                        // The given set argument will be true if three cards are now
-                                        // selected and they form a SET, or it will be false if three
-                                        // cards are now selected which are not a SET; if than three
-                                        // cards are now selected it will be nil.
-                                        //
-                                        // N.B. If this callback is specified at all to the cardTouched
-                                        // function, then it is our responsibility to (we MUST) call
-                                        // the given resolve function at the end of any processing.
-                                        //
-                                        if let set: Bool = set {
-                                            if (set) {
-                                                TableCardEffects.blinkCards(cards, times: 5) {
-                                                    print("SET")
-                                                    self.feedback.trigger(Feedback.SET);
-                                                    resolve();
-                                                }
-                                            }
-                                            else {
-                                                print("NOSET")
-                                                self.feedback.trigger(Feedback.NOSET, Feedback.HAPTIC_NOSET);
-                                                resolve();
-                                            }
-                                        }
-                                        else {
-                                            print("TAP")
-                                            self.feedback.trigger(Feedback.TAP, Feedback.HAPTIC_TAP);
+            CardGrid(table: table, settings: settings, spacing: spacing, marginx: marginx)
+            Space(size: 12)
+            StatusBar(statusResetToken: statusResetToken, marginx: marginx)
+            Space(size: 12)
+            FoundSets(table: table, settings: settings, marginx: marginx)
+            MultiPlayerGameButton()
+        }
+    }
+
+    private struct CardGrid: View  {
+
+        @ObservedObject var table: Table<TableCard>;
+        @ObservedObject var settings: Settings;
+
+        var spacing: CGFloat = 8;
+        var marginx: CGFloat = 8;
+
+        public var body: some View {
+            let spacingx: CGFloat = spacing;
+            let spacingy: CGFloat = spacing;
+            //
+            // Spacing notes:
+            // - marginx
+            //   The HStack spacing is amount of horizontal space to
+            //   the left and right of the table card grid itself;
+            //   also requires Spacer before/after the LazyVGrid.
+            // - spacingx
+            //   The columns/GridItem array spacing is the horizontal
+            //   space between each card on the table card grid.
+            // - spacingy
+            //   The LazyVGrid spacing is the vertical space
+            //   between each card on the table card grid.
+            //
+            HStack(spacing: marginx) {
+                let columns: Array<GridItem> = Array(
+                    repeating: GridItem(.flexible(), spacing: spacing),
+                    count: settings.cardsPerRow
+                )
+                Spacer()
+                LazyVGrid(columns: columns, spacing: spacing) {
+                    ForEach(table.cards, id: \.id) { card in
+                        CardUI(card, materialize: table.state.newcomers.contains(card.id)) { card in
+                            self.table.cardTouched(card, delay: Defaults.threeCardSelectDelay) { cards, set, resolve in
+                                print("CARD-TOUCHED> newcomers: \(table.state.newcomers) materializing: \(card.materializing)")
+                                if let set: Bool = set {
+                                    if (set) {
+                                        cards.blink() {
+                                            print("BLINK-DONE> newcomers: \(table.state.newcomers)")
                                             resolve();
+                                            print("BLINK-DONE-AFTER-RESOLVED> newcomers: \(table.state.newcomers)")
                                         }
                                     }
+                                    else {
+                                        cards.shake();
+                                        resolve();
+                                    }
                                 }
-                                .slightlyRotated(self.settings.cardsAskew)
-                                .allowsHitTesting(!self.table.state.disabled && !self.settings.demoMode)
-                            }
-                            else {
-                                Color.clear
+                                else {
+                                    resolve();
+                                }
                             }
                         }
                     }
                 }
-                VStack {
-                    Spacer(minLength: 24)
-                    StatusBarView(resetToken: statusResetToken)
-                    Spacer(minLength: 20)
-                    if (self.settings.showFoundSets) {
-                        FoundSetsView(setsLastFound: table.state.setsLastFound, settings: settings)
-                    }
-                    PlayButtonView(gameCenter: gameCenter)
-                        .padding(.horizontal)
+                Spacer()
+            }
+        }
+    }
+
+    private struct StatusBar: View {
+        var statusResetToken: Int = 0;
+        var marginx: CGFloat = 8;
+        var body: some View {
+            HStack(spacing: marginx) {
+                Spacer()
+                StatusBarView(resetToken: statusResetToken)
+                Spacer()
+            }
+        }
+    }
+
+    private struct FoundSets: View {
+        @ObservedObject var table: Table<TableCard>;
+        @ObservedObject var settings: Settings;
+        var marginx: CGFloat = 8;
+        var body: some View {
+            if (self.settings.showFoundSets) {
+                HStack(spacing: marginx) {
+                    Spacer()
+                    FoundSetsView(setsLastFound: table.state.setsLastFound, settings: settings)
+                    Spacer()
                 }
-            }.padding().offset(y: -12)
+            }
+        }
+    }
+
+    private struct MultiPlayerGameButton: View {
+        var body: some View {
+            if (false) {
+                // PlayButtonView(gameCenter: gameCenter)
+                //     .padding(.horizontal)
+            }
+        }
+    }
+
+    private struct Space: View {
+        var size: CGFloat = 0;
+        var body: some View {
+            Spacer(minLength: size)
         }
     }
 }

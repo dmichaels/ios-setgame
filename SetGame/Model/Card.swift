@@ -150,6 +150,13 @@ public class Card {
         return verbose ? "\(color)-\(shape)-\(filling)-\(number)"
                        : "\(codename)"
     }
+
+    /// For debugging.
+    ///
+    var uid: String { String(ObjectIdentifier(self).hashValue, radix: 16).uppercased() }
+    // var sid: String { String(ObjectIdentifier(self).hashValue & 0xFFFFFF, radix: 16).uppercased() }
+    var sid: String { String(format: "%6X", ObjectIdentifier(self).hashValue & 0xFFFFFF) }
+    var vid: String { String(format: "%4X", ObjectIdentifier(self).hashValue & 0xFFFF) }
 }
 
 /// Card extensions to conform to sundry protocols.

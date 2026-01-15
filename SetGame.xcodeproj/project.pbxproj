@@ -23,11 +23,6 @@
 		9811914A25ED5ACF0083606B /* TableCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811914025ED5ACF0083606B /* TableCard.swift */; };
 		9811914B25ED5ACF0083606B /* CardShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811914125ED5ACF0083606B /* CardShape.swift */; };
 		9811915125ED5D0E0083606B /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811915025ED5D0E0083606B /* CardView.swift */; };
-		981B00512F13095400875920 /* TopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981B004F2F13095400875920 /* TopViewController.swift */; };
-		981B00532F1309B000875920 /* GameCenterAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981B00522F1309B000875920 /* GameCenterAuthentication.swift */; };
-		981B00562F130CDE00875920 /* UIApplication+TopMostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981B00552F130CDE00875920 /* UIApplication+TopMostViewController.swift */; };
-		981B00572F130CDE00875920 /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981B00542F130CDE00875920 /* GameCenterManager.swift */; };
-		981B00592F130D3A00875920 /* PlayButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981B00582F130D3A00875920 /* PlayButtonView.swift */; };
 		981B00602F1450B900875920 /* TableCardEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981B005E2F1450B900875920 /* TableCardEffects.swift */; };
 		989D93692EE8B01D00BE461B /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D93682EE8B01D00BE461B /* Stats.swift */; };
 		989D936B2EEDABC600BE461B /* FoundSetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D936A2EEDABC600BE461B /* FoundSetsView.swift */; };
@@ -91,11 +86,6 @@
 		9811914125ED5ACF0083606B /* CardShape.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardShape.swift; sourceTree = "<group>"; };
 		9811915025ED5D0E0083606B /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		981B00492F113ABF00875920 /* SetGame.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SetGame.entitlements; sourceTree = "<group>"; };
-		981B004F2F13095400875920 /* TopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopViewController.swift; sourceTree = "<group>"; };
-		981B00522F1309B000875920 /* GameCenterAuthentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterAuthentication.swift; sourceTree = "<group>"; };
-		981B00542F130CDE00875920 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
-		981B00552F130CDE00875920 /* UIApplication+TopMostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+TopMostViewController.swift"; sourceTree = "<group>"; };
-		981B00582F130D3A00875920 /* PlayButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayButtonView.swift; sourceTree = "<group>"; };
 		981B005E2F1450B900875920 /* TableCardEffects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableCardEffects.swift; sourceTree = "<group>"; };
 		989D93682EE8B01D00BE461B /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		989D936A2EEDABC600BE461B /* FoundSetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundSetsView.swift; sourceTree = "<group>"; };
@@ -170,7 +160,6 @@
 			children = (
 				98EF7E0D2F167C5800A45F63 /* UI */,
 				981B005F2F1450B900875920 /* Effects */,
-				981B00502F13095400875920 /* GameCenter */,
 				981B00492F113ABF00875920 /* SetGame.entitlements */,
 				981190EF25ED59CC0083606B /* SetGameApp.swift */,
 				9811911D25ED5A0C0083606B /* Model */,
@@ -246,18 +235,6 @@
 				989FF92025F10BA7002AE44A /* TableView.swift */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		981B00502F13095400875920 /* GameCenter */ = {
-			isa = PBXGroup;
-			children = (
-				981B00582F130D3A00875920 /* PlayButtonView.swift */,
-				981B00542F130CDE00875920 /* GameCenterManager.swift */,
-				981B00552F130CDE00875920 /* UIApplication+TopMostViewController.swift */,
-				981B00522F1309B000875920 /* GameCenterAuthentication.swift */,
-				981B004F2F13095400875920 /* TopViewController.swift */,
-			);
-			path = GameCenter;
 			sourceTree = "<group>";
 		};
 		981B005F2F1450B900875920 /* Effects */ = {
@@ -454,22 +431,17 @@
 				98C2CA8225F3C1E40050ACDC /* StatsView.swift in Sources */,
 				989FF92B25F11872002AE44A /* StatusBarView.swift in Sources */,
 				981B00602F1450B900875920 /* TableCardEffects.swift in Sources */,
-				981B00562F130CDE00875920 /* UIApplication+TopMostViewController.swift in Sources */,
-				981B00572F130CDE00875920 /* GameCenterManager.swift in Sources */,
 				981190F025ED59CC0083606B /* SetGameApp.swift in Sources */,
 				989FF92625F10F08002AE44A /* SettingsView.swift in Sources */,
 				9811915125ED5D0E0083606B /* CardView.swift in Sources */,
 				9811914325ED5ACF0083606B /* CardColor.swift in Sources */,
 				9811914725ED5ACF0083606B /* Table.swift in Sources */,
 				9811914B25ED5ACF0083606B /* CardShape.swift in Sources */,
-				981B00512F13095400875920 /* TopViewController.swift in Sources */,
 				989D936F2EF21DEF00BE461B /* Settings.swift in Sources */,
 				9811914A25ED5ACF0083606B /* TableCard.swift in Sources */,
 				98A5C74B2F098D02009E708D /* HelpView.swift in Sources */,
 				989FF8FA25EF3708002AE44A /* StandardDeck.swift in Sources */,
 				989D93712EF43A8500BE461B /* DeckView.swift in Sources */,
-				981B00592F130D3A00875920 /* PlayButtonView.swift in Sources */,
-				981B00532F1309B000875920 /* GameCenterAuthentication.swift in Sources */,
 				98EF7E0E2F167C5800A45F63 /* CardUI.swift in Sources */,
 				98EF7E0F2F167C5800A45F63 /* TableUI.swift in Sources */,
 				989D93732EF4BEDB00BE461B /* Feedback.swift in Sources */,
@@ -562,7 +534,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -620,7 +592,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -641,11 +613,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 54;
 				DEVELOPMENT_ASSET_PATHS = "\"SetGame/Preview Content\"";
+				DEVELOPMENT_TEAM = N76S683655;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = SetGame/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LogiCard;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.card-games";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -672,11 +645,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 54;
 				DEVELOPMENT_ASSET_PATHS = "\"SetGame/Preview Content\"";
+				DEVELOPMENT_TEAM = N76S683655;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = SetGame/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LogiCard;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.card-games";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -699,7 +673,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = SetGameTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -719,7 +693,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = SetGameTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

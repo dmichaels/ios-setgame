@@ -3,6 +3,7 @@ import SwiftUI
 public struct CardUI : View {
     
     @ObservedObject var card: TableCard;
+                    var selectable: Bool                        = false;
                     var materialize: Bool                       = false;
                     var askew: Bool                             = false;
                     var alternate: Int?                         = nil;
@@ -15,12 +16,14 @@ public struct CardUI : View {
     let materializeDelay: Double = 0.4;
 
     init(_ card: TableCard,
+           selectable: Bool = false,
            materialize: Bool = false,
            askew: Bool = false,
            alternate: Int? = nil,
          _ touchedCallback: ((TableCard) -> Void)? = nil) {
 
         self.card = card;
+        self.selectable = selectable;
         self.materialize = materialize;
         self.askew = askew;
         self.alternate = alternate;
@@ -33,7 +36,12 @@ public struct CardUI : View {
 
     public var body: some View {
         VStack {
-            Button(action: { touchedCallback?(card) }) {
+            Button(action: {
+                if (selectable) {
+                    card.selected.toggle();
+                }
+                touchedCallback?(card)
+            }) {
                 Image(self.image(card, alternate))
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -104,21 +112,28 @@ public struct CardUI : View {
             }
             .skew(askew)
             .onAppear {
+                print("CARDUI-ONAPPEAR> card: \(card.vid) \(card.codename) self.materialized: \(self.materialized) self.materializing: \(self.materializing)")
                 if (self.materializing && !self.materialized) {
                     DispatchQueue.main.asyncAfter(deadline: .now() + self.materializeDelay) {
+                        print("CARDUI-ONAPPEAR-DISPATCH> card: \(card.vid) \(card.codename) self.materialized: \(self.materialized) self.materializing: \(self.materializing)")
                         self.materializing = false;
                         self.materialized = true;
+                        print("CARDUI-ONAPPEAR-DISPATCH-END> card: \(card.vid) \(card.codename) self.materialized: \(self.materialized) self.materializing: \(self.materializing)")
                     }
                 }
             }
+            // Text("\(card.vid):\(card.materializing ? "M": "N")").font(.system(size: 11))
+            // Text("\(card.vid):\(card.materializing ? "CM": "cm"):\(self.materializing ? "SM": "sm"):\(self.materialized ? "SD": "sd")").font(.system(size: 11))
         }
         .onChange(of: card.materializing) { value in
-            print("cardui-onchange-materializing> value: \(value) card.materializing: \(card.materializing)")
+            print("CARDUI-ONCHANGE-MATERIALIZING> card: \(card.vid) \(card.codename) value: \(value) card.materializing: \(card.materializing)")
             if (value) {
                 self.materializing = true;
                 DispatchQueue.main.asyncAfter(deadline: .now() + self.materializeDelay) {
+                    print("CARDUI-ONCHANGE-MATERIALIZING-DISPATCH> card: \(card.vid) \(card.codename) card.materializing: \(card.materializing)")
                     self.materializing = false;
                     card.materializing = false;
+                    print("CARDUI-ONCHANGE-MATERIALIZING-DISPATCH-END> card: \(card.vid) \(card.codename) card.materializing: \(card.materializing)")
                 }
             }
         }

@@ -8,10 +8,10 @@ struct FoundSetsView: View {
     var body: some View {
         let sets: [[TableCard]] = organizeSetsForDisplay(setsLastFound.reversed());
         let mostRecentSet: Set<String> = mostRecentSet(setsLastFound);
+VStack {
         HelpBar(visible: sets.isEmpty && !self.settings.hideHelpButton)
         Spacer()
         VStack(alignment: .leading, spacing: 8) {
-            TestView()
             ForEach(sets.indices, id: \.self) { i in
                 let left: [TableCard] = Array(sets[i].prefix(3));
                 let right: [TableCard] = Array(sets[i].dropFirst(3));
@@ -22,7 +22,9 @@ struct FoundSetsView: View {
                     DummySetView(visible: right.isEmpty)
                 }
             }
+            TestView()
         }
+}
     }
 
     private func organizeSetsForDisplay(_ setsLastFound: [[TableCard]]) -> [[TableCard]] {

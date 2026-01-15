@@ -213,7 +213,8 @@ struct HelpViewButton: View {
     let action: () -> Void
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 10) {
+            // HStack(spacing: 10) CURLY
+            HStack {
                 Image(systemName: "book.fill")
                     .font(.headline)
                 Text("Help")

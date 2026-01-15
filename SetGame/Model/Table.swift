@@ -349,7 +349,7 @@ class Table<TC : TableCard> : ObservableObject {
         else {
             let ids: Set<TC.ID> = Set(cards.map(\.id));
             self.state.newcomers.formUnion(ids);
-            let delay: Double = 0.2;
+            let delay: Double = 4.2;
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 self.state.newcomers.subtract(ids);
             }
