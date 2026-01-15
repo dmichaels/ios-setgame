@@ -60,6 +60,24 @@ class TableCard : Card, ObservableObject {
         super.init(card);
     }
 
+    convenience init(_ card: TableCard) {
+        self.init(card);
+        self.set = card.set;
+        self.selected = card.selected;
+        self.blinking = card.blinking;
+        self.blinkoff = card.blinkoff;
+        self.blinkCount = card.blinkCount;
+        self.blinkInterval = card.blinkInterval;
+        self.blinkoffInterval = card.blinkoffInterval;
+        self.blinkDoneCallback = card.blinkDoneCallback;
+        self.shaking = card.shaking;
+        self.shakeCount = card.shakeCount;
+        self.shakeSpeed = card.shakeSpeed;
+        self.materializing = card.materializing;
+        self.materializeSpeed = card.materializeSpeed;
+        self.materializeElasticity = card.materializeElasticity;
+    }
+
     override class func from(_ value: String) -> TableCard? {
         if let card = super.from(value) {
             return TableCard(card);

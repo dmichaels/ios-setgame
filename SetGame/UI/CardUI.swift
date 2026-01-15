@@ -13,6 +13,8 @@ public struct CardUI : View {
     @State private var materialized: Bool;
     @State private var shakeToken: CGFloat;
 
+    private var uid: ID = ID(short: true);
+
     let materializeDelay: Double = 0.4;
 
     init(_ card: TableCard,
@@ -22,6 +24,7 @@ public struct CardUI : View {
            alternate: Int? = nil,
          _ touchedCallback: ((TableCard) -> Void)? = nil) {
 
+        print("CARDUI-INIT> uid: \(self.uid) card: \(card.uid) \(card.sid) \(card.vid) \(card.id) \(card.codename)")
         self.card = card;
         self.selectable = selectable;
         self.materialize = materialize;
@@ -122,8 +125,7 @@ public struct CardUI : View {
                     }
                 }
             }
-            // Text("\(card.vid):\(card.materializing ? "M": "N")").font(.system(size: 11))
-            // Text("\(card.vid):\(card.materializing ? "CM": "cm"):\(self.materializing ? "SM": "sm"):\(self.materialized ? "SD": "sd")").font(.system(size: 11))
+            Text("\(self.uid)/\(card.vid):\(card.materializing ? "CM": "cm"):\(self.materializing ? "SM": "sm"):\(self.materialized ? "SD": "sd")").font(.system(size: 11))
         }
         .onChange(of: card.materializing) { value in
             print("CARDUI-ONCHANGE-MATERIALIZING> card: \(card.vid) \(card.codename) value: \(value) card.materializing: \(card.materializing)")

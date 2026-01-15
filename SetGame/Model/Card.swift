@@ -153,8 +153,8 @@ public class Card {
 
     /// For debugging.
     ///
-    var uid: String { String(ObjectIdentifier(self).hashValue, radix: 16).uppercased() }
-    // var sid: String { String(ObjectIdentifier(self).hashValue & 0xFFFFFF, radix: 16).uppercased() }
+    // var uid: String { String(ObjectIdentifier(self).hashValue, radix: 16).uppercased() }
+    var uid: String { String(format: "%X", ObjectIdentifier(self).hashValue) }
     var sid: String { String(format: "%6X", ObjectIdentifier(self).hashValue & 0xFFFFFF) }
     var vid: String { String(format: "%4X", ObjectIdentifier(self).hashValue & 0xFFFF) }
 }

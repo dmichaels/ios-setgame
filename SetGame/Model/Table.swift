@@ -11,11 +11,7 @@ class Table<TC : TableCard> : ObservableObject {
 
     public struct State {
 
-        private let table: Table;
-
-        public init(_ table: Table) {
-            self.table = table;
-        }
+        fileprivate let table: Table;
 
         public var partialSetSelected: Bool            = false;
         public var incorrectGuessCount: Int            = 0;
@@ -54,7 +50,7 @@ class Table<TC : TableCard> : ObservableObject {
 
         self.deck  = Deck(simple: self.settings.simpleDeck);
         self.cards = [TC]();
-        self.state = State(self);
+        self.state = State(table: self);
 
         if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.settings.simpleDeck)
@@ -337,12 +333,26 @@ class Table<TC : TableCard> : ObservableObject {
     }
 
     private func noteNewcomers(_ cards: [TC], randomize: Bool = true) {
-        if (randomize) {
+        if cards.count > 0 {
+            // let t: TableCard = TableCard(cards[0]);
+            let t: TableCard = cards[0];
+            print("NEWCOMER: \(t.vid) \(cards[0].vid)")
+        }
+        if (false) {
             for card in cards {
                 let delay: Double = Double.random(in: 0.20...0.60);
                 self.state.newcomers.insert(card.id);
                 DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                     self.state.newcomers.remove(card.id);
+                }
+            }
+        }
+        else if (randomize) {
+            for card in cards {
+                let delay: Double = Double.random(in: 0.20...0.60);
+                self.state.newcomers.formUnion([card.id]);
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                    self.state.newcomers.subtract([card.id]);
                 }
             }
         }

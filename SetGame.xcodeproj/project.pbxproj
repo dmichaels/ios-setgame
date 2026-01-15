@@ -43,6 +43,7 @@
 		98E4E3232773B0AC000EEC5A /* SetGame.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98E4E3222773B0AC000EEC5A /* SetGame.xcassets */; };
 		98EF7E0E2F167C5800A45F63 /* CardUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E0B2F167C5800A45F63 /* CardUI.swift */; };
 		98EF7E0F2F167C5800A45F63 /* TableUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E0C2F167C5800A45F63 /* TableUI.swift */; };
+		98EF7E112F19661F00A45F63 /* ID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E102F19661F00A45F63 /* ID.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,6 +107,7 @@
 		98E4E3222773B0AC000EEC5A /* SetGame.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SetGame.xcassets; sourceTree = "<group>"; };
 		98EF7E0B2F167C5800A45F63 /* CardUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardUI.swift; sourceTree = "<group>"; };
 		98EF7E0C2F167C5800A45F63 /* TableUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableUI.swift; sourceTree = "<group>"; };
+		98EF7E102F19661F00A45F63 /* ID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ID.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -200,6 +202,7 @@
 		9811911D25ED5A0C0083606B /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				98EF7E102F19661F00A45F63 /* ID.swift */,
 				9811913A25ED5ACF0083606B /* Card.swift */,
 				989FF8F925EF3708002AE44A /* CardArray.swift */,
 				9811913925ED5ACF0083606B /* CardColor.swift */,
@@ -435,6 +438,7 @@
 				989FF92625F10F08002AE44A /* SettingsView.swift in Sources */,
 				9811915125ED5D0E0083606B /* CardView.swift in Sources */,
 				9811914325ED5ACF0083606B /* CardColor.swift in Sources */,
+				98EF7E112F19661F00A45F63 /* ID.swift in Sources */,
 				9811914725ED5ACF0083606B /* Table.swift in Sources */,
 				9811914B25ED5ACF0083606B /* CardShape.swift in Sources */,
 				989D936F2EF21DEF00BE461B /* Settings.swift in Sources */,
