@@ -3,7 +3,7 @@ import Foundation
 
 /// This ID type is a unique ID for debugging; it is a UUID (or hash thereof) which
 /// acts like a String; it can be short (6 characters); or very short (4 characters);
-/// or any size really (between 1 and 32).
+/// or any size really in between 1 and 32 inclusive.
 ///
 public struct ID: ExpressibleByStringLiteral, CustomStringConvertible, Equatable, Hashable {
 
