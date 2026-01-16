@@ -12,7 +12,7 @@ class Deck<T : Card> {
     ///   surprisingly, is actually the default for the official SET Game® app deck.
     /// - Can contain just a random subset of cards if the given ncards is greater than 1;
     ///   the default card count is, of course, 3 * 3 * 3 * 3 = 81.
-    /// - Can be readonly (for the standard deck here) in which case no cards will be removed.
+    /// - Can be readonly (for the deck here) in which case no cards will be removed.
     ///
     init(simple: Bool = false, ncards: Int = 0, readonly: Bool = false) {
         self.readonly = readonly;
@@ -95,7 +95,7 @@ class Deck<T : Card> {
     /// N.B. Currently ONLY for the purpose of constructing a magic square.
     ///
     static func randomMagicSquare(simple: Bool = false) -> [Card] {
-        let deck: [Card] = simple ? StandardDeck.instanceSimple.cards : StandardDeck.instance.cards;
+        let deck: [Card] = simple ? TableDeck.instanceSimple.cards : TableDeck.instance.cards;
         var magic: [Card] = deck.randomNonSetCards();
         magic.append(Card.matchingSetValue(magic[0], magic[1])); // [3] from [0] and [1]
         magic.append(Card.matchingSetValue(magic[0], magic[2])); // [4] from [0] and [2]
@@ -105,10 +105,4 @@ class Deck<T : Card> {
         magic.append(Card.matchingSetValue(magic[0], magic[5])); // [8] from [0] and [5]
         return [magic[0], magic[1], magic[3], magic[2], magic[5], magic[6], magic[4], magic[7], magic[8]]
     }
-}
-
-class TableDeck: Deck<TableCard> {
-    static let instance       : TableDeck = TableDeck();
-    static let instanceSimple : TableDeck = TableDeck(simple: true);
-    static let size           : Int  = instance.count;
 }

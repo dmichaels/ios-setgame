@@ -1,4 +1,4 @@
-/// Card represents a single SET card from a standard SET Game® deck.
+/// Card represents a single SET card from a SET Game® deck.
 ///
 public class Card {
 
