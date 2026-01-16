@@ -40,6 +40,7 @@ struct FoundSetsView: View {
         }
         .onChange(of: self.table.state.setsLastFound) { value in
             print("FoundSetsView.onChange(table.state.setsLastFound)> \(value) \(self.table.state.setsLastFound)")
+            self.table.state.setsLastFound[self.table.state.setsLastFound.count - 1].blink(count: 4, interval: 0.14, delay: 0.1);
         }
     }
 
@@ -99,17 +100,11 @@ struct FoundSetsView: View {
         }
 
         let blink: Bool       = false;
-        let materialize: Bool = true;
-        let shake: Bool       = true;
+        let materialize: Bool = false;
+        let shake: Bool       = false;
 
         public var body: some View {
             ForEach(set, id: \.id) { card in
-                //
-                // IMPORTANT NOTE:
-                // We must create a copy of TableCard here so
-                // that the special materializeOnce gets reset.
-                //
-                // let card: TableCard = TableCard(card);
                 let recent: Bool = recent.contains(card.id);
                 CardUI(
                     card,
@@ -131,7 +126,7 @@ struct FoundSetsView: View {
                 }
                 .onAppear {
                     print("SetView.onAppear> \(recent) \(self.recent) \(self.set)")
-                    if (recent) {
+                    if (false && recent) {
                         if (blink) {
                             card.blink(count: 3, interval: 0.14, delay: 0.1);
                         }
