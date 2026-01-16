@@ -36,7 +36,9 @@ extension Array where Element : TableCard
         }
     }
 
-    func blink(count: Int = 0, interval: Double = 0.2, _ intervalOff: Double = 0.0, _ blinkDoneCallback: (() -> Void)? = nil)  {
+    func blink(count: Int = 0,
+               interval: Double = 0, offinterval: Double = 0.0, delay: Double = 0,
+             _ blinkDoneCallback: (() -> Void)? = nil)  {
         let ncards: Int = self.count;
         var ndone: Int = 0;
         func blinkDone() {
@@ -46,19 +48,19 @@ extension Array where Element : TableCard
             }
         }
         for card in self {
-            card.blink(count: count, interval: interval, intervalOff, blinkDone);
+            card.blink(count: count, interval: interval, offinterval: offinterval, delay: delay, blinkDone);
         }
     }
 
-    func shake(count: Int = 0, speed: Double = 0) {
+    func shake(count: Int = 0, speed: Double = 0, delay: Double = 0) {
         for card in self {
-            card.shake(count: count, speed: speed);
+            card.shake(count: count, speed: speed, delay: delay);
         }
     }
 
-    func materialize(once: Bool = false, speed: Double = 0, elasticity: Double = 0) {
+    func materialize(once: Bool = false, speed: Double = 0, elasticity: Double = 0, delay: Double = 0) {
         for card in self {
-            card.materialize(once: once, speed: speed, elasticity: elasticity);
+            card.materialize(once: once, speed: speed, elasticity: elasticity, delay: delay);
         }
     }
 

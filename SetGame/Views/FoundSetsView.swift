@@ -2,29 +2,35 @@ import SwiftUI
 
 struct FoundSetsView: View {
 
-                    let setsLastFound: [[TableCard]];
-    @ObservedObject var settings: Settings;
+    private let setsLastFound: [[TableCard]];
+    @ObservedObject
+    private var settings: Settings;
+
+    init(setsLastFound: [[TableCard]], settings: Settings) {
+        self.setsLastFound = setsLastFound;
+        self.settings = settings;
+    }
 
     var body: some View {
         let sets: [[TableCard]] = organizeSetsForDisplay(setsLastFound.reversed());
         let mostRecentSet: Set<String> = mostRecentSet(setsLastFound);
-VStack {
-        HelpBar(visible: sets.isEmpty && !self.settings.hideHelpButton)
-        Spacer()
-        VStack(alignment: .leading, spacing: 8) {
-            ForEach(sets.indices, id: \.self) { i in
-                let left: [TableCard] = Array(sets[i].prefix(3));
-                let right: [TableCard] = Array(sets[i].dropFirst(3));
-                HStack {
-                    SetView(set: left, recent: mostRecentSet, settings: settings)
-                    Separator(visible: !right.isEmpty)
-                    SetView(set: right, recent: [], settings: settings)
-                    DummySetView(visible: right.isEmpty)
+        VStack {
+            HelpBar(visible: sets.isEmpty && !self.settings.hideHelpButton)
+            Spacer()
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(sets.indices, id: \.self) { i in
+                    let left: [TableCard] = Array(sets[i].prefix(3));
+                    let right: [TableCard] = Array(sets[i].dropFirst(3));
+                    HStack {
+                        SetView(set: left, recent: mostRecentSet, settings: settings)
+                        Separator(visible: !right.isEmpty)
+                        SetView(set: right, recent: [], settings: settings)
+                        DummySetView(visible: right.isEmpty)
+                    }
                 }
+                TestView()
             }
-            TestView()
         }
-}
     }
 
     private func organizeSetsForDisplay(_ setsLastFound: [[TableCard]]) -> [[TableCard]] {
@@ -81,30 +87,37 @@ VStack {
             self.recent = recent;
             self.settings = settings;
             set.materializeOnceReset();
-/*
-            for card in set {
-                //
-                // TODO
-                // Fix this stuff; without this the first set does not appear; or another
-                // solution is to copy the card below by passing TableCard(card) to CardUI. 
-                // OR ...
-                // We introduce the ABOVE (also hack-ish) materializeOnceReset.
-                //
-                card.materializedOnce = false;
-            }
-*/
         }
+
+        let blink: Bool       = true;
+        let materialize: Bool = false;
+        let shake: Bool       = true;
+
         public var body: some View {
             ForEach(set, id: \.id) { card in
                 //
-                // Note important that we create a copy of TableCard
-                // so that the special materializeOnce gets reset.
+                // IMPORTANT NOTE:
+                // We must create a copy of TableCard here so
+                // that the special materializeOnce gets reset.
                 //
-                // CardUI(TableCard(card),
-                CardUI(card,
-                       materialize: recent.contains(card.id),
-                       askew: settings.cardsAskew,
-                       alternate: settings.alternateCards)
+                let card: TableCard = TableCard(card);
+                let recent: Bool = recent.contains(card.id);
+                CardUI(
+                    card,
+                    materialize: materialize && recent,
+                    askew: settings.cardsAskew,
+                    alternate: settings.alternateCards
+                )
+                .onAppear {
+                    if (recent) {
+                        if (blink) {
+                            card.blink(count: 3, interval: 0.14, delay: 0.1);
+                        }
+                        if (shake) {
+                            card.shake(count: 12, speed: 1.2, delay: 0.7);
+                        }
+                    }
+                }
             }
         }
     }

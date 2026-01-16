@@ -6,8 +6,8 @@ import SwiftUI
 class TableCard : Card, ObservableObject {
 
     private struct Defaults {
-        fileprivate static let blinkCount: Int               = 3;
-        fileprivate static let blinkInterval: Double         = 0.12;
+        fileprivate static let blinkCount: Int               = 4;
+        fileprivate static let blinkInterval: Double         = 0.15;
         fileprivate static let shakeCount: Int               = 9;
         fileprivate static let shakeSpeed: Double            = 0.55;
         fileprivate static let materializeSpeed: Double      = 0.70;
@@ -62,7 +62,6 @@ class TableCard : Card, ObservableObject {
     }
 
     convenience init(_ card: TableCard) {
-        // self.init(card);
         self.init(color: card.color, shape: card.shape, filling: card.filling, number: card.number)
         self.set = card.set;
         self.selected = card.selected;
@@ -115,24 +114,43 @@ class TableCard : Card, ObservableObject {
     }
 
     public func blink(count: Int = 0,
-                      interval: Double = 0, _ intervalOff: Double = 0,
+                      interval: Double = 0, offinterval: Double = 0, delay: Double = 0,
                     _ blinkDoneCallback: (() -> Void)? = nil) {
+        if (delay > 0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                self.blink(count: count, interval: interval, offinterval: offinterval, delay: 0, blinkDoneCallback);
+            }
+            return;
+        }
         self.blinkCount = count > 0 ? count : Defaults.blinkCount;
         self.blinkInterval = interval > 0 ? interval : Defaults.blinkInterval;
-        self.blinkoffInterval = intervalOff > 0 ? intervalOff : self.blinkInterval;
+        self.blinkoffInterval = offinterval > 0 ? offinterval : self.blinkInterval;
         self.blinkDoneCallback = blinkDoneCallback;
         self.blinking = true;
     }
 
-    public func shake(count: Int = 0, speed: Double = 0) {
+    public func shake(count: Int = 0, speed: Double = 0, delay: Double = 0) {
+        if (delay > 0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                self.shake(count: count, speed: speed, delay: 0);
+            }
+            return;
+        }
         self.shakeCount = count > 0 ? count : Defaults.shakeCount;
         self.shakeSpeed = speed > 0 ? speed : Defaults.shakeSpeed;
         self.shaking = true;
     }
 
-    public func materialize(once: Bool = false, speed: Double = 0, elasticity: Double = 0) {
+    public func materialize(once: Bool = false, speed: Double = 0, elasticity: Double = 0, delay: Double = 0) {
+        if (delay > 0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                self.materialize(once: once, speed: speed, elasticity: elasticity, delay: 0);
+            }
+            return;
+        }
         if (once) {
             //
+            // IMPORTANT NOTE:
             // Very special case: See CardUI.init for where the materialize argument is true.
             // The reason we want to do the materialize differently "once" when used in CardUI
             // is because otherwise we would visually see a flash of the full card and then
