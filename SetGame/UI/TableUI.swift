@@ -30,6 +30,7 @@ struct TableUI: View {
             FoundSets(table: table, settings: settings, marginx: marginx)
             MultiPlayerGameButton()
         }
+        .allowsHitTesting(!self.table.state.disabled)
     }
 
     private struct CardGrid: View  {

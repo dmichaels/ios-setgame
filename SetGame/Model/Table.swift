@@ -32,7 +32,9 @@ class Table: ObservableObject {
         public      var nonsetNonce: Int = 0
 
         public var blinking: Bool { self.table.cards.contains(where: { $0.blinking }) }
-        public var disabled: Bool { self.table.state.blinking || self.table.state.resolving }
+        public var disabled: Bool { self.table.state.blinking ||
+                                    self.table.state.resolving ||
+                                    self.table.settings.demoMode }
     }
 
     @Published private(set) var cards: [TableCard]!;
