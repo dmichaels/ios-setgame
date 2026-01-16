@@ -305,9 +305,6 @@ class Table: ObservableObject {
             //
             self.unselectCards()
             self.fillTable();
-            //// self.state.setsLastFound.append(selectedCards);
-            //// // self.state.setsLastFound.flatMap { $0 }.forEach { $0.selected = false; $0.materializedOnce = false; };
-            //// self.state.setsLastFound.flatMap { $0 }.forEach { $0.resetState() };
             self.addToSetsLastFound(selectedCards);
             self.noteNewcomers(newCards);
         }
@@ -608,7 +605,7 @@ class Table: ObservableObject {
                 for card in set {
                     self.cardTouched(card, select: false, delay: 0.5) { cards, set, resolve in
                         if let set: Bool = set, set {
-                            TableCardEffects.blinkCards(cards, times: 5) {
+                            cards.blink() {
                                 resolve();
                             }
                         }
