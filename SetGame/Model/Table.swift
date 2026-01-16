@@ -403,23 +403,9 @@ class Table: ObservableObject {
         }
     }
 
-    /// Unselects all cards.
-    ///
-    func unselectCards(set: Bool = false) {
-        self.unselectCards(self.cards, set: set);
-    }
-
-    /// Unselects the given cards (could be static).
-    /// If the set parameter is true then mark the card as part of a SET.
-    ///
-    private func unselectCards(_ cards    : [TableCard],
-                                 set      : Bool = false) {
-        cards.forEach {
-            let card: TableCard = $0;
+    func unselectCards() {
+        for card in self.cards {
             card.selected = false;
-            if (set) {
-                card.set = true;
-            }
         }
     }
 

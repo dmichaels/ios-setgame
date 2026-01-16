@@ -14,7 +14,7 @@ class TableCard : Card, ObservableObject {
         fileprivate static let materializeElasticity: Double = 0.40;
     }
 
-    @Published var set: Bool                     = false;
+    // @Published var set: Bool                     = false;
     @Published var selected: Bool                = false;
     //
     // These blinking/blinkoff properties are used ONLY for blinking the 3 cards when a
@@ -63,7 +63,7 @@ class TableCard : Card, ObservableObject {
 
     convenience init(_ card: TableCard) {
         self.init(color: card.color, shape: card.shape, filling: card.filling, number: card.number)
-        self.set = card.set;
+        // self.set = card.set;
         self.selected = card.selected;
         self.blinking = card.blinking;
         self.blinkoff = card.blinkoff;
