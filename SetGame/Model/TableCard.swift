@@ -113,19 +113,25 @@ class TableCard : Card, ObservableObject {
         }
     }
 
+    private static func delay(delay: Double? = nil, callback: @escaping () -> Void) -> Bool {
+        if let delay: Double = delay {
+            if (delay > 0) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) { callback(); }
+            }
+            else {
+                DispatchQueue.main.async { callback(); }
+            }
+            return true;
+        }
+        return false;
+    }
+
     public func blink(count: Int = 0,
                       interval: Double = 0, offinterval: Double = 0, delay: Double? = nil,
                     _ blinkDoneCallback: (() -> Void)? = nil) {
-        if let delay = delay {
-            if (delay > 0) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                    self.blink(count: count, interval: interval, offinterval: offinterval, delay: nil, blinkDoneCallback);
-                }
-            }
-            else {
-                DispatchQueue.main.async {
-                    self.blink(count: count, interval: interval, offinterval: offinterval, delay: nil, blinkDoneCallback);
-                }
+        if let delay: Double = delay {
+            TableCard.delay(delay: delay) {
+                self.blink(count: count, interval: interval, offinterval: offinterval, delay: nil, blinkDoneCallback);
             }
             return;
         }
@@ -137,16 +143,9 @@ class TableCard : Card, ObservableObject {
     }
 
     public func shake(count: Int = 0, speed: Double = 0, delay: Double? = nil) {
-        if let delay = delay {
-            if (delay > 0) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                    self.shake(count: count, speed: speed, delay: nil);
-                }
-            }
-            else {
-                DispatchQueue.main.async {
-                    self.shake(count: count, speed: speed, delay: nil);
-                }
+        if let delay: Double = delay {
+            TableCard.delay(delay: delay) {
+                self.shake(count: count, speed: speed, delay: nil);
             }
             return;
         }
@@ -156,6 +155,13 @@ class TableCard : Card, ObservableObject {
     }
 
     public func materialize(once: Bool = false, speed: Double = 0, elasticity: Double = 0, delay: Double? = nil) {
+        if let delay: Double = delay {
+            TableCard.delay(delay: delay) {
+                self.materialize(once: once, speed: speed, elasticity: elasticity, delay: nil);
+            }
+            return;
+        }
+/*
         if let delay = delay {
             if (delay > 0) {
                 DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
@@ -169,6 +175,7 @@ class TableCard : Card, ObservableObject {
             }
             return;
         }
+*/
         if (once) {
             //
             // IMPORTANT NOTE:

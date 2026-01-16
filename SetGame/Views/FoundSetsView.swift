@@ -61,7 +61,7 @@ struct FoundSetsView: View {
                     card,
                     selectable: false,
                     materialize: materialize && recent,
-                    materializeDelay: 0.00000001,
+                    materializeDelay: 0,
                     askew: settings.cardsAskew,
                     alternate: settings.alternateCards
                 )
