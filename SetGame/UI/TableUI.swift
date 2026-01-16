@@ -6,7 +6,7 @@ import SwiftUI
 //
 struct TableUI: View {
 
-    @ObservedObject var table: Table<TableCard>;
+    @ObservedObject var table: Table;
     @ObservedObject var settings: Settings;
     @ObservedObject var feedback: Feedback;
 
@@ -34,7 +34,7 @@ struct TableUI: View {
 
     private struct CardGrid: View  {
 
-        @ObservedObject var table: Table<TableCard>;
+        @ObservedObject var table: Table;
         @ObservedObject var settings: Settings;
 
         var spacing: CGFloat = 8;
@@ -67,6 +67,7 @@ struct TableUI: View {
                         CardUI(
                             card,
                             materialize: true, // table.state.newcomers.contains(card.id),
+                            askew: settings.cardsAskew,
                             alternate: settings.alternateCards
                         ) { card in
                             self.table.cardTouched(card, delay: Defaults.threeCardSelectDelay) { cards, set, resolve in
@@ -109,7 +110,7 @@ struct TableUI: View {
     }
 
     private struct FoundSets: View {
-        @ObservedObject var table: Table<TableCard>;
+        @ObservedObject var table: Table;
         @ObservedObject var settings: Settings;
         var marginx: CGFloat = 8;
         var body: some View {

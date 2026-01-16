@@ -91,11 +91,11 @@ class TableCard : Card, ObservableObject {
         return super.toString(verbose) + ":\(self.selected)";
     }
 
-    public func newcomer(to table: Table<TableCard>) -> Bool {
+    public func newcomer(to table: Table) -> Bool {
         return table.state.newcomers.contains(self.id);
     }
 
-    public func nonset(on table: Table<TableCard>) -> Bool {
+    public func nonset(on table: Table) -> Bool {
         return table.state.nonset.contains(self.id);
     }
 

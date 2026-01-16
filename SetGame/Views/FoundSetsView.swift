@@ -2,10 +2,10 @@ import SwiftUI
 
 struct FoundSetsView: View {
 
-    @ObservedObject private var table: Table<TableCard>;
+    @ObservedObject private var table: Table;
     @ObservedObject private var settings: Settings;
 
-    init(table: Table<TableCard>, settings: Settings) {
+    init(table: Table, settings: Settings) {
         self.table = table;
         self.settings = settings;
     }

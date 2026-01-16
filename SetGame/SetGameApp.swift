@@ -5,7 +5,7 @@ struct SetGameApp: App {
 
     @StateObject private var settings: Settings = Settings();
     @StateObject private var feedback: Feedback;
-    @StateObject private var table: Table<TableCard>;
+    @StateObject private var table: Table;
 
     init() {
         let shared_settings: Settings = Settings()
