@@ -63,4 +63,10 @@ extension Array where Element : TableCard
             card.materialize(once: once, speed: speed, elasticity: elasticity, delay: delay);
         }
     }
+
+    func reset() {
+        for card in self {
+            card.reset();
+        }
+    }
 }

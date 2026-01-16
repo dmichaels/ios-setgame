@@ -9,13 +9,6 @@ public struct CardUI : View {
                     var alternate: Int?                         = nil;
                     var touchedCallback: ((TableCard) -> Void)? = nil;
 
-    @State private var materializing: Bool;
-    @State private var shakeToken: CGFloat;
-
-    private var uid: ID = ID(short: true);
-
-    let materializeDelay: Double = 0.4;
-
     init(_ card: TableCard,
            selectable: Bool = false,
            materialize: Bool = false,
@@ -23,7 +16,6 @@ public struct CardUI : View {
            alternate: Int? = nil,
          _ touchedCallback: ((TableCard) -> Void)? = nil) {
 
-        print("CARDUI-INIT> uid: \(self.uid) card: \(card.uid) \(card.sid) \(card.vid) \(card.id) \(card.codename)")
         self.card = card;
         self.selectable = selectable;
         self.materialize = materialize;
@@ -38,6 +30,13 @@ public struct CardUI : View {
             card.materialize(once: true);
         }
     }
+
+    private struct Defaults {
+        fileprivate static let materializeDelay: Double = 0.4;
+    }
+
+    @State private var materializing: Bool;
+    @State private var shakeToken: CGFloat;
 
     public var body: some View {
         VStack {
@@ -116,18 +115,12 @@ public struct CardUI : View {
                     )
             }
             .skew(askew)
-            // Text("\(self.uid)/\(card.vid):\(card.materializing ? "CM": "cm"):\(self.materializing ? "SM": "sm"):\(self.materialized ? "SD": "sd")").font(.system(size: 11))
         }
         .onChange(of: card.materializeTrigger) { value in
-            print("CARDUI-ONCHANGE-MATERIALIZE-NONCE> card: \(card.vid) \(card.codename) value: \(value) card.materializeTrigger: \(card.materializeTrigger)")
-            // if (value) ...
-                self.materializing = true;
-                DispatchQueue.main.asyncAfter(deadline: .now() + self.materializeDelay) {
-                    print("CARDUI-ONCHANGE-MATERIALIZE-NONCE-DISPATCH> card: \(card.vid) \(card.codename) card.materializeTrigger: \(card.materializeTrigger)")
-                    self.materializing = false;
-                    // card.materializing = false;
-                    print("CARDUI-ONCHANGE-MATERIALIZE-NONCE-DISPATCH-END> card: \(card.vid) \(card.codename) card.materializeTrigger: \(card.materializeTrigger)")
-                }
+            self.materializing = true;
+            DispatchQueue.main.asyncAfter(deadline: .now() + Defaults.materializeDelay) {
+                self.materializing = false;
+            }
         }
         .onChange(of: card.blinking) { value in
             if (value) {
@@ -162,18 +155,6 @@ public struct CardUI : View {
             }
         }
     }
-    
-    /*
-    private func doMaterialize() {
-        print("CARDUI-MATERIALIZE-NONCE> card: \(card.vid) \(card.codename) card.materializeTrigger: \(card.materializeTrigger)")
-        self.materializing = true;
-        DispatchQueue.main.asyncAfter(deadline: .now() + self.materializeDelay) {
-            print("CARDUI-MATERIALIZE-NONCE-DISPATCH> card: \(card.vid) \(card.codename) card.materializeTrigger: \(card.materializeTrigger)")
-            self.materializing = false;
-            print("CARDUI-MATERIALIZE-NONCE-DISPATCH-END> card: \(card.vid) \(card.codename) card.materializeTrigger: \(card.materializeTrigger)")
-        }
-    }
-    */
 
     private func image(_ card: TableCard, _ alternate: Int? = nil) -> String {
         //

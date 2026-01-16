@@ -6,9 +6,9 @@ import SwiftUI
 //
 struct TableUI: View {
 
-    @ObservedObject var table : Table<TableCard>;
-    @ObservedObject var settings : Settings;
-    @ObservedObject var feedback : Feedback;
+    @ObservedObject var table: Table<TableCard>;
+    @ObservedObject var settings: Settings;
+    @ObservedObject var feedback: Feedback;
 
     // @ObservedObject private var gameCenter = GameCenterManager.shared;
 
@@ -24,7 +24,7 @@ struct TableUI: View {
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             CardGrid(table: table, settings: settings, spacing: spacing, marginx: marginx)
-            Space(size: 12)
+            Space(size: 18)
             StatusBar(statusResetToken: statusResetToken, marginx: marginx)
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)
@@ -64,7 +64,11 @@ struct TableUI: View {
                 Spacer()
                 LazyVGrid(columns: columns, spacing: spacing) {
                     ForEach(table.cards, id: \.id) { card in
-                        CardUI(card, materialize: true /*table.state.newcomers.contains(card.id)*/) { card in
+                        CardUI(
+                            card,
+                            materialize: true, // table.state.newcomers.contains(card.id),
+                            alternate: settings.alternateCards
+                        ) { card in
                             self.table.cardTouched(card, delay: Defaults.threeCardSelectDelay) { cards, set, resolve in
                                 print("CARD-TOUCHED> newcomers: \(table.state.newcomers) materializeTrigger: \(card.materializeTrigger)")
                                 if let set: Bool = set {
@@ -112,7 +116,7 @@ struct TableUI: View {
             if (self.settings.showFoundSets) {
                 HStack(spacing: marginx) {
                     Spacer()
-                    FoundSetsView(setsLastFound: table.state.setsLastFound, settings: settings)
+                    FoundSetsView(table: table, setsLastFound: table.state.setsLastFound, settings: settings)
                     Spacer()
                 }
             }

@@ -305,8 +305,10 @@ class Table<TC : TableCard> : ObservableObject {
             //
             self.unselectCards()
             self.fillTable();
-            self.state.setsLastFound.append(selectedCards);
-            self.state.setsLastFound.flatMap { $0 }.forEach { $0.selected = false };
+            //// self.state.setsLastFound.append(selectedCards);
+            //// // self.state.setsLastFound.flatMap { $0 }.forEach { $0.selected = false; $0.materializedOnce = false; };
+            //// self.state.setsLastFound.flatMap { $0 }.forEach { $0.resetState() };
+            self.addToSetsLastFound(selectedCards);
             self.noteNewcomers(newCards);
         }
         else {
@@ -316,6 +318,11 @@ class Table<TC : TableCard> : ObservableObject {
             self.noteIncorrectGuess(selectedCards);
             self.unselectCards();
         }
+    }
+
+    private func addToSetsLastFound(_ cards: [TC]) {
+        cards.reset();
+        self.state.setsLastFound.append(cards);
     }
 
     private func noteIncorrectGuess(_ cards: [TC]) {
@@ -333,21 +340,7 @@ class Table<TC : TableCard> : ObservableObject {
     }
 
     private func noteNewcomers(_ cards: [TC], randomize: Bool = true) {
-        if cards.count > 0 {
-            // let t: TableCard = TableCard(cards[0]);
-            let t: TableCard = cards[0];
-            print("NEWCOMER: \(t.vid) \(cards[0].vid)")
-        }
-        if (false) {
-            for card in cards {
-                let delay: Double = Double.random(in: 0.20...0.60);
-                self.state.newcomers.insert(card.id);
-                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                    self.state.newcomers.remove(card.id);
-                }
-            }
-        }
-        else if (randomize) {
+        if (randomize) {
             for card in cards {
                 let delay: Double = Double.random(in: 0.20...0.60);
                 self.state.newcomers.formUnion([card.id]);

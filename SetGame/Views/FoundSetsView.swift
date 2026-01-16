@@ -2,13 +2,17 @@ import SwiftUI
 
 struct FoundSetsView: View {
 
-    private let setsLastFound: [[TableCard]];
-    @ObservedObject
-    private var settings: Settings;
+    @ObservedObject private var table: Table<TableCard>;
+                    private let setsLastFound: [[TableCard]];
+    @ObservedObject private var settings: Settings;
 
-    init(setsLastFound: [[TableCard]], settings: Settings) {
+    @State private var slf: [[TableCard]];
+
+    init(table: Table<TableCard>, setsLastFound: [[TableCard]], settings: Settings) {
+        self.table = table;
         self.setsLastFound = setsLastFound;
         self.settings = settings;
+        self.slf = table.state.setsLastFound;
     }
 
     var body: some View {
@@ -28,8 +32,14 @@ struct FoundSetsView: View {
                         DummySetView(visible: right.isEmpty)
                     }
                 }
-                TestView()
+                // TestView()
             }
+        }
+        .onChange(of: self.slf) { value in
+            print("FoundSetsView.onChange(slf)> \(value) \(self.slf)")
+        }
+        .onChange(of: self.table.state.setsLastFound) { value in
+            print("FoundSetsView.onChange(table.state.setsLastFound)> \(value) \(self.table.state.setsLastFound)")
         }
     }
 
@@ -88,8 +98,8 @@ struct FoundSetsView: View {
             self.settings = settings;
         }
 
-        let blink: Bool       = true;
-        let materialize: Bool = false;
+        let blink: Bool       = false;
+        let materialize: Bool = true;
         let shake: Bool       = true;
 
         public var body: some View {
@@ -99,7 +109,7 @@ struct FoundSetsView: View {
                 // We must create a copy of TableCard here so
                 // that the special materializeOnce gets reset.
                 //
-                let card: TableCard = TableCard(card);
+                // let card: TableCard = TableCard(card);
                 let recent: Bool = recent.contains(card.id);
                 CardUI(
                     card,
@@ -107,7 +117,20 @@ struct FoundSetsView: View {
                     askew: settings.cardsAskew,
                     alternate: settings.alternateCards
                 )
+                .onChange(of: self.set) { value in
+                    print("SetView.onChange(set)> \(value) \(self.set)")
+                }
+                .onChange(of: self.recent) { value in
+                    print("SetView.onChange(recent)> \(value) \(self.recent)")
+                }
+                .onChange(of: self.set) { value in
+                    print("SetView.onChange(set)> \(value) \(self.set)")
+                }
+                .onChange(of: self.recent) { value in
+                    print("SetView.onChange(recent)> \(value) \(self.recent)")
+                }
                 .onAppear {
+                    print("SetView.onAppear> \(recent) \(self.recent) \(self.set)")
                     if (recent) {
                         if (blink) {
                             card.blink(count: 3, interval: 0.14, delay: 0.1);
