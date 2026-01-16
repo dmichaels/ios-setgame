@@ -37,14 +37,8 @@ class Deck<T : Card> {
         self.cards.shuffle();
     }
 
-    var count : Int {
+    var count: Int {
         return self.cards.count;
-    }
-
-    /// Returns true iff the given card is in this deck.
-    ///
-    func contains(_ card : T) -> Bool {
-        return self.cards.contains(card);
     }
 
     /// Returns true iff the given card is in this deck.
@@ -97,46 +91,8 @@ class Deck<T : Card> {
         return self.readonly ? [T]() : self.cards.takeRandomCards(n, plantSet: plantSet, existingCards: existingCards);
     }
 
-    /// Returns true iff there exists at least one SET in this deck.
-    ///
-    func containsSet() -> Bool {
-        return self.cards.containsSet();
-    }
-
-    /// Returns the number of unique SETs in this deck.
-    ///
-    func numberOfSets(disjoint: Bool = false) -> Int {
-        return self.cards.numberOfSets(disjoint: disjoint);
-    }
-
-    /// Identifies/enumerates any/all SETs in this deck and returns them in an array
-    /// of array of cards, each representing a unique (possibily overlaping) SET
-    /// within this deck. If no SETs exist then returns an empty array.
-    ///
-    func enumerateSets(limit: Int = 0, disjoint: Bool = false) -> [[T]] {
-        return self.cards.enumerateSets(limit: limit, disjoint: disjoint);
-    }
-
-    /// Returns the number of cards in a standard deck.
-    ///
-    static var count : Int {
-        return StandardDeck.instance.count;
-    }
-
-    /// Returns (without removal) a random card from a standard deck.
-    ///
-    static func randomCard() -> T {
-        return T(StandardDeck.instance.randomCard());
-    }
-
-    /// Returns (without removal) a random SET from a standard deck.
-    ///
-    static func randomSet() -> [T] {
-        return StandardDeck.instance.randomSet().map { T($0) };
-    }
-
-    /// Returns (WITHOUT removal) a random magic SET square from a standard deck.
-    /// N.B. In progress and only (currently) for the purpose of constructing a magic square.
+    /// Returns (WITHOUT removal) a random magic SET square from a full deck.
+    /// N.B. Currently ONLY for the purpose of constructing a magic square.
     ///
     static func randomMagicSquare(simple: Bool = false) -> [Card] {
         let deck: [Card] = simple ? StandardDeck.instanceSimple.cards : StandardDeck.instance.cards;
@@ -149,4 +105,10 @@ class Deck<T : Card> {
         magic.append(Card.matchingSetValue(magic[0], magic[5])); // [8] from [0] and [5]
         return [magic[0], magic[1], magic[3], magic[2], magic[5], magic[6], magic[4], magic[7], magic[8]]
     }
+}
+
+class TableDeck: Deck<TableCard> {
+    static let instance       : TableDeck = TableDeck();
+    static let instanceSimple : TableDeck = TableDeck(simple: true);
+    static let size           : Int  = instance.count;
 }
