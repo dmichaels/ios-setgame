@@ -151,10 +151,15 @@ class TableCard : Card, ObservableObject {
         if (once) {
             //
             // IMPORTANT NOTE:
+            //
             // Very special case: See CardUI.init for where the materialize argument is true.
             // The reason we want to do the materialize differently "once" when used in CardUI
             // is because otherwise we would visually see a flash of the full card and then
             // the materialization (fading in) of it; we don't want the flash.
+            //
+            // And note that this can (should) be reset using the reset method if/when
+            // a card is "handed off" from one view to another, e.g. like when moving
+            // a card from the main table view to the found-sets view.
             //
             if (!self.materializedOnce) {
                 self.materializedOnce = true;

@@ -3,138 +3,65 @@ import SwiftUI
 struct FoundSetsView: View {
 
     @ObservedObject private var table: Table<TableCard>;
-                    private let setsLastFound: [[TableCard]];
     @ObservedObject private var settings: Settings;
 
-    @State private var slf: [[TableCard]];
-
-    init(table: Table<TableCard>, setsLastFound: [[TableCard]], settings: Settings) {
+    init(table: Table<TableCard>, settings: Settings) {
         self.table = table;
-        self.setsLastFound = setsLastFound;
         self.settings = settings;
-        self.slf = table.state.setsLastFound;
     }
 
+    private var sets: [[TableCard]] { table.state.setsLastFound }
+    private var recent: [TableCard]? { self.sets.last?.sorted() }
+
     var body: some View {
-        let sets: [[TableCard]] = organizeSetsForDisplay(setsLastFound.reversed());
-        let mostRecentSet: Set<String> = mostRecentSet(setsLastFound);
+        let sets: [[TableCard]] = self.organizeSetsForDisplay(self.sets);
         VStack {
             HelpBar(visible: sets.isEmpty && !self.settings.hideHelpButton)
             Spacer()
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(sets.indices, id: \.self) { i in
-                    let left: [TableCard] = Array(sets[i].prefix(3));
-                    let right: [TableCard] = Array(sets[i].dropFirst(3));
+                    let left: [TableCard] = sets[i].first(3);
+                    let right: [TableCard] = sets[i].first(-3);
                     HStack {
-                        SetView(set: left, recent: mostRecentSet, settings: settings)
+                        //
+                        // Note that the most recent set is always in the left column.
+                        //
+                        SetView(set: left, recent: left == self.recent, settings: settings)
                         Separator(visible: !right.isEmpty)
-                        SetView(set: right, recent: [], settings: settings)
+                        SetView(set: right, recent: false, settings: settings)
                         DummySetView(visible: right.isEmpty)
                     }
                 }
-                // TestView()
             }
-        }
-        .onChange(of: self.slf) { value in
-            print("FoundSetsView.onChange(slf)> \(value) \(self.slf)")
         }
         .onChange(of: self.table.state.setsLastFound) { value in
-            print("FoundSetsView.onChange(table.state.setsLastFound)> \(value) \(self.table.state.setsLastFound)")
-            self.table.state.setsLastFound[self.table.state.setsLastFound.count - 1].blink(count: 4, interval: 0.14, delay: 0.1);
-        }
-    }
-
-    private func organizeSetsForDisplay(_ setsLastFound: [[TableCard]]) -> [[TableCard]] {
-        var result: [[TableCard]] = [];
-        var i: Int = 0;
-        while (i < setsLastFound.count) {
-            if ((i + 1) < setsLastFound.count) {
-                result.append(setsLastFound[i].sorted() + setsLastFound[i + 1].sorted());
-            } else {
-                result.append(setsLastFound[i].sorted());
-            }
-            i += 2;
-        }
-        return result;
-    }
-
-    private func mostRecentSet(_ setsLastFound: [[TableCard]]) -> Set<String> {
-        if let mostRecent: [TableCard] = setsLastFound.last {
-            return Set(mostRecent.prefix(3).map(\.id))
-        }
-        return [];
-    }
-
-    private struct HelpBar: View {
-        var visible: Bool = true;
-        @State private var showHelpButton: Bool = false;
-        public var body: some View {
-            if (visible) {
-                Spacer()
-                HelpViewButton {
-                    showHelpButton = true
-                }
-                NavigationLink(
-                    destination: HelpView(),
-                    isActive: $showHelpButton
-                ) {
-                    EmptyView()
-                }
-            }
+            self.recent?.blink(count: 4, interval: 0.14, delay: 0.6);
         }
     }
 
     private struct SetView: View {
 
                         let set: [TableCard];
-                        let recent: Set<String>;
+                        let recent: Bool;
         @ObservedObject var settings: Settings;
 
         // Note that settings above must be @ObservedObject otherwise the cards will not
         // visually update properly if the user changes the card images via SettingsView.
 
-        init(set: [TableCard], recent: Set<String>, settings: Settings) {
-            self.set = set;
-            self.recent = recent;
-            self.settings = settings;
-        }
-
         let blink: Bool       = false;
-        let materialize: Bool = false;
+        let materialize: Bool = true;
         let shake: Bool       = false;
 
         public var body: some View {
             ForEach(set, id: \.id) { card in
-                let recent: Bool = recent.contains(card.id);
                 CardUI(
                     card,
+                    selectable: false,
                     materialize: materialize && recent,
+                    materializeDelay: 0.00000001,
                     askew: settings.cardsAskew,
                     alternate: settings.alternateCards
                 )
-                .onChange(of: self.set) { value in
-                    print("SetView.onChange(set)> \(value) \(self.set)")
-                }
-                .onChange(of: self.recent) { value in
-                    print("SetView.onChange(recent)> \(value) \(self.recent)")
-                }
-                .onChange(of: self.set) { value in
-                    print("SetView.onChange(set)> \(value) \(self.set)")
-                }
-                .onChange(of: self.recent) { value in
-                    print("SetView.onChange(recent)> \(value) \(self.recent)")
-                }
-                .onAppear {
-                    print("SetView.onAppear> \(recent) \(self.recent) \(self.set)")
-                    if (false && recent) {
-                        if (blink) {
-                            card.blink(count: 3, interval: 0.14, delay: 0.1);
-                        }
-                        if (shake) {
-                            card.shake(count: 12, speed: 1.2, delay: 0.7);
-                        }
-                    }
-                }
             }
         }
     }
@@ -168,6 +95,50 @@ struct FoundSetsView: View {
                 DummyCardView()
             }
         }
+    }
+
+    private struct HelpBar: View {
+        var visible: Bool = true;
+        @State private var showHelpButton: Bool = false;
+        public var body: some View {
+            if (visible) {
+                Spacer()
+                HelpViewButton {
+                    showHelpButton = true
+                }
+                NavigationLink(
+                    destination: HelpView(),
+                    isActive: $showHelpButton
+                ) {
+                    EmptyView()
+                }
+            }
+        }
+    }
+
+    // Given a list of SETS in the form of array of array of TableCard where each array of
+    // TableCard within the outer array is the 3 cards comprising a SET, and assuming that
+    // the order is most recently found SETs last -- return the list of SETs organized for
+    // display such that the cards are (first) reversed in order (so the most recent will
+    // appear first), and then as an array of array of 6 cards each, representing the
+    // cards for 2 SETs, i.e. so the display can easily visually display 2 SETs per row,
+    // the last array in the outer array possibly containing only 3 cards if there are
+    // and odd number of SETs; also note that each sequence of 3 SET cards are ordered
+    // according to the Comparable interface (on Card from which TableCard is derived).
+    //
+    private func organizeSetsForDisplay(_ setsLastFound: [[TableCard]]) -> [[TableCard]] {
+        let sets: [[TableCard]] = setsLastFound.reversed();
+        var result: [[TableCard]] = [];
+        var i: Int = 0;
+        while (i < sets.count) {
+            if ((i + 1) < sets.count) {
+                result.append(sets[i].sorted() + sets[i + 1].sorted());
+            } else {
+                result.append(sets[i].sorted());
+            }
+            i += 2;
+        }
+        return result;
     }
 }
 

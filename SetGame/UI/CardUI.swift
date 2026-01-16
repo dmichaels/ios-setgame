@@ -5,6 +5,7 @@ public struct CardUI : View {
     @ObservedObject var card: TableCard;
                     var selectable: Bool                        = false;
                     var materialize: Bool                       = false;
+                    var materializeDelay: Double                = 0;
                     var askew: Bool                             = false;
                     var alternate: Int?                         = nil;
                     var touchedCallback: ((TableCard) -> Void)? = nil;
@@ -12,6 +13,7 @@ public struct CardUI : View {
     init(_ card: TableCard,
            selectable: Bool = false,
            materialize: Bool = false,
+           materializeDelay: Double = 0,
            askew: Bool = false,
            alternate: Int? = nil,
          _ touchedCallback: ((TableCard) -> Void)? = nil) {
@@ -27,7 +29,7 @@ public struct CardUI : View {
         self.shakeToken = 0;
 
         if (materialize) {
-            card.materialize(once: true);
+            card.materialize(once: true, delay: materializeDelay);
         }
     }
 

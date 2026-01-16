@@ -69,4 +69,16 @@ extension Array where Element : TableCard
             card.reset();
         }
     }
+
+    func first(_ n: Int) -> [TableCard] {
+        if (n > 0) {
+            return Array(self.prefix(n));
+        }
+        else if (n < 0) {
+            return Array(self.dropFirst(-n));
+        }
+        else {
+            return [];
+        }
+    }
 }

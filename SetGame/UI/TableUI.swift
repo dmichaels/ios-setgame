@@ -116,7 +116,7 @@ struct TableUI: View {
             if (self.settings.showFoundSets) {
                 HStack(spacing: marginx) {
                     Spacer()
-                    FoundSetsView(table: table, setsLastFound: table.state.setsLastFound, settings: settings)
+                    FoundSetsView(table: table, settings: settings)
                     Spacer()
                 }
             }
