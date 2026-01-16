@@ -68,11 +68,39 @@ VStack {
     }
 
     private struct SetView: View {
-        let set: [TableCard];
-        let recent: Set<String>;
+
+                        let set: [TableCard];
+                        let recent: Set<String>;
         @ObservedObject var settings: Settings;
+
+        // Note that settings above must be @ObservedObject otherwise the cards will not
+        // visually update properly if the user changes the card images via SettingsView.
+
+        init(set: [TableCard], recent: Set<String>, settings: Settings) {
+            self.set = set;
+            self.recent = recent;
+            self.settings = settings;
+            set.materializeOnceReset();
+/*
+            for card in set {
+                //
+                // TODO
+                // Fix this stuff; without this the first set does not appear; or another
+                // solution is to copy the card below by passing TableCard(card) to CardUI. 
+                // OR ...
+                // We introduce the ABOVE (also hack-ish) materializeOnceReset.
+                //
+                card.materializedOnce = false;
+            }
+*/
+        }
         public var body: some View {
             ForEach(set, id: \.id) { card in
+                //
+                // Note important that we create a copy of TableCard
+                // so that the special materializeOnce gets reset.
+                //
+                // CardUI(TableCard(card),
                 CardUI(card,
                        materialize: recent.contains(card.id),
                        askew: settings.cardsAskew,

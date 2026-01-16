@@ -31,8 +31,8 @@ class TableCard : Card, ObservableObject {
     @Published var shaking: Bool                    = false;
                var shakeCount: Int                  = Defaults.shakeCount;
                var shakeSpeed: Double               = Defaults.shakeSpeed;
-    @Published var materializeNonce: Int            = 1;
-    @Published var materializedInit: Bool           = false;
+    @Published var materializeTrigger: Int          = 1;
+    @Published var materializedOnce: Bool           = false;
                var materializeSpeed: Double         = Defaults.materializeSpeed;
                var materializeElasticity: Double    = Defaults.materializeElasticity;
 
@@ -62,7 +62,8 @@ class TableCard : Card, ObservableObject {
     }
 
     convenience init(_ card: TableCard) {
-        self.init(card);
+        // self.init(card);
+        self.init(color: card.color, shape: card.shape, filling: card.filling, number: card.number)
         self.set = card.set;
         self.selected = card.selected;
         self.blinking = card.blinking;
@@ -74,8 +75,8 @@ class TableCard : Card, ObservableObject {
         self.shaking = card.shaking;
         self.shakeCount = card.shakeCount;
         self.shakeSpeed = card.shakeSpeed;
-        self.materializeNonce = card.materializeNonce;
-        self.materializedInit = card.materializedInit;
+        // self.materializeTrigger = card.materializeTrigger;
+        // self.materializedOnce = card.materializedOnce;
         self.materializeSpeed = card.materializeSpeed;
         self.materializeElasticity = card.materializeElasticity;
     }
@@ -129,9 +130,28 @@ class TableCard : Card, ObservableObject {
         self.shaking = true;
     }
 
-    public func materialize(speed: Double = 0, elasticity: Double = 0) {
+    public func materialize(once: Bool = false, speed: Double = 0, elasticity: Double = 0) {
+        if (once) {
+            //
+            // Very special case: See CardUI.init for where the materialize argument is true.
+            // The reason we want to do the materialize differently "once" when used in CardUI
+            // is because otherwise we would visually see a flash of the full card and then
+            // the materialization (fading in) of it; we don't want the flash.
+            //
+            if (!self.materializedOnce) {
+                self.materializedOnce = true;
+                DispatchQueue.main.async {
+                    self.materialize(speed: speed, elasticity: elasticity);
+                }
+            }
+            return;
+        }
         self.materializeSpeed = speed > 0 ? speed : Defaults.materializeSpeed;
         self.materializeElasticity = elasticity > 0 ? elasticity : Defaults.materializeElasticity;
-        self.materializeNonce += 1;
+        self.materializeTrigger += 1;
+    }
+
+    public func materializeOnceReset() {
+        self.materializedOnce = false;
     }
 }

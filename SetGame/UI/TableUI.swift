@@ -66,7 +66,7 @@ struct TableUI: View {
                     ForEach(table.cards, id: \.id) { card in
                         CardUI(card, materialize: true /*table.state.newcomers.contains(card.id)*/) { card in
                             self.table.cardTouched(card, delay: Defaults.threeCardSelectDelay) { cards, set, resolve in
-                                print("CARD-TOUCHED> newcomers: \(table.state.newcomers) materializeNonce: \(card.materializeNonce)")
+                                print("CARD-TOUCHED> newcomers: \(table.state.newcomers) materializeTrigger: \(card.materializeTrigger)")
                                 if let set: Bool = set {
                                     if (set) {
                                         cards.blink() {
