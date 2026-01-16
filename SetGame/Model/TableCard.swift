@@ -168,8 +168,4 @@ class TableCard : Card, ObservableObject {
         self.materializeElasticity = elasticity > 0 ? elasticity : Defaults.materializeElasticity;
         self.materializeTrigger += 1;
     }
-
-    public func materializeOnceReset() {
-        self.materializedOnce = false;
-    }
 }

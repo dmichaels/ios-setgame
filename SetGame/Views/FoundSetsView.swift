@@ -86,7 +86,6 @@ struct FoundSetsView: View {
             self.set = set;
             self.recent = recent;
             self.settings = settings;
-            set.materializeOnceReset();
         }
 
         let blink: Bool       = true;
