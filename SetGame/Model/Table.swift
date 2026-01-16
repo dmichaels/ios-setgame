@@ -321,6 +321,12 @@ class Table<TC : TableCard> : ObservableObject {
     }
 
     private func addToSetsLastFound(_ cards: [TC]) {
+        //
+        // IMPORTANT NOTE:
+        // We must reset the (UI related) state of TableCard,
+        // e.g. selected and materializedOnce, here so that
+        // the special materializeOnce gets reset.
+        //
         cards.reset();
         self.state.setsLastFound.append(cards);
     }
