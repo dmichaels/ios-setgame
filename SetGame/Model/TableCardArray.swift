@@ -1,5 +1,17 @@
 extension Array where Element : TableCard
 {
+    func first(_ n: Int) -> [TableCard] {
+        if (n > 0) {
+            return Array(self.prefix(n));
+        }
+        else if (n < 0) {
+            return Array(self.dropFirst(-n));
+        }
+        else {
+            return [];
+        }
+    }
+
     var blinking: Bool
     {
         for card in self {
@@ -37,7 +49,7 @@ extension Array where Element : TableCard
     }
 
     func blink(count: Int = 0,
-               interval: Double = 0, offinterval: Double = 0.0, delay: Double = 0,
+               interval: Double = 0, offinterval: Double = 0.0, delay: Double? = nil,
              _ blinkDoneCallback: (() -> Void)? = nil)  {
         let ncards: Int = self.count;
         var ndone: Int = 0;
@@ -52,13 +64,13 @@ extension Array where Element : TableCard
         }
     }
 
-    func shake(count: Int = 0, speed: Double = 0, delay: Double = 0) {
+    func shake(count: Int = 0, speed: Double = 0, delay: Double? = nil) {
         for card in self {
             card.shake(count: count, speed: speed, delay: delay);
         }
     }
 
-    func materialize(once: Bool = false, speed: Double = 0, elasticity: Double = 0, delay: Double = 0) {
+    func materialize(once: Bool = false, speed: Double = 0, elasticity: Double = 0, delay: Double? = nil) {
         for card in self {
             card.materialize(once: once, speed: speed, elasticity: elasticity, delay: delay);
         }
@@ -67,18 +79,6 @@ extension Array where Element : TableCard
     func reset() {
         for card in self {
             card.reset();
-        }
-    }
-
-    func first(_ n: Int) -> [TableCard] {
-        if (n > 0) {
-            return Array(self.prefix(n));
-        }
-        else if (n < 0) {
-            return Array(self.dropFirst(-n));
-        }
-        else {
-            return [];
         }
     }
 }

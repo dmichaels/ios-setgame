@@ -12,6 +12,7 @@ struct FoundSetsView: View {
 
     private var sets: [[TableCard]] { table.state.setsLastFound }
     private var recent: [TableCard]? { self.sets.last?.sorted() }
+    private var blink: Bool = false;
 
     var body: some View {
         let sets: [[TableCard]] = self.organizeSetsForDisplay(self.sets);
@@ -35,7 +36,9 @@ struct FoundSetsView: View {
             }
         }
         .onChange(of: self.table.state.setsLastFound) { value in
-            self.recent?.blink(count: 4, interval: 0.14, delay: 0.6);
+            if (self.blink) {
+                self.recent?.blink(count: 4, interval: 0.14, delay: 0.6);
+            }
         }
     }
 

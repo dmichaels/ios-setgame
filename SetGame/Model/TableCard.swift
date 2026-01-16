@@ -114,11 +114,18 @@ class TableCard : Card, ObservableObject {
     }
 
     public func blink(count: Int = 0,
-                      interval: Double = 0, offinterval: Double = 0, delay: Double = 0,
+                      interval: Double = 0, offinterval: Double = 0, delay: Double? = nil,
                     _ blinkDoneCallback: (() -> Void)? = nil) {
-        if (delay > 0) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                self.blink(count: count, interval: interval, offinterval: offinterval, delay: 0, blinkDoneCallback);
+        if let delay = delay {
+            if (delay > 0) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                    self.blink(count: count, interval: interval, offinterval: offinterval, delay: nil, blinkDoneCallback);
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.blink(count: count, interval: interval, offinterval: offinterval, delay: nil, blinkDoneCallback);
+                }
             }
             return;
         }
@@ -129,10 +136,17 @@ class TableCard : Card, ObservableObject {
         self.blinking = true;
     }
 
-    public func shake(count: Int = 0, speed: Double = 0, delay: Double = 0) {
-        if (delay > 0) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                self.shake(count: count, speed: speed, delay: 0);
+    public func shake(count: Int = 0, speed: Double = 0, delay: Double? = nil) {
+        if let delay = delay {
+            if (delay > 0) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                    self.shake(count: count, speed: speed, delay: nil);
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.shake(count: count, speed: speed, delay: nil);
+                }
             }
             return;
         }
@@ -141,10 +155,17 @@ class TableCard : Card, ObservableObject {
         self.shaking = true;
     }
 
-    public func materialize(once: Bool = false, speed: Double = 0, elasticity: Double = 0, delay: Double = 0) {
-        if (delay > 0) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                self.materialize(once: once, speed: speed, elasticity: elasticity, delay: 0);
+    public func materialize(once: Bool = false, speed: Double = 0, elasticity: Double = 0, delay: Double? = nil) {
+        if let delay = delay {
+            if (delay > 0) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                    self.materialize(once: once, speed: speed, elasticity: elasticity, delay: nil);
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.materialize(once: once, speed: speed, elasticity: elasticity, delay: nil);
+                }
             }
             return;
         }
