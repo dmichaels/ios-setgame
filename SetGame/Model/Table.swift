@@ -40,7 +40,7 @@ class Table: ObservableObject {
     @Published private(set) var cards: [TableCard]!;
     @Published var state: State!;
 
-    private var deck: Deck<TableCard>!;
+    private var deck: TableDeck!;
     private var demoTimer: Timer? = nil;
 
     init(settings: Settings) {
@@ -50,12 +50,12 @@ class Table: ObservableObject {
 
     func startNewGame() {
 
-        self.deck  = Deck(simple: self.settings.simpleDeck);
+        self.deck  = TableDeck(simple: self.settings.simpleDeck);
         self.cards = [TableCard]();
         self.state = State(table: self);
 
         if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
-            let magicSquareCards: [Card] = Deck.randomMagicSquare(simple: self.settings.simpleDeck)
+            let magicSquareCards: [Card] = TableDeck.randomMagicSquare(simple: self.settings.simpleDeck)
             for card in magicSquareCards {
                 let card: TableCard = TableCard(card);
                 self.cards.add(card)

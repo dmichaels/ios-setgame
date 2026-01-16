@@ -96,8 +96,8 @@ extension Deck {
     ///
     public static func probabilityOfAtLeastOneSet(for ncards: Int, simple: Bool = false) -> Double {
         guard (ncards >= 3) && (ncards <= self.ncards(simple: simple)) else { return 0.0 }
-        guard (ncards < Deck.setlessCount(simple: simple)) else { return 1.0 } // Max no-SET ncards is 20
-        guard let setless = Deck.setlessCounts(simple: simple)[ncards] else {
+        guard (ncards < TableDeck.setlessCount(simple: simple)) else { return 1.0 } // Max no-SET ncards is 20
+        guard let setless = TableDeck.setlessCounts(simple: simple)[ncards] else {
             fatalError("Missing setless count for ncards = \(ncards)")
         }
         let totalHands = Math.binomial(self.ncards(simple: simple), ncards)

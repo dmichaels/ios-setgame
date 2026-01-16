@@ -8,7 +8,6 @@ struct HelpView: View  {
     private let lines: [String];
 
     @State private var resetMagicSquare: Bool = false;
-    // @State private var magicSquare: [TableCard] = Deck.randomMagicSquare().map { TableCard($0) }
     @State private var magicSquare: [TableCard] = HelpView.createMagicSquare();
     @State private var magicSquareCurrent: Int? = nil;
     let magicSquareIndices: [[Int]] = [
@@ -182,7 +181,7 @@ struct HelpView: View  {
     }
 
     private static func createMagicSquare() -> [TableCard] {
-        return Deck.randomMagicSquare().map { TableCard($0) };
+        return TableDeck.randomMagicSquare().map { TableCard($0) };
     }
 
     private func showMagicSquare() {
