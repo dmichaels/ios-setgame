@@ -132,11 +132,4 @@ struct TableUI: View {
             }
         }
     }
-
-    private struct Space: View {
-        var size: CGFloat = 0;
-        var body: some View {
-            Spacer(minLength: size)
-        }
-    }
 }

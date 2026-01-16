@@ -44,6 +44,7 @@
 		98EF7E0E2F167C5800A45F63 /* CardUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E0B2F167C5800A45F63 /* CardUI.swift */; };
 		98EF7E0F2F167C5800A45F63 /* TableUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E0C2F167C5800A45F63 /* TableUI.swift */; };
 		98EF7E112F19661F00A45F63 /* ID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E102F19661F00A45F63 /* ID.swift */; };
+		98EF7E132F1ACBD400A45F63 /* Space.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E122F1ACBD400A45F63 /* Space.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,6 +109,7 @@
 		98EF7E0B2F167C5800A45F63 /* CardUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardUI.swift; sourceTree = "<group>"; };
 		98EF7E0C2F167C5800A45F63 /* TableUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableUI.swift; sourceTree = "<group>"; };
 		98EF7E102F19661F00A45F63 /* ID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ID.swift; sourceTree = "<group>"; };
+		98EF7E122F1ACBD400A45F63 /* Space.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Space.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -227,6 +229,7 @@
 		9811914F25ED5CFE0083606B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				98EF7E122F1ACBD400A45F63 /* Space.swift */,
 				98A5C74A2F098D02009E708D /* HelpView.swift */,
 				9811915025ED5D0E0083606B /* CardView.swift */,
 				981190F125ED59CC0083606B /* ContentView.swift */,
@@ -437,6 +440,7 @@
 				981190F025ED59CC0083606B /* SetGameApp.swift in Sources */,
 				989FF92625F10F08002AE44A /* SettingsView.swift in Sources */,
 				9811915125ED5D0E0083606B /* CardView.swift in Sources */,
+				98EF7E132F1ACBD400A45F63 /* Space.swift in Sources */,
 				9811914325ED5ACF0083606B /* CardColor.swift in Sources */,
 				98EF7E112F19661F00A45F63 /* ID.swift in Sources */,
 				9811914725ED5ACF0083606B /* Table.swift in Sources */,

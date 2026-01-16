@@ -161,21 +161,6 @@ class TableCard : Card, ObservableObject {
             }
             return;
         }
-/*
-        if let delay = delay {
-            if (delay > 0) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                    self.materialize(once: once, speed: speed, elasticity: elasticity, delay: nil);
-                }
-            }
-            else {
-                DispatchQueue.main.async {
-                    self.materialize(once: once, speed: speed, elasticity: elasticity, delay: nil);
-                }
-            }
-            return;
-        }
-*/
         if (once) {
             //
             // IMPORTANT NOTE:

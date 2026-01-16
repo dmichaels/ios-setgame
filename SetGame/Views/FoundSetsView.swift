@@ -13,17 +13,26 @@ struct FoundSetsView: View {
     private var sets: [[TableCard]] { table.state.setsLastFound }
     private var recent: [TableCard]? { self.sets.last?.sorted() }
     private var blink: Bool = false;
+    private var shake: Bool = true;
 
     var body: some View {
         let sets: [[TableCard]] = self.organizeSetsForDisplay(self.sets);
         VStack {
             HelpBar(visible: sets.isEmpty && !self.settings.hideHelpButton)
-            Spacer()
-            VStack(alignment: .leading, spacing: 0) {
+            Space(size: 12)
+            //
+            // The VStack spacing here is the amount of
+            // space vertically between the rows of cards.
+            //
+            VStack(alignment: .leading, spacing: 8) {
                 ForEach(sets.indices, id: \.self) { i in
                     let left: [TableCard] = sets[i].first(3);
                     let right: [TableCard] = sets[i].first(-3);
-                    HStack {
+                    //
+                    // The HStack spacing here is the amount
+                    // of space horizontally between the cards.
+                    //
+                    HStack(spacing: 6) {
                         //
                         // Note that the most recent set is always in the left column.
                         //
@@ -37,7 +46,10 @@ struct FoundSetsView: View {
         }
         .onChange(of: self.table.state.setsLastFound) { value in
             if (self.blink) {
-                self.recent?.blink(count: 4, interval: 0.14, delay: 0.6);
+                self.recent?.blink(count: 3, interval: 0.14, delay: 1.4);
+            }
+            else if (self.shake) {
+                self.recent?.shake(count: 10, speed: 1.2, delay: 0.6);
             }
         }
     }
@@ -72,13 +84,11 @@ struct FoundSetsView: View {
     private struct Separator: View {
         var visible: Bool = true;
         public var body: some View {
-            if (visible) {
-                let diamondWidth: CGFloat = 6;
-                Text("\u{2756} ")
-                    .font(.system(size: 8))
-                    .frame(width: diamondWidth)
-                    .foregroundColor(visible ? .secondary : .clear);
-            }
+            let diamondWidth: CGFloat = 6;
+            Text("\u{2756} ")
+                .font(.system(size: 8))
+                .frame(width: diamondWidth)
+                .foregroundColor(visible ? .secondary : .clear);
         }
     }
 
@@ -105,7 +115,7 @@ struct FoundSetsView: View {
         @State private var showHelpButton: Bool = false;
         public var body: some View {
             if (visible) {
-                Spacer()
+                Space(size: 12)
                 HelpViewButton {
                     showHelpButton = true
                 }
