@@ -1,10 +1,10 @@
 import SwiftUI
 
-// This was previously TableView by factored out into this TableUI module
+// This was previously TableView by factored out into this TableView module
 // to eliminate references to global environment (@EnvironmentObject)
 // state, in order to facilitate multi-player (GameCenter) functionality.
 //
-public struct TableUI: View {
+public struct TableView: View {
 
     @ObservedObject var table: Table;
     @ObservedObject var settings: Settings;
@@ -63,7 +63,7 @@ public struct TableUI: View {
                 Spacer()
                 LazyVGrid(columns: columns, spacing: spacing) {
                     ForEach(table.cards, id: \.id) { card in
-                        CardUI(
+                        CardView(
                             card,
                             materialize: true, // table.state.newcomers.contains(card.id),
                             askew: settings.cardsAskew,

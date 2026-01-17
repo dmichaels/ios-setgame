@@ -46,25 +46,25 @@ public struct HelpView: View  {
                         }
                         else if line == "EXAMPLE-1" {
                             HStack {
-                                CardUI(TableCard("1RHO")!, alternate: alternateCards)
-                                CardUI(TableCard("2GSD")!, alternate: alternateCards)
-                                CardUI(TableCard("3PTQ")!, alternate: alternateCards)
+                                CardView(TableCard("1RHO")!, alternate: alternateCards)
+                                CardView(TableCard("2GSD")!, alternate: alternateCards)
+                                CardView(TableCard("3PTQ")!, alternate: alternateCards)
                                 Spacer()
                             } .frame(width: 300, height: 80)
                         }
                         else if line == "EXAMPLE-2" {
                             HStack {
-                                CardUI(TableCard("1RHO")!, alternate: alternateCards)
-                                CardUI(TableCard("1RHD")!, alternate: alternateCards)
-                                CardUI(TableCard("1RHQ")!, alternate: alternateCards)
+                                CardView(TableCard("1RHO")!, alternate: alternateCards)
+                                CardView(TableCard("1RHD")!, alternate: alternateCards)
+                                CardView(TableCard("1RHQ")!, alternate: alternateCards)
                                 Spacer()
                             } .frame(width: 300, height: 80)
                         }
                         else if line == "EXAMPLE-3" {
                             HStack {
-                                CardUI(TableCard("1RHO")!, alternate: 2)
-                                CardUI(TableCard("2GSD")!, alternate: 2)
-                                CardUI(TableCard("3PTQ")!, alternate: 2)
+                                CardView(TableCard("1RHO")!, alternate: 2)
+                                CardView(TableCard("2GSD")!, alternate: 2)
+                                CardView(TableCard("3PTQ")!, alternate: 2)
                                 Spacer()
                             } .frame(width: 300, height: 80)
                         }
@@ -77,19 +77,19 @@ public struct HelpView: View  {
                             HStack(alignment: .top, spacing: 2) {
                                 VStack(spacing: 6) {
                                     HStack(spacing: 8) {
-                                        CardUI(magicSquare[0])
-                                        CardUI(magicSquare[1])
-                                        CardUI(magicSquare[2])
+                                        CardView(magicSquare[0])
+                                        CardView(magicSquare[1])
+                                        CardView(magicSquare[2])
                                     }
                                     HStack(spacing: 4) {
-                                        CardUI(magicSquare[3])
-                                        CardUI(magicSquare[4])
-                                        CardUI(magicSquare[5])
+                                        CardView(magicSquare[3])
+                                        CardView(magicSquare[4])
+                                        CardView(magicSquare[5])
                                     }
                                     HStack(spacing: 4) {
-                                        CardUI(magicSquare[6])
-                                        CardUI(magicSquare[7])
-                                        CardUI(magicSquare[8])
+                                        CardView(magicSquare[6])
+                                        CardView(magicSquare[7])
+                                        CardView(magicSquare[8])
                                     }
                                 }
                                 Spacer()

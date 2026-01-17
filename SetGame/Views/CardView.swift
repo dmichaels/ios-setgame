@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct CardUI : View {
+public struct CardView : View {
     
     @ObservedObject var card: TableCard;
                     var selectable: Bool                        = false;

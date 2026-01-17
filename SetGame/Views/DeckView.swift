@@ -14,7 +14,7 @@ public struct DeckView: View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVGrid(columns: grid, spacing: spacing) {
                 ForEach(cards.sorted(), id: \.id) { card in
-                    CardUI(card, selectable: true)
+                    CardView(card, selectable: true)
                 }
             }
             .padding(.horizontal, marginx)

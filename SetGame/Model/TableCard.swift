@@ -165,8 +165,8 @@ public class TableCard : Card, ObservableObject {
             //
             // IMPORTANT NOTE:
             //
-            // Very special case: See CardUI.init for where the materialize argument is true.
-            // The reason we want to do the materialize differently "once" when used in CardUI
+            // Very special case: See CardView.init for where the materialize argument is true.
+            // The reason we want to do the materialize differently "once" when used in CardView
             // is because otherwise we would visually see a flash of the full card and then
             // the materialization (fading in) of it; we don't want the flash.
             //

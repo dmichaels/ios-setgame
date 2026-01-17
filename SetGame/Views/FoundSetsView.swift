@@ -69,7 +69,7 @@ public struct FoundSetsView: View {
 
         public var body: some View {
             ForEach(set, id: \.id) { card in
-                CardUI(
+                CardView(
                     card,
                     selectable: false,
                     materialize: materialize && recent,

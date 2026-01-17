@@ -20,7 +20,7 @@ public struct ContentView: View {
         NavigationView {
             ZStack {
                 background.ignoresSafeArea()
-                TableUI(table: table, settings: settings, feedback: feedback)
+                TableView(table: table, settings: settings, feedback: feedback)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .principal) {
