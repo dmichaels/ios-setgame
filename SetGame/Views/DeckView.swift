@@ -2,36 +2,24 @@ import SwiftUI
 
 public struct DeckView: View {
 
-    let cards: [Card];
+    let cards: [TableCard]
 
-    private let cardWidth: CGFloat = 56;
+    private let columns: Int = 6;
+    private let marginx: Double = 16;
+    private let marginy: Double = 6;
+    private let spacing: Double = 6;
 
     public var body: some View {
+        let grid: [GridItem] = Array(repeating: GridItem(spacing: spacing), count: columns);
         ScrollView(.vertical, showsIndicators: false) {
-            let rows: [[Card]] = organizeCardsForDisplay(cards);
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(rows.indices, id: \.self) { i in
-                    let row: [Card] = rows[i];
-                    HStack {
-                        ForEach(row.indices, id: \.self) { j in
-                            CardUI(row[j], selectable: true)
-                                .frame(width: cardWidth)
-                        }
-                    }
+            LazyVGrid(columns: grid, spacing: spacing) {
+                ForEach(cards.sorted(), id: \.id) { card in
+                    CardUI(card, selectable: true)
                 }
-            }.padding()
-        }.navigationTitle("\(Defaults.title) Deck") // SET Game® Deck
-    }
-
-    private func organizeCardsForDisplay(_ cards: [Card]) -> [[Card]] {
-        let cards: [Card] = cards.sorted();
-        var result: [[Card]] = [];
-        for i in 0..<cards.count {
-            if (i % 6 == 0) {
-                result.append([]);
             }
-            result[result.count - 1].append(cards[i]);
+            .padding(.horizontal, marginx)
+            .padding(.vertical, marginy)
         }
-        return result;
+        .navigationTitle("\(Defaults.title) Deck")
     }
 }
