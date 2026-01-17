@@ -46,19 +46,6 @@ private let _setlessCountsSimple: [Int: UInt64] = [
 
 extension Deck {
 
-    public func xaverageNumberOfSets(_ ncards: Int, iterations: Int = 200) -> Float {
-        if (ncards < 3) {
-            return 0;
-        }
-        var totalSets = 0;
-        for _ in 1...iterations {
-            let deck: Deck = Deck(simple: self.simple);
-            let cards: [T] = deck.takeRandomCards(ncards);
-            totalSets += cards.numberOfSets();
-        }
-        return Float(totalSets) / Float(iterations);
-    }
-
     public static func ncards(simple: Bool = false) -> Int {
         return simple ? 27 : 81;
     }
