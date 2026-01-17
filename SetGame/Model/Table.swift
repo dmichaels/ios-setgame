@@ -7,7 +7,7 @@ import SwiftUI
 ///
 public class Table: ObservableObject {
 
-    public var settings: Settings;
+    private var settings: Settings;
 
     public struct State {
 
@@ -36,17 +36,17 @@ public class Table: ObservableObject {
     }
 
     @Published private(set) var cards: [TableCard]!;
-    @Published              var state: State!;
+    @Published              var state: State!; // TODO: work to make this private(set)
 
     private var deck: TableDeck!;
     private var demoTimer: Timer? = nil;
 
-    init(settings: Settings) {
+    public init(settings: Settings) {
         self.settings = settings;
         self.startNewGame();
     }
 
-    func startNewGame() {
+    public func startNewGame() {
 
         self.deck  = TableDeck(simple: self.settings.simpleDeck);
         self.cards = [TableCard]();
@@ -382,13 +382,13 @@ public class Table: ObservableObject {
 
     /// Returns true iff there is at least one SET present on the table.
     ///
-    func containsSet() -> Bool {
+    public func containsSet() -> Bool {
         return self.cards.containsSet();
     }
 
     /// Returns the number SETs present on the table.
     ///
-    func numberOfSets(disjoint: Bool = false) -> Int {
+    public func numberOfSets(disjoint: Bool = false) -> Int {
         return self.cards.numberOfSets(disjoint: disjoint);
     }
 
@@ -397,19 +397,19 @@ public class Table: ObservableObject {
     /// a unique (possibily overlaping) SET within the table cards.
     /// If no SETs exist then returns an empty array.
     ///
-    func enumerateSets(limit : Int = 0, disjoint: Bool = false) -> [[TableCard]] {
+    public func enumerateSets(limit : Int = 0, disjoint: Bool = false) -> [[TableCard]] {
         return self.cards.enumerateSets(limit: limit, disjoint: disjoint);
     }
 
     /// Returns the number of cards remaining in the deck.
     ///
-    func remainingCardCount() -> Int {
+    public func remainingCardCount() -> Int {
         return self.deck.count;
     }
 
     /// Returns true iff the currently selected cards form a partial SET.
     ///
-    func partialSetSelected() -> Bool {
+    public func partialSetSelected() -> Bool {
         let selectedCards: [TableCard] = self.selectedCards();
         if (selectedCards.count == 1) {
             let cardA: TableCard = selectedCards[0];
@@ -436,7 +436,7 @@ public class Table: ObservableObject {
     /// Move a SET (if any) which may exist in the table cards to the front (top-left) of the table
     /// cards array; check first to see if there already is a SET at the front, and if so do nothing.
     ///
-    func moveAnyExistingSetToFront() {
+    public func moveAnyExistingSetToFront() {
         if ((self.cards.count > 3) && !self.cards.first(3).isSet()) {
             self.cards.moveAnyExistingSetToFront();
         }
@@ -444,7 +444,7 @@ public class Table: ObservableObject {
 
     /// Adds (at most) the given number of cards to the table from the deck.
     ///
-    func addMoreCards(_ ncards: Int, plantSet: Bool? = nil) {
+    public func addMoreCards(_ ncards: Int, plantSet: Bool? = nil) {
         guard (ncards > 0) && (self.deck.count > 0) else { return; }
         let plantSet: Bool = plantSet ?? self.settings.plantSet;
         if (plantSet && !self.containsSet() && (self.cards.count + min(self.deck.count, ncards)) >= 3) {
@@ -492,6 +492,10 @@ public class Table: ObservableObject {
     }
 
     private func addCards(_ cards: [TableCard]) {
+        //
+        // TODO
+        //
+        self.cards.add(cards);
     }
 
     /// Populate the table cards from the deck up to the displayCardCount.
