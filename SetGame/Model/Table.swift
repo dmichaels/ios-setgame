@@ -539,7 +539,7 @@ public class Table: ObservableObject {
         self.addMoreCards(self.settings.displayCardCount - self.cards.count);
         if (self.settings.additionalCards > 0) {
             while (!self.containsSet()) {
-                if (self.deck.cards.count == 0) {
+                if (self.deck.count == 0) {
                     break;
                 }
                 self.addMoreCards(self.settings.additionalCards);
