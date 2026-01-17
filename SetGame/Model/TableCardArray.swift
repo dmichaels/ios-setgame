@@ -1,17 +1,5 @@
 public extension Array where Element : TableCard
 {
-    func first(_ n: Int) -> [TableCard] {
-        if (n > 0) {
-            return Array(self.prefix(n));
-        }
-        else if (n < 0) {
-            return Array(self.dropFirst(-n));
-        }
-        else {
-            return [];
-        }
-    }
-
     var blinking: Bool
     {
         for card in self {

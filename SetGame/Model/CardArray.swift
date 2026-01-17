@@ -502,6 +502,18 @@ public extension Array where Element : Card {
         }
     }
 
+    func first(_ n: Int) -> [Element] {
+        if (n > 0) {
+            return Array(self.prefix(n));
+        }
+        else if (n < 0) {
+            return Array(self.dropFirst(-n));
+        }
+        else {
+            return [];
+        }
+    }
+
     /// Parses and returns a card array representing given comma-separated list of
     /// string representations of SET cards. See Card.from for details of format.
     /// Unparsable items in the list are ignored; if no parsable card formats
