@@ -22,7 +22,7 @@ public struct VersionInfo {
     // /usr/libexec/PlistBuddy -c "Set    :GitCommit        ${GIT_COMMIT}" "$PROPERTIES_FILE"
     // /usr/libexec/PlistBuddy -c "Print  :GitCommit        ${GIT_COMMIT}" "$PROPERTIES_FILE"
     //
-    static var commit: String {
+    public static var commit: String {
         guard let path = Bundle.main.path(forResource: "BuildInfo", ofType: "plist"),
               let dictionary = NSDictionary(contentsOfFile: path) as? [String: Any],
               let commit = dictionary["GitCommit"] as? String else {

@@ -10,13 +10,13 @@ public struct CardUI : View {
                     var alternate: Int?                         = nil;
                     var touchedCallback: ((TableCard) -> Void)? = nil;
 
-    init(_ card: TableCard,
-           selectable: Bool = false,
-           materialize: Bool = false,
-           materializeDelay: Double? = nil,
-           askew: Bool = false,
-           alternate: Int? = nil,
-         _ touchedCallback: ((TableCard) -> Void)? = nil) {
+    public init(_ card: TableCard,
+                  selectable: Bool = false,
+                  materialize: Bool = false,
+                  materializeDelay: Double? = nil,
+                  askew: Bool = false,
+                  alternate: Int? = nil,
+                _ touchedCallback: ((TableCard) -> Void)? = nil) {
 
         self.card = card;
         self.selectable = selectable;
@@ -33,14 +33,13 @@ public struct CardUI : View {
         }
     }
 
-    init(_ card: Card,
-           selectable: Bool = false,
-           materialize: Bool = false,
-           materializeDelay: Double? = nil,
-           askew: Bool = false,
-           alternate: Int? = nil,
-         _ touchedCallback: ((TableCard) -> Void)? = nil) {
-
+    public init(_ card: Card,
+                  selectable: Bool = false,
+                  materialize: Bool = false,
+                  materializeDelay: Double? = nil,
+                  askew: Bool = false,
+                  alternate: Int? = nil,
+                _ touchedCallback: ((TableCard) -> Void)? = nil) {
         self.init(
            TableCard(card),
            selectable: selectable,
@@ -214,7 +213,7 @@ private struct SlightRandomRotation: ViewModifier {
     }
 }
 
-extension View {
+private extension View {
     fileprivate func skew(_ enabled: Bool = true) -> some View {
         Group { if enabled { self.modifier(SlightRandomRotation()) } else { self } }
     }
