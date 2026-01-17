@@ -334,7 +334,7 @@ public class Table: ObservableObject {
         //
     }
 
-    func selectOneRandomSet(disjoint: Bool = false) {
+    public func selectOneRandomSet(disjoint: Bool = false) {
         self.unselectCards();
         let sets: [[TableCard]] = self.enumerateSets(disjoint: disjoint);
         if (sets.count > 0) {
@@ -362,7 +362,7 @@ public class Table: ObservableObject {
         }
     }
 
-    func unselectCards() {
+    public func unselectCards() {
         for card in self.cards {
             card.selected = false;
         }
@@ -370,13 +370,13 @@ public class Table: ObservableObject {
 
     /// Returns the set (array) of currently selected cards.
     ///
-    func selectedCards() -> [TableCard] {
+    public func selectedCards() -> [TableCard] {
         return self.cards.filter { $0.selected };
     }
 
     /// Returns the number of currently selected cards.
     ///
-    func selectedCardCount() -> Int {
+    public func selectedCardCount() -> Int {
         return self.selectedCards().count;
     }
 
