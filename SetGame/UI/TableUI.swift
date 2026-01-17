@@ -9,7 +9,6 @@ public struct TableUI: View {
     @ObservedObject var table: Table;
     @ObservedObject var settings: Settings;
     @ObservedObject var feedback: Feedback;
-    @Binding        var startTime: Date;
 
     // @ObservedObject private var gameCenter = GameCenterManager.shared;
 
@@ -24,7 +23,7 @@ public struct TableUI: View {
         ScrollView(.vertical, showsIndicators: false) {
             CardGrid(table: table, settings: settings, spacing: spacing, marginx: marginx)
             Space(size: 18)
-            StatusBar(startTime: $startTime, marginx: marginx)
+            StatusBar(marginx: marginx)
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)
             MultiPlayerGameButton()
@@ -95,12 +94,11 @@ public struct TableUI: View {
     }
 
     private struct StatusBar: View {
-        @Binding var startTime: Date;
-                 var marginx: CGFloat = 8;
+        var marginx: CGFloat = 8;
         var body: some View {
             HStack(spacing: marginx) {
                 Spacer()
-                StatusBarView(startTime: $startTime)
+                StatusBarView()
                 Spacer()
             }
         }

@@ -22,24 +22,15 @@ public struct StatusBarView: View {
     let BACKGROUND: Color = Color(hex: 0x8BD2CC);
     let SHAPE = RoundedRectangle(cornerRadius: 11, style: .continuous);
 
-    @Binding public var startTime: Date;
     @State private var now: Date = Date();
 
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect();
 
-    private var elapsedSeconds: Int {
-        Int(now.timeIntervalSince(self.startTime))
-    }
-
-    private var minutes: Int {
-        elapsedSeconds / 60
-    }
-
-    private var seconds: Int {
-        elapsedSeconds % 60
-    }
-    private var timeString: String {
-        String(format: "%02d:%02d", minutes, seconds)
+    private var time: String {
+        let elapsed: Int = Int(now.timeIntervalSince(self.table.state.startTime));
+        let minutes: Int = elapsed / 60;
+        let seconds: Int = elapsed % 60;
+        return String(format: "%02d:%02d", minutes, seconds)
     }
 
     public var body: some View {
@@ -61,7 +52,7 @@ public struct StatusBarView: View {
                     .foregroundColor(FOREGROUND)
             }
             if (self.settings.showTimer && !self.settings.demoMode) {
-                Text("\(DIAMOND_SYMBOL)  \(timeString)")
+                Text("\(DIAMOND_SYMBOL)  \(self.time)")
                     .font(.subheadline)
                     .frame(alignment: .leading)
                     .foregroundColor(FOREGROUND)
@@ -191,10 +182,6 @@ public struct StatusBarView: View {
         // .background(BACKGROUND)
         .allowsHitTesting(!self.table.state.disabled)
         .onReceive(timer) { date in now = date }
-        .onChange(of: self.startTime) { value in
-            self.startTime = value;
-            now = value;
-        }
     }
 }
 

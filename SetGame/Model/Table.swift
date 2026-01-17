@@ -13,6 +13,7 @@ public class Table: ObservableObject {
 
         fileprivate let table: Table;
 
+        public var startTime: Date                     = Date();
         public var partialSetSelected: Bool            = false;
         public var incorrectGuessCount: Int            = 0;
         public var setsFoundCount: Int                 = 0;
