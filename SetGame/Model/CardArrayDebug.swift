@@ -1,5 +1,3 @@
-/// Array extension for convenience in handling simple Card arrays.
-///
 public extension Array where Element : Card {
 
     /// FOR DEBUG/DEV ONLY!
