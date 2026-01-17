@@ -147,10 +147,10 @@ public struct HelpView: View  {
     }
 
     private func mapLine(_ line: String, _ alternateCards: Int) -> String {
-            //
-            // Classic.
-            //
         if (alternateCards == 0) {
+            //
+            // Classic images.
+            //
             return line.replacingOccurrences(of: "RED", with: "red")
                        .replacingOccurrences(of: "GREEN", with: "green")
                        .replacingOccurrences(of: "BLUE", with: "purple")
@@ -163,7 +163,7 @@ public struct HelpView: View  {
         }
         else if (alternateCards == 1) {
             //
-            // Squares.
+            // Squares images.
             //
             return line.replacingOccurrences(of: "RED", with: "red")
                        .replacingOccurrences(of: "GREEN", with: "green")
@@ -212,7 +212,6 @@ struct HelpViewButton: View {
     let action: () -> Void
     var body: some View {
         Button(action: action) {
-            // HStack(spacing: 10) CURLY
             HStack {
                 Image(systemName: "book.fill")
                     .font(.headline)
