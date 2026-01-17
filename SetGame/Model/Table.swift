@@ -27,7 +27,7 @@ public class Table: ObservableObject {
         // a SET is found (see allowsHitTesting in TableView); there should be a better way.
         //
         fileprivate var resolving: Bool = false;
-        public      var newcomers: Set<TableCard.ID> = [];
+        // public      var newcomers: Set<TableCard.ID> = [];
 
         public var blinking: Bool { self.table.cards.contains(where: { $0.blinking }) }
         public var disabled: Bool { self.table.state.blinking ||
@@ -329,23 +329,9 @@ public class Table: ObservableObject {
     }
 
     private func noteNewcomers(_ cards: [TableCard], randomize: Bool = true) {
-        if (randomize) {
-            for card in cards {
-                let delay: Double = Double.random(in: 0.20...0.60);
-                self.state.newcomers.formUnion([card.id]);
-                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                    self.state.newcomers.subtract([card.id]);
-                }
-            }
-        }
-        else {
-            let ids: Set<TableCard.ID> = Set(cards.map(\.id));
-            self.state.newcomers.formUnion(ids);
-            let delay: Double = 4.2;
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                self.state.newcomers.subtract(ids);
-            }
-        }
+        //
+        // Obsolete but may have another future use.
+        //
     }
 
     func selectAllCardsWhichArePartOfSet() {

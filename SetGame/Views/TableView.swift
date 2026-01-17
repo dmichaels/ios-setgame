@@ -65,7 +65,7 @@ public struct TableView: View {
                     ForEach(table.cards, id: \.id) { card in
                         CardView(
                             card,
-                            materialize: true, // table.state.newcomers.contains(card.id),
+                            materialize: true,
                             askew: settings.cardsAskew,
                             alternate: settings.alternateCards
                         ) { card in
