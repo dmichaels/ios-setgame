@@ -8,9 +8,9 @@ public struct ContentView: View {
 
     @State private var showNewGameConfirmation = false;
     @State private var showSettingsView = false;
-    @State private var statusResetToken = 0;
     @State private var saveMoveSetFront: Bool = false;
     @State private var saveSimpleDeck: Bool = false;
+    @State private var startTime: Date = Date();
 
     // let background: Color = Color(.sRGB, red: 0.93, green: 0.96, blue: 1.00, opacity: 1.0);
     // let background: Color = Color(hex: 0xEDF5FF);
@@ -21,7 +21,7 @@ public struct ContentView: View {
         NavigationView {
             ZStack {
                 background.ignoresSafeArea()
-                TableView(statusResetToken: statusResetToken)
+                TableUI(table: table, settings: settings, feedback: feedback, startTime: $startTime)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .principal) {
@@ -34,7 +34,7 @@ public struct ContentView: View {
                                 Button {
                                     if ((self.table.gameStart() || self.table.gameDone())) {
                                         self.table.startNewGame();
-                                        self.statusResetToken += 1;
+                                        self.startTime = Date();
                                         feedback.trigger(Feedback.NEW);
                                     }
                                     else {
@@ -75,7 +75,7 @@ public struct ContentView: View {
             .alert("Start New Game?", isPresented: $showNewGameConfirmation) {
                 Button("Yes", role: .destructive) {
                     self.table.startNewGame();
-                    self.statusResetToken += 1;
+                    self.startTime = Date();
                     feedback.trigger(Feedback.NEW);
                 }
                 Button("Cancel", role: .cancel) { }

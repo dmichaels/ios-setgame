@@ -9,10 +9,9 @@ public struct TableUI: View {
     @ObservedObject var table: Table;
     @ObservedObject var settings: Settings;
     @ObservedObject var feedback: Feedback;
+    @Binding        var startTime: Date;
 
     // @ObservedObject private var gameCenter = GameCenterManager.shared;
-
-    let statusResetToken: Int;
 
     private struct Defaults {
         fileprivate static let threeCardSelectDelay: Double = 0.75;
@@ -25,7 +24,7 @@ public struct TableUI: View {
         ScrollView(.vertical, showsIndicators: false) {
             CardGrid(table: table, settings: settings, spacing: spacing, marginx: marginx)
             Space(size: 18)
-            StatusBar(statusResetToken: statusResetToken, marginx: marginx)
+            StatusBar(startTime: $startTime, marginx: marginx)
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)
             MultiPlayerGameButton()
@@ -72,13 +71,10 @@ public struct TableUI: View {
                             alternate: settings.alternateCards
                         ) { card in
                             self.table.cardTouched(card, delay: Defaults.threeCardSelectDelay) { cards, set, resolve in
-                                print("CARD-TOUCHED> newcomers: \(table.state.newcomers) materializeTrigger: \(card.materializeTrigger)")
                                 if let set: Bool = set {
                                     if (set) {
                                         cards.blink() {
-                                            print("BLINK-DONE> newcomers: \(table.state.newcomers)")
                                             resolve();
-                                            print("BLINK-DONE-AFTER-RESOLVED> newcomers: \(table.state.newcomers)")
                                         }
                                     }
                                     else {
@@ -99,12 +95,12 @@ public struct TableUI: View {
     }
 
     private struct StatusBar: View {
-        var statusResetToken: Int = 0;
-        var marginx: CGFloat = 8;
+        @Binding var startTime: Date;
+                 var marginx: CGFloat = 8;
         var body: some View {
             HStack(spacing: marginx) {
                 Spacer()
-                StatusBarView(resetToken: statusResetToken)
+                StatusBarView(startTime: $startTime)
                 Spacer()
             }
         }

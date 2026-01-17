@@ -22,17 +22,13 @@ public struct StatusBarView: View {
     let BACKGROUND: Color = Color(hex: 0x8BD2CC);
     let SHAPE = RoundedRectangle(cornerRadius: 11, style: .continuous);
 
-    @State private var startDate: Date = Date()
-    @State private var now: Date = Date()
+    @Binding public var startTime: Date;
+    @State private var now: Date = Date();
 
-    let resetToken: Int;
-
-    private let timer = Timer.publish(every: 1,
-                                      on: .main,
-                                      in: .common).autoconnect()
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect();
 
     private var elapsedSeconds: Int {
-        Int(now.timeIntervalSince(startDate))
+        Int(now.timeIntervalSince(self.startTime))
     }
 
     private var minutes: Int {
@@ -195,16 +191,10 @@ public struct StatusBarView: View {
         // .background(BACKGROUND)
         .allowsHitTesting(!self.table.state.disabled)
         .onReceive(timer) { date in now = date }
-        .onChange(of: resetToken) { _ in
-            resetTimer()
+        .onChange(of: self.startTime) { value in
+            self.startTime = value;
+            now = value;
         }
-    }
-
-    // ✅ ADD THIS
-    private func resetTimer() {
-        let d = Date()
-        startDate = d
-        now = d
     }
 }
 
