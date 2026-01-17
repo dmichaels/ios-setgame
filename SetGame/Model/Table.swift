@@ -55,12 +55,10 @@ public class Table: ObservableObject {
         self.state = State(table: self);
 
         if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
-            let magicSquareCards: [Card] = TableDeck.randomMagicSquare(simple: self.settings.simpleDeck)
-            for card in magicSquareCards {
-                let card: TableCard = TableCard(card);
-                self.cards.add(card)
-                self.noteNewcomers([card]);
-                _ = self.deck.takeCard(card);
+            let magicSquareCards: [TableCard] = TableDeck.randomMagicSquare(simple: self.settings.simpleDeck)
+            if let cards: [TableCard] = self.deck.takeCards(magicSquareCards, strict: true) {
+                self.cards.add(cards)
+                self.noteNewcomers(cards);
             }
             //
             // Only bother making it look good if the cards-per-row is 4 (the default)
@@ -76,26 +74,26 @@ public class Table: ObservableObject {
             self.fillTable(moveSetFront: false);
             self.settings.displayCardCount = displayCardCountSave
             if (self.settings.cardsPerRow == 4) {
-                self.cards[3]  = self.cards[9]
-                self.cards[7]  = self.cards[10]
-                self.cards[4]  = TableCard(magicSquareCards[3])
-                self.cards[5]  = TableCard(magicSquareCards[4])
-                self.cards[6]  = TableCard(magicSquareCards[5])
-                self.cards[8]  = TableCard(magicSquareCards[6])
-                self.cards[9]  = TableCard(magicSquareCards[7])
-                self.cards[10] = TableCard(magicSquareCards[8])
+                self.cards[3]  = self.cards[9];
+                self.cards[7]  = self.cards[10];
+                self.cards[4]  = magicSquareCards[3];
+                self.cards[5]  = magicSquareCards[4];
+                self.cards[6]  = magicSquareCards[5];
+                self.cards[8]  = magicSquareCards[6];
+                self.cards[9]  = magicSquareCards[7];
+                self.cards[10] = magicSquareCards[8];
             }
             else if (self.settings.cardsPerRow == 5) {
-                self.cards[3]  = self.cards[9]
-                self.cards[4]  = self.cards[10]
-                self.cards[8]  = self.cards[11]
-                self.cards[9]  = self.cards[12]
-                self.cards[5]  = TableCard(magicSquareCards[3])
-                self.cards[6]  = TableCard(magicSquareCards[4])
-                self.cards[7]  = TableCard(magicSquareCards[5])
-                self.cards[10] = TableCard(magicSquareCards[6])
-                self.cards[11] = TableCard(magicSquareCards[7])
-                self.cards[12] = TableCard(magicSquareCards[8])
+                self.cards[3]  = self.cards[9];
+                self.cards[4]  = self.cards[10];
+                self.cards[8]  = self.cards[11];
+                self.cards[9]  = self.cards[12];
+                self.cards[5]  = magicSquareCards[3];
+                self.cards[6]  = magicSquareCards[4];
+                self.cards[7]  = magicSquareCards[5];
+                self.cards[10] = magicSquareCards[6];
+                self.cards[11] = magicSquareCards[7];
+                self.cards[12] = magicSquareCards[8];
             }
         }
         else {

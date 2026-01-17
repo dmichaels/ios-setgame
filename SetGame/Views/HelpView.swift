@@ -181,7 +181,7 @@ public struct HelpView: View  {
     }
 
     private static func createMagicSquare() -> [TableCard] {
-        return TableDeck.randomMagicSquare().map { TableCard($0) };
+        return TableDeck.randomMagicSquare();
     }
 
     private func showMagicSquare() {

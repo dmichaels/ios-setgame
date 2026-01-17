@@ -70,6 +70,23 @@ public extension Array where Element : Card {
         return nil;
     }
 
+    mutating func takeCards(_ cards: [Element], strict: Bool = false) -> [Element]? {
+        if (strict) {
+            for card in cards {
+                if (!self.contains(card)) {
+                    return nil;
+                }
+            }
+        }
+        var result: [Element] = [];
+        for card in cards {
+            if let card: Element = self.takeCard(card) {
+                result.append(card);
+            }
+        }
+        return result;
+    }
+
     /// Removes and returns a random card from this array;
     /// returns nil if no more cards in the array.
     ///

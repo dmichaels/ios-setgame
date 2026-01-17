@@ -36,6 +36,10 @@ public class Deck<T : Card> {
         return nil;
     }
 
+    func takeCards(_ cards: [T], strict: Bool = false) -> [T]? {
+        return self.cards.takeCards(cards, strict: strict);
+    }
+
     func takeRandomCards(_ n : Int, plantSet: Bool = false, existingCards: [T] = []) -> [T] {
         return self.cards.takeRandomCards(n, plantSet: plantSet, existingCards: existingCards);
     }
