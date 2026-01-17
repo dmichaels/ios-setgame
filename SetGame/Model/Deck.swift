@@ -58,35 +58,6 @@ public class Deck<T : Card> {
         return nil;
     }
 
-    func takeCard(_ card : Card) -> Card? {
-        if (self.contains(card)) {
-            self.cards.remove(T(card));
-            return card;
-        }
-        return nil;
-    }
-
-    /// FOR DEBUG/DEV ONLY!
-    /// See CardArrayExtension.takeCards([String]).
-    ///
-    func takeCards(_ values: [String]) -> [Card] {
-        return self.cards.takeCards(values);
-    }
-
-    /// FOR DEBUG/DEV ONLY!
-    /// See CardArrayExtension.takeCards(String...).
-    ///
-    func takeCards(_ values: String...) -> [Card] {
-        return self.cards.takeCards(values);
-    }
-
-    /// Removes and returns a random card from this deck;
-    /// returns nil if no more cards in the deck.
-    //
-    func takeRandomCard() -> T? {
-        return self.readonly ? nil : self.cards.takeRandomCard();
-    }
-
     func takeRandomCards(_ n : Int, plantSet: Bool = false, existingCards: [T] = []) -> [T] {
         return self.readonly ? [T]() : self.cards.takeRandomCards(n, plantSet: plantSet, existingCards: existingCards);
     }
