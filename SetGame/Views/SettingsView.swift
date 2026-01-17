@@ -181,9 +181,7 @@ public struct SettingsView: View {
                 }
                 navigationRow("\(Defaults.title) SET Stats", icon: "chart.bar", destination: StatsView())
                 navigationRow("\(Defaults.title) Deck", icon: "square.stack.3d.up",
-                              destination: DeckView(cards: settings.simpleDeck
-                                                           ? TableDeck.instanceSimple.cards
-                                                           : TableDeck.instance.cards))
+                              destination: DeckView(cards: TableDeck.instance(simple: settings.simpleDeck).cards))
                 navigationRow("Help", icon: "questionmark.circle", destination: HelpView())
             }
             Section {

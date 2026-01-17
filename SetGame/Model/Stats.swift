@@ -44,7 +44,7 @@ private let _setlessCountsSimple: [Int: UInt64] = [
     10: 0,
 ]
 
-extension Deck {
+public extension Deck {
 
     public static func ncards(simple: Bool = false) -> Int {
         return simple ? 27 : 81;

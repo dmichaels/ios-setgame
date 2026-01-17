@@ -1,13 +1,17 @@
 public class TableDeck: Deck<TableCard> {
 
-    public static let instance       : TableDeck = TableDeck();
-    public static let instanceSimple : TableDeck = TableDeck(simple: true);
+    private static let  instance: TableDeck = TableDeck();
+    private static let  instanceSimple: TableDeck = TableDeck(simple: true);
+
+    public static func instance(simple: Bool = false) -> TableDeck {
+        return simple ? TableDeck.instanceSimple : TableDeck.instance;
+    }
 
     /// Returns (WITHOUT removal) a random magic SET square from a full deck.
     /// N.B. Currently ONLY for the purpose of constructing a magic square.
     ///
     public static func randomMagicSquare(simple: Bool = false) -> [Card] {
-        let deck: [Card] = simple ? TableDeck.instanceSimple.cards : TableDeck.instance.cards;
+        let deck: [Card] = TableDeck.instance(simple: simple).cards;
         var magic: [Card] = deck.randomNonSetCards();
         magic.append(Card.matchingSetValue(magic[0], magic[1])); // [3] from [0] and [1]
         magic.append(Card.matchingSetValue(magic[0], magic[2])); // [4] from [0] and [2]
