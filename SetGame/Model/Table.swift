@@ -334,16 +334,6 @@ public class Table: ObservableObject {
         //
     }
 
-    func selectAllCardsWhichArePartOfSet() {
-        self.unselectCards();
-        let sets: [[TableCard]] = self.enumerateSets();
-        for set in sets {
-            for card in set {
-                card.selected = true;
-            }
-        }
-    }
-
     func selectOneRandomSet(disjoint: Bool = false) {
         self.unselectCards();
         let sets: [[TableCard]] = self.enumerateSets(disjoint: disjoint);
