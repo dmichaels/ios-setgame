@@ -4,7 +4,6 @@
 public class Deck<T : Card> {
 
     public private(set) var cards    : [T];
-    public              let readonly : Bool;
     public              let simple   : Bool;
 
     /// Creates a new shuffled SET Game® card deck.
@@ -12,10 +11,8 @@ public class Deck<T : Card> {
     ///   surprisingly, is actually the default for the official SET Game® app deck.
     /// - Can contain just a random subset of cards if the given ncards is greater than 1;
     ///   the default card count is, of course, 3 * 3 * 3 * 3 = 81.
-    /// - Can be readonly (for the deck here) in which case no cards will be removed.
     ///
-    init(simple: Bool = false, ncards: Int = 0, readonly: Bool = false) {
-        self.readonly = readonly;
+    init(simple: Bool = false, ncards: Int = 0) {
         self.cards = [T]();
         self.simple = simple;
         let fillings: [CardFilling] = simple ? [CardFilling.Solid] : CardFilling.allCases;
@@ -59,6 +56,6 @@ public class Deck<T : Card> {
     }
 
     func takeRandomCards(_ n : Int, plantSet: Bool = false, existingCards: [T] = []) -> [T] {
-        return self.readonly ? [T]() : self.cards.takeRandomCards(n, plantSet: plantSet, existingCards: existingCards);
+        return self.cards.takeRandomCards(n, plantSet: plantSet, existingCards: existingCards);
     }
 }
