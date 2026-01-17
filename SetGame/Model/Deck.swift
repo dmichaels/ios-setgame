@@ -9,10 +9,8 @@ public class Deck<T : Card> {
     /// Creates a new shuffled SET Game® card deck.
     /// - Can be a "simple" deck in which case the only filling is solid; this,
     ///   surprisingly, is actually the default for the official SET Game® app deck.
-    /// - Can contain just a random subset of cards if the given ncards is greater than 1;
-    ///   the default card count is, of course, 3 * 3 * 3 * 3 = 81.
     ///
-    init(simple: Bool = false, ncards: Int = 0) {
+    init(simple: Bool = false) {
         self.cards = [T]();
         self.simple = simple;
         let fillings: [CardFilling] = simple ? [CardFilling.Solid] : CardFilling.allCases;
@@ -23,12 +21,6 @@ public class Deck<T : Card> {
                         self.cards.add(T(color: color, shape: shape, filling: filling, number: number));
                     }
                 }
-            }
-        }
-        if ((ncards > 0) && (ncards < self.cards.count)) {
-            let nremove: Int = self.cards.count - ncards;
-            for _ in 0..<nremove {
-                _ = self.cards.takeRandomCard();
             }
         }
         self.cards.shuffle();

@@ -50,15 +50,6 @@ public struct SettingsView: View {
                     Spacer()
                     Toggle(isOn: $settings.showPeekButton) {}
                 }
-                if (false) {
-                    HStack {
-                        Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
-                        Text("Peek Disjoint ↑").lineLimit(1).layoutPriority(1)
-                            .foregroundStyle(settings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
-                        Spacer()
-                        Toggle(isOn: $settings.peekDisjoint) {}
-                    }.disabled(!(settings.showSetsPresentCount || settings.showPeekButton))
-                }
                 HStack {
                     Image(systemName: "timer").frame(width: iconWidth)
                     Text("Show Timer").lineLimit(1).layoutPriority(1)
@@ -100,15 +91,13 @@ public struct SettingsView: View {
                     Spacer()
                     Toggle(isOn: $settings.plantMagicSquare) {}
                 }
-                if (true) {
-                    HStack {
-                        Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
-                        Text("Peek Disjoint").lineLimit(1).layoutPriority(1)
-                            .foregroundStyle(settings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
-                        Spacer()
-                        Toggle(isOn: $settings.peekDisjoint) {}
-                    }.disabled(!(settings.showSetsPresentCount || settings.showPeekButton))
-                }
+                HStack {
+                    Image(systemName: "square.on.square.intersection.dashed").frame(width: iconWidth)
+                    Text("Peek Disjoint").lineLimit(1).layoutPriority(1)
+                        .foregroundStyle(settings.showSetsPresentCount || settings.showPeekButton ? .primary : .secondary)
+                    Spacer()
+                    Toggle(isOn: $settings.peekDisjoint) {}
+                }.disabled(!(settings.showSetsPresentCount || settings.showPeekButton))
             }
             Section(header: Text("Visual")) {
                 HStack {
@@ -173,11 +162,6 @@ public struct SettingsView: View {
                     Text("Simplified Deck").lineLimit(1).layoutPriority(1)
                     Spacer()
                     Toggle(isOn: $settings.simpleDeck) {}
-                }
-                if (false) {
-                    Toggle(isOn: $settings.demoMode) {
-                        Text("Demo Mode")
-                    }
                 }
                 navigationRow("\(Defaults.title) SET Stats", icon: "chart.bar", destination: StatsView())
                 navigationRow("\(Defaults.title) Deck", icon: "square.stack.3d.up",
