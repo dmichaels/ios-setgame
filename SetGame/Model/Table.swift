@@ -15,7 +15,6 @@ public class Table: ObservableObject {
 
         public var startTime: Date                     = Date();
         public var partialSetSelected: Bool            = false;
-        public var incorrectGuessCount: Int            = 0;
         public var setsFoundCount: Int                 = 0;
         public var setJustFound: Bool                  = false;
         public var setJustFoundNot: Bool               = false;
@@ -29,8 +28,6 @@ public class Table: ObservableObject {
         //
         fileprivate var resolving: Bool = false;
         public      var newcomers: Set<TableCard.ID> = [];
-        public      var nonset: Set<TableCard.ID> = [];
-        public      var nonsetNonce: Int = 0
 
         public var blinking: Bool { self.table.cards.contains(where: { $0.blinking }) }
         public var disabled: Bool { self.table.state.blinking ||
@@ -329,16 +326,6 @@ public class Table: ObservableObject {
 
     private func noteIncorrectGuess(_ cards: [TableCard]) {
         self.state.setJustFoundNot = true;
-        self.state.incorrectGuessCount += 1;
-        let ids: Set<TableCard.ID> = Set(cards.map(\.id));
-        self.state.nonset = ids;
-        self.state.nonsetNonce += 1;
-        let delay: Double = 0.35;
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-            if (self.state.nonset == ids) {
-                self.state.nonset.removeAll();
-            }
-        }
     }
 
     private func noteNewcomers(_ cards: [TableCard], randomize: Bool = true) {

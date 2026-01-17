@@ -79,10 +79,6 @@ public class TableCard : Card, ObservableObject {
         return super.toString(verbose) + ":\(self.selected)";
     }
 
-    public func nonset(on table: Table) -> Bool {
-        return table.state.nonset.contains(self.id);
-    }
-
     public func select(_ value: Bool? = nil, toggle: Bool? = nil) {
         if let value = value {
             self.selected = value;
