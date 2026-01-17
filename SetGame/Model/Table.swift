@@ -33,7 +33,7 @@ public class Table: ObservableObject {
 
         public var blinking: Bool { self.table.cards.contains(where: { $0.blinking }) }
         public var disabled: Bool { self.table.state.blinking ||
-                                       self.table.state.resolving ||
+                                    self.table.state.resolving ||
                                     self.table.settings.demoMode }
     }
 
