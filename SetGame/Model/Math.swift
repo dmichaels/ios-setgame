@@ -1,6 +1,6 @@
 import Foundation
 
-struct Math {
+public struct Math {
 
     public static func combinations(_ n: Int, _ k: Int) -> Int {
         guard n >= 0, k >= 0, k <= n else {

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct FoundSetsView: View {
+public struct FoundSetsView: View {
 
     @ObservedObject private var table: Table;
     @ObservedObject private var settings: Settings;
@@ -15,7 +15,7 @@ struct FoundSetsView: View {
     private var blink: Bool = false;
     private var shake: Bool = true;
 
-    var body: some View {
+    public var body: some View {
         let sets: [[TableCard]] = self.organizeSetsForDisplay(self.sets);
         VStack {
             HelpBar(visible: sets.isEmpty && !self.settings.hideHelpButton)

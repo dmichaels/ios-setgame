@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ContentView: View {
+public struct ContentView: View {
 
     @EnvironmentObject var table : Table;
     @EnvironmentObject var settings : Settings;
@@ -17,7 +17,7 @@ struct ContentView: View {
     // let background: Color = Color(hex: 0xDCE4EE);
     let background: Color = Color(hex: 0xDCEEE4);
 
-    var body: some View {
+    public var body: some View {
         NavigationView {
             ZStack {
                 background.ignoresSafeArea()

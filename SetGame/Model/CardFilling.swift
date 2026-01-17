@@ -1,6 +1,6 @@
 /// CardFilling represents the filling attributes of a SET card.
 ///
-enum CardFilling : Int, CaseIterable {
+public enum CardFilling : Int, CaseIterable {
 
     case Hollow;
     case Stripped;

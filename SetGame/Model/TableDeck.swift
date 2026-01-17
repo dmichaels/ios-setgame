@@ -1,5 +1,4 @@
-class TableDeck: Deck<TableCard> {
-    static let instance       : TableDeck = TableDeck();
-    static let instanceSimple : TableDeck = TableDeck(simple: true);
-    static let size           : Int  = instance.count;
+public class TableDeck: Deck<TableCard> {
+    static public let instance       : TableDeck = TableDeck();
+    static public let instanceSimple : TableDeck = TableDeck(simple: true);
 }

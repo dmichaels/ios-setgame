@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct TableView: View {
+public struct TableView: View {
 
     @EnvironmentObject var table: Table
     @EnvironmentObject var settings: Settings
@@ -8,7 +8,7 @@ struct TableView: View {
 
     let statusResetToken: Int
 
-    var body: some View {
+    public var body: some View {
         TableUI(table: table, settings: settings, feedback: feedback, statusResetToken: statusResetToken)
     }
 }

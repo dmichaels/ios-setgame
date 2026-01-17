@@ -5,7 +5,7 @@ import SwiftUI
 /// table cards which are on display; and sundry other data points.
 /// Is this class technically, effectively acting as a "model-view"?
 ///
-class Table: ObservableObject {
+public class Table: ObservableObject {
 
     public var settings: Settings;
 
@@ -33,7 +33,7 @@ class Table: ObservableObject {
 
         public var blinking: Bool { self.table.cards.contains(where: { $0.blinking }) }
         public var disabled: Bool { self.table.state.blinking ||
-                                    self.table.state.resolving ||
+                                       self.table.state.resolving ||
                                     self.table.settings.demoMode }
     }
 

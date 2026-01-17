@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SettingsView: View {
+public struct SettingsView: View {
     
     @EnvironmentObject var table : Table;
     @EnvironmentObject var settings : Settings;
@@ -17,7 +17,7 @@ struct SettingsView: View {
                                                                          ("Mono", 2),
                                                                          ("Classic", 0) ]
 
-    var body: some View { VStack(spacing: 10) {
+    public var body: some View { VStack(spacing: 10) {
 
         if (!self.settings.hideHelpButton) {
             HStack {

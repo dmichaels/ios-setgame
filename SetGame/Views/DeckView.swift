@@ -1,12 +1,12 @@
 import SwiftUI
 
-struct DeckView: View {
+public struct DeckView: View {
 
     let cards: [Card];
 
     private let cardWidth: CGFloat = 56;
 
-    var body: some View {
+    public var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             let rows: [[Card]] = organizeCardsForDisplay(cards);
             VStack(alignment: .leading, spacing: 8) {

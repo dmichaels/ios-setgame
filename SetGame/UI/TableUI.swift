@@ -4,7 +4,7 @@ import SwiftUI
 // to eliminate references to global environment (@EnvironmentObject)
 // state, in order to facilitate multi-player (GameCenter) functionality.
 //
-struct TableUI: View {
+public struct TableUI: View {
 
     @ObservedObject var table: Table;
     @ObservedObject var settings: Settings;
@@ -21,7 +21,7 @@ struct TableUI: View {
     let marginx: CGFloat = 6;
     let spacing: CGFloat = 6;
 
-    var body: some View {
+    public var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             CardGrid(table: table, settings: settings, spacing: spacing, marginx: marginx)
             Space(size: 18)

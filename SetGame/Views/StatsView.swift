@@ -1,13 +1,13 @@
 import SwiftUI
 
-struct StatsView: View  {
+public struct StatsView: View  {
     
     @EnvironmentObject var table : Table;
     @EnvironmentObject var settings : Settings;
 
     @State var isViewDisplayed = false;
 
-    var body: some View {
+    public var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading) {
                 HStack {

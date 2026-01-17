@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct HelpView: View  {
+public struct HelpView: View  {
     
     @EnvironmentObject var table : Table;
     @EnvironmentObject var settings : Settings;
@@ -31,7 +31,7 @@ struct HelpView: View  {
         self.lines = text.components(separatedBy: .newlines)
     }
 
-    var body: some View {
+    public var body: some View {
         let alternateCards: Int = self.settings.alternateCards != 2 ? self.settings.alternateCards : 1;
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {

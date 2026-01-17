@@ -1,7 +1,7 @@
 import SwiftUI
 import Combine
 
-struct StatusBarView: View {
+public struct StatusBarView: View {
     
     @EnvironmentObject var table : Table;
     @EnvironmentObject var settings : Settings;
@@ -46,7 +46,7 @@ struct StatusBarView: View {
         String(format: "%02d:%02d", minutes, seconds)
     }
 
-    var body: some View {
+    public var body: some View {
         let squeeze: Bool = self.settings.showTimer;
         HStack(alignment: .firstTextBaseline) {
             Text("  **SET**s: **\(table.state.setsFoundCount)**")

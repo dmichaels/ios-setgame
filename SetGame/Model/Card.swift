@@ -56,7 +56,7 @@ public class Card {
         return Card.isSet(self, b, c);
     }
 
-    /// Returns the unique card which completes the SET for the given two cards.
+    /// Returns the new unique card which completes the SET for the given two cards.
     ///
     static func matchingSetValue(_ b: Card, _ c: Card) -> Card {
         let color   : CardColor   = .matchingSetValue(b.color,   c.color);

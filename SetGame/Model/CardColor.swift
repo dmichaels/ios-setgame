@@ -1,6 +1,6 @@
 /// CardColor represents the color attributes of a SET card.
 ///
-enum CardColor : Int, CaseIterable {
+public enum CardColor : Int, CaseIterable {
 
     case Red;
     case Purple;

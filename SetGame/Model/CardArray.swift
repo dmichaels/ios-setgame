@@ -1,6 +1,6 @@
 /// Array extension for convenience in handling simple Card arrays.
 ///
-extension Array where Element : Card {
+public extension Array where Element : Card {
 
     /// Adds the given card(s) to this array.
     ///

@@ -1,4 +1,4 @@
-extension Array where Element : TableCard
+public extension Array where Element : TableCard
 {
     func first(_ n: Int) -> [TableCard] {
         if (n > 0) {

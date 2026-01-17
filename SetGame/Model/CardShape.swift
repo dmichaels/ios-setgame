@@ -1,6 +1,6 @@
 /// CardShape represents the shape attributes of a SET card.
 ///
-enum CardShape : Int, CaseIterable {
+public enum CardShape : Int, CaseIterable {
 
     case Oval;
     case Diamond;

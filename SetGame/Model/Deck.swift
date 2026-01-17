@@ -1,7 +1,7 @@
 /// Deck represents a deck of SET Game® card deck.
 /// Can be created with a subclass of Card if you like.
 ///
-class Deck<T : Card> {
+public class Deck<T : Card> {
 
     public private(set) var cards    : [T];
     public              let readonly : Bool;

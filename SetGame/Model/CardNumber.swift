@@ -1,6 +1,6 @@
 /// CardNumber represents the number attributes of a SET card.
 ///
-enum CardNumber : Int, CaseIterable  {
+public enum CardNumber : Int, CaseIterable  {
 
     case One   = 1;
     case Two   = 2;

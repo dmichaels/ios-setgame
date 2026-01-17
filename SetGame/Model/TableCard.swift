@@ -3,7 +3,7 @@ import SwiftUI
 /// TableCard represent a SET card on the table.
 /// A subclass of Card, it can be in a selected state or not.
 ///
-class TableCard : Card, ObservableObject {
+public class TableCard : Card, ObservableObject {
 
     private struct Defaults {
         fileprivate static let blinkCount: Int               = 4;
