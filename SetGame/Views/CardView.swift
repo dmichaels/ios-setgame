@@ -10,6 +10,13 @@ public struct CardView : View {
                     var alternate: Int?                         = nil;
                     var touchedCallback: ((TableCard) -> Void)? = nil;
 
+    private struct Defaults {
+        fileprivate static let materializeDelay: Double = 0.4;
+    }
+
+    @State private var materializing: Bool;
+    @State private var shakeToken: CGFloat;
+
     public init(_ card: TableCard,
                   selectable: Bool = false,
                   materialize: Bool = false,
@@ -40,22 +47,10 @@ public struct CardView : View {
                   askew: Bool = false,
                   alternate: Int? = nil,
                 _ touchedCallback: ((TableCard) -> Void)? = nil) {
-        self.init(
-           TableCard(card),
-           selectable: selectable,
-           materialize: materialize,
-           materializeDelay: materializeDelay,
-           askew: askew,
-           alternate: alternate,
-           touchedCallback);
+        self.init(TableCard(card),
+                  selectable: selectable, materialize: materialize, materializeDelay: materializeDelay,
+                  askew: askew, alternate: alternate, touchedCallback);
     }
-
-    private struct Defaults {
-        fileprivate static let materializeDelay: Double = 0.4;
-    }
-
-    @State private var materializing: Bool;
-    @State private var shakeToken: CGFloat;
 
     public var body: some View {
         VStack {
