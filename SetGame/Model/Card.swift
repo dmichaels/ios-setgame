@@ -79,10 +79,6 @@ public class Card {
             && cards[0].number  .formsSetWith(cards[1].number,  cards[2].number);
     }
 
-    static func isSet(_ cards : [Card]) -> Bool {
-        return cards.count == 3 && Card.isSet(cards[0], cards[1], cards[2]);
-    }
-
     /// Returns the unique 'codename' for this card.
     /// This can be used as a short name for this card and could conveniently
     /// be used to identify an (image) asset for the card.

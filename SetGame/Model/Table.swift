@@ -39,7 +39,7 @@ public class Table: ObservableObject {
     }
 
     @Published private(set) var cards: [TableCard]!;
-    @Published var state: State!;
+    @Published              var state: State!;
 
     private var deck: TableDeck!;
     private var demoTimer: Timer? = nil;
@@ -215,7 +215,6 @@ public class Table: ObservableObject {
         // MUST call the given resolve function at the end of its processing.
 
         if (delay > 0) {
-            // let delay: Double = selectedCards.isSet() ? delay / 2.0 : delay;
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 if let callback = callback {
                     callback(selectedCards, selectedCards.isSet(), resolve);
@@ -475,7 +474,7 @@ public class Table: ObservableObject {
     /// cards array; check first to see if there already is a SET at the front, and if so do nothing.
     ///
     func moveAnyExistingSetToFront() {
-        if ((self.cards.count > 3) && !Card.isSet(self.cards[0], self.cards[1], self.cards[2])) {
+        if ((self.cards.count > 3) && !self.cards.first(3).isSet()) {
             self.cards.moveAnyExistingSetToFront();
         }
     }
@@ -527,6 +526,9 @@ public class Table: ObservableObject {
             self.cards.add(cards);
             self.noteNewcomers(cards);
         }
+    }
+
+    private func addCards(_ cards: [TableCard]) {
     }
 
     /// Populate the table cards from the deck up to the displayCardCount.

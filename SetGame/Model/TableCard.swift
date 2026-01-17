@@ -14,8 +14,7 @@ public class TableCard : Card, ObservableObject {
         fileprivate static let materializeElasticity: Double = 0.40;
     }
 
-    // @Published var set: Bool                     = false;
-    @Published var selected: Bool                = false;
+    @Published var selected: Bool                   = false;
     //
     // These blinking/blinkoff properties are used ONLY for blinking the 3 cards when a
     // SET is found; the blinking property means that we are in the processing of doing
@@ -62,22 +61,11 @@ public class TableCard : Card, ObservableObject {
     }
 
     convenience init(_ card: TableCard) {
+        //
+        // FYI no need to copy over the various state variables
+        // concerning selection, blinking, shaking, or materializing.
+        //
         self.init(color: card.color, shape: card.shape, filling: card.filling, number: card.number)
-        // self.set = card.set;
-        self.selected = card.selected;
-        self.blinking = card.blinking;
-        self.blinkoff = card.blinkoff;
-        self.blinkCount = card.blinkCount;
-        self.blinkInterval = card.blinkInterval;
-        self.blinkoffInterval = card.blinkoffInterval;
-        self.blinkDoneCallback = card.blinkDoneCallback;
-        self.shaking = card.shaking;
-        self.shakeCount = card.shakeCount;
-        self.shakeSpeed = card.shakeSpeed;
-        // self.materializeTrigger = card.materializeTrigger;
-        // self.materializedOnce = card.materializedOnce;
-        self.materializeSpeed = card.materializeSpeed;
-        self.materializeElasticity = card.materializeElasticity;
     }
 
     override class func from(_ value: String) -> TableCard? {
@@ -89,10 +77,6 @@ public class TableCard : Card, ObservableObject {
 
     override func toString(_ verbose : Bool = false) -> String {
         return super.toString(verbose) + ":\(self.selected)";
-    }
-
-    public func newcomer(to table: Table) -> Bool {
-        return table.state.newcomers.contains(self.id);
     }
 
     public func nonset(on table: Table) -> Bool {

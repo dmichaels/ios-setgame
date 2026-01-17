@@ -205,29 +205,6 @@ public extension Array where Element : Card {
         return randomCards;
     }
 
-    /// Returns (WITH removal) three random cards (in a new array) from this array of cards,
-    /// ENSURING that, IF POSSIBLE, there NO SETs in the returned cards. If this is NOT
-    /// POSSIBLE (either because there are not enough cards in this array of cards, or if
-    /// they do not contain a non-SET of three), then returns and empty list (nothing removed).
-    /// Guaranteed: Return either an array of three cards which are a SET, or an empty array;
-    /// and if the former, then these three cards will be removed from this array of cards.
-    ///
-    /// N.B. Only (currently) used for the purpose of constructing a magic square.
-    ///
-    mutating func takeRandomNonSetCards() -> [Element] {
-        let cards: [Element] = self.randomNonSetCards();
-        guard cards.count == 3 else { return [] }
-        self.remove(cards);
-        return cards;
-    }
-
-    /// Returns (without removal), a random card from this array,
-    /// or nil if this array is empty.
-    ///
-    func randomCard() -> Element? {
-        return (self.count > 0) ? self[Int.random(in: 0..<self.count)] : nil;
-    }
-
     /// Returns (WITHOUT removal), at most, the specified number of random cards from this
     /// array, in a new array; if fewer cards are in this array than the that requested,
     /// then so be it, just that many will be returned, UNLESS the given strict argument
@@ -292,20 +269,6 @@ public extension Array where Element : Card {
     ///
     func isSet() -> Bool {
         return (self.count == 3) && Element.isSet(self[0], self[1], self[2]);
-    }
-
-    /// Returns true iff this array has three cards which do NOT comprise a SET.
-    ///
-    func isNonSet() -> Bool {
-        return (self.count == 3) && !Element.isSet(self[0], self[1], self[2]);
-    }
-
-    func formsSetWith(_ a : Element, _ b : Element) -> Bool {
-        return self.count == 1 && self[0].formsSetWith(a, b);
-    }
-
-    func formsSetWith(_ a : Element) -> Bool {
-        return self.count == 2 && self[0].formsSetWith(self[1], a);
     }
 
     /// Returns true iff there exists at least one SET in this array.
