@@ -14,8 +14,7 @@ public struct DeckView: View {
                     let row: [Card] = rows[i];
                     HStack {
                         ForEach(row.indices, id: \.self) { j in
-                            let card: Card = row[j];
-                            CardView(card: TableCard(card))
+                            CardUI(row[j], selectable: true)
                                 .frame(width: cardWidth)
                         }
                     }

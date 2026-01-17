@@ -64,6 +64,9 @@ public class Table: ObservableObject {
             // Only bother making it look good if the cards-per-row is 4 (the default)
             // or 5; if cards-per-row is 3 it already falls out to look good automatically.
             //
+            // TODO
+            // Changing displayCardCount at this point even temporarily may be problematic publish-wise.
+            //
             let displayCardCountSave: Int = self.settings.displayCardCount
             if ((self.settings.cardsPerRow == 4) && (self.settings.displayCardCount < 11)) {
                 self.settings.displayCardCount = 11

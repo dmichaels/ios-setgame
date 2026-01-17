@@ -1,0 +1,62 @@
+import Foundation
+import GameKit
+import UIKit
+
+/// A tiny wrapper around Game Center login state and UI presentation.
+@MainActor
+final class GameCenterManager {
+
+    static let shared = GameCenterManager()
+    private init() {}
+
+    private var didSetHandler = false
+
+    /// Call this once at app launch (or when user taps “Play with Friends”).
+    func authenticatePlayer() {
+        let player = GKLocalPlayer.local
+
+        // This can be called multiple times; we only need to assign the handler once.
+        if !didSetHandler {
+            didSetHandler = true
+
+            player.authenticateHandler = { [weak self] viewController, error in
+                guard let _ = self else { return }
+
+                if let error = error {
+                    // This can happen if user cancels, isn't signed in, network issues, etc.
+                    print("Game Center auth error: \(error)")
+                }
+
+                if let viewController = viewController {
+                    // Game Center needs you to present this login UI.
+                    guard let topVC = UIApplication.shared.topMostViewController else {
+                        print("Game Center: couldn't find a view controller to present auth UI.")
+                        return
+                    }
+                    topVC.present(viewController, animated: true)
+                    return
+                }
+
+                // If no UI is provided, we're either authenticated already, or not signed in.
+                if player.isAuthenticated {
+                    print("Game Center authenticated as: \(player.displayName) (\(player.gamePlayerID))")
+                } else {
+                    print("Game Center not authenticated (user may be signed out or declined).")
+                }
+            }
+        }
+
+        // Trigger the authentication flow (handler will be called).
+        // (Setting authenticateHandler doesn't always immediately fire until accessed;
+        // this "touch" is usually enough.)
+        _ = player.isAuthenticated
+    }
+
+    var isAuthenticated: Bool {
+        GKLocalPlayer.local.isAuthenticated
+    }
+
+    var displayName: String? {
+        GKLocalPlayer.local.isAuthenticated ? GKLocalPlayer.local.displayName : nil
+    }
+}

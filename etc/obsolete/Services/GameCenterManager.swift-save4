@@ -1,0 +1,94 @@
+import Foundation
+import GameKit
+import UIKit
+
+@MainActor
+final class GameCenterManager: NSObject, ObservableObject {
+
+    static let shared = GameCenterManager()
+    private override init() {
+        super.init()
+        installAuthHandlerOnce()
+        refreshAuthState(tag: "init")
+    }
+
+    // Published state for SwiftUI
+    @Published private(set) var isAuthenticated: Bool = GKLocalPlayer.local.isAuthenticated
+    @Published private(set) var displayName: String = GKLocalPlayer.local.isAuthenticated ? GKLocalPlayer.local.displayName : ""
+    @Published var showOpenSettingsAlert: Bool = false
+    @Published private(set) var lastAuthError: String = ""
+
+    private var handlerInstalled = false
+
+    func refreshAuthState(tag: String = "") {
+        let p = GKLocalPlayer.local
+        isAuthenticated = p.isAuthenticated
+        displayName = p.isAuthenticated ? p.displayName : ""
+        if !tag.isEmpty {
+            print("GC> GC state (\(tag)) -> auth=\(isAuthenticated) name=\(displayName)")
+        }
+    }
+
+    /// Call from user action (button). Don’t call at launch.
+    func signInUserInitiated() {
+        print("GC> AUTH: user initiated sign-in")
+        refreshAuthState(tag: "pre-signin")
+
+        // This "touch" often causes GameKit to invoke authenticateHandler.
+        _ = GKLocalPlayer.local.isAuthenticated
+
+        // If the system refuses to show UI, our handler will run with vc=nil + error.
+        // The handler will set showOpenSettingsAlert = true in that case.
+    }
+
+    private func installAuthHandlerOnce() {
+        guard !handlerInstalled else { return }
+        handlerInstalled = true
+
+        GKLocalPlayer.local.authenticateHandler = { [weak self] vc, error in
+            guard let self else { return }
+
+            // Always update state when handler fires
+            defer { self.refreshAuthState(tag: "handler") }
+
+            if let error {
+                self.lastAuthError = error.localizedDescription
+                print("GC> auth error: \(error)")
+
+                // If we got "canceled or disabled" / no UI, we must offer Settings fallback.
+                // Often shows up as Code=2 or wrapped in Code=6.
+                // We can’t reliably introspect codes without casting, but message is enough.
+            } else {
+                self.lastAuthError = ""
+            }
+
+            if let vc {
+                guard let top = UIApplication.shared.topMostViewController else {
+                    print("GC> cannot find top VC to present auth UI")
+                    return
+                }
+                if top.presentedViewController != nil {
+                    print("GC> top VC already presenting; not presenting auth UI")
+                    return
+                }
+                print("GC> presenting Game Center auth UI")
+                top.present(vc, animated: true)
+                return
+            }
+
+            // No VC provided => either already authed, or system refused prompt, or user declined.
+            if GKLocalPlayer.local.isAuthenticated {
+                print("GC> authenticated as \(GKLocalPlayer.local.displayName)")
+                self.showOpenSettingsAlert = false
+            } else {
+                print("GC> not authenticated; offering Settings fallback")
+                self.showOpenSettingsAlert = true
+            }
+        }
+    }
+
+    func openSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
+    }
+}

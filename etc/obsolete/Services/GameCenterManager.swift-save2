@@ -1,0 +1,271 @@
+import Foundation
+import GameKit
+import UIKit
+
+@MainActor
+final class GameCenterManager: NSObject, ObservableObject, GKMatchmakerViewControllerDelegate, GKMatchDelegate {
+
+    // Use shared if you want, but you can also instantiate and pass around.
+    static let shared = GameCenterManager()
+
+    // MARK: - Published UI state
+
+    @Published private(set) var isAuthenticated: Bool = GKLocalPlayer.local.isAuthenticated
+    @Published private(set) var displayName: String = GKLocalPlayer.local.isAuthenticated ? GKLocalPlayer.local.displayName : ""
+    @Published private(set) var playerID: String = GKLocalPlayer.local.isAuthenticated ? GKLocalPlayer.local.gamePlayerID : ""
+
+    @Published private(set) var inMatch: Bool = false
+
+    // MARK: - Match / callbacks
+
+    private(set) var match: GKMatch?
+
+    /// Optional hooks for your UI/logging
+    var onStatus: ((String) -> Void)?
+    var onReceivedMessage: ((String) -> Void)?
+
+    private var didSetAuthHandler = false
+
+    // MARK: - Init / auth change observer
+
+    override init() {
+        super.init()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(authDidChange),
+            name: .GKPlayerAuthenticationDidChangeNotificationName,
+            object: nil
+        )
+
+        refreshAuthState()
+        ensureAuthHandlerIsSet()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    @objc private func authDidChange() {
+        refreshAuthState()
+    }
+
+    // MARK: - Public API
+
+    /// Call once at app launch (best effort).
+    func authenticatePlayer() {
+        authenticatePlayerAtLaunch();
+    }
+    func authenticatePlayerAtLaunch() {
+        status("AUTH: launch")
+        ensureAuthHandlerIsSet()
+        // Touching isAuthenticated is enough to kick the handler on many systems.
+        _ = GKLocalPlayer.local.isAuthenticated
+        installAuthHandler(reason: "launch")
+        refreshAuthState()
+    }
+
+    /// Call from your "Sign In" button.
+    func signIn() {
+        status("AUTH: user tapped Sign In")
+        ensureAuthHandlerIsSet()
+        _ = GKLocalPlayer.local.isAuthenticated
+        installAuthHandler(reason: "user_signin")
+        refreshAuthState()
+    }
+
+    /// Call from your "Play with Friends" button (starts matchmaking UI).
+    func startMatchmaking(minPlayers: Int = 2, maxPlayers: Int = 4) {
+        // Use the *real* underlying GameKit state as the gate.
+        guard GKLocalPlayer.local.isAuthenticated else {
+            status("Not authenticated. Tap Sign In first.")
+            refreshAuthState()
+            return
+        }
+
+        // Drop any existing match for this demo.
+        match?.disconnect()
+        match = nil
+        inMatch = false
+
+        let request = GKMatchRequest()
+        request.minPlayers = minPlayers
+        request.maxPlayers = maxPlayers
+
+        guard let mmvc = GKMatchmakerViewController(matchRequest: request) else {
+            status("Could not create GKMatchmakerViewController.")
+            return
+        }
+        mmvc.matchmakerDelegate = self
+
+        guard let topVC = UIApplication.shared.topMostViewController else {
+            status("Couldn't find a view controller to present matchmaker UI.")
+            return
+        }
+
+        status("Presenting matchmaker…")
+        topVC.present(mmvc, animated: true)
+    }
+
+    func disconnectMatch() {
+        match?.disconnect()
+        match = nil
+        inMatch = false
+        status("Match disconnected.")
+    }
+
+    func sendText(_ text: String) {
+        guard let match else {
+            status("No match yet; can't send.")
+            return
+        }
+        guard let data = text.data(using: .utf8) else {
+            status("Couldn't encode message.")
+            return
+        }
+        do {
+            try match.sendData(toAllPlayers: data, with: .reliable)
+            status("Sent: \(text)")
+        } catch {
+            status("Send failed: \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - Auth internals
+
+    private func ensureAuthHandlerIsSet() {
+        guard !didSetAuthHandler else { return }
+        didSetAuthHandler = true
+
+        let player = GKLocalPlayer.local
+
+        player.authenticateHandler = { [weak self] viewController, error in
+            guard let self else { return }
+
+            if let error {
+                self.status("Game Center auth error: \(error.localizedDescription)")
+            }
+
+            if let viewController {
+                // Game Center wants you to present their login UI.
+                guard let topVC = UIApplication.shared.topMostViewController else {
+                    self.status("Game Center: couldn't find VC to present auth UI.")
+                    return
+                }
+
+                // Avoid "present while already presenting" silent failures.
+                if topVC.presentedViewController != nil {
+                    self.status("Game Center: top VC already presenting something; can't present auth UI now.")
+                    return
+                }
+
+                self.status("Presenting Game Center login UI…")
+                topVC.present(viewController, animated: true)
+                return
+            }
+
+            // No UI provided => either authenticated, or declined, or restricted.
+            self.refreshAuthState()
+            if GKLocalPlayer.local.isAuthenticated {
+                self.status("Game Center authenticated as \(GKLocalPlayer.local.displayName)")
+            } else {
+                self.status("Game Center not authenticated.")
+            }
+        }
+    }
+private func installAuthHandler(reason: String) {
+    let player = GKLocalPlayer.local
+
+    player.authenticateHandler = { [weak self] viewController, error in
+        guard let self else { return }
+
+        if let error {
+            self.status("GC auth error (\(reason)): \(error.localizedDescription)")
+        }
+
+        if let viewController {
+            guard let topVC = UIApplication.shared.topMostViewController else {
+                self.status("GC: couldn't find VC to present auth UI.")
+                return
+            }
+
+            // If something is already presented, dismiss it first or bail.
+            if let presented = topVC.presentedViewController {
+                self.status("GC: top VC already presenting; dismissing and retrying…")
+                presented.dismiss(animated: false)
+            }
+
+            self.status("GC: presenting sign-in UI (\(reason))")
+            topVC.present(viewController, animated: true)
+            return
+        }
+
+        // No VC => either authenticated already, or user declined/signed out/restricted.
+        self.refreshAuthState()
+        self.status("GC: auth state now auth=\(self.isAuthenticated) name=\(self.displayName)")
+    }
+}
+
+    private func refreshAuthState() {
+        let p = GKLocalPlayer.local
+        isAuthenticated = p.isAuthenticated
+        displayName = p.isAuthenticated ? p.displayName : ""
+        playerID = p.isAuthenticated ? p.gamePlayerID : ""
+        // NOTE: auth change notification often triggers this too; harmless.
+        status("GC state -> auth=\(isAuthenticated) name=\(displayName)")
+    }
+
+    // MARK: - GKMatchmakerViewControllerDelegate
+
+    func matchmakerViewControllerWasCancelled(_ viewController: GKMatchmakerViewController) {
+        status("Matchmaker cancelled.")
+        viewController.dismiss(animated: true)
+    }
+
+    func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFailWithError error: Error) {
+        status("Matchmaker failed: \(error.localizedDescription)")
+        viewController.dismiss(animated: true)
+    }
+
+    func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFind match: GKMatch) {
+        status("Match found. Players so far: \(match.players.count)")
+        viewController.dismiss(animated: true)
+
+        self.match = match
+        self.inMatch = true
+        match.delegate = self
+
+        // Optional "hello" to prove messaging works
+        sendText("Hello from \(GKLocalPlayer.local.displayName)")
+    }
+
+    // MARK: - GKMatchDelegate
+
+    func match(_ match: GKMatch, player: GKPlayer, didChange state: GKPlayerConnectionState) {
+        switch state {
+        case .connected:
+            status("Player connected: \(player.displayName)")
+        case .disconnected:
+            status("Player disconnected: \(player.displayName)")
+        @unknown default:
+            status("Player state changed: \(player.displayName)")
+        }
+    }
+
+    func match(_ match: GKMatch, didFailWithError error: Error?) {
+        status("Match error: \(error?.localizedDescription ?? "unknown")")
+    }
+
+    func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
+        let text = String(data: data, encoding: .utf8) ?? "<non-utf8 \(data.count) bytes>"
+        status("Received from \(player.displayName): \(text)")
+        onReceivedMessage?(text)
+    }
+
+    // MARK: - Logging helper
+
+    private func status(_ s: String) {
+        print("GC>", s)
+        onStatus?(s)
+    }
+}

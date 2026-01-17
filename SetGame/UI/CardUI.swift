@@ -33,6 +33,24 @@ public struct CardUI : View {
         }
     }
 
+    init(_ card: Card,
+           selectable: Bool = false,
+           materialize: Bool = false,
+           materializeDelay: Double? = nil,
+           askew: Bool = false,
+           alternate: Int? = nil,
+         _ touchedCallback: ((TableCard) -> Void)? = nil) {
+
+        self.init(
+           TableCard(card),
+           selectable: selectable,
+           materialize: materialize,
+           materializeDelay: materializeDelay,
+           askew: askew,
+           alternate: alternate,
+           touchedCallback);
+    }
+
     private struct Defaults {
         fileprivate static let materializeDelay: Double = 0.4;
     }
