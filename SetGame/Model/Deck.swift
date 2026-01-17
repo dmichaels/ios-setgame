@@ -30,17 +30,8 @@ public class Deck<T : Card> {
         return self.cards.count;
     }
 
-    /// Returns true iff the given card is in this deck.
-    /// Don't fully understand why this it's necessary to have this specialized
-    /// function for Card vs. T; need because we get a compiler type mismatch
-    /// error when calling the T based function above with a card of type Card.
-    ///
-    func contains(_ card : Card) -> Bool {
-        return self.cards.contains(T(card));
-    }
-
     func takeCard(_ card : T) -> T? {
-        if (self.contains(card)) {
+        if (self.cards.contains(card)) {
             self.cards.remove(card);
             return card;
         }
