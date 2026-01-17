@@ -64,18 +64,14 @@ public class Table: ObservableObject {
             // Only bother making it look good if the cards-per-row is 4 (the default)
             // or 5; if cards-per-row is 3 it already falls out to look good automatically.
             //
-            // TODO
-            // Changing displayCardCount at this point even temporarily may be problematic publish-wise.
-            //
-            let displayCardCountSave: Int = self.settings.displayCardCount
-            if ((self.settings.cardsPerRow == 4) && (self.settings.displayCardCount < 11)) {
-                self.settings.displayCardCount = 11
+            var displayCardCount: Int = self.settings.displayCardCount;
+            if ((self.settings.cardsPerRow == 4) && (displayCardCount < 11)) {
+                displayCardCount = 11;
             }
-            else if ((self.settings.cardsPerRow == 5) && (self.settings.displayCardCount < 13)) {
-                self.settings.displayCardCount = 13
+            else if ((self.settings.cardsPerRow == 5) && (displayCardCount < 13)) {
+                displayCardCount = 13;
             }
-            self.fillTable(moveSetFront: false);
-            self.settings.displayCardCount = displayCardCountSave
+            self.fillTable(moveSetFront: false, displayCardCount: displayCardCount);
             if (self.settings.cardsPerRow == 4) {
                 self.cards[3]  = self.cards[9];
                 self.cards[7]  = self.cards[10];
@@ -536,8 +532,9 @@ public class Table: ObservableObject {
     /// If the moreCardsIfNoSet flag is set then if we don't have a SET on
     /// the table, then add up to 3 more cards.
     ///
-    private func fillTable(moveSetFront: Bool? = nil) {
-        self.addMoreCards(self.settings.displayCardCount - self.cards.count);
+    private func fillTable(moveSetFront: Bool? = nil, displayCardCount: Int? = nil) {
+        let displayCardCount: Int = displayCardCount ?? self.settings.displayCardCount;
+        self.addMoreCards(displayCardCount - self.cards.count);
         if (self.settings.additionalCards > 0) {
             while (!self.containsSet()) {
                 if (self.deck.count == 0) {
