@@ -11,16 +11,13 @@ public struct ContentView: View {
     @State private var saveMoveSetFront: Bool = false;
     @State private var saveSimpleDeck: Bool = false;
 
-    // let background: Color = Color(.sRGB, red: 0.93, green: 0.96, blue: 1.00, opacity: 1.0);
-    // let background: Color = Color(hex: 0xEDF5FF);
-    // let background: Color = Color(hex: 0xDCE4EE);
-    let background: Color = Color(hex: 0xDCEEE4);
+    private let background: Color = Color(hex: 0xDCEEE4);
 
     public var body: some View {
         NavigationView {
             ZStack {
                 background.ignoresSafeArea()
-                TableView(table: table, settings: settings, feedback: feedback)
+                SetTableView(table: table, settings: settings, feedback: feedback)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .principal) {
@@ -102,6 +99,20 @@ public struct ContentView: View {
         // look normal and not split screen on iPad.
         //
         .navigationViewStyle(.stack)
+    }
+
+    private struct SetTableView: View {
+        @ObservedObject var table: Table;
+        @ObservedObject var settings: Settings;
+        @ObservedObject var feedback: Feedback;
+        public var body: some View {
+            if (settings.debugMode) {
+                TestCardView()
+            }
+            else {
+                TableView(table: table, settings: settings, feedback: feedback)
+            }
+        }
     }
 
     private func onGoToSettingsView() {

@@ -43,6 +43,7 @@
 		98EF7E132F1ACBD400A45F63 /* Space.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E122F1ACBD400A45F63 /* Space.swift */; };
 		98EF7E152F1AFE7A00A45F63 /* TableDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E142F1AFE7A00A45F63 /* TableDeck.swift */; };
 		98EF7E172F1BCC5000A45F63 /* CardArrayDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E162F1BCC5000A45F63 /* CardArrayDebug.swift */; };
+		98EF7E1A2F1D070500A45F63 /* TestCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E182F1D070500A45F63 /* TestCardView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,6 +107,7 @@
 		98EF7E122F1ACBD400A45F63 /* Space.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Space.swift; sourceTree = "<group>"; };
 		98EF7E142F1AFE7A00A45F63 /* TableDeck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableDeck.swift; sourceTree = "<group>"; };
 		98EF7E162F1BCC5000A45F63 /* CardArrayDebug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardArrayDebug.swift; sourceTree = "<group>"; };
+		98EF7E182F1D070500A45F63 /* TestCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,6 +160,7 @@
 		981190EE25ED59CC0083606B /* SetGame */ = {
 			isa = PBXGroup;
 			children = (
+				98EF7E192F1D070500A45F63 /* Debug */,
 				981B00492F113ABF00875920 /* SetGame.entitlements */,
 				981190EF25ED59CC0083606B /* SetGameApp.swift */,
 				9811911D25ED5A0C0083606B /* Model */,
@@ -244,6 +247,14 @@
 				98A5C74E2F09BBF6009E708D /* Help.md */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		98EF7E192F1D070500A45F63 /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				98EF7E182F1D070500A45F63 /* TestCardView.swift */,
+			);
+			path = Debug;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -403,6 +414,7 @@
 				989FF8FB25EF3708002AE44A /* CardArray.swift in Sources */,
 				98A5C7422EFED67E009E708D /* VersionInfo.swift in Sources */,
 				9811914225ED5ACF0083606B /* Deck.swift in Sources */,
+				98EF7E1A2F1D070500A45F63 /* TestCardView.swift in Sources */,
 				981190F225ED59CC0083606B /* ContentView.swift in Sources */,
 				9811914925ED5ACF0083606B /* String.swift in Sources */,
 				98A5C7442F059B8C009E708D /* TableCardArray.swift in Sources */,

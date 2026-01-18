@@ -23,6 +23,7 @@ public class Defaults {
     public static let haptics: Bool              = false;
     public static let hideHelpButton: Bool       = false;
     public static let demoMode: Bool             = false;
+    public static let debugMode: Bool            = false;
     public static let title: String              = "Logicard";
 }
 
@@ -51,6 +52,7 @@ public final class Settings: ObservableObject {
         static let sounds               = "sounds"
         static let haptics              = "haptics"
         static let hideHelpButton       = "hideHelpButton"
+        static let debugMode            = "debugMode"
     }
 
     private let defaults = UserDefaults.standard
@@ -76,6 +78,7 @@ public final class Settings: ObservableObject {
         sounds               = defaults.object(forKey: Keys.sounds)               as? Bool ?? Defaults.sounds
         haptics              = defaults.object(forKey: Keys.haptics)              as? Bool ?? Defaults.haptics
         hideHelpButton       = defaults.object(forKey: Keys.hideHelpButton)       as? Bool ?? Defaults.hideHelpButton
+        debugMode            = defaults.object(forKey: Keys.debugMode)            as? Bool ?? Defaults.debugMode
 
         $showPartialSetHint
             .sink { self.defaults.set($0, forKey: Keys.showPartialSetHint) }
@@ -131,6 +134,9 @@ public final class Settings: ObservableObject {
         $hideHelpButton
             .sink { self.defaults.set($0, forKey: Keys.hideHelpButton) }
             .store(in: &cancellables)
+        $debugMode
+            .sink { self.defaults.set($0, forKey: Keys.debugMode) }
+            .store(in: &cancellables)
     }
 
     public func reset() {
@@ -155,6 +161,7 @@ public final class Settings: ObservableObject {
         defaults.removeObject(forKey: Keys.sounds)
         defaults.removeObject(forKey: Keys.haptics)
         defaults.removeObject(forKey: Keys.hideHelpButton)
+        defaults.removeObject(forKey: Keys.debugMode)
 
         showPartialSetHint   = Defaults.showPartialSetHint
         showSetsPresentCount = Defaults.showSetsPresentCount
@@ -174,6 +181,7 @@ public final class Settings: ObservableObject {
         sounds               = Defaults.sounds
         haptics              = Defaults.haptics
         hideHelpButton       = Defaults.hideHelpButton
+        debugMode            = Defaults.debugMode
     }
 
     public func isDefault() -> Bool {
@@ -199,6 +207,7 @@ public final class Settings: ObservableObject {
             &&  (sounds               == Defaults.sounds)
             &&  (haptics              == Defaults.haptics)
             &&  (hideHelpButton       == Defaults.hideHelpButton)
+            &&  (debugMode            == Defaults.debugMode)
         )
     }
 
@@ -222,5 +231,6 @@ public final class Settings: ObservableObject {
     @Published var sounds: Bool               = Defaults.sounds;
     @Published var haptics: Bool              = Defaults.haptics;
     @Published var hideHelpButton: Bool       = Defaults.hideHelpButton;
+    @Published var debugMode: Bool            = Defaults.debugMode;
     @Published var demoMode: Bool             = Defaults.demoMode;
 }

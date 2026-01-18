@@ -53,7 +53,7 @@ public struct TableView: View {
             //   space between each card on the table card grid.
             // - spacingy
             //   The LazyVGrid spacing is the vertical space
-            //   between each card on the table card grid.
+            //   between each card (row) on the table card grid.
             //
             HStack(spacing: marginx) {
                 let columns: Array<GridItem> = Array(

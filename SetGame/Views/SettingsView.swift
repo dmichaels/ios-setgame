@@ -191,6 +191,11 @@ public struct SettingsView: View {
                 Spacer()
                 Toggle(isOn: $settings.hideHelpButton) {}
             }
+            HStack {
+                Text("  Debug Mode").font(.footnote)
+                Spacer()
+                Toggle(isOn: $settings.debugMode) {}
+            }
             if (VersionInfo.commit != "") {
                 HStack {
                     if (showCommitID) {
