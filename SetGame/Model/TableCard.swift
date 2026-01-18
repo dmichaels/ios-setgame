@@ -138,10 +138,15 @@ public class TableCard : Card, ObservableObject {
             return;
         }
         self.flipCount = count;
-        self.flipping = true;
+        // self.flipping = true;
+        withAnimation(.linear(duration: 0.8)) {
+            self.flipping = true
+        }
+        /*
         TableCard.delay(delay: 0.5) {
             self.flipping = false;
         }
+        */
     }
 
     public func shake(count: Int = 0, speed: Double = 0, delay: Double? = nil) {
