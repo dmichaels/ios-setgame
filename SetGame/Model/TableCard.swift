@@ -139,7 +139,7 @@ public class TableCard : Card, ObservableObject {
         }
         self.flipCount = count;
         self.flipping = true;
-        TableCard.delay(delay: 3) {
+        TableCard.delay(delay: 0.5) {
             self.flipping = false;
         }
     }
