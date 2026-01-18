@@ -10,8 +10,8 @@ public struct TestCardView: View {
 public class TestTable: ObservableObject {
 
     @Published public private(set) var cards: [TableCard]!;
+
     private var moveTo: Int = 0;
-    private var moveDone: Bool = false;
 
     init() {
         self.cards = [
@@ -34,18 +34,10 @@ public class TestTable: ObservableObject {
         if (self.moveTo >= (self.cards.count - 1)) {
             self.moveTo = 0;
         }
-        print("MOVETO: \(self.moveTo)")
     }
 }
 
 public struct TestView: View {
-
-    private var cards: [TableCard] = [
-        TableCard("1RHO")!, TableCard("2RHO")!, TableCard("3RHO")!, TableCard("1PSO")!,
-        TableCard("1GSD")!, TableCard("2GSD")!, TableCard("3GSD")!, TableCard("2PSO")!,
-        TableCard("1PQT")!, TableCard("2PQT")!, TableCard("3PQT")!, TableCard("3PSO")!,
-        TableCard("1GSO")!, TableCard("2GSO")!
-    ];
 
     public init(table: TestTable) {
         self.table = table;
