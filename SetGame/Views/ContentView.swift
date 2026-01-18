@@ -41,7 +41,7 @@ public struct ContentView: View {
                                } label: {
                                     Label("New Game" , systemImage: "arrow.counterclockwise")
                                 }.disabled(self.table.state.blinking || self.settings.demoMode)
-                                Button { self.table.addMoreCards(1) } label: {
+                                Button { self.table.addCards(1) } label: {
                                     Label("Add Card" , systemImage: "plus.rectangle")
                                 }.disabled(self.table.state.blinking || self.settings.demoMode)
                                 Toggle(isOn: $settings.demoMode) {

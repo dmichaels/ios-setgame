@@ -27,6 +27,7 @@ public class TableCard : Card, ObservableObject {
                var blinkInterval: Double            = Defaults.blinkInterval;
                var blinkoffInterval: Double         = 0;
                var blinkDoneCallback: (() -> Void)? = nil;
+    @Published var flipping: Bool                   = false;
     @Published var shaking: Bool                    = false;
                var shakeCount: Int                  = Defaults.shakeCount;
                var shakeSpeed: Double               = Defaults.shakeSpeed;
@@ -79,20 +80,6 @@ public class TableCard : Card, ObservableObject {
         return super.toString(verbose) + ":\(self.selected)";
     }
 
-    public func select(_ value: Bool? = nil, toggle: Bool? = nil) {
-        if let value = value {
-            self.selected = value;
-        }
-        else if let toggle = toggle {
-            if (toggle) {
-                self.selected.toggle();
-            }
-        }
-        else {
-            self.selected = true;
-        }
-    }
-
     private static func delay(delay: Double? = nil, callback: @escaping () -> Void) -> Bool {
         if let delay: Double = delay {
             if (delay > 0) {
@@ -104,6 +91,26 @@ public class TableCard : Card, ObservableObject {
             return true;
         }
         return false;
+    }
+
+    public func select(_ value: Bool? = nil, toggle: Bool? = nil, delay: Double? = nil) {
+        if let delay: Double = delay {
+            TableCard.delay(delay: delay) {
+                self.select(value, toggle: toggle, delay: nil);
+            }
+            return;
+        }
+        if let value = value {
+            self.selected = value;
+        }
+        else if let toggle = toggle {
+            if (toggle) {
+                self.selected.toggle();
+            }
+        }
+        else {
+            self.selected = true;
+        }
     }
 
     public func blink(count: Int = 0,

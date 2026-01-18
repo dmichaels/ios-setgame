@@ -27,7 +27,6 @@ public class Table: ObservableObject {
         // a SET is found (see allowsHitTesting in TableView); there should be a better way.
         //
         fileprivate var resolving: Bool = false;
-        // public      var newcomers: Set<TableCard.ID> = [];
 
         public var blinking: Bool { self.table.cards.contains(where: { $0.blinking }) }
         public var disabled: Bool { self.table.state.blinking ||
@@ -55,8 +54,7 @@ public class Table: ObservableObject {
         if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [TableCard] = TableDeck.randomMagicSquare(simple: self.settings.simpleDeck)
             if let cards: [TableCard] = self.deck.takeCards(magicSquareCards, strict: true) {
-                self.cards.add(cards)
-                self.noteNewcomers(cards);
+                self.addCards(cards, new: true);
             }
             //
             // Only bother making it look good if the cards-per-row is 4 (the default)
@@ -276,12 +274,15 @@ public class Table: ObservableObject {
                     existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
                 )
             );
+            print("NEW-CARDS: \(newCards)")
+            print("EXT-CARDS: \(extraCards)")
             var replacementCards: [TableCard] = extraCards + newCards;
             var deletionIndices: [Int] = []
             for i in 0..<self.cards.count {
                 if (self.cards[i].selected) {
                     if (replacementCards.count > 0) {
                         self.cards[i] = replacementCards[0];
+                        print("REPLACEMENT-CARD: \(replacementCards[0])")
                         replacementCards.remove(at: 0);
                     }
                     else {
@@ -299,10 +300,22 @@ public class Table: ObservableObject {
             // Fill just in case we have fewer cards than
             // what is normally desired; and unselect all.
             //
+            //xyzzy
+            let movedCards: [TableCard] = extraCards.filter { !selectedCards.contains($0) }
+            print("MOVED-CARDS: \(movedCards)")
+            if movedCards.count > 0 {
+                print("flipping!")
+                movedCards[0].flipping = true;
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    movedCards[0].flipping = false;
+                }
+            }
+            // movedCards.select(toggle: true, delay: 0.5)
+            // movedCards.select(toggle: true, delay: 1.0)
+            //xyzzy
             self.unselectCards()
             self.fillTable();
             self.addToSetsLastFound(selectedCards);
-            self.noteNewcomers(newCards);
         }
         else {
             //
@@ -326,12 +339,6 @@ public class Table: ObservableObject {
 
     private func noteIncorrectGuess(_ cards: [TableCard]) {
         self.state.setJustFoundNot = true;
-    }
-
-    private func noteNewcomers(_ cards: [TableCard], randomize: Bool = true) {
-        //
-        // Obsolete but may have another future use.
-        //
     }
 
     public func selectOneRandomSet(disjoint: Bool = false) {
@@ -444,7 +451,7 @@ public class Table: ObservableObject {
 
     /// Adds (at most) the given number of cards to the table from the deck.
     ///
-    public func addMoreCards(_ ncards: Int, plantSet: Bool? = nil) {
+    public func addCards(_ ncards: Int, plantSet: Bool? = nil) {
         guard (ncards > 0) && (self.deck.count > 0) else { return; }
         let plantSet: Bool = plantSet ?? self.settings.plantSet;
         if (plantSet && !self.containsSet() && (self.cards.count + min(self.deck.count, ncards)) >= 3) {
@@ -460,9 +467,7 @@ public class Table: ObservableObject {
                 // cards; just try to ensure the random 3+ cards taken
                 // from the deck contain a SET.
                 //
-                let cards: [TableCard] = self.deck.takeRandomCards(ncards, plantSet: true);
-                self.cards.add(cards);
-                self.noteNewcomers(cards);
+                self.addCards(self.deck.takeRandomCards(ncards, plantSet: true), new: true);
             }
             else {
                 //
@@ -476,9 +481,8 @@ public class Table: ObservableObject {
                         let b: TableCard = self.cards[j];
                         let c: TableCard = TableCard(TableCard.matchingSetValue(a, b));
                         if let c = self.deck.takeCard(c) {
-                            self.cards.add(c);
-                            self.noteNewcomers([c]);
-                            self.addMoreCards(ncards - 1, plantSet: false);
+                            self.addCards(c, new: true);
+                            self.addCards(ncards - 1, plantSet: false);
                         }
                     }
                 }
@@ -486,16 +490,16 @@ public class Table: ObservableObject {
         }
         else {
             let cards: [TableCard] = self.deck.takeRandomCards(ncards);
-            self.cards.add(cards);
-            self.noteNewcomers(cards);
+            self.addCards(cards, new: true);
         }
     }
 
-    private func addCards(_ cards: [TableCard]) {
-        //
-        // TODO
-        //
+    private func addCards(_ cards: [TableCard], new: Bool = false) {
         self.cards.add(cards);
+    }
+
+    private func addCards(_ card: TableCard, new: Bool = false) {
+        self.addCards([card], new: new);
     }
 
     /// Populate the table cards from the deck up to the displayCardCount.
@@ -504,13 +508,13 @@ public class Table: ObservableObject {
     ///
     private func fillTable(moveSetFront: Bool? = nil, displayCardCount: Int? = nil) {
         let displayCardCount: Int = displayCardCount ?? self.settings.displayCardCount;
-        self.addMoreCards(displayCardCount - self.cards.count);
+        self.addCards(displayCardCount - self.cards.count);
         if (self.settings.additionalCards > 0) {
             while (!self.containsSet()) {
                 if (self.deck.count == 0) {
                     break;
                 }
-                self.addMoreCards(self.settings.additionalCards);
+                self.addCards(self.settings.additionalCards);
             }
         }
         if (moveSetFront ?? self.settings.moveSetFront) {

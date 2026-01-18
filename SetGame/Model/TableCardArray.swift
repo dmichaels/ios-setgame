@@ -30,9 +30,9 @@ public extension Array where Element : TableCard
         }
     }
 
-    func select(_ value: Bool? = nil, toggle: Bool? = nil) {
+    func select(_ value: Bool? = nil, toggle: Bool? = nil, delay: Double? = nil) {
         for card in self {
-            card.select(value, toggle: toggle);
+            card.select(value, toggle: toggle, delay: delay);
         }
     }
 
