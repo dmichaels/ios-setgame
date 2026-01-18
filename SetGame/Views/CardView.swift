@@ -131,7 +131,7 @@ public struct CardView : View {
             .skew(askew)
 // TODO: tomorrow (2026-01-18) so i think i want .multiFlip followed by .multiFlip2 (some time/delayed after) ...
 			// .flip(card.flipping) // this one does the move with optional fliping on the way
-			.multiFlip(card.flipping, count: 2) // same as above i think but simpler?
+			.multiFlip(card.flipping, count: 1) // same as above i think but simpler?
 			// .multiFlip2(card.flipping, flips: 2) // this one just flips around (horizontally) in place - nice
         }
         .onChange(of: card.materializeTrigger) { value in

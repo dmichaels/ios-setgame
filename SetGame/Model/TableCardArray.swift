@@ -52,6 +52,12 @@ public extension Array where Element : TableCard
         }
     }
 
+    func flip(count: Int = 0, delay: Double? = nil) {
+        for card in self {
+            card.flip(count: count, delay: delay);
+        }
+    }
+
     func shake(count: Int = 0, speed: Double = 0, delay: Double? = nil) {
         for card in self {
             card.shake(count: count, speed: speed, delay: delay);

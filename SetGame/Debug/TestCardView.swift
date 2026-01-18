@@ -57,7 +57,7 @@ public struct TestCardView: View {
                     }
                 } label: { Text("Blink") }.buttonStyle(.borderedProminent)
                 Button {
-                    cards.shake();
+                    cards.flip(count: 3);
                 } label: { Text("Flip") }.buttonStyle(.borderedProminent)
                 Button {
                     cards.materialize(speed: 0.9);

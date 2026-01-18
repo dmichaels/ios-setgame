@@ -303,13 +303,15 @@ public class Table: ObservableObject {
             //xyzzy
             let movedCards: [TableCard] = extraCards.filter { !selectedCards.contains($0) }
             print("MOVED-CARDS: \(movedCards)")
+            movedCards.flip(count: 3);
+            /*
             if movedCards.count > 0 {
-                print("flipping!")
                 movedCards[0].flipping = true;
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     movedCards[0].flipping = false;
                 }
             }
+            */
             // movedCards.select(toggle: true, delay: 0.5)
             // movedCards.select(toggle: true, delay: 1.0)
             //xyzzy

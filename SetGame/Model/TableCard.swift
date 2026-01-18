@@ -28,6 +28,7 @@ public class TableCard : Card, ObservableObject {
                var blinkoffInterval: Double         = 0;
                var blinkDoneCallback: (() -> Void)? = nil;
     @Published var flipping: Bool                   = false;
+               var flipCount: Int                   = 2;
     @Published var shaking: Bool                    = false;
                var shakeCount: Int                  = Defaults.shakeCount;
                var shakeSpeed: Double               = Defaults.shakeSpeed;
@@ -127,6 +128,20 @@ public class TableCard : Card, ObservableObject {
         self.blinkoffInterval = offinterval > 0 ? offinterval : self.blinkInterval;
         self.blinkDoneCallback = blinkDoneCallback;
         self.blinking = true;
+    }
+
+    public func flip(count: Int = 0, delay: Double? = nil) {
+        if let delay: Double = delay {
+            TableCard.delay(delay: delay) {
+                self.flip(count: count, delay: nil);
+            }
+            return;
+        }
+        self.flipCount = count;
+        self.flipping = true;
+        TableCard.delay(delay: 3) {
+            self.flipping = false;
+        }
     }
 
     public func shake(count: Int = 0, speed: Double = 0, delay: Double? = nil) {
