@@ -274,15 +274,12 @@ public class Table: ObservableObject {
                     existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
                 )
             );
-            print("NEW-CARDS: \(newCards)")
-            print("EXT-CARDS: \(extraCards)")
             var replacementCards: [TableCard] = extraCards + newCards;
             var deletionIndices: [Int] = []
             for i in 0..<self.cards.count {
                 if (self.cards[i].selected) {
                     if (replacementCards.count > 0) {
                         self.cards[i] = replacementCards[0];
-                        print("REPLACEMENT-CARD: \(replacementCards[0])")
                         replacementCards.remove(at: 0);
                     }
                     else {
@@ -302,16 +299,15 @@ public class Table: ObservableObject {
             //
             //xyzzy
             let movedCards: [TableCard] = extraCards.filter { !selectedCards.contains($0) }
-            print("MOVED-CARDS: \(movedCards)")
+/*
             movedCards.flip(count: 3);
-            /*
             if movedCards.count > 0 {
                 movedCards[0].flipping = true;
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     movedCards[0].flipping = false;
                 }
             }
-            */
+*/
             // movedCards.select(toggle: true, delay: 0.5)
             // movedCards.select(toggle: true, delay: 1.0)
             //xyzzy

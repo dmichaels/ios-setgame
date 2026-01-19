@@ -8,8 +8,11 @@ public class TableCard : Card, ObservableObject {
     private struct Defaults {
         fileprivate static let blinkCount: Int               = 4;
         fileprivate static let blinkInterval: Double         = 0.15;
-        fileprivate static let shakeCount: Int               = 9;
-        fileprivate static let shakeSpeed: Double            = 0.55;
+        fileprivate static let flipCount: Int                = 2;
+        fileprivate static let flipDuration: Double          = 0.4;
+        fileprivate static let flipLeft: Bool                = false;
+        fileprivate static let shakeCount: Int               = 20;
+        fileprivate static let shakeDuration: Double         = 1.55;
         fileprivate static let materializeSpeed: Double      = 0.70;
         fileprivate static let materializeElasticity: Double = 0.40;
     }
@@ -27,11 +30,13 @@ public class TableCard : Card, ObservableObject {
                var blinkInterval: Double            = Defaults.blinkInterval;
                var blinkoffInterval: Double         = 0;
                var blinkDoneCallback: (() -> Void)? = nil;
-    @Published var flipping: Bool                   = false;
-               var flipCount: Int                   = 2;
-    @Published var shaking: Bool                    = false;
+    @Published var flipTrigger: Int                 = 0;
+               var flipCount: Int                   = Defaults.flipCount;
+               var flipDuration: Double             = Defaults.flipDuration;
+               var flipLeft: Bool                   = Defaults.flipLeft;
+    @Published var shakeTrigger: Int                = 0;
                var shakeCount: Int                  = Defaults.shakeCount;
-               var shakeSpeed: Double               = Defaults.shakeSpeed;
+               var shakeDuration: Double               = Defaults.shakeDuration;
     @Published var materializeTrigger: Int          = 1;
     @Published var materializedOnce: Bool           = false;
                var materializeSpeed: Double         = Defaults.materializeSpeed;
@@ -81,7 +86,7 @@ public class TableCard : Card, ObservableObject {
         return super.toString(verbose) + ":\(self.selected)";
     }
 
-    private static func delay(delay: Double? = nil, callback: @escaping () -> Void) -> Bool {
+    public static func delay(delay: Double? = nil, callback: @escaping () -> Void) -> Bool {
         if let delay: Double = delay {
             if (delay > 0) {
                 DispatchQueue.main.asyncAfter(deadline: .now() + delay) { callback(); }
@@ -130,35 +135,29 @@ public class TableCard : Card, ObservableObject {
         self.blinking = true;
     }
 
-    public func flip(count: Int = 0, delay: Double? = nil) {
+    public func flip(count: Int = 0, duration: Double = 0, left: Bool = false, delay: Double? = nil) {
         if let delay: Double = delay {
             TableCard.delay(delay: delay) {
-                self.flip(count: count, delay: nil);
+                self.flip(count: count, duration: duration, left: left, delay: nil);
             }
             return;
         }
-        self.flipCount = count;
-        // self.flipping = true;
-        withAnimation(.linear(duration: 0.8)) {
-            self.flipping = true
-        }
-        /*
-        TableCard.delay(delay: 0.5) {
-            self.flipping = false;
-        }
-        */
+        self.flipCount = count > 0 ? count : Defaults.flipCount;
+        self.flipDuration = duration > 0 ? duration : Defaults.flipDuration;
+        self.flipLeft = left;
+        self.flipTrigger += 1;
     }
 
-    public func shake(count: Int = 0, speed: Double = 0, delay: Double? = nil) {
+    public func shake(count: Int = 0, duration: Double = 0, delay: Double? = nil) {
         if let delay: Double = delay {
             TableCard.delay(delay: delay) {
-                self.shake(count: count, speed: speed, delay: nil);
+                self.shake(count: count, duration: duration, delay: nil);
             }
             return;
         }
         self.shakeCount = count > 0 ? count : Defaults.shakeCount;
-        self.shakeSpeed = speed > 0 ? speed : Defaults.shakeSpeed;
-        self.shaking = true;
+        self.shakeDuration = duration > 0 ? duration : Defaults.shakeDuration;
+        self.shakeTrigger += 1;
     }
 
     public func materialize(once: Bool = false, speed: Double = 0, elasticity: Double = 0, delay: Double? = nil) {

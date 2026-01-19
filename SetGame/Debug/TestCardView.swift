@@ -9,7 +9,7 @@ public struct TestCardView: View {
 
 public class TestTable: ObservableObject {
 
-    @Published public private(set) var cards: [TableCard]!;
+    @Published public /*private(set)*/ var cards: [TableCard]!;
 
     private var moveTo: Int = 0;
 
@@ -34,6 +34,11 @@ public class TestTable: ObservableObject {
         if (self.moveTo >= (self.cards.count - 1)) {
             self.moveTo = 0;
         }
+    }
+
+    public func x() {
+        self.cards.swapAt(0, 3);
+        [self.cards[0], self.cards[3]].flip();
     }
 }
 
@@ -79,16 +84,17 @@ public struct TestView: View {
 
     private struct CardControls: View  {
         @ObservedObject public var table: TestTable;
-        private let spacing: CGFloat = 6;
+        private let spacing: CGFloat = 5;
         private let margint: CGFloat = 12;
         public var body: some View {
             HStack(spacing: spacing) {
                 Control(label: "Select") { table.cards.select(toggle: true) }
                 Control(label: "Blink")  { table.cards.blink(count: 5, interval: 0.15) }
-                Control(label: "Flip")   { table.cards.flip(count: 3) }
+                Control(label: "Flip")   { table.cards.flip(count: 8, duration: 2.0) }
                 Control(label: "Fade")   { table.cards.materialize(speed: 0.9) }
                 Control(label: "Shake")  { table.cards.shake() }
                 Control(label: "Move")   { table.move() }.disabled(!table.moveEnabled)
+                Control(label: "X")   { table.x(); }
             }.padding(.top, margint)
         }
         private struct Control: View  {
@@ -97,7 +103,7 @@ public struct TestView: View {
             public var body: some View {
                 Button {
                     callback();
-                } label: { Text(label).font(.subheadline) }.buttonStyle(.borderedProminent)
+                } label: { Text(label).font(.footnote) }.buttonStyle(.borderedProminent)
             }
         }
     }

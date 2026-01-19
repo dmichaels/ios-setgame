@@ -49,7 +49,7 @@ public struct FoundSetsView: View {
                 self.recent?.blink(count: 3, interval: 0.14, delay: 1.4);
             }
             else if (self.shake) {
-                self.recent?.shake(count: 10, speed: 1.2, delay: 0.6);
+                self.recent?.shake(count: 10, duration: 1.2, delay: 0.6);
             }
         }
     }

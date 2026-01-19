@@ -14,8 +14,8 @@ public struct CardView : View {
         fileprivate static let materializeDelay: Double = 0.4;
     }
 
-    @State private var materializing: Bool;
     @State private var shakeToken: CGFloat;
+    @State private var materializing: Bool;
 
     public init(_ card: TableCard,
                   selectable: Bool = false,
@@ -32,8 +32,8 @@ public struct CardView : View {
         self.alternate = alternate;
         self.touchedCallback = touchedCallback;
 
-        self._materializing = State(initialValue: materialize)
         self.shakeToken = 0;
+        self._materializing = State(initialValue: materialize)
 
         if (materialize) {
             card.materialize(once: true, delay: materializeDelay);
@@ -75,17 +75,14 @@ public struct CardView : View {
                     // the cards; e.g. on an incorrect SET guess.
                     //
                     .modifier(
-                        ShakeEffect(shakesPerUnit: CGFloat(card.shakeCount),
-                                    animatableData: card.shaking ? CGFloat(shakeToken) : 0)
+                        ShakeEffect(count: CGFloat(card.shakeCount),
+                                    animatableData: CGFloat(shakeToken))
                     )
-                    .onChange(of: card.shaking) { value in
-                        if (value) {
-                            var t = Transaction();
-                            t.animation = .linear(duration: card.shakeSpeed);
-                            withTransaction(t) {
-                                self.shakeToken += 1;
-                            }
-                            card.shaking = false;
+                    .onChange(of: card.shakeTrigger) { value in
+                        var t = Transaction();
+                        t.animation = .linear(duration: card.shakeDuration);
+                        withTransaction(t) {
+                            self.shakeToken += 1;
                         }
                     }
                     //
@@ -129,10 +126,14 @@ public struct CardView : View {
                     )
             }
             .skew(askew)
-// TODO: tomorrow (2026-01-18) so i think i want .multiFlip followed by .multiFlip2 (some time/delayed after) ...
-			// .flip(card.flipping) // this one does the move with optional fliping on the way
-			.multiFlip(card.flipping, count: 1) // same as above i think but simpler?
-			// .multiFlip2(card.flipping, flips: 2) // this one just flips around (horizontally) in place - nice
+            //
+            // N.B. This flip modifier not only does (x-axis) flips; it also MOVES the card
+            // if this is called (i.e. by incrementing card.flipTrigger) on u TableCard in
+            // a LazyVGrid (like we have in TableView); the flipTrigger should be updated
+            // immediately after the assignment to the new slot in the TableCard array
+            // used by the LazyVGrid; it's almost like magic.
+            // 
+			.flip(card.flipTrigger, count: card.flipCount, duration: card.flipDuration, left: card.flipLeft)
         }
         .onChange(of: card.materializeTrigger) { value in
             self.materializing = true;
@@ -193,11 +194,11 @@ public struct CardView : View {
 }
 
 private struct ShakeEffect: GeometryEffect {
+    var count: CGFloat = 9.0
     var angle: CGFloat = 8.0
-    var shakesPerUnit: CGFloat = 9.0
     var animatableData: CGFloat
     func effectValue(size: CGSize) -> ProjectionTransform {
-        let a = angle * sin(animatableData * .pi * 2 * shakesPerUnit)
+        let a = angle * sin(animatableData * .pi * 2 * count)
         let t = CGAffineTransform(translationX: size.width/2, y: size.height/2)
             .rotated(by: a * (.pi / 180))
             .translatedBy(x: -size.width/2, y: -size.height/2)
@@ -212,100 +213,15 @@ private struct SlightRandomRotation: ViewModifier {
     }
 }
 
-struct FlipEffect: GeometryEffect {
-    var flips: Int = 5           // Number of full flips (e.g., 1 = 180°, 2 = 360°, etc.)
-    var animatableData: Double
-
-    func effectValue(size: CGSize) -> ProjectionTransform {
-        let angle = CGFloat(animatableData) * .pi * CGFloat(flips)
-        let transform = CGAffineTransform(translationX: size.width / 2, y: size.height / 2)
-            .rotated(by: angle)
-            .translatedBy(x: -size.width / 2, y: -size.height / 2)
-        return ProjectionTransform(transform)
-    }
-}
-
-private struct old_FlipEffect: ViewModifier {
-    let flipped: Bool
-    let axis: (x: CGFloat, y: CGFloat, z: CGFloat)
-    func body(content: Content) -> some View {
-        content
-            .rotation3DEffect(
-                .degrees(flipped ? 180 : 0),
-                axis: axis
-            )
-            .animation(.linear(duration: 0.4), value: flipped)
-    }
-}
-private struct FlipModifier: AnimatableModifier {
-    var target: CGFloat
-    var flips: Int
-    var duration: Double
-
-    var animatableData: CGFloat {
-        get { target }
-        set { target = newValue }
-    }
-
-    init(flipped: Bool, flips: Int, duration: Double) {
-        self.target = flipped ? 1 : 0
-        self.flips = flips
-        print("FLIPSSSS: \(self.flips)")
-        self.duration = duration
-    }
-
-    func body(content: Content) -> some View {
-        content
-            .modifier(FlipEffect(flips: flips, animatableData: target))
-            .animation(.linear(duration: duration), value: target)
-    }
-    let x = 1
-}
-
 private extension View {
 
     fileprivate func skew(_ enabled: Bool = true) -> some View {
         Group { if enabled { self.modifier(SlightRandomRotation()) } else { self } }
     }
 
-    fileprivate func old_flip(_ flipped: Bool, axis: (x: CGFloat, y: CGFloat, z: CGFloat) = (0, 1, 0)) -> some View {
-        self.rotation3DEffect(.degrees(flipped ? 180 : 0), axis: axis)
-            .animation(.linear(duration: 0.4), value: flipped)
-    }
-    func flip(_ flipped: Bool, flips: Int = 10, duration: Double = 0.6) -> some View {
-        modifier(FlipModifier(flipped: flipped, flips: flips, duration: duration))
-    }
-    func multiFlip(_ flipped: Bool, count: Int = 2, duration: Double = 0.8) -> some View {
-        self.rotation3DEffect(
-            .degrees(flipped ? Double(count * 360) : 0),
-            axis: (x: 0, y: 1, z: 0)
-        )
-        .animation(.linear(duration: duration), value: flipped)
-    }
-    func multiFlip2(_ flipped: Bool, flips: Int = 1, duration: Double = 0.6) -> some View {
-        self.modifier(MultiFlipEffect2(flipped: flipped, flips: flips, duration: duration))
-    }
-}
-
-struct MultiFlipEffect2: ViewModifier {
-    let flipped: Bool
-    let flips: Int
-    let duration: Double
-
-    @State private var rotation: Double = 0.0
-
-    func body(content: Content) -> some View {
-        content
-            .rotation3DEffect(.degrees(rotation), axis: (x: 0, y: 1, z: 0))
-            .onChange(of: flipped) { value in
-                if value {
-                    // Delay to ensure this happens *after* layout transition settles
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        withAnimation(.linear(duration: duration)) {
-                            rotation = Double(flips) * 360
-                        }
-                    }
-                }
-            }
+    fileprivate func flip(_ trigger: Int, count: Int = 2, duration: Double = 0.6, left: Bool = false) -> some View {
+        self.rotation3DEffect(.degrees(Double(trigger * count * 180) * (left ? -1 : 1)),
+                               axis: (x: 0, y: 1, z: 0))
+            .animation(.linear(duration: duration), value: trigger)
     }
 }
