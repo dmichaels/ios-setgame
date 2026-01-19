@@ -152,7 +152,6 @@ public struct CardView : View {
                     self.blinking = false;
                     if let blinkDoneCallback = card.blinkDoneCallback {
                         DispatchQueue.main.async {
-                        // DispatchQueue.main.asyncAfter(deadline: .now() + card.blinkInterval * 3) {
                             blinkDoneCallback();
                         }
                     }
