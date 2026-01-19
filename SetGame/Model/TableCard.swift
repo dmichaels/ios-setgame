@@ -86,19 +86,6 @@ public class TableCard : Card, ObservableObject {
         return super.toString(verbose) + ":\(self.selected)";
     }
 
-    public static func delay(delay: Double? = nil, callback: @escaping () -> Void) -> Bool {
-        if let delay: Double = delay {
-            if (delay > 0) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + delay) { callback(); }
-            }
-            else {
-                DispatchQueue.main.async { callback(); }
-            }
-            return true;
-        }
-        return false;
-    }
-
     public func select(_ value: Bool? = nil, toggle: Bool? = nil, delay: Double? = nil) {
         if let delay: Double = delay {
             Delay(by: delay) {
