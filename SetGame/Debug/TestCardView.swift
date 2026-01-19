@@ -74,7 +74,7 @@ public struct TestView: View {
                 Spacer()
                 LazyVGrid(columns: columns, spacing: spacing) {
                     ForEach(table.cards, id: \.id) { card in
-                        CardView(card)
+                        CardView(card, selectable: true)
                     }
                 }
                 Spacer()
