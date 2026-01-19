@@ -34,8 +34,8 @@ public class Table: ObservableObject {
                                     self.table.settings.demoMode }
     }
 
-    @Published private(set) var cards: [TableCard]!;
-    @Published              var state: State!; // TODO: work to make this private(set)
+    @Published private(set)        var cards: [TableCard]!;
+    @Published public private(set) var state: State!;
 
     private var deck: TableDeck!;
     private var demoTimer: Timer? = nil;
@@ -329,7 +329,17 @@ public class Table: ObservableObject {
         self.state.setJustFoundNot = true;
     }
 
-    public func selectOneRandomSet(disjoint: Bool = false) {
+    public func showOneRandomSet(disjoint: Bool = false) {
+        self.state.showingOneRandomSet.toggle();
+        if (self.state.showingOneRandomSet) {
+            self.selectOneRandomSet(disjoint: disjoint);
+        }
+        else {
+            self.unselectCards();
+        }
+    }
+
+    private func selectOneRandomSet(disjoint: Bool = false) {
         self.unselectCards();
         let sets: [[TableCard]] = self.enumerateSets(disjoint: disjoint);
         if (sets.count > 0) {

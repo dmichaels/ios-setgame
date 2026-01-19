@@ -131,13 +131,7 @@ public struct StatusBarView: View {
                 }
             if (settings.showPeekButton) {
                 Button(action: {
-                    self.table.state.showingOneRandomSet.toggle();
-                    if (self.table.state.showingOneRandomSet) {
-                        self.table.selectOneRandomSet(disjoint: settings.peekDisjoint);
-                    }
-                    else {
-                        self.table.unselectCards();
-                    }
+                    self.table.showOneRandomSet(disjoint: settings.peekDisjoint);
                 }) {
                     Image(systemName: "eyes")
                         .foregroundColor(self.table.containsSet() ? FOREGROUND : Color.gray)
