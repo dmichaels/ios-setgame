@@ -89,17 +89,27 @@ public class TableCard : Card, ObservableObject {
 
     public func blink(count: Int = 0,
                       interval: Double = 0, offinterval: Double = 0, delay: Double? = nil,
+                      delayCallback: Double? = nil,
                     _ blinkDoneCallback: (() -> Void)? = nil) {
         if let delay: Double = delay {
             Delay(by: delay) {
-                self.blink(count: count, interval: interval, offinterval: offinterval, delay: nil, blinkDoneCallback);
+                self.blink(count: count, interval: interval, offinterval: offinterval,
+                           delay: nil, delayCallback: delayCallback, blinkDoneCallback);
             }
             return;
+        }
+        func callback() {
+            if let blinkDoneCallback = blinkDoneCallback {
+                Delay(by: delayCallback) {
+                    blinkDoneCallback();
+                }
+            }
         }
         self.blinkCount = count > 0 ? count : Defaults.Effects.blinkCount;
         self.blinkInterval = interval > 0 ? interval : Defaults.Effects.blinkInterval;
         self.blinkoffInterval = offinterval > 0 ? offinterval : self.blinkInterval;
-        self.blinkDoneCallback = blinkDoneCallback;
+        // self.blinkDoneCallback = blinkDoneCallback;
+        self.blinkDoneCallback = callback;
         self.blinkTrigger += 1;
     }
 

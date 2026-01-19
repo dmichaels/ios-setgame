@@ -8,6 +8,7 @@ public extension Array where Element : TableCard
 
     func blink(count: Int = 0,
                interval: Double = 0, offinterval: Double = 0.0, delay: Double? = nil,
+               delayCallback: Double? = nil,
              _ blinkDoneCallback: (() -> Void)? = nil)  {
         let ncards: Int = self.count;
         var ndone: Int = 0;
@@ -18,7 +19,8 @@ public extension Array where Element : TableCard
             }
         }
         for card in self {
-            card.blink(count: count, interval: interval, offinterval: offinterval, delay: delay, blinkDone);
+            card.blink(count: count, interval: interval, offinterval: offinterval,
+                       delay: delay, delayCallback: delayCallback, blinkDone);
         }
     }
 
