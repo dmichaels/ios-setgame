@@ -38,31 +38,7 @@ public struct CardGridView: View {
                         askew: settings.cardsAskew,
                         alternate: settings.alternateCards
                     ) { card in
-                        self.table.cardTouched(
-                            card,
-                            //
-                            // The delay argument to cardTouched is the amount of time (seconds)
-                            // to let the selected SET show as selected BEFORE we start blinking;
-                            // the delay within the blink callback is the amount of time to let
-                            // the selected SET show as selected AFTER the blinking is done and
-                            // BEFORE we replace them with new cards (via resolve).
-                            //
-                            delay: Defaults.Effects.selectBeforeSetDelay,
-                            onSet: { cards, resolve in
-                                cards.blink {
-                                    Delay(by: Defaults.Effects.selectAfterSetDelay) {
-                                        resolve();
-                                    }
-                                }
-                            },
-                            onNoSet: { cards, resolve in
-                                cards.shake();
-                                resolve();
-                            },
-                            onCardsMoved: { cards in
-                                cards.flip(duration: 0.8);
-                            }
-                        )
+                        self.table.cardTouchedDefaultBehavior(card);
                     }
                 }
             }
