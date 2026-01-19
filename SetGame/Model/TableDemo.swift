@@ -52,7 +52,7 @@ extension Table {
             try? await Task.sleep(nanoseconds: 500_000_000)
         }
         for card in set {
-            self.cardTouchedDefaultBehavior(card);
+            CardGridView.cardTouchedDefault(card, table: self);
         }
     }
 }
