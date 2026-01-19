@@ -4,7 +4,7 @@ public struct DeckView: View {
 
     let cards: [TableCard]
 
-    private let columns: Int = 6;
+    private let columns: Int    = 6;
     private let marginx: Double = 16;
     private let marginy: Double = 6;
     private let spacing: Double = 6;

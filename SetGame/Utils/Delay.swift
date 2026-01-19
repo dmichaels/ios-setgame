@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUI
 
 public func Delay(by delay: Double? = nil, callback: @escaping () -> Void) -> Bool {
     if let delay: Double = delay {
