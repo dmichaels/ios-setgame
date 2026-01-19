@@ -54,7 +54,7 @@ public class Table: ObservableObject {
         if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [TableCard] = TableDeck.randomMagicSquare(simple: self.settings.simpleDeck)
             if let cards: [TableCard] = self.deck.takeCards(magicSquareCards, strict: true) {
-                self.addCards(cards, new: true);
+                self.addCards(cards);
             }
             //
             // Only bother making it look good if the cards-per-row is 4 (the default)
@@ -465,7 +465,7 @@ public class Table: ObservableObject {
                 // cards; just try to ensure the random 3+ cards taken
                 // from the deck contain a SET.
                 //
-                self.addCards(self.deck.takeRandomCards(ncards, plantSet: true), new: true);
+                self.addCards(self.deck.takeRandomCards(ncards, plantSet: true));
             }
             else {
                 //
@@ -479,7 +479,7 @@ public class Table: ObservableObject {
                         let b: TableCard = self.cards[j];
                         let c: TableCard = TableCard(TableCard.matchingSetValue(a, b));
                         if let c = self.deck.takeCard(c) {
-                            self.addCards(c, new: true);
+                            self.addCards(c);
                             self.addCards(ncards - 1, plantSet: false);
                         }
                     }
@@ -488,16 +488,16 @@ public class Table: ObservableObject {
         }
         else {
             let cards: [TableCard] = self.deck.takeRandomCards(ncards);
-            self.addCards(cards, new: true);
+            self.addCards(cards);
         }
     }
 
-    private func addCards(_ cards: [TableCard], new: Bool = false) {
+    private func addCards(_ cards: [TableCard]) {
         self.cards.add(cards);
     }
 
-    private func addCards(_ card: TableCard, new: Bool = false) {
-        self.addCards([card], new: new);
+    private func addCards(_ card: TableCard) {
+        self.addCards([card]);
     }
 
     /// Populate the table cards from the deck up to the displayCardCount.
