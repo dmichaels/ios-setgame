@@ -41,15 +41,18 @@ public struct CardGridView: View {
                         self.table.cardTouched(
                             card,
                             //
-                            // The delay here is the amount of time to let the selected SET
-                            // show as selected before we start blinking; the delayCallback
-                            // is the amount of time to let the selecte SET show as selected
-                            // AFTER the blinking is done before we replace with new cards.
+                            // The delay argument to cardTouched is the amount of time (seconds)
+                            // to let the selected SET show as selected BEFORE we start blinking;
+                            // the delay within the blink callback is the amount of time to let
+                            // the selected SET show as selected AFTER the blinking is done and
+                            // BEFORE we replace them with new cards (via resolve).
                             //
-                            delay: Defaults.Effects.selectDelay,
+                            delay: Defaults.Effects.selectBeforeSetDelay,
                             onSet: { cards, resolve in
-                                cards.blink(delayCallback: Defaults.Effects.selectDelay) {
-                                    resolve();
+                                cards.blink {
+                                    Delay(by: Defaults.Effects.selectAfterSetDelay) {
+                                        resolve();
+                                    }
                                 }
                             },
                             onNoSet: { cards, resolve in

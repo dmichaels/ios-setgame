@@ -32,7 +32,8 @@ public class Defaults {
     public static let title: String                     = "Logicard";
 
     public struct Effects {
-        public static let selectDelay: Double           = 0.80;
+        public static let selectBeforeSetDelay: Double  = 0.80;
+        public static let selectAfterSetDelay: Double   = 0.40;
         public static let blinkCount: Int               = 4;
         public static let blinkInterval: Double         = 0.15;
         public static let flipCount: Int                = 2;
