@@ -11,8 +11,8 @@ public class TableCard : Card, ObservableObject {
         fileprivate static let flipCount: Int                = 2;
         fileprivate static let flipDuration: Double          = 0.4;
         fileprivate static let flipLeft: Bool                = false;
-        fileprivate static let shakeCount: Int               = 20;
-        fileprivate static let shakeDuration: Double         = 1.55;
+        fileprivate static let shakeCount: Int               = 10;
+        fileprivate static let shakeDuration: Double         = 0.75;
         fileprivate static let materializeSpeed: Double      = 0.70;
         fileprivate static let materializeElasticity: Double = 0.40;
     }
@@ -101,7 +101,7 @@ public class TableCard : Card, ObservableObject {
 
     public func select(_ value: Bool? = nil, toggle: Bool? = nil, delay: Double? = nil) {
         if let delay: Double = delay {
-            TableCard.delay(delay: delay) {
+            Delay(by: delay) {
                 self.select(value, toggle: toggle, delay: nil);
             }
             return;
@@ -123,7 +123,7 @@ public class TableCard : Card, ObservableObject {
                       interval: Double = 0, offinterval: Double = 0, delay: Double? = nil,
                     _ blinkDoneCallback: (() -> Void)? = nil) {
         if let delay: Double = delay {
-            TableCard.delay(delay: delay) {
+            Delay(by: delay) {
                 self.blink(count: count, interval: interval, offinterval: offinterval, delay: nil, blinkDoneCallback);
             }
             return;
@@ -137,7 +137,7 @@ public class TableCard : Card, ObservableObject {
 
     public func flip(count: Int = 0, duration: Double = 0, left: Bool = false, delay: Double? = nil) {
         if let delay: Double = delay {
-            TableCard.delay(delay: delay) {
+            Delay(by: delay) {
                 self.flip(count: count, duration: duration, left: left, delay: nil);
             }
             return;
@@ -150,7 +150,7 @@ public class TableCard : Card, ObservableObject {
 
     public func shake(count: Int = 0, duration: Double = 0, delay: Double? = nil) {
         if let delay: Double = delay {
-            TableCard.delay(delay: delay) {
+            Delay(by: delay) {
                 self.shake(count: count, duration: duration, delay: nil);
             }
             return;
@@ -162,7 +162,7 @@ public class TableCard : Card, ObservableObject {
 
     public func materialize(once: Bool = false, speed: Double = 0, elasticity: Double = 0, delay: Double? = nil) {
         if let delay: Double = delay {
-            TableCard.delay(delay: delay) {
+            Delay(by: delay) {
                 self.materialize(once: once, speed: speed, elasticity: elasticity, delay: nil);
             }
             return;

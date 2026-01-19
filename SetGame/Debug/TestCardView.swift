@@ -90,7 +90,7 @@ public struct TestView: View {
             HStack(spacing: spacing) {
                 Control(label: "Select") { table.cards.select(toggle: true) }
                 Control(label: "Blink")  { table.cards.blink(count: 5, interval: 0.15) }
-                Control(label: "Flip")   { table.cards.flip(count: 8, duration: 2.0) }
+                Control(label: "Flip")   { table.cards.flip() }
                 Control(label: "Fade")   { table.cards.materialize(speed: 0.9) }
                 Control(label: "Shake")  { table.cards.shake() }
                 Control(label: "Move")   { table.move() }.disabled(!table.moveEnabled)
