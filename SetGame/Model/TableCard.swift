@@ -36,7 +36,7 @@ public class TableCard : Card, ObservableObject {
                var flipLeft: Bool                   = Defaults.flipLeft;
     @Published var shakeTrigger: Int                = 0;
                var shakeCount: Int                  = Defaults.shakeCount;
-               var shakeDuration: Double               = Defaults.shakeDuration;
+               var shakeDuration: Double            = Defaults.shakeDuration;
     @Published var materializeTrigger: Int          = 1;
     @Published var materializedOnce: Bool           = false;
                var materializeSpeed: Double         = Defaults.materializeSpeed;
