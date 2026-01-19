@@ -5,41 +5,23 @@ import SwiftUI
 ///
 public class TableCard : Card, ObservableObject {
 
-    private struct Defaults {
-        fileprivate static let blinkCount: Int               = 4;
-        fileprivate static let blinkInterval: Double         = 0.15;
-        fileprivate static let flipCount: Int                = 2;
-        fileprivate static let flipDuration: Double          = 0.4;
-        fileprivate static let flipLeft: Bool                = false;
-        fileprivate static let shakeCount: Int               = 11;
-        fileprivate static let shakeDuration: Double         = 0.90;
-        fileprivate static let materializeSpeed: Double      = 0.70;
-        fileprivate static let materializeElasticity: Double = 0.40;
-    }
-
     @Published var selected: Bool                   = false;
-    //
-    // These blinking/blinkoff properties are used ONLY for blinking the 3 cards when a
-    // SET is found; the blinking property means that we are in the processing of doing
-    // the 3-card blinking; the blinkoff property means we are either blinked off (when
-    // blinkoff is true) or on (when blinkoff is false) at any one moment; see CardView.
-    //
     @Published var blinkTrigger: Int                = 0;
-               var blinkCount: Int                  = Defaults.blinkCount;
-               var blinkInterval: Double            = Defaults.blinkInterval;
+               var blinkCount: Int                  = Defaults.Effects.blinkCount;
+               var blinkInterval: Double            = Defaults.Effects.blinkInterval;
                var blinkoffInterval: Double         = 0;
                var blinkDoneCallback: (() -> Void)? = nil;
     @Published var flipTrigger: Int                 = 0;
-               var flipCount: Int                   = Defaults.flipCount;
-               var flipDuration: Double             = Defaults.flipDuration;
-               var flipLeft: Bool                   = Defaults.flipLeft;
+               var flipCount: Int                   = Defaults.Effects.flipCount;
+               var flipDuration: Double             = Defaults.Effects.flipDuration;
+               var flipLeft: Bool                   = Defaults.Effects.flipLeft;
     @Published var shakeTrigger: Int                = 0;
-               var shakeCount: Int                  = Defaults.shakeCount;
-               var shakeDuration: Double            = Defaults.shakeDuration;
+               var shakeCount: Int                  = Defaults.Effects.shakeCount;
+               var shakeDuration: Double            = Defaults.Effects.shakeDuration;
     @Published var materializeTrigger: Int          = 1;
     @Published var materializedOnce: Bool           = false;
-               var materializeSpeed: Double         = Defaults.materializeSpeed;
-               var materializeElasticity: Double    = Defaults.materializeElasticity;
+               var materializeSpeed: Double         = Defaults.Effects.materializeSpeed;
+               var materializeElasticity: Double    = Defaults.Effects.materializeElasticity;
 
     required init() {
         super.init(color: .random, shape: .random, filling: .random, number: .random);
@@ -114,8 +96,8 @@ public class TableCard : Card, ObservableObject {
             }
             return;
         }
-        self.blinkCount = count > 0 ? count : Defaults.blinkCount;
-        self.blinkInterval = interval > 0 ? interval : Defaults.blinkInterval;
+        self.blinkCount = count > 0 ? count : Defaults.Effects.blinkCount;
+        self.blinkInterval = interval > 0 ? interval : Defaults.Effects.blinkInterval;
         self.blinkoffInterval = offinterval > 0 ? offinterval : self.blinkInterval;
         self.blinkDoneCallback = blinkDoneCallback;
         self.blinkTrigger += 1;
@@ -128,8 +110,8 @@ public class TableCard : Card, ObservableObject {
             }
             return;
         }
-        self.flipCount = count > 0 ? count : Defaults.flipCount;
-        self.flipDuration = duration > 0 ? duration : Defaults.flipDuration;
+        self.flipCount = count > 0 ? count : Defaults.Effects.flipCount;
+        self.flipDuration = duration > 0 ? duration : Defaults.Effects.flipDuration;
         self.flipLeft = left;
         self.flipTrigger += 1;
     }
@@ -141,8 +123,8 @@ public class TableCard : Card, ObservableObject {
             }
             return;
         }
-        self.shakeCount = count > 0 ? count : Defaults.shakeCount;
-        self.shakeDuration = duration > 0 ? duration : Defaults.shakeDuration;
+        self.shakeCount = count > 0 ? count : Defaults.Effects.shakeCount;
+        self.shakeDuration = duration > 0 ? duration : Defaults.Effects.shakeDuration;
         self.shakeTrigger += 1;
     }
 
@@ -174,8 +156,8 @@ public class TableCard : Card, ObservableObject {
             }
             return;
         }
-        self.materializeSpeed = speed > 0 ? speed : Defaults.materializeSpeed;
-        self.materializeElasticity = elasticity > 0 ? elasticity : Defaults.materializeElasticity;
+        self.materializeSpeed = speed > 0 ? speed : Defaults.Effects.materializeSpeed;
+        self.materializeElasticity = elasticity > 0 ? elasticity : Defaults.Effects.materializeElasticity;
         self.materializeTrigger += 1;
     }
 

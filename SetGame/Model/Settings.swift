@@ -4,6 +4,8 @@ import SwiftUI
 
 public class Defaults {
 
+    // These settings are persisted across game instances.
+
     public static let showPartialSetHint: Bool   = true;
     public static let showSetsPresentCount: Bool = true;
     public static let showPeekButton: Bool       = true;
@@ -24,7 +26,23 @@ public class Defaults {
     public static let hideHelpButton: Bool       = false;
     public static let demoMode: Bool             = false;
     public static let debugMode: Bool            = false;
-    public static let title: String              = "Logicard";
+
+    // These settings are NOT persisted across game instances.
+
+    public static let title: String                     = "Logicard";
+
+    public struct Effects {
+        public static let selectDelay: Double           = 0.80;
+        public static let blinkCount: Int               = 4;
+        public static let blinkInterval: Double         = 0.15;
+        public static let flipCount: Int                = 2;
+        public static let flipDuration: Double          = 0.4;
+        public static let flipLeft: Bool                = false;
+        public static let shakeCount: Int               = 11;
+        public static let shakeDuration: Double         = 0.90;
+        public static let materializeSpeed: Double      = 0.70;
+        public static let materializeElasticity: Double = 0.40;
+    }
 }
 
 public final class Settings: ObservableObject {

@@ -9,12 +9,7 @@ public struct TableView: View {
     @ObservedObject var table: Table;
     @ObservedObject var settings: Settings;
     @ObservedObject var feedback: Feedback;
-
-    // @ObservedObject private var gameCenter = GameCenterManager.shared;
-
-    private struct Defaults {
-        fileprivate static let threeCardSelectDelay: Double = 0.80;
-    }
+ // @ObservedObject private var gameCenter = GameCenterManager.shared;
 
     let marginx: CGFloat = 6;
     let spacing: CGFloat = 6;
@@ -71,7 +66,7 @@ public struct TableView: View {
                         ) { card in
                             self.table.cardTouched(
                                 card,
-                                delay: Defaults.threeCardSelectDelay,
+                                delay: Defaults.Effects.selectDelay,
                                 onSet: { cards, resolve in
                                     cards.blink() {
                                         resolve();
@@ -82,7 +77,7 @@ public struct TableView: View {
                                     resolve();
                                 },
                                 onCardsMoved: { cards in
-                                    cards.flip();
+                                    cards.flip(duration: 0.8);
                                 }
                             )
                         }
