@@ -303,6 +303,10 @@ public extension Array where Element : Card {
     /// NP-hard problem; but that for a small such as SET Game, a simple
     /// backtracking search provides a fast and accurate solution.
     ///
+    private struct SetEnumerationCandidate {
+        let mask: UInt64
+        let set: [Element]
+    }
     func enumerateSets(limit: Int = 0, disjoint: Bool = false) -> [[Element]] {
 
         var sets: [[Element]] = [[Element]]();
@@ -395,11 +399,6 @@ public extension Array where Element : Card {
         depthFirstSearch(0, 0);
         let result: [[Element]] = best.map { $0.set }
         return (limit > 0) ? result.prefix(limit).map { $0 } : result;
-    }
-
-    fileprivate struct SetEnumerationCandidate {
-        let mask: UInt64
-        let set: [Element]
     }
 
     private func enumerateSets(limit: Int = 0, _ handler : ([Element]) -> Void) {

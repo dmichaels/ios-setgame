@@ -147,7 +147,7 @@ public class Table: ObservableObject {
     // New version of this function 2026-01-19 taking specific
     // callbacks including for cards moved after SET is resolved.
     //
-    public func cardTouched(_ card : TableCard,
+    public func cardTouched(_ card: TableCard,
                               select: Bool = true,
                               delay: Double? = nil,
                               onSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
@@ -171,6 +171,7 @@ public class Table: ObservableObject {
             // given card in a selected state; we don't do this the
             // demo-mode case, in which case we don't visually select
             // the SET first, rather we just do the blinking thing.
+            // And actually (2026-01-19) not really needed for demo-mode. 
             //
             self.selectCard(card);
         }

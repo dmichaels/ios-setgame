@@ -43,35 +43,33 @@ extension Table {
 
     @MainActor
     private func demoStep() async {
-        if (self.cards.count > 0) {
-            let sets: [[TableCard]] = self.enumerateSets(limit: 1);
-            if (sets.count == 1) {
-                let set: [TableCard] = sets[0];
-                for card in set {
-                    self.selectCard(card);
-                    try? await Task.sleep(nanoseconds: 500_000_000)
-                }
-                for card in set {
-                    self.cardTouched(
-                        card,
-                        select: false,
-                        delay: 0.8,
-                        onSet: { cards, resolve in
-                            cards.blink() {
-                                resolve();
-                            }
-                        },
-                        onNoSet: { cards, resolve in
-                            cards.shake();
+        let sets: [[TableCard]] = self.enumerateSets(limit: 1);
+        guard sets.count == 1 else { return }
+        let set: [TableCard] = sets[0];
+        try? await Task.sleep(nanoseconds: 300_000_000)
+        for card in set {
+            self.selectCard(card);
+            try? await Task.sleep(nanoseconds: 500_000_000)
+        }
+        for card in set {
+            self.cardTouched(
+                card,
+                delay: Defaults.Effects.selectBeforeSetDelay,
+                onSet: { cards, resolve in
+                    cards.blink {
+                        Delay(by: Defaults.Effects.selectAfterSetDelay) {
                             resolve();
-                        },
-                        onCardsMoved: { cards in
-                            cards.flip();
                         }
-                    )
+                    }
+                },
+                onNoSet: { cards, resolve in
+                    cards.shake();
+                    resolve();
+                },
+                onCardsMoved: { cards in
+                    cards.flip(duration: 0.8);
                 }
-                try? await Task.sleep(nanoseconds: 800_000_000)
-            }
+            )
         }
     }
 }
