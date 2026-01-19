@@ -4,7 +4,6 @@ public struct CardView : View {
     
     @ObservedObject var card: TableCard;
                     var selectable: Bool                        = false;
-                    var materialize: Bool                       = false;
                     var materializeDelay: Double?               = nil;
                     var askew: Bool                             = false;
                     var alternate: Int?                         = nil;
@@ -14,6 +13,8 @@ public struct CardView : View {
         fileprivate static let materializeDelay: Double = 0.4;
     }
 
+    @State private var blinking: Bool;
+    @State private var blinkoff: Bool;
     @State private var shakeToken: CGFloat;
     @State private var materializing: Bool;
 
@@ -27,11 +28,12 @@ public struct CardView : View {
 
         self.card = card;
         self.selectable = selectable;
-        self.materialize = materialize;
         self.askew = askew;
         self.alternate = alternate;
         self.touchedCallback = touchedCallback;
 
+        self.blinking = false;
+        self.blinkoff = false;
         self.shakeToken = 0;
         self._materializing = State(initialValue: materialize)
 
@@ -99,8 +101,8 @@ public struct CardView : View {
                     // per the above rotation; the duration here controls how long that twirling takes;
                     // and note that this is not done while blinking.
                     //
-                    .animation(card.blinking ? nil : .linear(duration: 0.20), value: card.selected)
-                    .animation(nil, value: card.blinkoff)
+                    .animation(self.blinking ? nil : .linear(duration: 0.20), value: card.selected)
+                    .animation(nil, value: self.blinkoff)
                     //
                     // Optional: Also ensure blinkoff toggles don’t animate (belt+suspenders).
                     //
@@ -109,7 +111,7 @@ public struct CardView : View {
                     // Placing this opacity qualifier here (rather than higher up above) ensures
                     // that the entire card - including it selection border if present - blinks.
                     //
-                    .opacity(self.materializing || card.blinkoff ? 0.0 : 1.0)
+                    .opacity(self.materializing || self.blinkoff ? 0.0 : 1.0)
                     //
                     // Animation for newly added "materialized" cards.
                     // - The response argument to the .spring qualifier
@@ -127,11 +129,11 @@ public struct CardView : View {
             }
             .skew(askew)
             //
-            // N.B. This flip modifier not only does (x-axis) flips; it also MOVES the card
+            // N.B. This flip modifier NOT ONLY does (x-axis) flips; it ALSO MOVES the card
             // if this is called (i.e. by incrementing card.flipTrigger) on u TableCard in
             // a LazyVGrid (like we have in TableView); the flipTrigger should be updated
             // immediately after the assignment to the new slot in the TableCard array
-            // used by the LazyVGrid; it's almost like magic.
+            // used by the LazyVGrid; this seems like it is almost like MAGIC.
             // 
 			.flip(card.flipTrigger, count: card.flipCount, duration: card.flipDuration, left: card.flipLeft)
         }
@@ -141,37 +143,34 @@ public struct CardView : View {
                 self.materializing = false;
             }
         }
-        .onChange(of: card.blinking) { value in
-            if (value) {
-                var nblinks: Int = card.blinkCount;
-                var niterations: Int = nblinks * 2;
-                func blink() {
-                    niterations -= 1 ; if (niterations <= 0) {
-                        card.blinkoff = false;
-                        card.blinking = false;
-                        if let blinkDoneCallback = card.blinkDoneCallback {
-                            DispatchQueue.main.async {
-                                blinkDoneCallback();
-                            }
-                        }
-                        return;
-                    }
-                    if (card.blinkoff) {
-                        card.blinkoff = false;
-                        DispatchQueue.main.asyncAfter(deadline: .now() + card.blinkInterval) {
-                            blink();
+        .onChange(of: card.blinkTrigger) { _ in
+            var nblinks: Int = card.blinkCount;
+            var niterations: Int = nblinks * 2;
+            func blink() {
+                niterations -= 1 ; if (niterations <= 0) {
+                    self.blinkoff = false;
+                    self.blinking = false;
+                    if let blinkDoneCallback = card.blinkDoneCallback {
+                        DispatchQueue.main.async {
+                            blinkDoneCallback();
                         }
                     }
-                    else {
-                        card.blinkoff = true;
-                        DispatchQueue.main.asyncAfter(deadline: .now() + card.blinkoffInterval) {
-                            blink();
-                        }
+                    return;
+                }
+                if (self.blinkoff) {
+                    self.blinkoff = false;
+                    DispatchQueue.main.asyncAfter(deadline: .now() + card.blinkInterval) {
+                        blink();
                     }
                 }
-                blink();
-
+                else {
+                    self.blinkoff = true;
+                    DispatchQueue.main.asyncAfter(deadline: .now() + card.blinkoffInterval) {
+                        blink();
+                    }
+                }
             }
+            blink();
         }
     }
 

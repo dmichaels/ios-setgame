@@ -58,63 +58,63 @@ public struct StatusBarView: View {
                     .foregroundColor(FOREGROUND)
             }
             Spacer()
-                if (self.settings.showPartialSetHint) {
-                    if (self.table.state.blinking || self.table.selectedCards().isSet()) {
-                            Text(HAPPY_FACE_SYMBOL)
-                                .scaleEffect(1.2)
-                                .font(.subheadline)
-                                .foregroundColor(FOREGROUND)
-                                .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
-                    }
-                    else if (self.table.state.partialSetSelected) {
-                        if (self.table.selectedCardCount() == 1) {
-                            Text(OK_SYMBOL)
-                                .scaleEffect(1.2)
-                                .font(.subheadline)
-                                .foregroundColor(FOREGROUND)
-                                .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
-                        }
-                        else if (self.table.selectedCardCount() == 2) {
-                            Text(THUMBSUP_SYMBOL)
-                                .scaleEffect(1.2)
-                                .font(.subheadline)
-                                .foregroundColor(FOREGROUND)
-                                .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
-                        }
-                        else {
-                            Text(NEUTRAL_FACE_SYMBOL)
-                                .scaleEffect(1.2)
-                                .font(.subheadline)
-                                .foregroundColor(FOREGROUND)
-                                .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
-                        }
-                    }
-                    else if ((self.table.selectedCardCount() == 1) || (self.table.selectedCardCount() == 2)) {
-                        Text(SAD_FACE_SYMBOL)
-                            .scaleEffect(1.2)
-                            .font(.subheadline)
-                            .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
-                    }
-                    else if (self.table.state.setJustFound || self.table.selectedCards().isSet()) {
+            if (self.settings.showPartialSetHint) {
+                if (self.table.selectedCards().isSet()) {
                         Text(HAPPY_FACE_SYMBOL)
                             .scaleEffect(1.2)
                             .font(.subheadline)
+                            .foregroundColor(FOREGROUND)
                             .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
-                    }
-                    else if (self.table.state.setJustFoundNot) {
-                        Text(SAD_FACE_SYMBOL)
+                }
+                else if (self.table.state.partialSetSelected) {
+                    if (self.table.selectedCardCount() == 1) {
+                        Text(OK_SYMBOL)
                             .scaleEffect(1.2)
                             .font(.subheadline)
+                                .foregroundColor(FOREGROUND)
+                        .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
+                    }
+                    else if (self.table.selectedCardCount() == 2) {
+                        Text(THUMBSUP_SYMBOL)
+                            .scaleEffect(1.2)
+                            .font(.subheadline)
+                            .foregroundColor(FOREGROUND)
                             .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                     }
                     else {
                         Text(NEUTRAL_FACE_SYMBOL)
                             .scaleEffect(1.2)
                             .font(.subheadline)
-                            .frame(alignment: .leading)
+                            .foregroundColor(FOREGROUND)
                             .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
                     }
                 }
+                else if ((self.table.selectedCardCount() == 1) || (self.table.selectedCardCount() == 2)) {
+                    Text(SAD_FACE_SYMBOL)
+                        .scaleEffect(1.2)
+                        .font(.subheadline)
+                        .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
+                }
+                else if (self.table.state.setJustFound || self.table.selectedCards().isSet()) {
+                    Text(HAPPY_FACE_SYMBOL)
+                        .scaleEffect(1.2)
+                        .font(.subheadline)
+                        .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
+                }
+                else if (self.table.state.setJustFoundNot) {
+                    Text(SAD_FACE_SYMBOL)
+                        .scaleEffect(1.2)
+                        .font(.subheadline)
+                        .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
+                }
+                else {
+                    Text(NEUTRAL_FACE_SYMBOL)
+                        .scaleEffect(1.2)
+                        .font(.subheadline)
+                        .frame(alignment: .leading)
+                        .padding(.trailing, self.settings.showSetsPresentCount || settings.showPeekButton ? 4 : 10)
+                }
+            }
             if (self.settings.showSetsPresentCount) {
                 Text("\(table.numberOfSets(disjoint: settings.peekDisjoint))")
                     .font(.subheadline)

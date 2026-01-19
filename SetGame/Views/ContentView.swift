@@ -37,16 +37,16 @@ public struct ContentView: View {
                                     }
                                } label: {
                                     Label("New Game" , systemImage: "arrow.counterclockwise")
-                                }.disabled(self.table.state.blinking || self.settings.demoMode)
+                                }.disabled(self.table.state.disabled)
                                 Button { self.table.addCards(1) } label: {
                                     Label("Add Card" , systemImage: "plus.rectangle")
-                                }.disabled(self.table.state.blinking || self.settings.demoMode)
+                                }.disabled(self.table.state.disabled)
                                 Toggle(isOn: $settings.demoMode) {
                                     Label("Demo Mode", systemImage: "play.circle")
                                 }
                                 Button { self.showSettingsView = true } label: {
                                     Label("Settings ...", systemImage: "gearshape")
-                                }.disabled(self.table.state.blinking || self.settings.demoMode)
+                                }.disabled(self.table.state.disabled)
                             } label: {
                                 Image(systemName: "gearshape.fill")
                                     .foregroundColor(Color(UIColor.darkGray))

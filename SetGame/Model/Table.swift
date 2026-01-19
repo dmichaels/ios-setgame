@@ -28,10 +28,7 @@ public class Table: ObservableObject {
         //
         fileprivate var resolving: Bool = false;
 
-        public var blinking: Bool { self.table.cards.contains(where: { $0.blinking }) }
-        public var disabled: Bool { self.table.state.blinking ||
-                                    self.table.state.resolving ||
-                                    self.table.settings.demoMode }
+        public var disabled: Bool { self.table.state.resolving || self.table.settings.demoMode }
     }
 
     @Published private(set)        var cards: [TableCard]!;

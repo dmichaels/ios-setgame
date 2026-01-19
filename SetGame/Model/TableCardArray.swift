@@ -1,35 +1,5 @@
 public extension Array where Element : TableCard
 {
-    var blinking: Bool
-    {
-        for card in self {
-            if (card.blinking) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    func blinkingStart() {
-        for card in self {
-            card.blinking = true;
-        }
-    }
-
-    func blinkingEnd() {
-        for card in self {
-            card.blinking = false;
-            card.blinkoff = false; // just in case
-        }
-    }
-
-    func blinkoffToggle()
-    {
-        for card in self {
-            card.blinkoff.toggle();
-        }
-    }
-
     func select(_ value: Bool? = nil, toggle: Bool? = nil, delay: Double? = nil) {
         for card in self {
             card.select(value, toggle: toggle, delay: delay);
