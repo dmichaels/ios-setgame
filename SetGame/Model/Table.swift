@@ -7,7 +7,7 @@ import SwiftUI
 ///
 public class Table: ObservableObject {
 
-    private var settings: Settings;
+    var settings: Settings; // N.B. Not private only because of TableDemo.
 
     public struct State {
 
@@ -38,7 +38,7 @@ public class Table: ObservableObject {
     @Published public private(set) var state: State!;
 
     private var deck: TableDeck!;
-    private var demoTimer: Timer? = nil;
+    var demoTimer: Timer? = nil; // N.B. Not private only because of TableDemo.
 
     public init(settings: Settings) {
         self.settings = settings;
@@ -96,9 +96,10 @@ public class Table: ObservableObject {
         }
     }
 
-    /// Touch the given card; selects or unselects as appropriate.
-    ///
-    private func selectCard(_ card : TableCard) {
+    // Touch the given card; selects or unselects as appropriate.
+    // N.B. Not private only because of TableDemo.
+    //
+    func selectCard(_ card : TableCard) {
 
         if (!self.cards.contains(card)) {
             //
@@ -616,6 +617,7 @@ public class Table: ObservableObject {
     public func gameDone() -> Bool {
         return (self.deck.count == 0) && !self.containsSet();
     }
+/*
 
     @MainActor
     public func demoCheck() async {
@@ -689,4 +691,5 @@ public class Table: ObservableObject {
             }
         }
     }
+    */
 }
