@@ -667,37 +667,23 @@ public class Table: ObservableObject {
                     try? await Task.sleep(nanoseconds: 500_000_000)
                 }
                 for card in set {
-                    if (true) {
-                        self.cardTouched(
-                            card,
-                            select: false,
-                            delay: 0.8,
-                            onSet: { cards, resolve in
-                                cards.blink() {
-                                    resolve();
-                                }
-                            },
-                            onNoSet: { cards, resolve in
-                                cards.shake();
-                                resolve();
-                            },
-                            onCardsMoved: { cards in
-                                cards.flip();
-                            }
-                        )
-                    }
-                    else {
-                        self.cardTouched(card, select: false, delay: 0.5) { cards, set, resolve in
-                            if let set: Bool = set, set {
-                                cards.blink() {
-                                    resolve();
-                                }
-                            }
-                            else {
+                    self.cardTouched(
+                        card,
+                        select: false,
+                        delay: 0.8,
+                        onSet: { cards, resolve in
+                            cards.blink() {
                                 resolve();
                             }
+                        },
+                        onNoSet: { cards, resolve in
+                            cards.shake();
+                            resolve();
+                        },
+                        onCardsMoved: { cards in
+                            cards.flip();
                         }
-                    }
+                    )
                 }
                 try? await Task.sleep(nanoseconds: 800_000_000)
             }

@@ -36,7 +36,6 @@ public struct TableView: View {
         @ObservedObject var table: Table;
         @ObservedObject var settings: Settings;
 
-        let newCardTouched: Bool = true;
         var spacing: CGFloat = 8;
         var marginx: CGFloat = 8;
 
@@ -70,42 +69,22 @@ public struct TableView: View {
                             askew: settings.cardsAskew,
                             alternate: settings.alternateCards
                         ) { card in
-                            if (self.newCardTouched) {
-                                self.table.cardTouched(
-                                    card,
-                                    delay: Defaults.threeCardSelectDelay,
-                                    onSet: { cards, resolve in
-                                        cards.blink() {
-                                            resolve();
-                                        }
-                                    },
-                                    onNoSet: { cards, resolve in
-                                        cards.shake();
-                                        resolve();
-                                    },
-                                    onCardsMoved: { cards in
-                                        cards.flip();
-                                    }
-                                )
-                            }
-                            else {
-                                self.table.cardTouched(card, delay: Defaults.threeCardSelectDelay) { cards, set, resolve in
-                                    if let set: Bool = set {
-                                        if (set) {
-                                            cards.blink() {
-                                                resolve();
-                                            }
-                                        }
-                                        else {
-                                            cards.shake();
-                                            resolve();
-                                        }
-                                    }
-                                    else {
+                            self.table.cardTouched(
+                                card,
+                                delay: Defaults.threeCardSelectDelay,
+                                onSet: { cards, resolve in
+                                    cards.blink() {
                                         resolve();
                                     }
+                                },
+                                onNoSet: { cards, resolve in
+                                    cards.shake();
+                                    resolve();
+                                },
+                                onCardsMoved: { cards in
+                                    cards.flip();
                                 }
-                            }
+                            )
                         }
                     }
                 }
