@@ -213,16 +213,12 @@
 				9811914125ED5ACF0083606B /* CardShape.swift */,
 				9811913825ED5ACF0083606B /* Deck.swift */,
 				989D93722EF4BEDB00BE461B /* Feedback.swift */,
-				98EF7E102F19661F00A45F63 /* ID.swift */,
-				989D93762EF5F30200BE461B /* Math.swift */,
 				989D936E2EF21DEF00BE461B /* Settings.swift */,
 				989D93682EE8B01D00BE461B /* Stats.swift */,
-				9811913F25ED5ACF0083606B /* String.swift */,
 				9811913D25ED5ACF0083606B /* Table.swift */,
 				9811914025ED5ACF0083606B /* TableCard.swift */,
 				98A5C7432F059B8C009E708D /* TableCardArray.swift */,
 				98EF7E142F1AFE7A00A45F63 /* TableDeck.swift */,
-				98A5C7412EFED67E009E708D /* VersionInfo.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -248,6 +244,10 @@
 			isa = PBXGroup;
 			children = (
 				9867E12D2F1E573000CB221F /* Delay.swift */,
+				98EF7E102F19661F00A45F63 /* ID.swift */,
+				989D93762EF5F30200BE461B /* Math.swift */,
+				9811913F25ED5ACF0083606B /* String.swift */,
+				98A5C7412EFED67E009E708D /* VersionInfo.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";

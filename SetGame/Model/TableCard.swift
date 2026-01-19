@@ -11,8 +11,8 @@ public class TableCard : Card, ObservableObject {
         fileprivate static let flipCount: Int                = 2;
         fileprivate static let flipDuration: Double          = 0.4;
         fileprivate static let flipLeft: Bool                = false;
-        fileprivate static let shakeCount: Int               = 10;
-        fileprivate static let shakeDuration: Double         = 0.75;
+        fileprivate static let shakeCount: Int               = 11;
+        fileprivate static let shakeDuration: Double         = 0.90;
         fileprivate static let materializeSpeed: Double      = 0.70;
         fileprivate static let materializeElasticity: Double = 0.40;
     }
