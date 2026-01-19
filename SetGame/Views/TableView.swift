@@ -85,7 +85,8 @@ public struct TableView: View {
                                     },
                                     onCardsMoved: { cards in
                                         cards.flip();
-                                    })
+                                    }
+                                )
                             }
                             else {
                                 self.table.cardTouched(card, delay: Defaults.threeCardSelectDelay) { cards, set, resolve in

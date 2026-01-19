@@ -635,8 +635,11 @@ public class Table: ObservableObject {
             self.unselectCards();
         }
         if (self.gameDone()) {
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
             self.startNewGame();
+        }
+        else if (self.gameStart()) {
+            try? await Task.sleep(nanoseconds: 800_000_000)
         }
         while (self.settings.demoMode) {
             if (self.gameDone()) {
@@ -664,14 +667,35 @@ public class Table: ObservableObject {
                     try? await Task.sleep(nanoseconds: 500_000_000)
                 }
                 for card in set {
-                    self.cardTouched(card, select: false, delay: 0.5) { cards, set, resolve in
-                        if let set: Bool = set, set {
-                            cards.blink() {
+                    if (true) {
+                        self.cardTouched(
+                            card,
+                            select: false,
+                            delay: 0.8,
+                            onSet: { cards, resolve in
+                                cards.blink() {
+                                    resolve();
+                                }
+                            },
+                            onNoSet: { cards, resolve in
+                                cards.shake();
+                                resolve();
+                            },
+                            onCardsMoved: { cards in
+                                cards.flip();
+                            }
+                        )
+                    }
+                    else {
+                        self.cardTouched(card, select: false, delay: 0.5) { cards, set, resolve in
+                            if let set: Bool = set, set {
+                                cards.blink() {
+                                    resolve();
+                                }
+                            }
+                            else {
                                 resolve();
                             }
-                        }
-                        else {
-                            resolve();
                         }
                     }
                 }
