@@ -10,5 +10,8 @@ public func Delay(by delay: Double? = nil, callback: @escaping () -> Void) -> Bo
         }
         return true;
     }
+    else {
+        callback();
+    }
     return false;
 }

@@ -146,6 +146,93 @@ public class Table: ObservableObject {
         self.state.partialSetSelected = self.partialSetSelected();
     }
 
+    // New version of this function 2026-01-19 taking specific
+    // callbacks including for cards moved after SET is resolved.
+    //
+    public func cardTouched(_ card : TableCard,
+                              select: Bool = true,
+                              delay: Double? = nil,
+                              onSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
+                              onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
+                              onCardsMoved: (([TableCard]) -> Void)? = nil) {
+
+        guard !self.state.resolving else {
+            //
+            // We are already in the process of resolving a three-card selection;
+            // this essentially makes this function non-reentrant, by setting the
+            // state.resolving property during this process (function execution);
+            // should not really get here because state.disabled is true in this
+            // case in which disallows input (via allowsHitTesting in TableView).
+            //
+            return;
+        }
+
+        if (select) {
+            //
+            // This is the default case; we first actually put the
+            // given card in a selected state; we don't do this the
+            // demo-mode case, in which case we don't visually select
+            // the SET first, rather we just do the blinking thing.
+            //
+            self.selectCard(card);
+        }
+
+        let selectedCards: [TableCard] = self.selectedCards();
+
+        guard selectedCards.count == 3 else {
+            //
+            // We don't even have three cards selected; do nothing.
+            // we still call the given callback (with nil argument meaning
+            // three cards were not even selected); this allows the caller
+            // to do something in this case, like make a tapping sound.
+            //
+            // The resolve function (see comments below) to this callback currently
+            // does nothing; but maintain the documented requirement that it needs
+            // to be called by the caller at the end of its processing, just in
+            // case we later decide something else needs to be done/resolved.
+            //
+            return;
+        }
+
+        // Here three cards are selected; we note that we are we are now resolving
+        // this seleciton by setting the state.resolving property, which prevents
+        // this function from being re-entered, and makes state.disabled true
+        // which disallows input (via allowsHitTesting in TestView).
+
+        self.state.resolving = true;
+
+        func resolve() {
+            self.resolveSet(onCardsMoved);
+            self.state.resolving = false;
+        }
+
+        // Allowing a little delay gives us time to briefly see the cards
+        // in a stable selected state, before moving on to deselect,
+        // if no SET; or on to blinking, removing, and replacing, if SET.
+        //
+        // Note that the caller, if the callback argument is specified,
+        // MUST call the given resolve function at the end of its processing.
+
+        Delay(by: delay) {
+            if (selectedCards.isSet()) {
+                if let onSet = onSet {
+                    onSet(selectedCards, resolve);
+                }
+                else {
+                    resolve();
+                }
+            }
+            else {
+                if let onNoSet = onNoSet {
+                    onNoSet(selectedCards, resolve);
+                }
+                else {
+                    resolve();
+                }
+            }
+        }
+    }
+
     public func cardTouched(_ card : TableCard,
                               select: Bool = true,
                               delay: Double = 0.0,
@@ -233,7 +320,7 @@ public class Table: ObservableObject {
     /// If a non-SET is selected (i.e. three cards selected but which do
     /// not form SET), then these cards will simply be unselected.
     ///
-    private func resolveSet() {
+    private func resolveSet(_ movedCardsCallback: (([TableCard]) -> Void)? = nil) {
 
         let selectedCards: [TableCard] = self.selectedCards();
 
@@ -297,13 +384,15 @@ public class Table: ObservableObject {
             // Fill just in case we have fewer cards than
             // what is normally desired; and unselect all.
             //
-            //xyzzy
-            let movedCards: [TableCard] = extraCards.filter { !selectedCards.contains($0) }
-            movedCards.flip(count: 4, duration: 0.9);
-            //xyzzy
             self.unselectCards()
             self.fillTable();
             self.addToSetsLastFound(selectedCards);
+            if let movedCardsCallback = movedCardsCallback {
+                let movedCards: [TableCard] = extraCards.filter { !selectedCards.contains($0) }
+                if (movedCards.count > 0) {
+                    movedCardsCallback(movedCards);
+                }
+            }
         }
         else {
             //
