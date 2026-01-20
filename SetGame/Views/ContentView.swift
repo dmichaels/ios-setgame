@@ -17,7 +17,7 @@ public struct ContentView: View {
         NavigationView {
             ZStack {
                 background.ignoresSafeArea()
-                SetTableView(table: table, settings: settings, feedback: feedback)
+                SetTableView(table: self.table, settings: self.settings, feedback: self.feedback)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .principal) {
@@ -30,7 +30,7 @@ public struct ContentView: View {
                                 Button {
                                     if ((self.table.gameStart() || self.table.gameDone())) {
                                         self.table.startNewGame();
-                                        feedback.trigger(Feedback.NEW);
+                                        self.feedback.trigger(Feedback.NEW);
                                     }
                                     else {
                                         self.showNewGameConfirmation = true;
@@ -58,11 +58,11 @@ public struct ContentView: View {
                     }
                     .onChange(of: settings.demoMode) { _ in
                         Task {
-                            await table.demoCheck()
+                            await self.table.demoCheck()
                         }
                     }
                 NavigationLink(destination:
-                    SettingsView().environmentObject(table)
+                    SettingsView().environmentObject(self.table)
                                   .environmentObject(settings), isActive: $showSettingsView) {
                         EmptyView()
                     }.hidden()
@@ -70,7 +70,7 @@ public struct ContentView: View {
             .alert("Start New Game?", isPresented: $showNewGameConfirmation) {
                 Button("Yes", role: .destructive) {
                     self.table.startNewGame();
-                    feedback.trigger(Feedback.NEW);
+                    self.feedback.trigger(Feedback.NEW);
                 }
                 Button("Cancel", role: .cancel) { }
             }
@@ -105,12 +105,20 @@ public struct ContentView: View {
         @ObservedObject var table: Table;
         @ObservedObject var settings: Settings;
         @ObservedObject var feedback: Feedback;
+        @State private var startedNewGame: Bool = false;
         public var body: some View {
             if (settings.debugMode) {
-                TestCardView()
+             // TestCardView()
+                TestCardGridView(table: self.table, settings: self.settings)
             }
             else {
-                TableView(table: table, settings: settings, feedback: feedback)
+                TableView(table: self.table, settings: self.settings, feedback: self.feedback)
+                    .onAppear {
+                        if (!self.startedNewGame) {
+                            self.table.startNewGame();
+                            self.startedNewGame = true;
+                        }
+                    }
             }
         }
     }

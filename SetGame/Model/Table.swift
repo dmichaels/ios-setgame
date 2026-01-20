@@ -37,16 +37,24 @@ public class Table: ObservableObject {
     private var deck: TableDeck!;
     var demoTimer: Timer? = nil; // N.B. Not private only because of TableDemo.
 
-    public init(settings: Settings) {
+    public init(settings: Settings, startNewGame: Bool = false) {
         self.settings = settings;
-        self.startNewGame();
+        startNewGame ? self.startNewGame() : self.initialize();
+    }
+
+    public func initialize() {
+        self.deck  = TableDeck(simple: self.settings.simpleDeck);
+        self.cards = [TableCard]();
+        self.state = State(table: self);
     }
 
     public func startNewGame() {
 
-        self.deck  = TableDeck(simple: self.settings.simpleDeck);
-        self.cards = [TableCard]();
-        self.state = State(table: self);
+        self.initialize();
+
+        // self.deck  = TableDeck(simple: self.settings.simpleDeck);
+        // self.cards = [TableCard]();
+        // self.state = State(table: self);
 
         if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [TableCard] = TableDeck.randomMagicSquare(simple: self.settings.simpleDeck)
@@ -499,11 +507,11 @@ public class Table: ObservableObject {
         }
     }
 
-    private func addCards(_ cards: [TableCard]) {
+    public func addCards(_ cards: [TableCard]) {
         self.cards.add(cards);
     }
 
-    private func addCards(_ card: TableCard) {
+    public func addCards(_ card: TableCard) {
         self.addCards([card]);
     }
 
@@ -533,5 +541,19 @@ public class Table: ObservableObject {
 
     public func gameDone() -> Bool {
         return (self.deck.count == 0) && !self.containsSet();
+    }
+
+    // New for testing for TestCardGridView ...
+
+    public func removeCard(at index: Int) {
+        if (self.cards.count > index) {
+            self.cards.remove(at: index);
+        }
+    }
+
+    public func swapCards(at i: Int, and j: Int) {
+        if ((self.cards.count > i) && (self.cards.count > j)) {
+            self.cards.swapAt(i, j);
+        }
     }
 }
