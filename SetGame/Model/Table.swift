@@ -543,7 +543,7 @@ public class Table: ObservableObject {
         return (self.deck.count == 0) && !self.containsSet();
     }
 
-    // New for testing for TestCardGridView ...
+    // New for testing for TestCardView ...
 
     public func removeCard(at index: Int) {
         if (self.cards.count > index) {

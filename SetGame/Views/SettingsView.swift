@@ -187,6 +187,7 @@ public struct SettingsView: View {
                 ).opacity(settings.isDefault() ? 0.5 : 1.0)
             }
             HStack {
+                Image(systemName: "eye.slash")
                 Text("  Hide Help Button").font(.footnote)
                 Spacer()
                 Toggle(isOn: $settings.hideHelpButton) {}
@@ -199,13 +200,14 @@ public struct SettingsView: View {
             }
 */
             HStack {
+                Image(systemName: "number")
                 if (showCommitID) {
                     Text("  Commit ID").font(.footnote)
                     Spacer()
                     Text("\(VersionInfo.commit) ").font(.footnote)
                 }
                 else {
-                    Text("  Version").font(.footnote)
+                    Text("    Version").font(.footnote)
                     Spacer()
                     Text("\(VersionInfo.version).\(VersionInfo.build) ").font(.footnote)
                 }
@@ -213,10 +215,10 @@ public struct SettingsView: View {
             .onTapGesture {
                 showCommitID.toggle();
             }
-            Section {
-                navigationRow("  Debug View", icon: "ant",
-                              destination: TestCardGridView(settings: self.settings))
-            }
+            // Section {
+                navigationRow(" Debug View", icon: "ant",
+                              destination: TestCardView(settings: self.settings), small: true)
+            // }
         }
         .navigationTitle("\(Defaults.title) Settings")
         .alert("Reset Settings?", isPresented: $showResetConfirmation) {
@@ -227,11 +229,11 @@ public struct SettingsView: View {
         }
     } }
 
-    private func navigationRow<Destination: View>(_ title: String, icon: String, destination: Destination) -> some View {
+    private func navigationRow<Destination: View>(_ title: String, icon: String, destination: Destination, small: Bool = false) -> some View {
         NavigationLink(destination: destination) {
             HStack {
                 Image(systemName: icon).frame(width: iconWidth)
-                Text(title).foregroundColor(.primary)
+                Text(title).foregroundColor(.primary).font(small ? .footnote : nil)
             }
             .contentShape(Rectangle()) // makes whole row tap-able
         }

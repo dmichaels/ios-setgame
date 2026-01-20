@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct TestCardGridView: View {
+public struct TestCardView: View {
 
     @ObservedObject var settings: Settings;
     @StateObject var table: Table;
