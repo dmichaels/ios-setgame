@@ -43,7 +43,7 @@ public class Table: ObservableObject {
 
     public func initialize() {
         self.deck  = TableDeck(simple: self.settings.simpleDeck);
-        self.cards = [TableCard]();
+        self.cards = [];
         self.state = State(table: self);
     }
 
@@ -493,7 +493,7 @@ public class Table: ObservableObject {
                         let b: TableCard = self.cards[j];
                         let c: TableCard = TableCard(TableCard.matchingSetValue(a, b));
                         if let c = self.deck.takeCard(c) {
-                            self.addCards(c);
+                            self.addCard(c);
                             self.addCards(ncards - 1, plantSet: false);
                         }
                     }
@@ -510,7 +510,7 @@ public class Table: ObservableObject {
         self.cards.add(cards);
     }
 
-    public func addCards(_ card: TableCard) {
+    public func addCard(_ card: TableCard) {
         self.addCards([card]);
     }
 
@@ -547,6 +547,20 @@ public class Table: ObservableObject {
     public func removeCard(at index: Int) {
         if (self.cards.count > index) {
             self.cards.remove(at: index);
+        }
+    }
+
+    public func removeCard(_ card: TableCard) {
+        for i in 0..<self.cards.count {
+            if (self.cards[i] == card) {
+                self.cards.remove(at: i);
+            }
+        }
+    }
+
+    public func removeCards() {
+        if (self.cards.count > 0) {
+            self.cards.removeAll();
         }
     }
 

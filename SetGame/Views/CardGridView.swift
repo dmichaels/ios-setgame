@@ -4,9 +4,10 @@ public struct CardGridView: View {
 
     @ObservedObject var table: Table;
     @ObservedObject var settings: Settings;
+    var materialize: Bool = true;
 
-    var spacing: CGFloat = 8;
-    var marginx: CGFloat = 8;
+    var spacing: CGFloat = 6;
+    var marginx: CGFloat = 6;
 
     public var body: some View {
         let spacingx: CGFloat = spacing;
@@ -31,10 +32,18 @@ public struct CardGridView: View {
             )
             Spacer()
             LazyVGrid(columns: columns, spacing: spacing) {
-                ForEach(table.cards, id: \.id) { card in
+                //
+                // Change the id on the ForEach from \.id to \.uid (2026-01-20)
+                // to fix issue with (for example) TableCard.materializeTrigger
+                // getting called on an item that was removed and then incorrectly
+                // materializing (fading in) the card if the card was previously
+                // in the table.cards list; for example when doing add-card after
+                // new-game where the card added was in a previous game.
+                //
+                ForEach(table.cards, id: \.uid) { card in
                     CardView(
                         card,
-                        materialize: true,
+                        materialize: materialize,
                         askew: settings.cardsAskew,
                         alternate: settings.alternateCards
                     ) { card in

@@ -71,7 +71,7 @@ public class Card {
     /// logic in here; and in the attribute classes, i.e. formsSetWith,
     /// matchingSetValue in CardColor, CardShape, CardFilling, CardNumber.
     ///
-    static func isSet(_ cards : Card...) -> Bool {
+    static func isSet(_ cards: Card...) -> Bool {
         if (cards.count != 3) { return false; }
         return cards[0].color   .formsSetWith(cards[1].color,   cards[2].color)
             && cards[0].shape   .formsSetWith(cards[1].shape,   cards[2].shape)
@@ -83,7 +83,7 @@ public class Card {
     /// This can be used as a short name for this card and could conveniently
     /// be used to identify an (image) asset for the card.
     ///
-    var codename : String {
+    var codename: String {
         return color.codename + shape.codename + filling.codename + number.codename;
     }
 
@@ -157,9 +157,9 @@ public class Card {
 
 /// Card extensions to conform to sundry protocols.
 ///
-extension Card : Identifiable, Equatable, Comparable, CustomStringConvertible {
+extension Card: Identifiable, Equatable, Comparable, CustomStringConvertible {
 
-    public var id : String { self.codename; }
+    public var id: String { self.codename; }
 
     public static func == (lhs: Card, rhs: Card) -> Bool {
         return (lhs.color   == rhs.color)   &&
@@ -198,7 +198,7 @@ extension Card : Identifiable, Equatable, Comparable, CustomStringConvertible {
         }
     }
 
-    public var description : String {
+    public var description: String {
         return self.toString();
     }
 }

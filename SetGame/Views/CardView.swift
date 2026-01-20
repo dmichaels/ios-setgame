@@ -4,7 +4,6 @@ public struct CardView : View {
     
     @ObservedObject var card: TableCard;
                     var selectable: Bool                        = false;
-                    var materializeDelay: Double?               = nil;
                     var askew: Bool                             = false;
                     var alternate: Int?                         = nil;
                     var touchedCallback: ((TableCard) -> Void)? = nil;
@@ -57,12 +56,12 @@ public struct CardView : View {
     public var body: some View {
         VStack {
             Button(action: {
-                if (selectable) {
+                if (self.selectable) {
                     card.selected.toggle();
                 }
-                touchedCallback?(card)
+                self.touchedCallback?(card)
             }) {
-                Image(self.image(card, alternate))
+                Image(self.image(card, self.alternate))
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .cornerRadius(8)
@@ -127,7 +126,7 @@ public struct CardView : View {
                          value: self.materializing
                     )
             }
-            .skew(askew)
+            .skew(self.askew)
             //
             // N.B. This flip modifier NOT ONLY does (x-axis) flips; it ALSO MOVES the card
             // if this is called (i.e. by incrementing card.flipTrigger) on u TableCard in

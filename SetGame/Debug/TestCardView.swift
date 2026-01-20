@@ -14,6 +14,13 @@ public struct TestCardView: View {
         ScrollView(.vertical, showsIndicators: false) {
             CardGridView(table: table, settings: settings)
             CardControls(table: table)
+            TextBoxWithButton() { value in
+                if let card: TableCard = TableCard(value) {
+                    let deck = TableDeck();
+                    let card = deck.takeCard(card)!;
+                    self.table.addCard(card);
+                }
+            }
         }
         .onAppear {
             self.table.addCards([
@@ -43,6 +50,9 @@ public struct TestCardView: View {
                 Control(label: "Shake")  { self.table.cards.shake() }
                 Control(label: "Move")   { self.move() }.disabled(!self.moveEnabled)
             }.padding(.top, margint)
+            HStack(spacing: spacing) {
+                Control(label: "Clear") { self.table.removeCards() }
+            }.padding(.top, margint)
         }
 
         private struct Control: View  {
@@ -68,6 +78,20 @@ public struct TestCardView: View {
             if (self.moveTo >= (self.table.cards.count - 1)) {
                 self.moveTo = 0;
             }
+        }
+    }
+
+    private struct TextBoxWithButton: View {
+        @State var callback: (String) -> Void;
+        @State private var inputText: String = "1GSQ"
+        public var body: some View {
+            HStack(spacing: 20) {
+                TextField("Card", text: $inputText)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
+                Button("Submit") { callback(inputText) }
+                    .buttonStyle(.borderedProminent)
+            }.padding()
         }
     }
 }
