@@ -165,5 +165,22 @@ public class TableCard : Card, ObservableObject {
     public func reset() {
         self.selected = false;
         self.materializedOnce = false;
+
+        self.blinkTrigger = 0;
+        self.blinkCount = 0;
+        self.blinkInterval = 0;
+        self.blinkoffInterval = 0;
+        self.blinkDoneCallback = nil;
+        self.flipTrigger = 0;
+        self.flipCount = 0;
+        self.flipDuration = 0;
+        self.flipLeft = false;
+        self.shakeTrigger = 0;
+        self.shakeCount = 0;
+        self.shakeDuration = 0;
+        self.materializeTrigger = 0;
+        self.materializedOnce = false;
+        self.materializeSpeed = 0;
+        self.materializeElasticity = 0;
     }
 }
