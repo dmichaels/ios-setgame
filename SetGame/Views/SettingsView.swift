@@ -191,27 +191,31 @@ public struct SettingsView: View {
                 Spacer()
                 Toggle(isOn: $settings.hideHelpButton) {}
             }
+/*
             HStack {
                 Text("  Debug Mode").font(.footnote)
                 Spacer()
                 Toggle(isOn: $settings.debugMode) {}
             }
-            if (VersionInfo.commit != "") {
-                HStack {
-                    if (showCommitID) {
-                        Text("  Commit ID").font(.footnote)
-                        Spacer()
-                        Text("\(VersionInfo.commit) ").font(.footnote)
-                    }
-                    else {
-                        Text("  Version").font(.footnote)
-                        Spacer()
-                        Text("\(VersionInfo.version).\(VersionInfo.build) ").font(.footnote)
-                    }
+*/
+            HStack {
+                if (showCommitID) {
+                    Text("  Commit ID").font(.footnote)
+                    Spacer()
+                    Text("\(VersionInfo.commit) ").font(.footnote)
                 }
-                .onTapGesture {
-                    showCommitID.toggle();
+                else {
+                    Text("  Version").font(.footnote)
+                    Spacer()
+                    Text("\(VersionInfo.version).\(VersionInfo.build) ").font(.footnote)
                 }
+            }
+            .onTapGesture {
+                showCommitID.toggle();
+            }
+            Section {
+                navigationRow("  Debug View", icon: "ant",
+                              destination: TestCardGridView(settings: self.settings))
             }
         }
         .navigationTitle("\(Defaults.title) Settings")

@@ -107,19 +107,13 @@ public struct ContentView: View {
         @ObservedObject var feedback: Feedback;
         @State private var startedNewGame: Bool = false;
         public var body: some View {
-            if (settings.debugMode) {
-             // TestCardView()
-                TestCardGridView(table: self.table, settings: self.settings)
-            }
-            else {
-                TableView(table: self.table, settings: self.settings, feedback: self.feedback)
-                    .onAppear {
-                        if (!self.startedNewGame) {
-                            self.table.startNewGame();
-                            self.startedNewGame = true;
-                        }
+            TableView(table: self.table, settings: self.settings, feedback: self.feedback)
+                .onAppear {
+                    if (!self.startedNewGame) {
+                        self.table.startNewGame();
+                        self.startedNewGame = true;
                     }
-            }
+                }
         }
     }
 
