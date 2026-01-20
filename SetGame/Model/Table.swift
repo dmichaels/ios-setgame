@@ -51,10 +51,6 @@ public class Table: ObservableObject {
 
         self.initialize();
 
-        // self.deck  = TableDeck(simple: self.settings.simpleDeck);
-        // self.cards = [TableCard]();
-        // self.state = State(table: self);
-
         if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [TableCard] = TableDeck.randomMagicSquare(simple: self.settings.simpleDeck)
             if let cards: [TableCard] = self.deck.takeCards(magicSquareCards, strict: true) {
