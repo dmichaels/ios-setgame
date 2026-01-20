@@ -23,10 +23,10 @@
 		9811914A25ED5ACF0083606B /* TableCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811914025ED5ACF0083606B /* TableCard.swift */; };
 		9811914B25ED5ACF0083606B /* CardShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811914125ED5ACF0083606B /* CardShape.swift */; };
 		9867E12F2F1E573000CB221F /* Delay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E12D2F1E573000CB221F /* Delay.swift */; };
-		9867E1312F1E725000CB221F /* TableDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1302F1E725000CB221F /* TableDemo.swift */; };
 		9867E1332F1E86FE00CB221F /* CardGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1322F1E86FE00CB221F /* CardGridView.swift */; };
 		9867E1352F1EF1FA00CB221F /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1342F1EF1FA00CB221F /* Data.swift */; };
 		9867E1372F1F2D7100CB221F /* TestCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1362F1F2D7100CB221F /* TestCardView.swift */; };
+		9867E1392F1FC98E00CB221F /* TableDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1382F1FC98E00CB221F /* TableDemo.swift */; };
 		989D93692EE8B01D00BE461B /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D93682EE8B01D00BE461B /* Stats.swift */; };
 		989D936B2EEDABC600BE461B /* FoundSetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D936A2EEDABC600BE461B /* FoundSetsView.swift */; };
 		989D936F2EF21DEF00BE461B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D936E2EF21DEF00BE461B /* Settings.swift */; };
@@ -91,10 +91,10 @@
 		9811914125ED5ACF0083606B /* CardShape.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardShape.swift; sourceTree = "<group>"; };
 		981B00492F113ABF00875920 /* SetGame.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SetGame.entitlements; sourceTree = "<group>"; };
 		9867E12D2F1E573000CB221F /* Delay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delay.swift; sourceTree = "<group>"; };
-		9867E1302F1E725000CB221F /* TableDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableDemo.swift; sourceTree = "<group>"; };
 		9867E1322F1E86FE00CB221F /* CardGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardGridView.swift; sourceTree = "<group>"; };
 		9867E1342F1EF1FA00CB221F /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		9867E1362F1F2D7100CB221F /* TestCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCardView.swift; sourceTree = "<group>"; };
+		9867E1382F1FC98E00CB221F /* TableDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableDemo.swift; sourceTree = "<group>"; };
 		989D93682EE8B01D00BE461B /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		989D936A2EEDABC600BE461B /* FoundSetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundSetsView.swift; sourceTree = "<group>"; };
 		989D936E2EF21DEF00BE461B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -168,6 +168,7 @@
 		981190EE25ED59CC0083606B /* SetGame */ = {
 			isa = PBXGroup;
 			children = (
+				9867E13A2F1FCA8A00CB221F /* Demo */,
 				981B00492F113ABF00875920 /* SetGame.entitlements */,
 				981190EF25ED59CC0083606B /* SetGameApp.swift */,
 				98EF7E192F1D070500A45F63 /* Debug */,
@@ -226,7 +227,6 @@
 				9811914025ED5ACF0083606B /* TableCard.swift */,
 				98A5C7432F059B8C009E708D /* TableCardArray.swift */,
 				98EF7E142F1AFE7A00A45F63 /* TableDeck.swift */,
-				9867E1302F1E725000CB221F /* TableDemo.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -259,6 +259,14 @@
 				98A5C7412EFED67E009E708D /* VersionInfo.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		9867E13A2F1FCA8A00CB221F /* Demo */ = {
+			isa = PBXGroup;
+			children = (
+				9867E1382F1FC98E00CB221F /* TableDemo.swift */,
+			);
+			path = Demo;
 			sourceTree = "<group>";
 		};
 		98A5C74D2F09BBC7009E708D /* Resources */ = {
@@ -434,7 +442,6 @@
 				989FF8FB25EF3708002AE44A /* CardArray.swift in Sources */,
 				98A5C7422EFED67E009E708D /* VersionInfo.swift in Sources */,
 				9811914225ED5ACF0083606B /* Deck.swift in Sources */,
-				9867E1312F1E725000CB221F /* TableDemo.swift in Sources */,
 				981190F225ED59CC0083606B /* ContentView.swift in Sources */,
 				9811914925ED5ACF0083606B /* String.swift in Sources */,
 				98A5C7442F059B8C009E708D /* TableCardArray.swift in Sources */,
@@ -443,6 +450,7 @@
 				9811914825ED5ACF0083606B /* CardNumber.swift in Sources */,
 				98EF7E152F1AFE7A00A45F63 /* TableDeck.swift in Sources */,
 				989D936B2EEDABC600BE461B /* FoundSetsView.swift in Sources */,
+				9867E1392F1FC98E00CB221F /* TableDemo.swift in Sources */,
 				9811914525ED5ACF0083606B /* CardFilling.swift in Sources */,
 				98C2CA8225F3C1E40050ACDC /* StatsView.swift in Sources */,
 				9867E1332F1E86FE00CB221F /* CardGridView.swift in Sources */,

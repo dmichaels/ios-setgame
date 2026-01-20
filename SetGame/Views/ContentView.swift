@@ -58,7 +58,7 @@ public struct ContentView: View {
                     }
                     .onChange(of: settings.demoMode) { _ in
                         Task {
-                            await self.table.demoCheck()
+                            await TableDemo(table: self.table, settings: self.settings).start();
                         }
                     }
                 NavigationLink(destination:

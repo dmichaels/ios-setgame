@@ -35,7 +35,7 @@ public class Table: ObservableObject {
     @Published public private(set) var state: State!;
 
     private var deck: TableDeck!;
-    var demoTimer: Timer? = nil; // N.B. Not private only because of TableDemo.
+    // var demoTimer: Timer? = nil; // N.B. Not private only because of TableDemo.
 
     public init(settings: Settings, startNewGame: Bool = false) {
         self.settings = settings;
