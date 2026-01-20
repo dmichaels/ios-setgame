@@ -215,10 +215,10 @@ public struct SettingsView: View {
             .onTapGesture {
                 showCommitID.toggle();
             }
-            // Section {
+            if (Defaults.debugView) {
                 navigationRow(" Debug View", icon: "ant",
                               destination: TestCardView(settings: self.settings), small: true)
-            // }
+            }
         }
         .navigationTitle("\(Defaults.title) Settings")
         .alert("Reset Settings?", isPresented: $showResetConfirmation) {

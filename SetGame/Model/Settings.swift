@@ -30,6 +30,7 @@ public class Defaults {
     // These settings are NOT persisted across game instances.
 
     public static let title: String                     = "Logicard";
+    public static let debugView: Bool                   = true;
 
     public struct Effects {
         public static let selectBeforeSetDelay: Double  = 0.80;
