@@ -27,40 +27,12 @@ public class TableCard : Card, ObservableObject {
         super.init(color: .random, shape: .random, filling: .random, number: .random);
     }
 
-    required init?(_ value : String) {
-        if let card = Self.from(value) {
-            super.init(card);
-        }
-        else {
-            return nil;
-        }
-    }
-
-    required convenience init?(_ value : Substring) {
-        self.init(String(value));
-    }
-
     required init(color: CardColor, shape: CardShape, filling: CardFilling, number: CardNumber) {
         super.init(color: color, shape: shape, filling: filling, number: number);
     }
 
     required init(_ card : Card) {
         super.init(card);
-    }
-
-    convenience init(_ card: TableCard) {
-        //
-        // FYI no need to copy over the various state variables
-        // concerning selection, blinking, shaking, or materializing.
-        //
-        self.init(color: card.color, shape: card.shape, filling: card.filling, number: card.number)
-    }
-
-    override class func from(_ value: String) -> TableCard? {
-        if let card = super.from(value) {
-            return TableCard(card);
-        }
-        return nil;
     }
 
     override func toString(_ verbose : Bool = false) -> String {
