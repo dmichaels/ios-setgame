@@ -17,23 +17,6 @@ public struct TestCardView: View {
             TextBoxWithButton() { value in
                 let cards: [TableCard] = TestCardView.toCards(value);
                 self.simulateIncomingDealCardsMessage(cards);
-                /*
-                for card in cards {
-                    self.table.addCard(card);
-                }
-                */
-/*
-                for codename in value.split() {
-                    if let card: TableCard = TableCard(codename) {
-                        self.table.addCard(card);
-                        self.simulateIncomingDealCardsMessage(cards: [card]);
-                        // let deck: TableDeck = TableDeck();
-                        // if let card: TableCard = deck.takeCard(card) {
-                        //     self.table.addCard(card);
-                        // }
-                    }
-                }
-*/
             }
         }
         .onAppear {
@@ -124,7 +107,6 @@ public struct TestCardView: View {
     }
 
     private func receiveMessage(_ message: Data?) {
-        // if let message: GameCenter.DealCardsMessage = message as? GameCenter.DealCardsMessage {
         if let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(message!) {
             self.receiveDealCardsMessage(message);
         }
