@@ -94,7 +94,7 @@ public struct TestCardView: View {
 
     private static func toCards(_ cardcodes: String) -> [TableCard] {
         var cards: [TableCard] = [];
-        for cardcode in cardcodes.split() {
+        for cardcode in cardcodes.split(delimiters: " ,./") {
             if let card: TableCard = TableCard(cardcode) {
                 cards.add(card);
             }
