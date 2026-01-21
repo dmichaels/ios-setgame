@@ -87,11 +87,13 @@ public class Card {
         return color.codename + shape.codename + filling.codename + number.codename;
     }
 
-    /// Parses a string representation of a SET card and returns its Card instance; returns
-    /// nil if unparsable. This representation can be a dash-separated list of attribute
-    /// names, e.g. 'Red-Oval-Stripped-Two' where the order of attributes doesn't matter.
-    /// A set of single characters, unique across all attributes, are also defined as
-    /// follows, so we can represent a card like 'ROS2' (meaning: Red-Oval-Solid-Two):
+    /// Parses a string representation of a SET card and returns its Card instance, or nil
+    /// if unparsable. This representation may be a dash-separated list of case-insensitive
+    /// attribute names, e.g. "Red-Oval-Stripped-Two", where the order of attribute names
+    /// does NOT matter; or the representation may be a simple sequence case-insensitive
+    /// characters (unique across all attributes), where the order of the characters
+    /// does NOT matter, as defined below, so we can represent a card
+    /// like "ROS2" (meaning: Red-Oval-Solid-Two):
     ///
     /// Color:   G = Green
     ///          P = Purple
