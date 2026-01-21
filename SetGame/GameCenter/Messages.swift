@@ -107,7 +107,6 @@ public enum GameCenter {
                                         dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
                                         foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
 
-        // if let data = data, let envelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
         if let data = data, let envelope = GameCenter.fromJson(data, MessageEnvelope.self) {
             switch envelope.type {
                 case .playerReady:
