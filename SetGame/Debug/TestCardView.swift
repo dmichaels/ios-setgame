@@ -15,10 +15,14 @@ public struct TestCardView: View {
             CardGridView(table: table, settings: settings)
             CardControls(table: table)
             TextBoxWithButton() { value in
-                if let card: TableCard = TableCard(value) {
-                    let deck = TableDeck();
-                    let card = deck.takeCard(card)!;
-                    self.table.addCard(card);
+                for codename in value.split() {
+                    if let card: TableCard = TableCard(codename) {
+                        self.table.addCard(card);
+                        // let deck: TableDeck = TableDeck();
+                        // if let card: TableCard = deck.takeCard(card) {
+                        //     self.table.addCard(card);
+                        // }
+                    }
                 }
             }
         }
@@ -93,5 +97,11 @@ public struct TestCardView: View {
                     .buttonStyle(.borderedProminent)
             }.padding()
         }
+    }
+
+    private static func split(_ input: String, delimiters: String = " ,./") -> [String] {
+        input.components(separatedBy: CharacterSet(charactersIn: delimiters))
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
     }
 }
