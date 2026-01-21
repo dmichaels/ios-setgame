@@ -2,10 +2,10 @@
 ///
 public class Card {
 
-    private(set) var color   : CardColor;
-    private(set) var shape   : CardShape;
-    private(set) var filling : CardFilling;
-    private(set) var number  : CardNumber;
+    public private(set) var color   : CardColor;
+    public private(set) var shape   : CardShape;
+    public private(set) var filling : CardFilling;
+    public private(set) var number  : CardNumber;
 
     /// Creates a card from a String representation of the card or nil if not unparsable.
     /// Required so we (CardList) can create a generic Card or subclass thereof.

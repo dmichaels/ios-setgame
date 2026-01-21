@@ -4,35 +4,35 @@ public extension Array where Element : Card {
 
     /// Adds the given card(s) to this array.
     ///
-    init(_ cards : Element...) {
+    public init(_ cards : Element...) {
         self = cards;
     }
 
     /// Creates an array of card(s) containgin cards specified by given string
     /// representations of cards to this array. Empty array of unparseable.
     ///
-    init(_ values : String) {
+    public init(_ values : String) {
         self = Self.from(values);
     }
 
-    init(_ values : [String]) {
+    public init(_ values : [String]) {
         self = Self.from(values);
     }
 
     /// Adds given card(s) to this array.
     ///
-    mutating func add(_ card : Element, _ cards : Element...) {
+    public mutating func add(_ card : Element, _ cards : Element...) {
         self.append(card);
         self.append(contentsOf: cards);
     }
 
-    mutating func add(_ cards : [Element]) {
+    public mutating func add(_ cards : [Element]) {
         self.append(contentsOf: cards);
     }
 
     /// Remove (all instances of the) given card(s) from this array.
     ///
-    mutating func remove(_ card : Element, _ cards  : Element...) {
+    public mutating func remove(_ card : Element, _ cards  : Element...) {
         self.removeAll(where: {$0 == card});
         cards.forEach {
             let card = $0;
@@ -40,21 +40,21 @@ public extension Array where Element : Card {
         }
     }
 
-    mutating func remove(_ cards : [Element]) {
+    public mutating func remove(_ cards : [Element]) {
         cards.forEach {
             let card = $0;
             self.removeAll(where: {$0 == card});
         }
     }
 
-    mutating func clear() {
+    public mutating func clear() {
         self.removeAll();
     }
 
     /// Removes and returns the first card from this array;
     /// returns nil if no more cards in the array.
     ///
-    mutating func takeCard() -> Element? {
+    public mutating func takeCard() -> Element? {
         return self.count > 0 ? self.remove(at: 0) : nil;
     }
 
@@ -62,7 +62,7 @@ public extension Array where Element : Card {
     /// from this array and, if present and removed, returns the card,
     /// otherwise returns nil.
     ///
-    mutating func takeCard(_ card: Element) -> Element? {
+    public mutating func takeCard(_ card: Element) -> Element? {
         if let index: Int = firstIndex(of: card) {
             self.remove(at: index);
             return card;
@@ -70,7 +70,7 @@ public extension Array where Element : Card {
         return nil;
     }
 
-    mutating func takeCards(_ cards: [Element], strict: Bool = false) -> [Element]? {
+    public mutating func takeCards(_ cards: [Element], strict: Bool = false) -> [Element]? {
         if (strict) {
             for card in cards {
                 if (!self.contains(card)) {
@@ -90,7 +90,7 @@ public extension Array where Element : Card {
     /// Removes and returns a random card from this array;
     /// returns nil if no more cards in the array.
     ///
-    mutating func takeRandomCard() -> Element? {
+    public mutating func takeRandomCard() -> Element? {
         return (self.count > 0) ? self.remove(at: Int.random(in: 0..<self.count)) : nil;
     }
 
@@ -98,7 +98,7 @@ public extension Array where Element : Card {
     /// a new array; if fewer cards are in this array than the number requested, then so be it, just
     /// that many will be returned (and then this array will end up being empty in this case).
     ///
-    mutating func takeRandomCards(_ n : Int) -> [Element] {
+    public mutating func takeRandomCards(_ n : Int) -> [Element] {
         guard (n > 0) && (self.count > 0) else { return [] }
         var randomCards: [Element] = [Element]();
         for _ in 0..<n {
@@ -126,7 +126,7 @@ public extension Array where Element : Card {
     /// N.B. Please keep in mind that (normally) when our comments say "this array" here,
     /// we are talking about the deck of cards, and not the cards that are on the table.
     ///
-    mutating func takeRandomCards(_ n : Int, plantSet: Bool, existingCards: [Element] = []) -> [Element] {
+    public mutating func takeRandomCards(_ n : Int, plantSet: Bool, existingCards: [Element] = []) -> [Element] {
         guard (n > 0) && (self.count > 0) else { return [] }
         var randomCards: [Element] = [Element]();
         if (plantSet) {
@@ -212,7 +212,7 @@ public extension Array where Element : Card {
     ///
     /// N.B. Only (currently) used for the purpose of constructing a magic square.
     ///
-    func randomCards(_ n: Int, strict: Bool = false) -> [Element] {
+    public func randomCards(_ n: Int, strict: Bool = false) -> [Element] {
         guard (n > 0) && (self.count > 0) else { return [] }
         let n: Int = Swift.min(n, self.count);
         let randomIndices = Array<Int>(0..<self.count).shuffled().prefix(n);
@@ -226,7 +226,7 @@ public extension Array where Element : Card {
     /// Returns (WITHOUT removal) three random cards from this array which form a SET.
     /// If no such thing can be found then returns an empty array.
     ///
-    func randomSetCards() -> [Element] {
+    public func randomSetCards() -> [Element] {
         let randomIndices = Array<Int>(0..<self.count).shuffled();
         for i in 0..<(randomIndices.count - 2) {
             for j in (i + 1)..<(randomIndices.count - 1) {
@@ -251,7 +251,7 @@ public extension Array where Element : Card {
     ///
     /// N.B. Only (currently) used for the purpose of constructing a magic square.
     ///
-    func randomNonSetCards() -> [Element] {
+    public func randomNonSetCards() -> [Element] {
         guard self.count >= 3 else { return [] }
         var randomNonSetCards: [Element] = self.randomCards(2);
         let matchingSetCard = Card.matchingSetValue(randomNonSetCards[0], randomNonSetCards[1]);
@@ -267,13 +267,13 @@ public extension Array where Element : Card {
 
     /// Returns true iff this array comprises a SET.
     ///
-    func isSet() -> Bool {
+    public func isSet() -> Bool {
         return (self.count == 3) && Element.isSet(self[0], self[1], self[2]);
     }
 
     /// Returns true iff there exists at least one SET in this array.
     ///
-    func containsSet() -> Bool {
+    public func containsSet() -> Bool {
         var nsets: Int = 0;
         self.enumerateSets(limit: 1) { _ in nsets += 1; }
         return nsets > 0;
@@ -281,7 +281,7 @@ public extension Array where Element : Card {
 
     /// Returns the number of unique SETs in this array.
     ///
-    func numberOfSets(disjoint: Bool = false) -> Int {
+    public func numberOfSets(disjoint: Bool = false) -> Int {
         return self.enumerateSets(disjoint: disjoint).count;
     }
 
@@ -307,7 +307,7 @@ public extension Array where Element : Card {
         let mask: UInt64
         let set: [Element]
     }
-    func enumerateSets(limit: Int = 0, disjoint: Bool = false) -> [[Element]] {
+    public func enumerateSets(limit: Int = 0, disjoint: Bool = false) -> [[Element]] {
 
         var sets: [[Element]] = [[Element]]();
 
@@ -428,7 +428,7 @@ public extension Array where Element : Card {
     /// cards in this array, and even choosing the any existing SET which
     /// already has the most cards in the top position.
     ///
-    mutating func moveAnyExistingSetToFront() {
+    public mutating func moveAnyExistingSetToFront() {
 
         func findTargetSetIndices() -> [Int]? {
 
@@ -481,7 +481,7 @@ public extension Array where Element : Card {
         }
     }
 
-    func first(_ n: Int) -> [Element] {
+    public func first(_ n: Int) -> [Element] {
         if (n > 0) {
             return Array(self.prefix(n));
         }
@@ -498,7 +498,7 @@ public extension Array where Element : Card {
     /// Unparsable items in the list are ignored; if no parsable card formats
     /// are found, then returns an empty array.
     ///
-    static func from(_ values : String) -> [Element] {
+    public static func from(_ values : String) -> [Element] {
         return Self.from(
             values.filter  { !$0.isWhitespace }
                   .split() { $0 == "," }
@@ -511,7 +511,7 @@ public extension Array where Element : Card {
     /// Unparsable items in the list are ignored; if no parsable card formats
     /// are found, then returns an empty array.
     ///
-    static func from(_ values : [String]) -> [Element] {
+    public static func from(_ values : [String]) -> [Element] {
         var cards: [Element] = [Element]();
         for value in values {
             if let card: Element = Element(value) {
@@ -524,7 +524,7 @@ public extension Array where Element : Card {
     /// Parses and returns a card representing the given string
     /// representation of a SET card; If unparsable then returns nil.
     //
-    static func from(_ value : String) -> Element? {
+    public static func from(_ value : String) -> Element? {
         return Element(value);
     }
 }

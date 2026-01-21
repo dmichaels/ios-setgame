@@ -2,7 +2,7 @@ import SwiftUI
 
 public struct DeckView: View {
 
-    let cards: [TableCard]
+    public let cards: [TableCard]
 
     private let columns: Int    = 6;
     private let marginx: Double = 16;
