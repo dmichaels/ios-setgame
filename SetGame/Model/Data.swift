@@ -11,8 +11,8 @@ public enum GameCenter {
     public protocol Message: Codable {
         var type: MessageType { get }
         var player: String { get }
-        func serialize() -> Data?
         init?(_ data: Data)
+        func serialize() -> Data?
     }
 
     public struct PlayerReadyMessage: Message {
@@ -35,14 +35,7 @@ public enum GameCenter {
         private let cardcodes: [String];
 
         public init?(_ data: Data) {
-            if let message: FoundSetMessage = GameCenter.fromJson(data, GameCenter.FoundSetMessage.self) {
-                self.type      = message.type;
-                self.player    = message.player;
-                self.cardcodes = message.cardcodes;
-            }
-            else {
-                return nil;
-            }
+            self.init(data, as: GameCenter.FoundSetMessage.self);
         }
 
         public lazy var cards: [Card] = {
@@ -56,20 +49,8 @@ public enum GameCenter {
         public  let player: String;
         private let cardcodes: [String];
 
-        public lazy var cards: [Card] = {
-            return GameCenter.toCards(self.cardcodes);
-        }()
-
-
         public init?(_ data: Data) {
-            if let message: DealCardsMessage = GameCenter.fromJson(data, GameCenter.DealCardsMessage.self) {
-                self.type      = message.type;
-                self.player    = message.player;
-                self.cardcodes = message.cardcodes;
-            }
-            else {
-                return nil;
-            }
+            self.init(data, as: GameCenter.DealCardsMessage.self);
         }
 
         public init(player: String, cards: [Card]) {
@@ -77,6 +58,10 @@ public enum GameCenter {
             self.player    = player;
             self.cardcodes = cards.map { $0.codename };
         }
+
+        public lazy var cards: [Card] = {
+            return GameCenter.toCards(self.cardcodes);
+        }()
     }
 
     private static func toJson(_ data: GameCenter.Message) -> Data? {
@@ -108,6 +93,12 @@ public enum GameCenter {
 }
 
 private extension GameCenter.Message {
+
+    public init?<T: Decodable>(_ data: Data, as type: T.Type) {
+        guard let decoded = GameCenter.fromJson(data, type) as? Self else { return nil }
+        self = decoded
+    }
+
     public func serialize() -> Data? {
         return GameCenter.toJson(self)
     }
