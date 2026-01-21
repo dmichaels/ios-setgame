@@ -11,8 +11,6 @@ public class Table: ObservableObject {
 
     public struct State {
 
-        fileprivate let table: Table;
-
         public var startTime: Date                     = Date();
         public var partialSetSelected: Bool            = false;
         public var setsFoundCount: Int                 = 0;
@@ -23,33 +21,32 @@ public class Table: ObservableObject {
         public var showingOneRandomSet: Bool           = false;
         public var showingOneRandomSetLast: Int?       = nil;
 
-        // This blinking flag is ONLY used to disable input while blinking the cards after
+        // This resolving flag is ONLY used to disable input while blinking the cards after
         // a SET is found (see allowsHitTesting in TableView); there should be a better way.
         //
         fileprivate var resolving: Bool = false;
-
-        public var disabled: Bool { self.table.state.resolving || self.table.settings.demoMode }
     }
 
-    @Published private(set)        var cards: [TableCard]!;
-    @Published public private(set) var state: State!;
+    @Published private(set)        var cards: [TableCard];
+    @Published public private(set) var state: State;
+               private             var deck: TableDeck;
 
-    private var deck: TableDeck!;
-
-    public init(settings: Settings, startNewGame: Bool = false) {
+    public init(settings: Settings) {
         self.settings = settings;
-        startNewGame ? self.startNewGame() : self.initialize();
+        self.cards = [];
+        self.deck  = TableDeck(simple: self.settings.simpleDeck);
+        self.state = State();
     }
 
-    public func initialize() {
-        self.deck  = TableDeck(simple: self.settings.simpleDeck);
-        self.cards = [];
-        self.state = State(table: self);
+    public var disabled: Bool {
+        return self.state.resolving || self.settings.demoMode;
     }
 
     public func startNewGame() {
 
-        self.initialize();
+        self.cards = [];
+        self.deck  = TableDeck(simple: self.settings.simpleDeck);
+        self.state = State();
 
         if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [TableCard] = TableDeck.randomMagicSquare(simple: self.settings.simpleDeck)

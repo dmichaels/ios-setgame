@@ -174,7 +174,7 @@ public struct StatusBarView: View {
                 .shadow(color: .black.opacity(0.3), radius: 4, x: 3, y: 6)
         )
         // .background(BACKGROUND)
-        .allowsHitTesting(!self.table.state.disabled)
+        .allowsHitTesting(!self.table.disabled)
         .onReceive(timer) { date in now = date }
     }
 }
