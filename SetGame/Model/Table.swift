@@ -215,6 +215,10 @@ public class Table: ObservableObject {
         Delay(by: delay) {
             if (selectedCards.isSet()) {
                 if let onSet = onSet {
+                    //
+                    // N.B. The given onSet function implementation is
+                    // responsible for and MUST call the passed resolve function!
+                    //
                     onSet(selectedCards, resolve);
                 }
                 else {
@@ -223,6 +227,10 @@ public class Table: ObservableObject {
             }
             else {
                 if let onNoSet = onNoSet {
+                    //
+                    // N.B. The given onNoSet function implementation is
+                    // responsible for and MUST call the passed resolve function!
+                    //
                     onNoSet(selectedCards, resolve);
                 }
                 else {
