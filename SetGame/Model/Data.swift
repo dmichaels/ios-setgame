@@ -43,24 +43,27 @@ class GameMessageDealCards: XGameMessage {
 
 ////
 
-protocol GameMessage: Codable {
-    var type: GameMessageType { get }
-    var player: String { get }
-}
+public enum GameCenter {
 
-enum GameMessageType: String, Codable {
-    case playerReady
-    case dealCards
-    case notifySet
-}
+    protocol Message: Codable {
+        var type: MessageType { get }
+        var player: String { get }
+    }
 
-struct PlayerReadyMessage: GameMessage {
-    let type: GameMessageType = .playerReady
-    let player: String
-}
+    enum MessageType: String, Codable {
+        case playerReady
+        case dealCards
+        case notifySet
+    }
 
-struct DealCardsMessage: GameMessage {
-    let type: GameMessageType = .dealCards
-    let player: String
-    let cards: [String]
+    struct PlayerReadyMessage: Message {
+        let type: MessageType = .playerReady
+        let player: String
+    }
+
+    struct DealCardsMessage: Message {
+        let type: MessageType = .dealCards
+        let player: String
+        let cards: [String]
+    }
 }
