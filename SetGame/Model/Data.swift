@@ -16,26 +16,34 @@ public enum GameCenter {
     }
 
     public struct PlayerReadyMessage: Message {
-        public let type: MessageType = .playerReady
+
+        public let type: MessageType;
         public let player: String
+
         public init?(_ data: Data) {
-            if let message: PlayerReadyMessage = GameCenter.fromJson(data, GameCenter.PlayerReadyMessage.self) {
-                self.player = message.player;
-            }
-            else {
-                return nil;
-            }
+            self.init(data, as: GameCenter.PlayerReadyMessage.self);
+        }
+
+        public init(player: String, cards: [Card]) {
+            self.type   = MessageType.playerReady;
+            self.player = player;
         }
     }
 
     public struct FoundSetMessage: Message {
 
-        public  let type: MessageType;
-        public  let player: String;
-        private let cardcodes: [String];
+        public let type: MessageType;
+        public let player: String;
+        public let cardcodes: [String];
 
         public init?(_ data: Data) {
             self.init(data, as: GameCenter.FoundSetMessage.self);
+        }
+
+        public init(player: String, cards: [Card]) {
+            self.type      = MessageType.foundSet;
+            self.player    = player;
+            self.cardcodes = cards.map { $0.codename };
         }
 
         public lazy var cards: [Card] = {
