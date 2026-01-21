@@ -127,9 +127,6 @@ public struct TestCardView: View {
         }
 
         tablecards.select();
-
-        let delay: Double = 0.5;
-
         CardGridCallbacks.possibleSetSelected(table: self.table);
     }
 
