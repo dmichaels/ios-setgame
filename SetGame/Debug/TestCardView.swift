@@ -14,9 +14,13 @@ public struct TestCardView: View {
         ScrollView(.vertical, showsIndicators: false) {
             CardGridView(table: table, settings: settings)
             CardControls(table: table)
-            TextBoxWithButton() { value in
+            TextBoxWithButton(label: "DEAL") { value in
                 let cards: [TableCard] = TestCardView.toCards(value);
                 self.simulateIncomingDealCardsMessage(cards);
+            }
+            TextBoxWithButton(label: "SET!") { value in
+                let cards: [TableCard] = TestCardView.toCards(value);
+                self.simulateIncomingFoundSetMessage(cards);
             }
         }
         .onAppear {
@@ -79,6 +83,7 @@ public struct TestCardView: View {
     }
 
     private struct TextBoxWithButton: View {
+        var label: String;
         @State var callback: (String) -> Void;
         @State private var inputText: String = "1GSQ"
         public var body: some View {
@@ -86,7 +91,7 @@ public struct TestCardView: View {
                 TextField("Card", text: $inputText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
-                Button("Submit") { callback(inputText) }
+                Button(label) { callback(inputText) }
                     .buttonStyle(.borderedProminent)
             }.padding()
         }
@@ -102,8 +107,20 @@ public struct TestCardView: View {
         return cards;
     }
 
-    private func receiveDealCardsMessage(_ message: GameCenter.DealCardsMessage) {
-        self.table.addCards(message.cards);
+    private func handleDealCardsMessage(_ message: GameCenter.DealCardsMessage) {
+        let cards: [TableCard] = message.cards;
+        self.table.addCards(cards);
+    }
+
+    private func handleFoundSetMessage(_ message: GameCenter.FoundSetMessage) {
+        let cards: [TableCard] = message.cards;
+        if (cards.count > 0) {
+            for card in cards {
+                if let card: TableCard = self.table.cards.find(card) {
+                    card.select(toggle: true);
+                }
+            }
+        }
     }
 
     private func simulateIncomingDealCardsMessage(_ cards: [TableCard]) {
@@ -118,6 +135,21 @@ public struct TestCardView: View {
 
         // Use our GameCenter function to receive, decode, and dispatch the message.
 
-        GameCenter.receiveMessage(data, dealCards: receiveDealCardsMessage);
+        GameCenter.receiveMessage(data, dealCards: handleDealCardsMessage);
+    }
+
+    private func simulateIncomingFoundSetMessage(_ cards: [TableCard]) {
+
+        // Create a test message.
+
+        let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: cards);
+
+        // Serialize the test message to a Data object.
+
+        let data: Data? = message.serialize();
+
+        // Use our GameCenter function to receive, decode, and dispatch the message.
+
+        GameCenter.receiveMessage(data, foundSet: handleFoundSetMessage);
     }
 }

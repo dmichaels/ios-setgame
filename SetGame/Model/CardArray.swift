@@ -481,7 +481,7 @@ public extension Array where Element : Card {
         }
     }
 
-    public func first(_ n: Int) -> [Element] {
+    func first(_ n: Int) -> [Element] {
         if (n > 0) {
             return Array(self.prefix(n));
         }
@@ -491,6 +491,10 @@ public extension Array where Element : Card {
         else {
             return [];
         }
+    }
+
+    func find(_ card: Element) -> Element? {
+        return self.first(where: { $0 == card });
     }
 
     /// Parses and returns a card array representing given comma-separated list of
