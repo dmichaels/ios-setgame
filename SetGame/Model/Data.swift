@@ -2,14 +2,7 @@ import SwiftUI
 
 public enum GameCenter {
 
-    public enum MessageType: String, Codable {
-        case playerReady
-        case dealCards
-        case foundSet
-    }
-
     public protocol Message: Codable {
-        var type: MessageType { get }
         var player: String { get }
         init?(_ data: Data?)
         func serialize() -> Data?
@@ -17,7 +10,6 @@ public enum GameCenter {
 
     public struct PlayerReadyMessage: Message {
 
-        public let type: MessageType;
         public let player: String
 
         public init?(_ data: Data?) {
@@ -25,14 +17,12 @@ public enum GameCenter {
         }
 
         public init(player: String, cards: [Card]) {
-            self.type   = MessageType.playerReady;
             self.player = player;
         }
     }
 
     public struct FoundSetMessage: Message {
 
-        public let type: MessageType;
         public let player: String;
         public let cardcodes: [String];
 
@@ -41,7 +31,6 @@ public enum GameCenter {
         }
 
         public init(player: String, cards: [Card]) {
-            self.type      = MessageType.foundSet;
             self.player    = player;
             self.cardcodes = cards.map { $0.codename };
         }
@@ -53,7 +42,6 @@ public enum GameCenter {
 
     public struct DealCardsMessage: Message {
 
-        public  let type: MessageType;
         public  let player: String;
         private let cardcodes: [String];
 
@@ -62,7 +50,6 @@ public enum GameCenter {
         }
 
         public init(player: String, cards: [Card]) {
-            self.type      = MessageType.dealCards;
             self.player    = player;
             self.cardcodes = cards.map { $0.codename };
         }
