@@ -113,6 +113,27 @@ public struct TestCardView: View {
     }
 
     private func handleFoundSetMessage(_ message: GameCenter.FoundSetMessage) {
+
+        let cards: [TableCard] = message.cards;
+
+        guard cards.isSet() else {
+            return;
+        }
+
+        let tablecards: [TableCard] = self.table.cards.find(cards);
+
+        guard tablecards.count == 3 else {
+            return;
+        }
+
+        tablecards.select();
+
+        let delay: Double = 0.5;
+
+        CardGridCallbacks.possibleSetSelected(table: self.table);
+    }
+
+    private func old_handleFoundSetMessage(_ message: GameCenter.FoundSetMessage) {
         let cards: [TableCard] = message.cards;
         if (cards.count > 0) {
             for card in cards {

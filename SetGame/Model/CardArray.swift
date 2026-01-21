@@ -497,6 +497,10 @@ public extension Array where Element : Card {
         return self.first(where: { $0 == card });
     }
 
+    func find(_ cards: [Element]) -> [Element] {
+        return self.filter { card in cards.contains(where: { $0 == card }) };
+    }
+
     /// Parses and returns a card array representing given comma-separated list of
     /// string representations of SET cards. See Card.from for details of format.
     /// Unparsable items in the list are ignored; if no parsable card formats

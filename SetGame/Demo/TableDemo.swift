@@ -59,7 +59,7 @@ public class TableDemo
             try? await Task.sleep(nanoseconds: 500_000_000)
         }
         for card in set {
-            CardGridView.cardTouchedDefault(card, table: self.table);
+            CardGridCallbacks.cardTouched(card, table: self.table);
         }
     }
 }
