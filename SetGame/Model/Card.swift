@@ -79,12 +79,12 @@ public class Card {
             && cards[0].number  .formsSetWith(cards[1].number,  cards[2].number);
     }
 
-    /// Returns the unique 'codename' for this card.
+    /// Returns the unique 'code' for this card.
     /// This can be used as a short name for this card and could conveniently
     /// be used to identify an (image) asset for the card.
     ///
-    var codename: String {
-        return color.codename + shape.codename + filling.codename + number.codename;
+    var code: String {
+        return color.code + shape.code + filling.code + number.code;
     }
 
     /// Parses a string representation of a SET card and returns its Card instance, or nil
@@ -111,7 +111,7 @@ public class Card {
     ///          2 = Two
     ///          3 = Three
     ///
-    /// Cards represented with these codes will also be used for the Card 'codename'
+    /// Cards represented with these codes will also be used for the Card 'code'
     /// which will be used to identify the name of the image asset to use in the UI;
     /// attributes being in the above order, i.e. color, shape, filling, number.
     ///
@@ -146,7 +146,7 @@ public class Card {
     ///
     func toString(_ verbose : Bool = false) -> String {
         return verbose ? "\(color)-\(shape)-\(filling)-\(number)"
-                       : "\(codename)"
+                       : "\(code)"
     }
 
     /// For debugging.
@@ -161,7 +161,7 @@ public class Card {
 ///
 extension Card: Identifiable, Equatable, Comparable, CustomStringConvertible {
 
-    public var id: String { self.codename; }
+    public var id: String { self.code; }
 
     public static func == (lhs: Card, rhs: Card) -> Bool {
         return (lhs.color   == rhs.color)   &&

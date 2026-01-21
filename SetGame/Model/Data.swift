@@ -32,7 +32,7 @@ public enum GameCenter {
 
         public init(player: String, cards: [Card]) {
             self.player    = player;
-            self.cardcodes = cards.map { $0.codename };
+            self.cardcodes = cards.map { $0.code };
         }
 
         public var cards: [TableCard] {
@@ -51,7 +51,7 @@ public enum GameCenter {
 
         public init(player: String, cards: [Card]) {
             self.player    = player;
-            self.cardcodes = cards.map { $0.codename };
+            self.cardcodes = cards.map { $0.code };
         }
 
         public var cards: [TableCard] {

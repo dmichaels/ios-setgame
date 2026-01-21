@@ -6,9 +6,9 @@ public enum CardNumber : Int, CaseIterable  {
     case Two   = 2;
     case Three = 3;
 
-    /// Returns the single  'codename' character/string for this attribute.
+    /// Returns the single  'code' character/string for this attribute.
     ///
-    var codename : String {
+    var code : String {
         switch self {
             case .One:   return "1";
             case .Two:   return "2";

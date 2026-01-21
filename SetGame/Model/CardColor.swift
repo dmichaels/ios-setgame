@@ -6,9 +6,9 @@ public enum CardColor : Int, CaseIterable {
     case Purple;
     case Green;
 
-    /// Returns the single  'codename' character/string for this attribute.
+    /// Returns the single  'code' character/string for this attribute.
     ///
-    var codename : String {
+    var code : String {
         switch self {
             case .Red:    return "R";
             case .Purple: return "P";

@@ -6,9 +6,9 @@ public enum CardShape : Int, CaseIterable {
     case Diamond;
     case Squiggle;
 
-    /// Returns the single  'codename' character/string for this attribute.
+    /// Returns the single  'code' character/string for this attribute.
     ///
-    var codename : String {
+    var code : String {
         switch self {
             case .Oval:     return "O";
             case .Diamond:  return "D";

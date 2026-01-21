@@ -183,10 +183,10 @@ public struct CardView : View {
         // - See ios-setgame/etc/alternate_cards/alternate_cards_no_colors.py
         //
         switch alternate ?? 0 {
-            case 0:  return card.codename;
-            case 1:  return "ALTD_\(card.codename)";
-            case 2:  return "ALTNC_\(card.codename)";
-            default: return card.codename;
+            case 0:  return card.code;
+            case 1:  return "ALTD_\(card.code)";
+            case 2:  return "ALTNC_\(card.code)";
+            default: return card.code;
         }
     }
 }

@@ -105,10 +105,10 @@ public struct CardView : View {
         //
         let alternateCards: Int = self.alternate ?? self.table.settings.alternateCards;
         switch alternateCards {
-            case 0:  return card.codename;
-            case 1:  return "ALTD_\(card.codename)";
-            case 2:  return "ALTNC_\(card.codename)";
-            default: return card.codename;
+            case 0:  return card.code;
+            case 1:  return "ALTD_\(card.code)";
+            case 2:  return "ALTNC_\(card.code)";
+            default: return card.code;
         }
     }
 }

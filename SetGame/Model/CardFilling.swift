@@ -6,9 +6,9 @@ public enum CardFilling : Int, CaseIterable {
     case Stripped;
     case Solid;
 
-    /// Returns the single  'codename' character/string for this attribute.
+    /// Returns the single  'code' character/string for this attribute.
     ///
-    var codename : String {
+    var code : String {
         switch self {
             case .Hollow:   return "H";
             case .Stripped: return "T";
