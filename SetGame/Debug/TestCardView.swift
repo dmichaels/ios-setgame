@@ -107,7 +107,7 @@ public struct TestCardView: View {
     }
 
     private func receiveMessage(_ message: Data?) {
-        if let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(message!) {
+        if let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(message) {
             self.receiveDealCardsMessage(message);
         }
     }
