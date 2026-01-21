@@ -106,15 +106,18 @@ public struct TestCardView: View {
         self.table.addCards(message.cards);
     }
 
-    private func receiveMessage(_ message: Data?) {
-        if let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(message) {
-            self.receiveDealCardsMessage(message);
-        }
-    }
-
     private func simulateIncomingDealCardsMessage(_ cards: [TableCard]) {
+
+        // Create a test message.
+
         let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(player: "A", cards: cards);
+
+        // Serialize the test message to a Data object.
+
         let data: Data? = message.serialize();
-        self.receiveMessage(data);
+
+        // Use our GameCenter function to receive, decode, and dispatch the message.
+
+        GameCenter.receiveMessage(data, dealCards: receiveDealCardsMessage);
     }
 }
