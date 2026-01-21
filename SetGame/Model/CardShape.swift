@@ -52,6 +52,7 @@ public enum CardShape : Int, CaseIterable {
                  "oval":      return Oval;
             case "q",
                  "squiggle",
+                 "squiggles",
                  "squiggled": return Squiggle;
             default:          return nil;
         }
