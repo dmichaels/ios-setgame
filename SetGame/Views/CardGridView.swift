@@ -5,6 +5,7 @@ public struct CardGridView: View {
     @ObservedObject var table: Table;
     @ObservedObject var settings: Settings;
     var materialize: Bool = true;
+    var materializeDelay: Double = 0;
 
     var spacing: CGFloat = 6;
     var marginx: CGFloat = 6;
@@ -40,10 +41,18 @@ public struct CardGridView: View {
                 // in the table.cards list; for example when doing add-card after
                 // new-game where the card added was in a previous game.
                 //
+                // The materializeDelay argument to CardView is the amount of
+                // time (seconds) to wait until the materialization (fading in)
+                // of the card begins; we use a smalle random amount of time
+                // here so the cards come into being in a staggered, visually
+                // interesting, fashion.
+                //
                 ForEach(table.cards, id: \.uid) { card in
                     CardView(
                         card,
                         materialize: materialize,
+                        materializeDelay: materializeDelay > 0 ?
+                                          materializeDelay : Defaults.Effects.materializeDelay,
                         askew: settings.cardsAskew,
                         alternate: settings.alternateCards
                     ) { card in
@@ -65,10 +74,10 @@ public struct CardGridView: View {
             // the selected SET show as selected AFTER the blinking is done and
             // BEFORE we replace them with new cards (via resolve).
             //
-            delay: Defaults.Effects.selectBeforeSetDelay,
+            delay: Defaults.Effects.selectBeforeDelay,
             onSet: { cards, resolve in
                 cards.blink {
-                    Delay(by: Defaults.Effects.selectAfterSetDelay) {
+                    Delay(by: Defaults.Effects.selectAfterDelay) {
                         resolve();
                     }
                 }

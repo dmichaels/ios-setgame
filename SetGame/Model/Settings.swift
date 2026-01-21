@@ -33,8 +33,8 @@ public class Defaults {
     public static let debugView: Bool                   = true;
 
     public struct Effects {
-        public static let selectBeforeSetDelay: Double  = 0.80;
-        public static let selectAfterSetDelay: Double   = 0.40;
+        public static let selectBeforeDelay: Double     = 0.80;
+        public static let selectAfterDelay: Double      = 0.40;
         public static let blinkCount: Int               = 4;
         public static let blinkInterval: Double         = 0.15;
         public static let flipCount: Int                = 2;
@@ -44,6 +44,7 @@ public class Defaults {
         public static let shakeDuration: Double         = 0.90;
         public static let materializeSpeed: Double      = 0.70;
         public static let materializeElasticity: Double = 0.40;
+        public static var materializeDelay: Double { Double.random(in: 0...0.8) }
     }
 }
 
