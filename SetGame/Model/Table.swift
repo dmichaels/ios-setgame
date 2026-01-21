@@ -545,7 +545,7 @@ public class Table: ObservableObject {
         return (self.deck.count == 0) && !self.containsSet();
     }
 
-    // New for testing for TestCardView ...
+    // New for testing for CardViewDebug ...
 
     public func removeCard(at index: Int) {
         if (self.cards.count > index) {

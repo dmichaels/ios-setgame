@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct TestCardView: View {
+public struct CardViewDebug: View {
 
     @ObservedObject var settings: Settings;
     @StateObject var table: Table;
@@ -15,11 +15,11 @@ public struct TestCardView: View {
             CardGridView(table: table, settings: settings)
             CardControls(table: table)
             TextBoxWithButton(label: "DEAL") { value in
-                let cards: [TableCard] = TestCardView.toCards(value);
+                let cards: [TableCard] = CardViewDebug.toCards(value);
                 self.simulateIncomingDealCardsMessage(cards);
             }
             TextBoxWithButton(label: "SET!") { value in
-                let cards: [TableCard] = TestCardView.toCards(value);
+                let cards: [TableCard] = CardViewDebug.toCards(value);
                 self.simulateIncomingFoundSetMessage(cards);
             }
         }

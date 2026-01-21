@@ -217,7 +217,7 @@ public struct SettingsView: View {
             }
             if (Defaults.debugView) {
                 navigationRow(" Debug View", icon: "ant",
-                              destination: TestCardView(settings: self.settings), small: true)
+                              destination: CardViewDebug(settings: self.settings), small: true)
             }
         }
         .navigationTitle("\(Defaults.title) Settings")
