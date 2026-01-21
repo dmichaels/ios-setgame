@@ -551,9 +551,7 @@ public class Table: ObservableObject {
     }
 
     public func removeCards() {
-        if (self.cards.count > 0) {
-            self.cards.removeAll();
-        }
+        self.cards.removeAll();
     }
 
     public func swapCards(at i: Int, and j: Int) {
