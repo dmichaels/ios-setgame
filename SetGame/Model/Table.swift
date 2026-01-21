@@ -53,8 +53,8 @@ public class Table: ObservableObject {
                 self.addCards(cards);
             }
             //
-            // Only bother making it look good if the cards-per-row is 4 (the default)
-            // or 5; if cards-per-row is 3 it already falls out to look good automatically.
+            // Only bother making it look good if the cards-per-row is four (the default) or
+            // five; if cards-per-row is three it already falls out to look good automatically.
             //
             var displayCardCount: Int = self.settings.displayCardCount;
             if ((self.settings.cardsPerRow == 4) && (displayCardCount < 11)) {
@@ -121,7 +121,7 @@ public class Table: ObservableObject {
 
         if (self.selectedCards().count >= 3) {
             //
-            // NEVER allowed to have more than 3 cards selected; EXCEPT for the above special
+            // NEVER allowed to have more than three cards selected; EXCEPT for the above special
             // case of showingCardsWhichArePartOfSet or showingOneRandomSet, as a result of
             // calling selectAllCardsWhichArePartOfSet or selectOneRandomSet.
             //
@@ -467,9 +467,9 @@ public class Table: ObservableObject {
             //
             if (ncards >= 3) {
                 //
-                // Trivial case; no SETs on the table and adding 3 or more
-                // cards; just try to ensure the random 3+ cards taken
-                // from the deck contain a SET.
+                // Trivial case; no SETs on the table and adding three
+                // or more cards; just try to ensure the random three
+                // plus cards taken from the deck contain a SET.
                 //
                 self.addCards(self.deck.takeRandomCards(ncards, plantSet: true));
             }
@@ -507,8 +507,8 @@ public class Table: ObservableObject {
     }
 
     /// Populate the table cards from the deck up to the displayCardCount.
-    /// If the moreCardsIfNoSet flag is set then if we don't have a SET on
-    /// the table, then add up to 3 more cards.
+    /// If the moreCardsIfNoSet flag is set then if we don't have a SET
+    /// on the table, then add up to three more cards.
     ///
     private func fillTable(moveSetFront: Bool? = nil, displayCardCount: Int? = nil) {
         let displayCardCount: Int = displayCardCount ?? self.settings.displayCardCount;
