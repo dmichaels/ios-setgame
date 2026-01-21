@@ -175,17 +175,18 @@ public class Table: ObservableObject {
             self.selectCard(card);
         }
 
-        self.possibleSetTouched(self.selectedCards(), delay: delay,
-                                onSet: onSet, onNoSet: onNoSet, onCardsMoved: onCardsMoved);
+        self.possibleSetSelected(
+            delay: delay, onSet: onSet, onNoSet: onNoSet, onCardsMoved: onCardsMoved);
     }
 
-    public func possibleSetTouched(_ cards: [TableCard],
-                                     delay: Double? = nil,
-                                     onSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
-                                     onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
-                                     onCardsMoved: (([TableCard]) -> Void)? = nil) {
+    public func possibleSetSelected(delay: Double? = nil,
+                                    onSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
+                                    onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
+                                    onCardsMoved: (([TableCard]) -> Void)? = nil) {
 
-        guard cards.count == 3 else {
+        let selectedCards: [TableCard] = self.selectedCards();
+
+        guard selectedCards.count == 3 else {
             //
             // We don't even have three cards selected; do nothing.
             //
@@ -212,9 +213,9 @@ public class Table: ObservableObject {
         // MUST call the given resolve function at the end of its processing.
 
         Delay(by: delay) {
-            if (cards.isSet()) {
+            if (selectedCards.isSet()) {
                 if let onSet = onSet {
-                    onSet(cards, resolve);
+                    onSet(selectedCards, resolve);
                 }
                 else {
                     resolve();
@@ -222,7 +223,7 @@ public class Table: ObservableObject {
             }
             else {
                 if let onNoSet = onNoSet {
-                    onNoSet(cards, resolve);
+                    onNoSet(selectedCards, resolve);
                 }
                 else {
                     resolve();
