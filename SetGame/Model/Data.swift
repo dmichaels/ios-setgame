@@ -46,9 +46,9 @@ public enum GameCenter {
             self.cardcodes = cards.map { $0.codename };
         }
 
-        public lazy var cards: [Card] = {
-            return GameCenter.toCards(self.cardcodes);
-        }()
+        public var cards: [TableCard] {
+            return GameCenter.toCards(self.cardcodes).map { TableCard($0) }
+        }
     }
 
     public struct DealCardsMessage: Message {
@@ -67,9 +67,9 @@ public enum GameCenter {
             self.cardcodes = cards.map { $0.codename };
         }
 
-        public lazy var cards: [Card] = {
-            return GameCenter.toCards(self.cardcodes);
-        }()
+        public var cards: [TableCard] {
+            return GameCenter.toCards(self.cardcodes).map { TableCard($0) }
+        }
     }
 
     private static func toJson(_ data: GameCenter.Message) -> Data? {

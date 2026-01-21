@@ -15,15 +15,25 @@ public struct TestCardView: View {
             CardGridView(table: table, settings: settings)
             CardControls(table: table)
             TextBoxWithButton() { value in
+                let cards: [TableCard] = TestCardView.toCards(value);
+                self.simulateIncomingDealCardsMessage(cards);
+                /*
+                for card in cards {
+                    self.table.addCard(card);
+                }
+                */
+/*
                 for codename in value.split() {
                     if let card: TableCard = TableCard(codename) {
                         self.table.addCard(card);
+                        self.simulateIncomingDealCardsMessage(cards: [card]);
                         // let deck: TableDeck = TableDeck();
                         // if let card: TableCard = deck.takeCard(card) {
                         //     self.table.addCard(card);
                         // }
                     }
                 }
+*/
             }
         }
         .onAppear {
@@ -97,5 +107,32 @@ public struct TestCardView: View {
                     .buttonStyle(.borderedProminent)
             }.padding()
         }
+    }
+
+    private static func toCards(_ cardcodes: String) -> [TableCard] {
+        var cards: [TableCard] = [];
+        for cardcode in cardcodes.split() {
+            if let card: TableCard = TableCard(cardcode) {
+                cards.add(card);
+            }
+        }
+        return cards;
+    }
+
+    private func receiveDealCardsMessage(_ message: GameCenter.DealCardsMessage) {
+        self.table.addCards(message.cards);
+    }
+
+    private func receiveMessage(_ message: Data?) {
+        // if let message: GameCenter.DealCardsMessage = message as? GameCenter.DealCardsMessage {
+        if let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(message!) {
+            self.receiveDealCardsMessage(message);
+        }
+    }
+
+    private func simulateIncomingDealCardsMessage(_ cards: [TableCard]) {
+        let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(player: "A", cards: cards);
+        let data: Data? = message.serialize();
+        self.receiveMessage(data);
     }
 }
