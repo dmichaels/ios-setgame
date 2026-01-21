@@ -130,17 +130,6 @@ public struct TestCardView: View {
         CardGridCallbacks.possibleSetSelected(table: self.table);
     }
 
-    private func old_handleFoundSetMessage(_ message: GameCenter.FoundSetMessage) {
-        let cards: [TableCard] = message.cards;
-        if (cards.count > 0) {
-            for card in cards {
-                if let card: TableCard = self.table.cards.find(card) {
-                    card.select(toggle: true);
-                }
-            }
-        }
-    }
-
     private func simulateIncomingDealCardsMessage(_ cards: [TableCard]) {
 
         // Create a test message.
