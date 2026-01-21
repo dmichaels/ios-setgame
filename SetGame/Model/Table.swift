@@ -175,19 +175,19 @@ public class Table: ObservableObject {
             self.selectCard(card);
         }
 
-        let selectedCards: [TableCard] = self.selectedCards();
+        self.possibleSetTouched(self.selectedCards(), delay: delay,
+                                onSet: onSet, onNoSet: onNoSet, onCardsMoved: onCardsMoved);
+    }
 
-        guard selectedCards.count == 3 else {
+    public func possibleSetTouched(_ cards: [TableCard],
+                                     delay: Double? = nil,
+                                     onSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
+                                     onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
+                                     onCardsMoved: (([TableCard]) -> Void)? = nil) {
+
+        guard cards.count == 3 else {
             //
             // We don't even have three cards selected; do nothing.
-            // we still call the given callback (with nil argument meaning
-            // three cards were not even selected); this allows the caller
-            // to do something in this case, like make a tapping sound.
-            //
-            // The resolve function (see comments below) to this callback currently
-            // does nothing; but maintain the documented requirement that it needs
-            // to be called by the caller at the end of its processing, just in
-            // case we later decide something else needs to be done/resolved.
             //
             return;
         }
@@ -212,9 +212,9 @@ public class Table: ObservableObject {
         // MUST call the given resolve function at the end of its processing.
 
         Delay(by: delay) {
-            if (selectedCards.isSet()) {
+            if (cards.isSet()) {
                 if let onSet = onSet {
-                    onSet(selectedCards, resolve);
+                    onSet(cards, resolve);
                 }
                 else {
                     resolve();
@@ -222,7 +222,7 @@ public class Table: ObservableObject {
             }
             else {
                 if let onNoSet = onNoSet {
-                    onNoSet(selectedCards, resolve);
+                    onNoSet(cards, resolve);
                 }
                 else {
                     resolve();
