@@ -136,8 +136,6 @@ public class TableCard : Card, ObservableObject {
 
     public func reset() {
         self.selected = false;
-        self.materializedOnce = false;
-
         self.blinkTrigger = 0;
         self.blinkCount = 0;
         self.blinkInterval = 0;

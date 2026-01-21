@@ -10,24 +10,23 @@ public class Table: ObservableObject {
     private var settings: Settings;
 
     public struct State {
-
-        public var startTime: Date                     = Date();
-        public var partialSetSelected: Bool            = false;
-        public var setsFoundCount: Int                 = 0;
-        public var setJustFound: Bool                  = false;
-        public var setJustFoundNot: Bool               = false;
-        public var setsLastFound: [[TableCard]]        = [];
-        public var showingCardsWhichArePartOfSet: Bool = false;
-        public var showingOneRandomSet: Bool           = false;
-        public var showingOneRandomSetLast: Int?       = nil;
-
+        public private(set) var startTime: Date                     = Date();
+        public              var partialSetSelected: Bool            = false;
+        public              var setsFoundCount: Int                 = 0;
+        public              var setJustFound: Bool                  = false;
+        public              var setJustFoundNot: Bool               = false;
+        public              var setsLastFound: [[TableCard]]        = [];
+        fileprivate         var showingCardsWhichArePartOfSet: Bool = false;
+        fileprivate         var showingOneRandomSet: Bool           = false;
+        fileprivate         var showingOneRandomSetLast: Int?       = nil;
+        //
         // This resolving flag is ONLY used to disable input while blinking the cards after
         // a SET is found (see allowsHitTesting in TableView); there should be a better way.
         //
-        fileprivate var resolving: Bool = false;
+        fileprivate var resolving: Bool                             = false;
     }
 
-    @Published private(set)        var cards: [TableCard];
+    @Published public private(set) var cards: [TableCard];
     @Published public private(set) var state: State;
                private             var deck: TableDeck;
 
