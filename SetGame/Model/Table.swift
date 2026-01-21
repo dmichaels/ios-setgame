@@ -217,8 +217,8 @@ public class Table: ObservableObject {
                 if let onSet = onSet {
                     //
                     // IMPORTANT NOTE:
-                    // The given onSet function implementation is responsible
-                    // for and MUST call the passed resolve function or else chaos!
+                    // The given onSet function implementation is responsible for
+                    // and MUST call the passed resolve function or else undefined!
                     //
                     onSet(selectedCards, resolve);
                 }
@@ -230,8 +230,8 @@ public class Table: ObservableObject {
                 if let onNoSet = onNoSet {
                     //
                     // IMPORTANT NOTE:
-                    // The given onNoSet function implementation is responsible
-                    // for and MUST call the passed resolve function or else chaos!
+                    // The given onNoSet function implementation is responsible for
+                    // and MUST call the passed resolve function or else undefined!
                     //
                     onNoSet(selectedCards, resolve);
                 }
