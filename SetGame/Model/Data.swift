@@ -18,7 +18,6 @@ public enum GameCenter {
     public struct PlayerReadyMessage: Message {
         public let type: MessageType = .playerReady
         public let player: String
-        public func serialize() -> Data? { return GameCenter.toJson(self); }
         public init?(_ data: Data) {
             if let message: PlayerReadyMessage = GameCenter.fromJson(data, GameCenter.PlayerReadyMessage.self) {
                 self.player = message.player;
@@ -34,10 +33,6 @@ public enum GameCenter {
         public  let type: MessageType;
         public  let player: String;
         private let cardcodes: [String];
-
-        public func serialize() -> Data? {
-            return GameCenter.toJson(self);
-        }
 
         public init?(_ data: Data) {
             if let message: FoundSetMessage = GameCenter.fromJson(data, GameCenter.FoundSetMessage.self) {
@@ -65,9 +60,6 @@ public enum GameCenter {
             return GameCenter.toCards(self.cardcodes);
         }()
 
-        public func serialize() -> Data? {
-            return GameCenter.toJson(self);
-        }
 
         public init?(_ data: Data) {
             if let message: DealCardsMessage = GameCenter.fromJson(data, GameCenter.DealCardsMessage.self) {
@@ -112,5 +104,11 @@ public enum GameCenter {
             }
         }
         return cards;
+    }
+}
+
+private extension GameCenter.Message {
+    public func serialize() -> Data? {
+        return GameCenter.toJson(self)
     }
 }
