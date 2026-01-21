@@ -1,56 +1,11 @@
 import SwiftUI
 
-/*
-public class XGameMessage: Codable {
-
-    public let type: String;
-    public let player: String;
-    public let payload: [String: String];
-
-    public init(type: String, player: String, payload: [String: String]) {
-        self.type = type;
-        self.player = player;
-        self.payload = payload;
-    }
-
-    public static func toJson(_ data: XGameMessage) -> Data? {
-        do {
-            return try JSONEncoder().encode(data);
-        }
-        catch {
-            return nil;
-        }
-    }
-
-    public static func fromJson<T: Decodable>(_ data: Data, _ type: T.Type) -> T? {
-        do {
-            return try JSONDecoder().decode(type, from: data);
-        } catch {
-            return nil;
-        }
-    }
-}
-
-class GameMessageDealCards: XGameMessage {
-
-    public func toJson() -> Data? {
-        return XGameMessage.toJson(self);
-    }
-
-    public static func fromJson(_ data: Data) -> GameMessageDealCards? {
-        return XGameMessage.fromJson(data, GameMessageDealCards.self);
-    }
-}
-*/
-
-////
-
 public enum GameCenter {
 
     public enum MessageType: String, Codable {
         case playerReady
         case dealCards
-        case notifySet
+        case foundSet
     }
 
     public protocol Message: Codable {
@@ -58,6 +13,78 @@ public enum GameCenter {
         var player: String { get }
         func serialize() -> Data?
         init?(_ data: Data)
+    }
+
+    public struct PlayerReadyMessage: Message {
+        public let type: MessageType = .playerReady
+        public let player: String
+        public func serialize() -> Data? { return GameCenter.toJson(self); }
+        public init?(_ data: Data) {
+            if let message: PlayerReadyMessage = GameCenter.fromJson(data, GameCenter.PlayerReadyMessage.self) {
+                self.player = message.player;
+            }
+            else {
+                return nil;
+            }
+        }
+    }
+
+    public struct FoundSetMessage: Message {
+
+        public  let type: MessageType;
+        public  let player: String;
+        private let cardcodes: [String];
+
+        public func serialize() -> Data? {
+            return GameCenter.toJson(self);
+        }
+
+        public init?(_ data: Data) {
+            if let message: FoundSetMessage = GameCenter.fromJson(data, GameCenter.FoundSetMessage.self) {
+                self.type      = message.type;
+                self.player    = message.player;
+                self.cardcodes = message.cardcodes;
+            }
+            else {
+                return nil;
+            }
+        }
+
+        public lazy var cards: [Card] = {
+            return GameCenter.toCards(self.cardcodes);
+        }()
+    }
+
+    public struct DealCardsMessage: Message {
+
+        public  let type: MessageType;
+        public  let player: String;
+        private let cardcodes: [String];
+
+        public lazy var cards: [Card] = {
+            return GameCenter.toCards(self.cardcodes);
+        }()
+
+        public func serialize() -> Data? {
+            return GameCenter.toJson(self);
+        }
+
+        public init?(_ data: Data) {
+            if let message: DealCardsMessage = GameCenter.fromJson(data, GameCenter.DealCardsMessage.self) {
+                self.type      = message.type;
+                self.player    = message.player;
+                self.cardcodes = message.cardcodes;
+            }
+            else {
+                return nil;
+            }
+        }
+
+        public init(player: String, cards: [Card]) {
+            self.type      = MessageType.dealCards;
+            self.player    = player;
+            self.cardcodes = cards.map { $0.codename };
+        }
     }
 
     private static func toJson(_ data: GameCenter.Message) -> Data? {
@@ -77,39 +104,13 @@ public enum GameCenter {
         }
     }
 
-    public struct PlayerReadyMessage: Message {
-        public let type: MessageType = .playerReady
-        public let player: String
-        public func serialize() -> Data? { return GameCenter.toJson(self); }
-        public init?(_ data: Data) {
-            if let message: PlayerReadyMessage = GameCenter.fromJson(data, GameCenter.PlayerReadyMessage.self) {
-                self.player = message.player;
-            }
-            else {
-                return nil;
+    private static func toCards(_ codes: [String]) -> [Card] {
+        var cards: [Card] = [];
+        for code in codes {
+            if let card: Card = Card(code) {
+                cards.append(card);
             }
         }
-    }
-
-    public struct DealCardsMessage: Message {
-        public let type: MessageType;
-        public let player: String;
-        public let cards: [String];
-        public func serialize() -> Data? { return GameCenter.toJson(self); }
-        public init?(_ data: Data) {
-            if let message: DealCardsMessage = GameCenter.fromJson(data, GameCenter.DealCardsMessage.self) {
-                self.type   = message.type;
-                self.player = message.player;
-                self.cards  = message.cards;
-            }
-            else {
-                return nil;
-            }
-        }
-        public init(player: String, cards: [Card]) {
-            self.type = .dealCards
-            self.player = player
-            self.cards = cards.map { $0.codename }
-        }
+        return cards;
     }
 }
