@@ -98,10 +98,4 @@ public struct TestCardView: View {
             }.padding()
         }
     }
-
-    private static func split(_ input: String, delimiters: String = " ,./") -> [String] {
-        input.components(separatedBy: CharacterSet(charactersIn: delimiters))
-            .map { $0.trimmingCharacters(in: .whitespaces) }
-            .filter { !$0.isEmpty }
-    }
 }
