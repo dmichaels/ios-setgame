@@ -212,6 +212,10 @@ public class Table: ObservableObject {
         // Note that the caller, if the callback argument is specified,
         // MUST call the given resolve function at the end of its processing.
 
+        // TODO:
+        // Here is where (I think), for GameCenter multi-player
+        // game mode, we will send a FoundSetMessage to the host.
+
         Delay(by: delay) {
             if (selectedCards.isSet()) {
                 if let onSet = onSet {
