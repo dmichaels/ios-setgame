@@ -129,6 +129,7 @@ public class TableCard : Card, ObservableObject {
             }
             return;
         }
+        print("MATERIALIZING> \(self) delay: \(delay) speed: \(materializeSpeed) once: \(materializeSpeed) mdelay: \(materializeSpeed)")
         self.materializeSpeed = speed > 0 ? speed : Defaults.Effects.materializeSpeed;
         self.materializeElasticity = elasticity > 0 ? elasticity : Defaults.Effects.materializeElasticity;
         self.materializeTrigger += 1;

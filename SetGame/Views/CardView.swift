@@ -8,6 +8,11 @@ public struct CardView : View {
                     var alternate: Int?                         = nil;
                     var touchedCallback: ((TableCard) -> Void)? = nil;
 
+    public enum OnAppearEffect {
+        case none;
+        case materialize;
+    }
+
     private struct Defaults {
         fileprivate static let materializeDelay: Double = 0.4;
     }
@@ -16,10 +21,12 @@ public struct CardView : View {
     @State private var blinkoff: Bool;
     @State private var shakeToken: CGFloat;
     @State private var materializing: Bool;
+    @State private var materializeDelay: Double?;
 
     public init(_ card: TableCard,
                   selectable: Bool = false,
-                  materialize: Bool = false,
+                  // materialize: Bool = false,
+                  materialize: OnAppearEffect = .none,
                   materializeDelay: Double? = nil,
                   askew: Bool = false,
                   alternate: Int? = nil,
@@ -34,16 +41,21 @@ public struct CardView : View {
         self.blinking = false;
         self.blinkoff = false;
         self.shakeToken = 0;
-        self._materializing = State(initialValue: materialize)
+        // self._materializing = State(initialValue: materialize)
+        self.materializeDelay = materializeDelay;
+        self._materializing = State(initialValue: materialize == .materialize);
 
+/*
         if (materialize) {
             card.materialize(once: true, delay: materializeDelay);
         }
+*/
     }
 
     public init(_ card: Card,
                   selectable: Bool = false,
-                  materialize: Bool = false,
+                  // materialize: Bool = false,
+                  materialize: OnAppearEffect = .none,
                   materializeDelay: Double? = nil,
                   askew: Bool = false,
                   alternate: Int? = nil,
@@ -136,10 +148,24 @@ public struct CardView : View {
             // 
 			.flip(card.flipTrigger, count: card.flipCount, duration: card.flipDuration, left: card.flipLeft)
         }
+/*
         .onChange(of: card.materializeTrigger) { value in
             self.materializing = true;
             DispatchQueue.main.asyncAfter(deadline: .now() + Defaults.materializeDelay) {
                 self.materializing = false;
+            }
+        }
+*/
+        .onChange(of: card.materializeTrigger) { value in
+            print("CardView.onChange.materializeTrigger> \(card) delay: \(self.materializeDelay)")
+            self.materializing = true;
+            // gpt DispatchQueue.main.asyncAfter(deadline: .now() + Defaults.materializeDelay) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + (self.materializeDelay ?? 0)) {
+                print("CardView.onChange.materializeTrigger> \(card) dispatch")
+                withAnimation(.spring(response: card.materializeSpeed,
+                                      dampingFraction: card.materializeElasticity)) {
+                    materializing = false;
+                }
             }
         }
         .onChange(of: card.blinkTrigger) { _ in
@@ -170,6 +196,18 @@ public struct CardView : View {
                 }
             }
             blink();
+        }
+        .onAppear {
+            guard self.materializing else { return }
+            print("CardView.onAppear> \(card) delay: \(self.materializeDelay)")
+            // gpt DispatchQueue.main.async {
+            DispatchQueue.main.asyncAfter(deadline: .now() + (self.materializeDelay ?? 0)) {
+                print("CardView.onAppear> \(card) dispatch")
+                withAnimation(.spring(response: card.materializeSpeed,
+                                      dampingFraction: card.materializeElasticity)) {
+                    materializing = false
+                }
+            }
         }
     }
 

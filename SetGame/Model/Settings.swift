@@ -45,7 +45,7 @@ public class Defaults {
         public static let shakeDuration: Double         = 0.90;
         public static let materializeSpeed: Double      = 0.70;
         public static let materializeElasticity: Double = 0.40;
-        public static var materializeDelay: Double { Double.random(in: 0...0.8) }
+        public static var materializeRandomDelay: Double { Double.random(in: 0.1...0.8) }
     }
 }
 

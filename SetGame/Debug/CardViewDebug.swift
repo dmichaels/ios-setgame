@@ -12,7 +12,7 @@ public struct CardViewDebug: View {
 
     public var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            CardGridView(table: table, settings: settings)
+            CardGridView(table: table, settings: settings, materialize: true, materializeDelay: 0.4)
             CardControls(table: table)
             TextBoxWithButton(label: "DEAL") { value in
                 let cards: [TableCard] = CardViewDebug.toCards(value);
@@ -47,6 +47,7 @@ public struct CardViewDebug: View {
                 Control(label: "Select") { self.table.cards.select(toggle: true) }
                 Control(label: "Blink")  { self.table.cards.blink(count: 5, interval: 0.15) }
                 Control(label: "Flip")   { self.table.cards.flip() }
+                // Control(label: "Fade")   { self.table.cards.materialize(speed: 0.9) }
                 Control(label: "Fade")   { self.table.cards.materialize(speed: 0.9) }
                 Control(label: "Shake")  { self.table.cards.shake() }
                 Control(label: "Move")   { self.move() }.disabled(!self.moveEnabled)

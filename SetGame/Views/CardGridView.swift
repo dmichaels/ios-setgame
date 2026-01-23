@@ -50,9 +50,10 @@ public struct CardGridView: View {
                 ForEach(table.cards, id: \.uid) { card in
                     CardView(
                         card,
-                        materialize: materialize,
+                        // materialize: materialize,
+                        materialize: materialize ? .materialize : .none,
                         materializeDelay: materializeDelay > 0 ?
-                                          materializeDelay : Defaults.Effects.materializeDelay,
+                                          materializeDelay : Defaults.Effects.materializeRandomDelay,
                         askew: settings.cardsAskew,
                         alternate: settings.alternateCards
                     ) { card in
