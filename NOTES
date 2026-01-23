@@ -1,1 +1,9 @@
-current working branch 2026-01-23: game-center-20260109
+DEVELOPMENT NOTES
+
+> 2026-01-22:
+ - Game Center related development.
+   Branch (off main): game-center-20260109
+
+> 2026-01-23:
+ - Addressing iOS 18 animation regressions with workarounds with help from ChatGPT.
+   Branch (off game-center-20260109): game-center-20260109-with-possible-ios-18-animation-regression-fixes
