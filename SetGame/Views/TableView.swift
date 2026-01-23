@@ -9,7 +9,6 @@ public struct TableView: View {
     @ObservedObject var table: Table;
     @ObservedObject var settings: Settings;
     @ObservedObject var feedback: Feedback;
- // @ObservedObject private var gameCenter = GameCenterManager.shared;
 
     let marginx: CGFloat = 6;
     let spacing: CGFloat = 6;
@@ -21,6 +20,7 @@ public struct TableView: View {
             StatusBar(marginx: marginx)
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)
+            DebugView()
             MultiPlayerGameButton()
         }
         .allowsHitTesting(!self.table.disabled)
@@ -51,13 +51,64 @@ public struct TableView: View {
             }
         }
     }
+}
 
-    private struct MultiPlayerGameButton: View {
+private struct DebugView: View {
+    func receiveMessages(for playerID: String) async -> [String] {
+        let url = URL(string: "http://127.0.0.1:5000/receive/\(playerID)")!
+        print(url)
+        let (data, _) = try! await URLSession.shared.data(from: url)
+        print("RAW-DATA")
+        print(data)
+        print(type(of: data))
+        let s = String(data: data, encoding: .utf8)
+        print("STRING-DATA")
+        print(s)
+        return (try? JSONDecoder().decode([String].self, from: data)) ?? []
+    }
+    func sendMessage(_ msg: String, to playerID: String) async {
+        let url = URL(string: "http://127.0.0.1:5000/send")!
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let payload = ["to": playerID, "message": msg]
+        req.httpBody = try? JSONEncoder().encode(payload)
+        let _ = try? await URLSession.shared.data(for: req)
+    }
+    var body: some View { HStack {
+        Button {
+Task {
+            print("HTTP-CALL")
+            let data = await receiveMessages(for: "A")
+            print("HTTP-CALL-DONE")
+            print(data)
+}
+        } label: {
+            Text("HTTP-GET")
+        }
+        Button { Task {
+            print("HTTP-POST")
+            let cards: [TableCard] = [TableCard("ROS3")!];
+            let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: cards);
+            if let data: Data = message.serialize() {
+                if let stringToSend = String(data: data, encoding: .utf8) {
+                    let data = await sendMessage(stringToSend, to: "A")
+                    print("HTTP-POST-DONE")
+                    print(data)
+                }
+            }
+        } } label: {
+            Text("HTTP-POST")
+        }
+    } }
+}
+
+private struct MultiPlayerGameButton: View {
+    @ObservedObject private var gameCenter = GameCenterManager.shared;
         var body: some View {
-            if (false) {
-                // PlayButtonView(gameCenter: gameCenter)
-                //     .padding(.horizontal)
+            if (true) {
+                PlayButtonView(gameCenter: gameCenter)
+                    .padding(.horizontal)
             }
         }
     }
-}

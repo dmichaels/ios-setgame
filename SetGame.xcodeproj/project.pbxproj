@@ -29,6 +29,12 @@
 		9867E1412F217D4200CB221F /* CardGridCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1402F217D4200CB221F /* CardGridCallbacks.swift */; };
 		9867E1432F21821800CB221F /* CardArrayDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1422F21821800CB221F /* CardArrayDebug.swift */; };
 		9867E1452F2182AB00CB221F /* CardViewDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1442F2182AB00CB221F /* CardViewDebug.swift */; };
+		9867E14B2F21CF4300CB221F /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1472F21CF4300CB221F /* GameCenterManager.swift */; };
+		9867E14C2F21CF4300CB221F /* PlayButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1482F21CF4300CB221F /* PlayButtonView.swift */; };
+		9867E14D2F21CF4300CB221F /* GameCenterAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1462F21CF4300CB221F /* GameCenterAuthentication.swift */; };
+		9867E14E2F21CF4300CB221F /* UIApplication+TopMostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E14A2F21CF4300CB221F /* UIApplication+TopMostViewController.swift */; };
+		9867E14F2F21CF4300CB221F /* TopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1492F21CF4300CB221F /* TopViewController.swift */; };
+		9867E1512F22E65100CB221F /* HttpRelayTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1502F22E65100CB221F /* HttpRelayTransport.swift */; };
 		989D93692EE8B01D00BE461B /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D93682EE8B01D00BE461B /* Stats.swift */; };
 		989D936B2EEDABC600BE461B /* FoundSetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D936A2EEDABC600BE461B /* FoundSetsView.swift */; };
 		989D936F2EF21DEF00BE461B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D936E2EF21DEF00BE461B /* Settings.swift */; };
@@ -98,6 +104,12 @@
 		9867E1402F217D4200CB221F /* CardGridCallbacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardGridCallbacks.swift; sourceTree = "<group>"; };
 		9867E1422F21821800CB221F /* CardArrayDebug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardArrayDebug.swift; sourceTree = "<group>"; };
 		9867E1442F2182AB00CB221F /* CardViewDebug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardViewDebug.swift; sourceTree = "<group>"; };
+		9867E1462F21CF4300CB221F /* GameCenterAuthentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterAuthentication.swift; sourceTree = "<group>"; };
+		9867E1472F21CF4300CB221F /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
+		9867E1482F21CF4300CB221F /* PlayButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayButtonView.swift; sourceTree = "<group>"; };
+		9867E1492F21CF4300CB221F /* TopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopViewController.swift; sourceTree = "<group>"; };
+		9867E14A2F21CF4300CB221F /* UIApplication+TopMostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+TopMostViewController.swift"; sourceTree = "<group>"; };
+		9867E1502F22E65100CB221F /* HttpRelayTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRelayTransport.swift; sourceTree = "<group>"; };
 		989D93682EE8B01D00BE461B /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		989D936A2EEDABC600BE461B /* FoundSetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundSetsView.swift; sourceTree = "<group>"; };
 		989D936E2EF21DEF00BE461B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -274,6 +286,11 @@
 		9867E13C2F21255600CB221F /* GameCenter */ = {
 			isa = PBXGroup;
 			children = (
+				9867E1462F21CF4300CB221F /* GameCenterAuthentication.swift */,
+				9867E1472F21CF4300CB221F /* GameCenterManager.swift */,
+				9867E1482F21CF4300CB221F /* PlayButtonView.swift */,
+				9867E1492F21CF4300CB221F /* TopViewController.swift */,
+				9867E14A2F21CF4300CB221F /* UIApplication+TopMostViewController.swift */,
 				9867E13E2F213EE100CB221F /* Messages.swift */,
 			);
 			path = GameCenter;
@@ -292,6 +309,7 @@
 			children = (
 				9867E1442F2182AB00CB221F /* CardViewDebug.swift */,
 				9867E1422F21821800CB221F /* CardArrayDebug.swift */,
+				9867E1502F22E65100CB221F /* HttpRelayTransport.swift */,
 			);
 			path = Debug;
 			sourceTree = "<group>";
@@ -476,6 +494,11 @@
 				9811914325ED5ACF0083606B /* CardColor.swift in Sources */,
 				98EF7E112F19661F00A45F63 /* ID.swift in Sources */,
 				9867E12F2F1E573000CB221F /* Delay.swift in Sources */,
+				9867E14B2F21CF4300CB221F /* GameCenterManager.swift in Sources */,
+				9867E14C2F21CF4300CB221F /* PlayButtonView.swift in Sources */,
+				9867E14D2F21CF4300CB221F /* GameCenterAuthentication.swift in Sources */,
+				9867E14E2F21CF4300CB221F /* UIApplication+TopMostViewController.swift in Sources */,
+				9867E14F2F21CF4300CB221F /* TopViewController.swift in Sources */,
 				9811914725ED5ACF0083606B /* Table.swift in Sources */,
 				9811914B25ED5ACF0083606B /* CardShape.swift in Sources */,
 				989D936F2EF21DEF00BE461B /* Settings.swift in Sources */,
@@ -484,6 +507,7 @@
 				989D93712EF43A8500BE461B /* DeckView.swift in Sources */,
 				98EF7E0E2F167C5800A45F63 /* CardView.swift in Sources */,
 				98EF7E0F2F167C5800A45F63 /* TableView.swift in Sources */,
+				9867E1512F22E65100CB221F /* HttpRelayTransport.swift in Sources */,
 				989D93732EF4BEDB00BE461B /* Feedback.swift in Sources */,
 				989D93772EF5F30200BE461B /* Math.swift in Sources */,
 			);

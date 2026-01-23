@@ -5,9 +5,11 @@ import SwiftUI
 /// table cards which are on display; and sundry other data points.
 /// Is this class technically, effectively acting as a "model-view"?
 ///
-public class Table: ObservableObject {
+public class Table: ObservableObject, MultiPlayerReceiver /* , MultiPlayerReceiver */ {
+    public func receive(message: Data, from senderID: String) {}
 
     private var settings: Settings;
+    // private var multiplayer: MultiPlayerSender?;
 
     public struct State {
         public private(set) var startTime: Date                     = Date();
@@ -30,8 +32,16 @@ public class Table: ObservableObject {
     @Published public private(set) var state: State;
                private             var deck: TableDeck;
 
-    public init(settings: Settings) {
+
+    public func receiveMessageDealCards(_ cards: [TableCard]) {
+    }
+
+    public func receiveMessageFoundSet(_ cards: [TableCard]) {
+    }
+
+    public init(settings: Settings /*, multiplayer: MultiPlayerSender? = nil */ ) {
         self.settings = settings;
+        // self.multiplayer = multiplayer;
         self.cards = [];
         self.deck  = TableDeck(simple: self.settings.simpleDeck);
         self.state = State();
@@ -215,6 +225,17 @@ public class Table: ObservableObject {
         // TODO:
         // Here is where (I think), for GameCenter multi-player
         // game mode, we will send a FoundSetMessage to the host.
+
+/*
+        if let multiplayer = self.multiplayer {
+            if (selectedCards.isSet()) {
+                multiplayer.sendMessageFoundSet(selectedCards);
+                // let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: selectedCards);
+                // print("GC> IA: \(gameCenter.isAuthenticated)");
+                // GameCenter.sendMessageToHost(message);
+            }
+        }
+*/
 
         Delay(by: delay) {
             if (selectedCards.isSet()) {

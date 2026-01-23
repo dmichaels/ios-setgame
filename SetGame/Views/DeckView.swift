@@ -2,7 +2,8 @@ import SwiftUI
 
 public struct DeckView: View {
 
-    public let cards: [TableCard]
+    public let cards: [TableCard];
+    public let settings: Settings;
 
     private let columns: Int    = 6;
     private let marginx: Double = 16;
@@ -14,7 +15,7 @@ public struct DeckView: View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVGrid(columns: grid, spacing: spacing) {
                 ForEach(cards.sorted(), id: \.id) { card in
-                    CardView(card, selectable: true)
+                    CardView(card, selectable: true, alternate: settings.alternateCards)
                 }
             }
             .padding(.horizontal, marginx)

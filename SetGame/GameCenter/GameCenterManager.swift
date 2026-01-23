@@ -20,6 +20,8 @@ final class GameCenterManager: NSObject, ObservableObject, GKMatchmakerViewContr
         super.init()
         installAuthHandlerIfNeeded()
         refresh()
+    print("xyzzy1: \(self.isAuthenticated)")
+    print("xyzzy2: \(GKLocalPlayer.local.isAuthenticated)")
     }
 
     // Call this from your button tap.
@@ -93,7 +95,8 @@ final class GameCenterManager: NSObject, ObservableObject, GKMatchmakerViewContr
     private func refresh() {
         isAuthenticated = GKLocalPlayer.local.isAuthenticated
         displayName = GKLocalPlayer.local.isAuthenticated ? GKLocalPlayer.local.displayName : ""
-        print("GC state -> auth=\(isAuthenticated) name=\(displayName)")
+        print("FOO[\(GKLocalPlayer.local.displayName)")
+        print("GAMECENTER-STATE> authenticated: \(isAuthenticated) name: '\(displayName)' self.authenticated: \(self.isAuthenticated)")
     }
 
     private func presentMatchmaker(minPlayers: Int, maxPlayers: Int) {
