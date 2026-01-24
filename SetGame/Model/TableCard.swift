@@ -58,7 +58,7 @@ public class TableCard : Card, ObservableObject {
         }
     }
 
-    public func unselect(_ value: Bool? = nil, toggle: Bool? = nil, delay: Double? = nil) {
+    public func unselect(_ value: Bool? = nil, delay: Double? = nil) {
         self.select(false, toggle: false, delay: delay);
     }
 

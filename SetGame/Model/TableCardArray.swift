@@ -6,7 +6,7 @@ public extension Array where Element : TableCard
         }
     }
 
-    public func unselect(_ value: Bool? = nil, delay: Double? = nil) {
+    public func unselect(delay: Double? = nil) {
         self.select(false, toggle: false, delay: delay);
     }
 
