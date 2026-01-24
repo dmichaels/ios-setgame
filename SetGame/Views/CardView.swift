@@ -11,7 +11,13 @@ public struct CardView : View {
 
     public enum OnAppearEffect {
         case none;
-        case materialize;
+        case materialize(duration: Double = 0, elasticity: Double = 0, delay: Double? = nil);
+    var isMaterialize: Bool {
+        if case .materialize = self {
+            return true
+        }
+        return false
+    }
     }
 
     @State private var blinking: Bool;
@@ -43,7 +49,8 @@ public struct CardView : View {
         // This assighment to the materializing state variable MUST go LAST in init!
         // Still not 100% sure I undstand whey; but does not work unless this is last in init.
         //
-        self._materializing = State(initialValue: materialize == .materialize);
+        // self._materializing = State(initialValue: materialize == .materialize);
+        self._materializing = State(initialValue: materialize.isMaterialize);
     }
 
     public init(_ card: Card,
@@ -206,6 +213,10 @@ public struct CardView : View {
             default: return card.code;
         }
     }
+}
+
+extension CardView.OnAppearEffect {
+    static let materialize: CardView.OnAppearEffect = .materialize();
 }
 
 private struct ShakeEffect: GeometryEffect {
