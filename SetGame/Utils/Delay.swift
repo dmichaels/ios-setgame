@@ -13,3 +13,19 @@ public func Delay(by delay: Double? = nil, callback: @escaping () -> Void) {
         callback();
     }
 }
+
+public func Delay(by delay: DelayBy, callback: @escaping () -> Void) {
+    Delay(by: delay.value, callback: callback);
+}
+
+public struct DelayBy: ExpressibleByIntegerLiteral, ExpressibleByFloatLiteral {
+    private let c: Double;
+    private let r: ClosedRange<Double>?;
+    public init(_ value: Int) { c = Double(value); r = nil; }
+    public init(integerLiteral value: Int) { c = Double(value); r = nil; }
+    public init(_ value: Double) { c = Double(value); r = nil; }
+    public init(floatLiteral value: Double) { c = Double(value); r = nil; }
+    public init(random r: ClosedRange<Double>) { c = 0; self.r = r; }
+    public init(random r: ClosedRange<Int>) { self.init(random: Double(r.lowerBound)...Double(r.upperBound)); }
+    public var value: Double { if let r = r { return Double.random(in: r); } else { return c; } }
+}
