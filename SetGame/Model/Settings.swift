@@ -46,6 +46,7 @@ public class Defaults {
         public static let materializeDuration: Double   = 0.65;
         public static let materializeElasticity: Double = 0.40;
         public static let materializeDelay: Double      = 0.40;
+        public static var materializeRandomDelayRange: ClosedRange<Double> = 0.1...0.8;
         public static var materializeRandomDelay: Double { Double.random(in: 0.1...0.8) }
     }
 }

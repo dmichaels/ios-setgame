@@ -25,7 +25,15 @@ public struct DelayBy: ExpressibleByIntegerLiteral, ExpressibleByFloatLiteral {
     public init(integerLiteral value: Int) { c = Double(value); r = nil; }
     public init(_ value: Double) { c = Double(value); r = nil; }
     public init(floatLiteral value: Double) { c = Double(value); r = nil; }
-    public init(random r: ClosedRange<Double>) { c = 0; self.r = r; }
-    public init(random r: ClosedRange<Int>) { self.init(random: Double(r.lowerBound)...Double(r.upperBound)); }
-    public var value: Double { if let r = r { return Double.random(in: r); } else { return c; } }
+    public init(_ r: ClosedRange<Double>) { c = 0; self.r = r; }
+    public init(random r: ClosedRange<Int>) { self.init(Double(r.lowerBound)...Double(r.upperBound)); }
+    public var value: Double {
+        print("DelayBy> c: \(self.c) r: \(self.r)")
+        if let r: ClosedRange<Double> = r {
+            return Double.random(in: r);
+        }
+        else {
+            return c;
+        }
+    }
 }

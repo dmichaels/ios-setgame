@@ -19,7 +19,7 @@ public class TableCard : Card, ObservableObject {
                var shakeCount: Int                  = Defaults.Effects.shakeCount;
                var shakeDuration: Double            = Defaults.Effects.shakeDuration;
     @Published var materializeTrigger: Int          = 0;
-               var materializeDuration: Double         = Defaults.Effects.materializeDuration;
+               var materializeDuration: Double      = Defaults.Effects.materializeDuration;
                var materializeElasticity: Double    = Defaults.Effects.materializeElasticity;
 
     required init() {

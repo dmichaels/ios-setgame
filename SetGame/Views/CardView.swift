@@ -19,12 +19,12 @@ public struct CardView : View {
     @State private var blinkoff: Bool;
     @State private var shakeToken: CGFloat;
     @State private var materializing: Bool;
-    @State private var materializeDelay: Double?;
+    @State private var materializeDelay: DelayBy?;
 
     public init(_ card: TableCard,
                   selectable: Bool = false,
                   materialize: OnAppearEffect = .none,
-                  materializeDelay: Double? = nil,
+                  materializeDelay: DelayBy? = nil,
                   askew: Bool = false,
                   alternate: Int? = nil,
                 _ touchedCallback: ((TableCard) -> Void)? = nil) {
@@ -51,7 +51,7 @@ public struct CardView : View {
     public init(_ card: Card,
                   selectable: Bool = false,
                   materialize: OnAppearEffect = .none,
-                  materializeDelay: Double? = nil,
+                  materializeDelay: DelayBy? = nil,
                   askew: Bool = false,
                   alternate: Int? = nil,
                 _ touchedCallback: ((TableCard) -> Void)? = nil) {
@@ -141,10 +141,13 @@ public struct CardView : View {
                 // Animation for newly added "materialized" cards.
                 // - The response argument to the .spring qualifier
                 //   qualifier controls how fast the spring is;
-                //   lower is faster; higher is slower.
+                //   the lower the faster; the higher the slower.
                 // - The dampingFraction argument to .spring qualifier
-                //   qualifier controls how flexible/slopping the bounce is;
-                //   lower is bouncier and sloppier; higher is stiffer.
+                //   qualifier controls how flexible/elastic the bounce is;
+                //   the lower the bouncier/elastic; the higher the more rigid.
+                //   If it is very low (close to zero) it is VERY bouncy indeed;
+                //   and in fact if it is zero (ChatGPT at least) says it could lead
+                //   to undefined behavior or even a crash (TODO: enforce prevent this).
                 //
                 withAnimation(.spring(response: card.materializeDuration,
                                       dampingFraction: card.materializeElasticity)) {
@@ -183,7 +186,8 @@ public struct CardView : View {
         }
         .onAppear {
             guard self.materializing else { return }
-            Delay(by: self.materializeDelay) {
+            print("ONAPPEAR> md: [\(self.materializeDelay)] mdv: [\(self.materializeDelay?.value)]")
+            Delay(by: self.materializeDelay?.value) {
                 withAnimation(.spring(response: card.materializeDuration,
                                       dampingFraction: card.materializeElasticity)) {
                     self.materializing = false;

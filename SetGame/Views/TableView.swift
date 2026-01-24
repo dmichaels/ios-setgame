@@ -104,7 +104,7 @@ Task {
 
 // xyzzy
         Button {
-            table.cards[0].materialize();
+            table.cards[0].materialize(duration: 2);
         } label: {
             Text("MATERIALIZE")
         }

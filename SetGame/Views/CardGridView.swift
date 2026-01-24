@@ -5,7 +5,7 @@ public struct CardGridView: View {
     @ObservedObject var table: Table;
     @ObservedObject var settings: Settings;
     var materialize: Bool = true;
-    var materializeDelay: Double = 0;
+    var materializeDelay: DelayBy? = DelayBy(Defaults.Effects.materializeRandomDelayRange);
 
     var spacing: CGFloat = 6;
     var marginx: CGFloat = 6;
@@ -51,8 +51,7 @@ public struct CardGridView: View {
                     CardView(
                         card,
                         materialize: materialize ? .materialize : .none,
-                        materializeDelay: materializeDelay > 0 ?
-                                          materializeDelay : Defaults.Effects.materializeRandomDelay,
+                        materializeDelay: materializeDelay,
                         askew: settings.cardsAskew,
                         alternate: settings.alternateCards
                     ) { card in
