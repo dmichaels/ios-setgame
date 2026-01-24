@@ -58,6 +58,10 @@ public class TableCard : Card, ObservableObject {
         }
     }
 
+    public func unselect(_ value: Bool? = nil, toggle: Bool? = nil, delay: Double? = nil) {
+        self.select(false, toggle: false, delay: delay);
+    }
+
     public func blink(count: Int = 0,
                       interval: Double = 0, offinterval: Double = 0, delay: Double? = nil,
                     _ blinkDoneCallback: (() -> Void)? = nil) {
@@ -111,24 +115,5 @@ public class TableCard : Card, ObservableObject {
         self.materializeSpeed = speed > 0 ? speed : Defaults.Effects.materializeSpeed;
         self.materializeElasticity = elasticity > 0 ? elasticity : Defaults.Effects.materializeElasticity;
         self.materializeTrigger += 1;
-    }
-
-    public func reset() {
-        self.selected = false;
-        self.blinkTrigger = 0;
-        self.blinkCount = 0;
-        self.blinkInterval = 0;
-        self.blinkoffInterval = 0;
-        self.blinkDoneCallback = nil;
-        self.flipTrigger = 0;
-        self.flipCount = 0;
-        self.flipDuration = 0;
-        self.flipLeft = false;
-        self.shakeTrigger = 0;
-        self.shakeCount = 0;
-        self.shakeDuration = 0;
-        self.materializeTrigger = 0;
-        self.materializeSpeed = 0;
-        self.materializeElasticity = 0;
     }
 }

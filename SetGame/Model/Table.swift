@@ -357,22 +357,9 @@ public class Table: ObservableObject, MultiPlayerReceiver /* , MultiPlayerReceiv
     }
 
     private func addToSetsLastFound(_ cards: [TableCard]) {
-        //
-        // IMPORTANT NOTE:
-        // We must reset the (UI related) state of TableCard,
-        // e.g. selected and materializedOnce, here so that
-        // the special materializeOnce gets reset.
-        //
-        // cards.reset();
-        // self.state.setsLastFound.append(cards);
-        func copyTableCards(_ cards: [TableCard]) -> [TableCard] {
-            var result: [TableCard] = [];
-            for card in cards {
-                result.append(TableCard(card));
-            }
-            return result;
-        }
-        self.state.setsLastFound.append(copyTableCards(cards));
+        cards.unselect();
+        // cards.select(false);
+        self.state.setsLastFound.append(cards);
     }
 
     private func noteIncorrectGuess(_ cards: [TableCard]) {
