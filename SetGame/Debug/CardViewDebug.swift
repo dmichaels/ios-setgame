@@ -5,15 +5,28 @@ public struct CardViewDebug: View {
     @ObservedObject var settings: Settings;
     @StateObject var table: Table;
 
+    private static let materialize: Bool = true;
+    private static let materializeDelay: Double = Defaults.Effects.materializeDelay;
+    private let initialEffect: CardView.InitialEffect;
+
     public init(settings: Settings) {
         self.settings = settings
         self._table = StateObject(wrappedValue: Table(settings: settings))
+        self.initialEffect = (
+            CardViewDebug.materialize
+                ? .materialize(duration: Defaults.Effects.materializeDuration,
+                               elasticity: Defaults.Effects.materializeElasticity,
+                               delay: DelayBy(CardViewDebug.materializeDelay))
+                : .none
+        );
     }
 
     public var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             // TODO this materializeDelay referes to the onAppear effect
-            CardGridView(table: table, settings: settings, materialize: true, materializeDelay: 0.4)
+            CardGridView(table: self.table,
+                         settings: self.settings,
+                         initialEffect: self.initialEffect)
             CardControls(table: table)
             TextBoxWithButton(label: "DEAL") { value in
                 let cards: [TableCard] = CardViewDebug.toCards(value);

@@ -5,9 +5,20 @@ public struct FoundSetsView: View {
     @ObservedObject private var table: Table;
     @ObservedObject private var settings: Settings;
 
+    private static let materialize: Bool = true;
+    private static let materializeDelay: Double = Defaults.Effects.materializeDelay;
+    private let initialEffect: CardView.InitialEffect;
+
     init(table: Table, settings: Settings) {
         self.table = table;
         self.settings = settings;
+        self.initialEffect = (
+            FoundSetsView.materialize
+                ? .materialize(duration: Defaults.Effects.materializeDuration,
+                               elasticity: Defaults.Effects.materializeElasticity,
+                               delay: DelayBy(FoundSetsView.materializeDelay))
+                : .none
+        );
     }
 
     private var sets: [[TableCard]] { table.state.setsLastFound }
@@ -70,11 +81,12 @@ public struct FoundSetsView: View {
         public var body: some View {
             ForEach(set, id: \.id) { card in
                 CardView(
-                    card,
-                    // TableCard(card),
+                    TableCard(card),
                     selectable: false,
-                    materialize: materialize && recent ? .materialize : .none,
-                    materializeDelay: 0,
+                    // TODO blinks!
+                    // initialEffect: materialize && recent ? .materialize : .none,
+                    initialEffect: .none,
+                    // materializeDelay: 0,
                     askew: settings.cardsAskew,
                     alternate: settings.alternateCards
                 )

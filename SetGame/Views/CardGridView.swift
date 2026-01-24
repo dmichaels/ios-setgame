@@ -4,11 +4,24 @@ public struct CardGridView: View {
 
     @ObservedObject var table: Table;
     @ObservedObject var settings: Settings;
-    var materialize: Bool = true;
-    var materializeDelay: Double = 0;
+                    let initialEffect: CardView.InitialEffect;
+                    let spacing: CGFloat;
+                    let marginx: CGFloat;
 
-    var spacing: CGFloat = 6;
-    var marginx: CGFloat = 6;
+    // var spacing: CGFloat = 6;
+    // var marginx: CGFloat = 6;
+
+    public init(table: Table,
+                settings: Settings,
+                initialEffect: CardView.InitialEffect = .none,
+                spacing: CGFloat = 6,
+                marginx: CGFloat = 6) {
+        self.table = table;
+        self.settings = settings;
+        self.spacing = spacing;
+        self.marginx = marginx;
+        self.initialEffect = initialEffect;
+    }
 
     public var body: some View {
         let spacingx: CGFloat = spacing;
@@ -50,9 +63,7 @@ public struct CardGridView: View {
                 ForEach(table.cards, id: \.uid) { card in
                     CardView(
                         card,
-                        materialize: materialize ? .materialize : .none,
-                        materializeDelay: materializeDelay > 0 ?
-                                          materializeDelay : Defaults.Effects.materializeRandomDelay,
+                        initialEffect: self.initialEffect,
                         askew: settings.cardsAskew,
                         alternate: settings.alternateCards
                     ) { card in

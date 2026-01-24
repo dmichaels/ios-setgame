@@ -15,7 +15,11 @@ public struct TableView: View {
 
     public var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            CardGridView(table: table, settings: settings, spacing: spacing, marginx: marginx)
+            CardGridView(table: table,
+                         settings: settings,
+                         initialEffect: .materialize,
+                         spacing: spacing,
+                         marginx: marginx)
             Space(size: 18)
             StatusBar(marginx: marginx)
             Space(size: 12)
