@@ -32,25 +32,15 @@ public struct CardView : View {
         }
     }
 
-/*
-    public enum OnAppearEffect {
-        case none;
-        case materialize(duration: Double = 0, elasticity: Double = 0, delay: Double? = nil);
-        var materialize: Bool { if case .materialize = self { true } else { false } }
-    }
-*/
-
     @State private var blinking: Bool;
     @State private var blinkoff: Bool;
     @State private var shakeToken: CGFloat;
     @State private var materializing: Bool;
-    @State private var materializeDelay: DelayBy?;
     @State private var initialEffect: InitialEffect;
 
     public init(_ card: TableCard,
                   selectable: Bool = false,
                   initialEffect: InitialEffect = .none,
-                  materializeDelay: DelayBy? = nil,
                   askew: Bool = false,
                   alternate: Int? = nil,
                 _ touchedCallback: ((TableCard) -> Void)? = nil) {
@@ -64,7 +54,6 @@ public struct CardView : View {
         self.blinking = false;
         self.blinkoff = false;
         self.shakeToken = 0;
-        self.materializeDelay = materializeDelay;
 
         self.initialEffect = initialEffect;
         //
@@ -78,12 +67,11 @@ public struct CardView : View {
     public init(_ card: Card,
                   selectable: Bool = false,
                   initialEffect: InitialEffect = .none,
-                  materializeDelay: DelayBy? = nil,
                   askew: Bool = false,
                   alternate: Int? = nil,
                 _ touchedCallback: ((TableCard) -> Void)? = nil) {
         self.init(TableCard(card),
-                  selectable: selectable, initialEffect: initialEffect, materializeDelay: materializeDelay,
+                  selectable: selectable, initialEffect: initialEffect,
                   askew: askew, alternate: alternate, touchedCallback);
     }
 
@@ -213,10 +201,7 @@ public struct CardView : View {
         }
         .onAppear {
             guard self.materializing else { return }
-         // Delay(by: self.materializeDelay?.value) {
             Delay(by: self.initialEffect.materializeDelay) {
-                // withAnimation(.spring(response: card.materializeDuration,
-                //                       dampingFraction: card.materializeElasticity)) {
                 withAnimation(.spring(response: self.initialEffect.materializeDuration,
                                       dampingFraction: self.initialEffect.materializeElasticity)) {
                     self.materializing = false;

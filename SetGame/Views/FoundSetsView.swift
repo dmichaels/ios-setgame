@@ -74,7 +74,6 @@ public struct FoundSetsView: View {
                     // TableCard(card),
                     selectable: false,
                     initialEffect: materialize && recent ? .materialize : .none,
-                    materializeDelay: 0,
                     askew: settings.cardsAskew,
                     alternate: settings.alternateCards
                 )

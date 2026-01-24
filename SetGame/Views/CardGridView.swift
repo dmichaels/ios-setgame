@@ -5,9 +5,7 @@ public struct CardGridView: View {
     @ObservedObject var table: Table;
     @ObservedObject var settings: Settings;
     var materialize: Bool = true;
-    var materializeDelay: DelayBy? = DelayBy(Defaults.Effects.materializeRandomDelay);
     var initialEffect: CardView.InitialEffect = Defaults.Effects.initialEffect;
-
     var spacing: CGFloat = 6;
     var marginx: CGFloat = 6;
 
@@ -52,7 +50,6 @@ public struct CardGridView: View {
                     CardView(
                         card,
                         initialEffect: materialize ? initialEffect : .none,
-                        materializeDelay: materializeDelay,
                         askew: settings.cardsAskew,
                         alternate: settings.alternateCards
                     ) { card in

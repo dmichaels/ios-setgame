@@ -12,8 +12,7 @@ public struct CardViewDebug: View {
 
     public var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            // TODO this materializeDelay referes to the onAppear effect
-            CardGridView(table: table, settings: settings, materialize: true, materializeDelay: 0.4)
+            CardGridView(table: table, settings: settings, initialEffect: Defaults.Effects.initialEffect)
             CardControls(table: table)
             TextBoxWithButton(label: "DEAL") { value in
                 let cards: [TableCard] = CardViewDebug.toCards(value);
