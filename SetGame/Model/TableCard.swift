@@ -19,7 +19,7 @@ public class TableCard : Card, ObservableObject {
                var shakeCount: Int                  = Defaults.Effects.shakeCount;
                var shakeDuration: Double            = Defaults.Effects.shakeDuration;
     @Published var materializeTrigger: Int          = 0;
-               var materializeSpeed: Double         = Defaults.Effects.materializeSpeed;
+               var materializeDuration: Double         = Defaults.Effects.materializeDuration;
                var materializeElasticity: Double    = Defaults.Effects.materializeElasticity;
 
     required init() {
@@ -111,8 +111,7 @@ public class TableCard : Card, ObservableObject {
             }
             return;
         }
-        print("MATERIALIZING> \(self) delay: \(delay) speed: \(materializeSpeed) once: \(materializeSpeed) mdelay: \(materializeSpeed)")
-        self.materializeSpeed = speed > 0 ? speed : Defaults.Effects.materializeSpeed;
+        self.materializeDuration = speed > 0 ? speed : Defaults.Effects.materializeDuration;
         self.materializeElasticity = elasticity > 0 ? elasticity : Defaults.Effects.materializeElasticity;
         self.materializeTrigger += 1;
     }

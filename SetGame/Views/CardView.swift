@@ -144,7 +144,7 @@ public struct CardView : View {
                 //   qualifier controls how flexible/slopping the bounce is;
                 //   lower is bouncier and sloppier; higher is stiffer.
                 //
-                withAnimation(.spring(response: card.materializeSpeed,
+                withAnimation(.spring(response: card.materializeDuration,
                                       dampingFraction: card.materializeElasticity)) {
                     self.materializing = false;
                 }
@@ -182,7 +182,7 @@ public struct CardView : View {
         .onAppear {
             guard self.materializing else { return }
             Delay(by: self.materializeDelay) {
-                withAnimation(.spring(response: card.materializeSpeed,
+                withAnimation(.spring(response: card.materializeDuration,
                                       dampingFraction: card.materializeElasticity)) {
                     self.materializing = false;
                 }
