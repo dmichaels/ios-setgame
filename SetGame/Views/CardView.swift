@@ -12,12 +12,7 @@ public struct CardView : View {
     public enum OnAppearEffect {
         case none;
         case materialize(duration: Double = 0, elasticity: Double = 0, delay: Double? = nil);
-    var isMaterialize: Bool {
-        if case .materialize = self {
-            return true
-        }
-        return false
-    }
+        var isMaterialize: Bool { if case .materialize = self { true } else { false } }
     }
 
     @State private var blinking: Bool;
