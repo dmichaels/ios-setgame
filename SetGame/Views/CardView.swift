@@ -9,11 +9,33 @@ public struct CardView : View {
                     var alternate: Int?                         = nil;
                     var touchedCallback: ((TableCard) -> Void)? = nil;
 
+    public enum InitialEffect {
+
+        case none;
+        case materialize(duration: Double = 0, elasticity: Double = 0, delay: DelayBy? = nil);
+
+        fileprivate var materialize: Bool { if case .materialize = self { true } else { false } }
+
+        fileprivate var materializeDuration: Double? {
+            if case let .materialize(duration, _, _) = self { duration } else { nil }
+        }
+
+        fileprivate var materializeElasticity: Double? {
+            if case let .materialize(_, elasticity, _) = self { elasticity } else { nil }
+        }
+
+        fileprivate var materializeDelay: Double? {
+            if case let .materialize(_, _, delay) = self { delay?.value } else { nil }
+        }
+    }
+
+/*
     public enum OnAppearEffect {
         case none;
         case materialize(duration: Double = 0, elasticity: Double = 0, delay: Double? = nil);
-        var isMaterialize: Bool { if case .materialize = self { true } else { false } }
+        var materialize: Bool { if case .materialize = self { true } else { false } }
     }
+*/
 
     @State private var blinking: Bool;
     @State private var blinkoff: Bool;
@@ -23,7 +45,7 @@ public struct CardView : View {
 
     public init(_ card: TableCard,
                   selectable: Bool = false,
-                  materialize: OnAppearEffect = .none,
+                  materialize: InitialEffect = .none,
                   materializeDelay: DelayBy? = nil,
                   askew: Bool = false,
                   alternate: Int? = nil,
@@ -44,13 +66,12 @@ public struct CardView : View {
         // This assighment to the materializing state variable MUST go LAST in init!
         // Still not 100% sure I undstand whey; but does not work unless this is last in init.
         //
-        // self._materializing = State(initialValue: materialize == .materialize);
-        self._materializing = State(initialValue: materialize.isMaterialize);
+        self._materializing = State(initialValue: materialize.materialize);
     }
 
     public init(_ card: Card,
                   selectable: Bool = false,
-                  materialize: OnAppearEffect = .none,
+                  materialize: InitialEffect = .none,
                   materializeDelay: DelayBy? = nil,
                   askew: Bool = false,
                   alternate: Int? = nil,
@@ -214,9 +235,15 @@ public struct CardView : View {
     }
 }
 
+extension CardView.InitialEffect {
+    static let materialize: CardView.InitialEffect = .materialize();
+}
+
+/*
 extension CardView.OnAppearEffect {
     static let materialize: CardView.OnAppearEffect = .materialize();
 }
+*/
 
 private struct ShakeEffect: GeometryEffect {
     var count: CGFloat = 9.0
