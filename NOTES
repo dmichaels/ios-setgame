@@ -10,6 +10,11 @@ DEVELOPMENT NOTES
 
 > 2026-01-24:
   - Refactoring materialize stuff into CardView.InitialEffect (along with DelayBy type),
-    and not working so far (blinks like crazy at start)
+    and not broke it (blinks like crazy at start)
     Branch (off game-center-20260109-with-possible-ios-18-animation-regression-fixes):
     - game-center-20260109-with-possible-ios-18-animation-regression-fixes-initial-effect-type-introduction
+
+> 2026-01-24:
+  - Take two from working branch for CardView.InitialEffect introduction.
+    Branch (off game-center-20260109-with-possible-ios-18-animation-regression-fixes):
+    - game-center-20260109-with-possible-ios-18-animation-regression-fixes-initial-effect-type-taketwo
