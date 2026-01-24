@@ -7,3 +7,9 @@ DEVELOPMENT NOTES
 > 2026-01-23:
  - Addressing iOS 18 animation regressions with workarounds with help from ChatGPT.
    Branch (off game-center-20260109): game-center-20260109-with-possible-ios-18-animation-regression-fixes
+
+> 2026-01-24:
+  - Refactoring materialize stuff into CardView.InitialEffect (along with DelayBy type),
+    and not working so far (blinks like crazy at start)
+    Branch (off game-center-20260109-with-possible-ios-18-animation-regression-fixes):
+    - game-center-20260109-with-possible-ios-18-animation-regression-fixes-initial-effect-type-introduction
