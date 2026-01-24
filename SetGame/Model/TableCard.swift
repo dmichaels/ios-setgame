@@ -19,7 +19,6 @@ public class TableCard : Card, ObservableObject {
                var shakeCount: Int                  = Defaults.Effects.shakeCount;
                var shakeDuration: Double            = Defaults.Effects.shakeDuration;
     @Published var materializeTrigger: Int          = 0;
-    @Published var materializedOnce: Bool           = false;
                var materializeSpeed: Double         = Defaults.Effects.materializeSpeed;
                var materializeElasticity: Double    = Defaults.Effects.materializeElasticity;
 
@@ -101,31 +100,10 @@ public class TableCard : Card, ObservableObject {
         self.shakeTrigger += 1;
     }
 
-    public func materialize(once: Bool = false, speed: Double = 0, elasticity: Double = 0, delay: Double? = nil) {
+    public func materialize(speed: Double = 0, elasticity: Double = 0, delay: Double? = nil) {
         if let delay: Double = delay {
             Delay(by: delay) {
-                self.materialize(once: once, speed: speed, elasticity: elasticity, delay: nil);
-            }
-            return;
-        }
-        if (once) {
-            //
-            // IMPORTANT NOTE:
-            //
-            // Very special case: See CardView.init for where the materialize argument is true.
-            // The reason we want to do the materialize differently "once" when used in CardView
-            // is because otherwise we would visually see a flash of the full card and then
-            // the materialization (fading in) of it; we don't want the flash.
-            //
-            // And note that this can (should) be reset using the reset method if/when
-            // a card is "handed off" from one view to another, e.g. like when moving
-            // a card from the main table view to the found-sets view.
-            //
-            if (!self.materializedOnce) {
-                self.materializedOnce = true;
-                DispatchQueue.main.async {
-                    self.materialize(speed: speed, elasticity: elasticity);
-                }
+                self.materialize(speed: speed, elasticity: elasticity, delay: nil);
             }
             return;
         }
@@ -150,7 +128,6 @@ public class TableCard : Card, ObservableObject {
         self.shakeCount = 0;
         self.shakeDuration = 0;
         self.materializeTrigger = 0;
-        self.materializedOnce = false;
         self.materializeSpeed = 0;
         self.materializeElasticity = 0;
     }
