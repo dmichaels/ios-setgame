@@ -45,7 +45,7 @@ public struct CardView : View {
 
     public init(_ card: TableCard,
                   selectable: Bool = false,
-                  materialize: InitialEffect = .none,
+                  initialEffect: InitialEffect = .none,
                   materializeDelay: DelayBy? = nil,
                   askew: Bool = false,
                   alternate: Int? = nil,
@@ -66,18 +66,18 @@ public struct CardView : View {
         // This assighment to the materializing state variable MUST go LAST in init!
         // Still not 100% sure I undstand whey; but does not work unless this is last in init.
         //
-        self._materializing = State(initialValue: materialize.materialize);
+        self._materializing = State(initialValue: initialEffect.materialize);
     }
 
     public init(_ card: Card,
                   selectable: Bool = false,
-                  materialize: InitialEffect = .none,
+                  initialEffect: InitialEffect = .none,
                   materializeDelay: DelayBy? = nil,
                   askew: Bool = false,
                   alternate: Int? = nil,
                 _ touchedCallback: ((TableCard) -> Void)? = nil) {
         self.init(TableCard(card),
-                  selectable: selectable, materialize: materialize, materializeDelay: materializeDelay,
+                  selectable: selectable, initialEffect: initialEffect, materializeDelay: materializeDelay,
                   askew: askew, alternate: alternate, touchedCallback);
     }
 
