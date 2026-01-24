@@ -1,3 +1,4 @@
+
 import SwiftUI
 
 public struct CardView : View {
@@ -11,10 +12,6 @@ public struct CardView : View {
     public enum OnAppearEffect {
         case none;
         case materialize;
-    }
-
-    private struct Defaults {
-        fileprivate static let materializeDelay: Double = 0.4;
     }
 
     @State private var blinking: Bool;
@@ -41,15 +38,13 @@ public struct CardView : View {
         self.blinking = false;
         self.blinkoff = false;
         self.shakeToken = 0;
-        // self._materializing = State(initialValue: materialize)
         self.materializeDelay = materializeDelay;
-        self._materializing = State(initialValue: materialize == .materialize);
 
-/*
-        if (materialize) {
-            card.materialize(once: true, delay: materializeDelay);
-        }
-*/
+        // IMPORTANT NOTE:
+        // This assighment to the materializing state variable MUST go LAST in init!
+        // Still not 100% sure I undstand whey; but does not work unless this is last in init.
+        //
+        self._materializing = State(initialValue: materialize == .materialize);
     }
 
     public init(_ card: Card,
@@ -122,21 +117,7 @@ public struct CardView : View {
                     // Placing this opacity qualifier here (rather than higher up above) ensures
                     // that the entire card - including it selection border if present - blinks.
                     //
-                    .opacity(self.materializing || self.blinkoff ? 0.0 : 1.0)
-                    //
-                    // Animation for newly added "materialized" cards.
-                    // - The response argument to the .spring qualifier
-                    //   qualifier controls how fast the spring is;
-                    //   lower is faster; higher is slower.
-                    // - The dampingFraction argument to .spring qualifier
-                    //   qualifier controls how flexible/slopping the bounce is;
-                    //   lower is bouncier and sloppier; higher is stiffer.
-                    //
-                    // .animation(.spring(response: 0.70, dampingFraction: 0.40), value: materializing)
-                    .animation(
-                        .spring(response: card.materializeSpeed, dampingFraction: card.materializeElasticity),
-                         value: self.materializing
-                    )
+                    .opacity(self.blinkoff ? 0.0 : 1.0)
             }
             .skew(self.askew)
             //
@@ -148,23 +129,21 @@ public struct CardView : View {
             // 
 			.flip(card.flipTrigger, count: card.flipCount, duration: card.flipDuration, left: card.flipLeft)
         }
-/*
         .onChange(of: card.materializeTrigger) { value in
             self.materializing = true;
-            DispatchQueue.main.asyncAfter(deadline: .now() + Defaults.materializeDelay) {
-                self.materializing = false;
-            }
-        }
-*/
-        .onChange(of: card.materializeTrigger) { value in
-            print("CardView.onChange.materializeTrigger> \(card) delay: \(self.materializeDelay)")
-            self.materializing = true;
-            // gpt DispatchQueue.main.asyncAfter(deadline: .now() + Defaults.materializeDelay) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + (self.materializeDelay ?? 0)) {
-                print("CardView.onChange.materializeTrigger> \(card) dispatch")
+            Delay(by: self.materializeDelay) { // TODO? use card.materializeDelay?
+                //
+                // Animation for newly added "materialized" cards.
+                // - The response argument to the .spring qualifier
+                //   qualifier controls how fast the spring is;
+                //   lower is faster; higher is slower.
+                // - The dampingFraction argument to .spring qualifier
+                //   qualifier controls how flexible/slopping the bounce is;
+                //   lower is bouncier and sloppier; higher is stiffer.
+                //
                 withAnimation(.spring(response: card.materializeSpeed,
                                       dampingFraction: card.materializeElasticity)) {
-                    materializing = false;
+                    self.materializing = false;
                 }
             }
         }
@@ -199,13 +178,10 @@ public struct CardView : View {
         }
         .onAppear {
             guard self.materializing else { return }
-            print("CardView.onAppear> \(card) delay: \(self.materializeDelay)")
-            // gpt DispatchQueue.main.async {
-            DispatchQueue.main.asyncAfter(deadline: .now() + (self.materializeDelay ?? 0)) {
-                print("CardView.onAppear> \(card) dispatch")
+            Delay(by: self.materializeDelay) {
                 withAnimation(.spring(response: card.materializeSpeed,
                                       dampingFraction: card.materializeElasticity)) {
-                    materializing = false
+                    self.materializing = false;
                 }
             }
         }

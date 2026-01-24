@@ -20,7 +20,7 @@ public struct TableView: View {
             StatusBar(marginx: marginx)
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)
-            DebugView()
+            DebugView(table: table)
             MultiPlayerGameButton()
         }
         .allowsHitTesting(!self.table.disabled)
@@ -54,6 +54,7 @@ public struct TableView: View {
 }
 
 private struct DebugView: View {
+    @ObservedObject var table: Table;
     func receiveMessages(for playerID: String) async -> [String] {
         let url = URL(string: "http://127.0.0.1:5000/receive/\(playerID)")!
         print(url)
@@ -100,6 +101,14 @@ Task {
         } } label: {
             Text("HTTP-POST")
         }
+
+// xyzzy
+        Button {
+            table.cards[0].materialize();
+        } label: {
+            Text("MATERIALIZE")
+        }
+// xyzzy
     } }
 }
 
