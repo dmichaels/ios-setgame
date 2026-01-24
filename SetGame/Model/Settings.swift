@@ -29,25 +29,29 @@ public class Defaults {
 
     // These settings are NOT persisted across game instances.
 
-    public static let title: String                     = "Logicard";
-    public static let gameCenter: Bool                  = true;
-    public static let debugView: Bool                   = true;
+    public static let title: String    = "Logicard";
+    public static let gameCenter: Bool = true;
+    public static let debugView: Bool  = true;
 
     public struct Effects {
-        public static let selectBeforeDelay: Double     = 0.80;
-        public static let selectAfterDelay: Double      = 0.40;
-        public static let blinkCount: Int               = 4;
-        public static let blinkInterval: Double         = 0.15;
-        public static let flipCount: Int                = 2;
-        public static let flipDuration: Double          = 0.4;
-        public static let flipLeft: Bool                = false;
-        public static let shakeCount: Int               = 11;
-        public static let shakeDuration: Double         = 0.90;
-        public static let materializeDuration: Double   = 0.65;
-        public static let materializeElasticity: Double = 0.40;
-        public static let materializeDelay: Double      = 0.40;
-        public static var materializeRandomDelayRange: ClosedRange<Double> = 0.1...0.8;
-        public static var materializeRandomDelay: Double { Double.random(in: 0.1...0.8) }
+        public static let selectBeforeDelay: Double                   = 0.80;
+        public static let selectAfterDelay: Double                    = 0.40;
+        public static let blinkCount: Int                             = 4;
+        public static let blinkInterval: Double                       = 0.15;
+        public static let flipCount: Int                              = 2;
+        public static let flipDuration: Double                        = 0.4;
+        public static let flipLeft: Bool                              = false;
+        public static let shakeCount: Int                             = 11;
+        public static let shakeDuration: Double                       = 0.90;
+        public static let materializeDuration: Double                 = 0.65;
+        public static let materializeElasticity: Double               = 0.40;
+        public static let materializeDelay: Double                    = 0.40;
+        public static var materializeRandomDelay: ClosedRange<Double> = 0.1...0.8;
+        public static let initialEffect: CardView.InitialEffect = CardView.InitialEffect.materialize(
+                          duration: Defaults.Effects.materializeDuration,
+                          elasticity: Defaults.Effects.materializeElasticity,
+                          delay: DelayBy(Defaults.Effects.materializeRandomDelay)
+                      );
     }
 }
 

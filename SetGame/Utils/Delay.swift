@@ -14,8 +14,8 @@ public func Delay(by delay: Double? = nil, callback: @escaping () -> Void) {
     }
 }
 
-public func Delay(by delay: DelayBy, callback: @escaping () -> Void) {
-    Delay(by: delay.value, callback: callback);
+public func Delay(by delay: DelayBy?, callback: @escaping () -> Void) {
+    Delay(by: delay?.value, callback: callback);
 }
 
 public struct DelayBy: ExpressibleByIntegerLiteral, ExpressibleByFloatLiteral {

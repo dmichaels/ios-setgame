@@ -12,20 +12,23 @@ public struct CardView : View {
     public enum InitialEffect {
 
         case none;
-        case materialize(duration: Double = 0, elasticity: Double = 0, delay: DelayBy? = nil);
+     // case materialize(duration: Double = 0, elasticity: Double = 0, delay: DelayBy? = nil);
+        case materialize(duration: Double = Defaults.Effects.materializeDuration,
+                         elasticity: Double = Defaults.Effects.materializeElasticity,
+                         delay: DelayBy? = nil);
 
         fileprivate var materialize: Bool { if case .materialize = self { true } else { false } }
 
-        fileprivate var materializeDuration: Double? {
-            if case let .materialize(duration, _, _) = self { duration } else { nil }
+        fileprivate var materializeDuration: Double {
+            if case let .materialize(duration, _, _) = self { duration } else { 0 } // TODO default value?
         }
 
-        fileprivate var materializeElasticity: Double? {
-            if case let .materialize(_, elasticity, _) = self { elasticity } else { nil }
+        fileprivate var materializeElasticity: Double {
+            if case let .materialize(_, elasticity, _) = self { elasticity } else { 0 } // TODO default value?
         }
 
-        fileprivate var materializeDelay: Double? {
-            if case let .materialize(_, _, delay) = self { delay?.value } else { nil }
+        fileprivate var materializeDelay: DelayBy? {
+            if case let .materialize(_, _, delay) = self { delay } else { nil }
         }
     }
 
@@ -42,6 +45,7 @@ public struct CardView : View {
     @State private var shakeToken: CGFloat;
     @State private var materializing: Bool;
     @State private var materializeDelay: DelayBy?;
+    @State private var initialEffect: InitialEffect;
 
     public init(_ card: TableCard,
                   selectable: Bool = false,
@@ -62,6 +66,8 @@ public struct CardView : View {
         self.shakeToken = 0;
         self.materializeDelay = materializeDelay;
 
+        self.initialEffect = initialEffect;
+        //
         // IMPORTANT NOTE:
         // This assighment to the materializing state variable MUST go LAST in init!
         // Still not 100% sure I undstand whey; but does not work unless this is last in init.
@@ -207,10 +213,12 @@ public struct CardView : View {
         }
         .onAppear {
             guard self.materializing else { return }
-            print("ONAPPEAR> md: [\(self.materializeDelay)] mdv: [\(self.materializeDelay?.value)]")
-            Delay(by: self.materializeDelay?.value) {
-                withAnimation(.spring(response: card.materializeDuration,
-                                      dampingFraction: card.materializeElasticity)) {
+         // Delay(by: self.materializeDelay?.value) {
+            Delay(by: self.initialEffect.materializeDelay) {
+                // withAnimation(.spring(response: card.materializeDuration,
+                //                       dampingFraction: card.materializeElasticity)) {
+                withAnimation(.spring(response: self.initialEffect.materializeDuration,
+                                      dampingFraction: self.initialEffect.materializeElasticity)) {
                     self.materializing = false;
                 }
             }
