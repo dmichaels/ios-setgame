@@ -12,19 +12,35 @@ public struct CardView : View {
     public enum InitialEffect {
 
         case none;
-     // case materialize(duration: Double = 0, elasticity: Double = 0, delay: DelayBy? = nil);
         case materialize(duration: Double = Defaults.Effects.materializeDuration,
                          elasticity: Double = Defaults.Effects.materializeElasticity,
                          delay: DelayBy? = nil);
 
+        private enum Limits {
+            static let materializeDurationMin: Double   = 0.05;
+            static let materializeDurationMax: Double   = 2.00;
+            static let materializeElasticityMin: Double = 0.05;
+            static let materializeElasticityMax: Double = 1.00;
+        }
+
         fileprivate var materialize: Bool { if case .materialize = self { true } else { false } }
 
         fileprivate var materializeDuration: Double {
-            if case let .materialize(duration, _, _) = self { duration } else { 0 } // TODO default value?
+            if case let .materialize(duration, _, _) = self {
+                min(max(duration, Limits.materializeDurationMin), Limits.materializeDurationMax);
+            }
+            else {
+                Limits.materializeDurationMin;
+            }
         }
 
         fileprivate var materializeElasticity: Double {
-            if case let .materialize(_, elasticity, _) = self { elasticity } else { 0 } // TODO default value?
+            if case let .materialize(_, elasticity, _) = self {
+                min(max(elasticity, Limits.materializeElasticityMin), Limits.materializeElasticityMax);
+            }
+            else {
+                Limits.materializeElasticityMin;
+            }
         }
 
         fileprivate var materializeDelay: DelayBy? {
