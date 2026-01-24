@@ -22,7 +22,6 @@ public struct CardView : View {
 
     public init(_ card: TableCard,
                   selectable: Bool = false,
-                  // materialize: Bool = false,
                   materialize: OnAppearEffect = .none,
                   materializeDelay: Double? = nil,
                   askew: Bool = false,
@@ -49,7 +48,6 @@ public struct CardView : View {
 
     public init(_ card: Card,
                   selectable: Bool = false,
-                  // materialize: Bool = false,
                   materialize: OnAppearEffect = .none,
                   materializeDelay: Double? = nil,
                   askew: Bool = false,

@@ -1,5 +1,5 @@
 import GameKit
-import UIKit
+// import UIKit
 
 @MainActor
 enum GameCenterAuthentication {

@@ -1,6 +1,6 @@
 import Foundation
 import GameKit
-import UIKit
+// import UIKit
 
 @MainActor
 final class GameCenterManager: NSObject, ObservableObject, GKMatchmakerViewControllerDelegate {

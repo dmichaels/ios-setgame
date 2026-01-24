@@ -2,7 +2,6 @@ import SwiftUI
 import AudioToolbox
 import CoreHaptics
 import AVFoundation
-import UIKit
 
 public class Feedback: ObservableObject
 {
