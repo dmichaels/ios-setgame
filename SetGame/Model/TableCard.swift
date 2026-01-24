@@ -104,14 +104,14 @@ public class TableCard : Card, ObservableObject {
         self.shakeTrigger += 1;
     }
 
-    public func materialize(speed: Double = 0, elasticity: Double = 0, delay: Double? = nil) {
+    public func materialize(duration: Double = 0, elasticity: Double = 0, delay: Double? = nil) {
         if let delay: Double = delay {
             Delay(by: delay) {
-                self.materialize(speed: speed, elasticity: elasticity, delay: nil);
+                self.materialize(duration: duration, elasticity: elasticity, delay: nil);
             }
             return;
         }
-        self.materializeDuration = speed > 0 ? speed : Defaults.Effects.materializeDuration;
+        self.materializeDuration = duration > 0 ? duration : Defaults.Effects.materializeDuration;
         self.materializeElasticity = elasticity > 0 ? elasticity : Defaults.Effects.materializeElasticity;
         self.materializeTrigger += 1;
     }
