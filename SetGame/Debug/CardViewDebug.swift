@@ -12,6 +12,7 @@ public struct CardViewDebug: View {
 
     public var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
+            // TODO this materializeDelay referes to the onAppear effect
             CardGridView(table: table, settings: settings, materialize: true, materializeDelay: 0.4)
             CardControls(table: table)
             TextBoxWithButton(label: "DEAL") { value in

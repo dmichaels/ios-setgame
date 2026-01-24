@@ -129,7 +129,12 @@ public struct CardView : View {
         }
         .onChange(of: card.materializeTrigger) { value in
             self.materializing = true;
-            Delay(by: self.materializeDelay) { // TODO? use card.materializeDelay?
+            //
+            // Note no materializeDelay used here; if we want a delay
+            // for on-demand (i.e. not on-appear) materialization
+            // then use the delay argument in TableCard.materialize.
+            //
+            Delay {
                 //
                 // Animation for newly added "materialized" cards.
                 // - The response argument to the .spring qualifier
