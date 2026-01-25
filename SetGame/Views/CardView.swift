@@ -291,12 +291,6 @@ extension CardView.InitialEffect {
     static let materialize: CardView.InitialEffect = .materialize();
 }
 
-/*
-extension CardView.OnAppearEffect {
-    static let materialize: CardView.OnAppearEffect = .materialize();
-}
-*/
-
 private struct ShakeEffect: GeometryEffect {
     var count: CGFloat = 9.0
     var angle: CGFloat = 8.0
