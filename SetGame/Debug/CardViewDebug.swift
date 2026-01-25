@@ -12,7 +12,11 @@ public struct CardViewDebug: View {
 
     public var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            CardGridView(table: table, settings: settings, initialEffect: Defaults.Effects.initialEffect)
+            CardGridView(
+                table: table,
+                settings: settings,
+                initialEffect: Defaults.Effects.initialEffect
+            )
             CardControls(table: table)
             TextBoxWithButton(label: "DEAL") { value in
                 let cards: [TableCard] = CardViewDebug.toCards(value);
