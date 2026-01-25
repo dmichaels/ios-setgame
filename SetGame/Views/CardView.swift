@@ -10,7 +10,7 @@ public struct CardView : View {
 
     fileprivate struct Materialize {
 
-        fileprivate static let durationRange: ClosedRange<Double>   = 0.05...2.00;
+        fileprivate static let durationRange: ClosedRange<Double>   = 0.05...4.00;
         fileprivate static let durationMax: Double                  = durationRange.upperBound;
         fileprivate static let durationMin: Double                  = durationRange.lowerBound;
 
@@ -18,7 +18,7 @@ public struct CardView : View {
         fileprivate static let elasticityMax: Double                = elasticityRange.upperBound;
         fileprivate static let elasticityMin: Double                = elasticityRange.lowerBound;
 
-        private static let springResponseRange: ClosedRange<Double>  = 0.05...2.00;
+        private static let springResponseRange: ClosedRange<Double>  = 0.05...4.00;
         private static let springResponseMin: Double                 = springResponseRange.lowerBound;
         private static let springResponseMax: Double                 = springResponseRange.upperBound;
 
@@ -32,8 +32,7 @@ public struct CardView : View {
             //
             let duration = duration.clamp(to: durationRange);
             let elasticity = elasticity.clamp(to: elasticityRange);
-            let elasticityInverse = elasticityMax - elasticity;
-            let damping = elasticityInverse;
+            let damping = elasticityMax - elasticity;
             let responseAdjustment = 0.85 + 0.5 * (elasticity / (elasticityMax - elasticityMin));
             let response = duration / responseAdjustment;
             return (response.clamp(to: springResponseRange), damping.clamp(to: springDampingRange))
@@ -242,7 +241,7 @@ public struct CardView : View {
         .onAppear {
             guard self.materializing else { return }
             let springArgs = CardView.Materialize.springArgs(
-                duration: card.materializeDuration,
+                duration: self.initialEffect.materializeDuration,
                 elasticity: self.initialEffect.materializeElasticity);
             Delay(by: self.initialEffect.materializeDelay) {
                 withAnimation(.spring(response: springArgs.response, dampingFraction: springArgs.damping)) {
