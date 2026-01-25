@@ -9,11 +9,13 @@ struct SetGameApp: App {
 
     init() {
         // let multiPlayerSender: MultiPlayerSender? = Defaults.gameCenter ? GameCenterSender() : nil;
+        let multiPlayerSender: MultiPlayerTransport? = Defaults.gameCenter ? RelayTransport(player: "A") : nil;
         let shared_settings: Settings = Settings();
         _settings = StateObject(wrappedValue: shared_settings);
         _feedback = StateObject(wrappedValue: Feedback(sounds: shared_settings.sounds,
                                                        haptics: shared_settings.haptics));
-        _table = StateObject(wrappedValue: Table(settings: shared_settings /*, multiplayer: multiPlayerSender */ ));
+        // _table = StateObject(wrappedValue: Table(settings: shared_settings /*, multiplayer: multiPlayerSender */ ));
+        _table = StateObject(wrappedValue: Table(settings: shared_settings, multiplayer: multiPlayerSender));
         // let x = RelayTransport(player: "A", receiver: _table);
     }
 

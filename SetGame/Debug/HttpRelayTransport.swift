@@ -17,7 +17,7 @@ public class RelayTransport: MultiPlayerTransport {
     private      let url: URL;
     private      var pollingTimer: Timer?;
 
-    public init(player: String, receiver: MultiPlayerReceiver?, url: URL? = nil) {
+    public init(player: String, receiver: MultiPlayerReceiver? = nil, url: URL? = nil) {
         self.player = player
         self.receiver = receiver
         self.url = url ?? URL("http://127.0.0.1:5000")!

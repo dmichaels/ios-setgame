@@ -6,10 +6,9 @@ import SwiftUI
 /// Is this class technically, effectively acting as a "model-view"?
 ///
 public class Table: ObservableObject, MultiPlayerReceiver /* , MultiPlayerReceiver */ {
-    public func receive(message: Data, from senderID: String) {}
 
     private var settings: Settings;
-    // private var multiplayer: MultiPlayerSender?;
+    private var multiplayer: MultiPlayerTransport?;
 
     public struct State {
         public private(set) var startTime: Date                     = Date();
@@ -33,13 +32,16 @@ public class Table: ObservableObject, MultiPlayerReceiver /* , MultiPlayerReceiv
                private             var deck: TableDeck;
 
 
+    public func receive(message: Data, from senderID: String) {
+    }
+
     public func receiveMessageDealCards(_ cards: [TableCard]) {
     }
 
     public func receiveMessageFoundSet(_ cards: [TableCard]) {
     }
 
-    public init(settings: Settings /*, multiplayer: MultiPlayerSender? = nil */ ) {
+    public init(settings: Settings, multiplayer: MultiPlayerTransport? = nil) {
         self.settings = settings;
         // self.multiplayer = multiplayer;
         self.cards = [];
