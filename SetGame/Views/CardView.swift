@@ -50,32 +50,14 @@ public struct CardView : View {
         }
     }
 
-    private static func springDamping(elasticity: Double) -> Double {
-
-        // Computes the SwiftUI dampingFraction value for the .spring
-        // qualifier for the materialization (fading in) functionality.
-        // Externally advertise "elasticity" as 0.0...1.0 where 0.0 is least
-        // elastic and 1.0 is most elastic; but from SwiftUI POV it is reversed.
-
-        let elasticity: Double = min(max(elasticity, MaterializeLimits.elasticityMin), MaterializeLimits.elasticityMax);
-
-        let dampingFractionMin: Double = 0.05;
-        let dampingFractionMax: Double = 1.00;
-        let dampingFraction: Double = MaterializeLimits.elasticityMax - elasticity;
-
-        return min(max(dampingFraction, dampingFractionMin), dampingFractionMax);
-    }
-
     private static func springResponse(duration: Double, damping: Double) -> Double {
 
-        // Computes the SwiftUI response value for the .spring
-        // qualifier for the materialization (fading in) functionality.
+        // Computes the SwiftUI response value for the .spring qualifier for
+        // the given duration value, for the materialization functionality.
         // The given damping value is the SwiftUI dampingFraction
-        // based value, i.e from the above springDamping function.
-        //
-        // From ChatGPT ...
-        // Adjust response to compensate for bounce stretching time
-        // Bouncier (lower damping) → lower response needed to keep duration similar
+        // based value, i.e from the below springDamping function.
+        // The external duration min/max values are defined by
+        // durationMin and durationMax in MaterializationLimits.
 
         let durationMin: Double = 0.1;
         let durationMax: Double = 2.0;
@@ -83,10 +65,33 @@ public struct CardView : View {
 
         let responseMin: Double = 0.05;
         let responseMax: Double = 1.00;
+        //
+        // From ChatGPT ...
+        // Adjust response to compensate for bounce stretching time
+        // Bouncier (lower damping) → lower response needed to keep duration similar
+        //
         let responseAdjustment = 0.85 + 0.3 * (1.0 - damping); // 0.85...1.15
-        let response = duration / responseAdjustment
+        let response = duration / responseAdjustment;
 
         return response;
+    }
+
+    private static func springDamping(elasticity: Double) -> Double {
+
+        // Computes the SwiftUI dampingFraction value for the .spring qualifier
+        // from the given elasticity value, for the materialization functionality.
+        // Externally advertise the elasticity as 0.0...1.0 where 0.0 is least
+        // elastic and 1.0 is most elastic; but from SwiftUI POV it is reversed.
+        // The external elasticity min/max values are defined by
+        // elasticityMin and elasticityMax in MaterializationLimits.
+
+        let elasticity: Double = min(max(elasticity, MaterializeLimits.elasticityMin), MaterializeLimits.elasticityMax);
+
+        let dampingMin: Double = 0.05;
+        let dampingMax: Double = 1.00;
+        let damping: Double = MaterializeLimits.elasticityMax - elasticity;
+
+        return min(max(damping, dampingMin), dampingMax);
     }
 
     @State private var blinking: Bool;
