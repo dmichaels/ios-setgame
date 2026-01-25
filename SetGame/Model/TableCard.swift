@@ -22,19 +22,19 @@ public class TableCard : Card, ObservableObject {
                var materializeDuration: Double      = Defaults.Effects.materializeDuration;
                var materializeElasticity: Double    = Defaults.Effects.materializeElasticity;
 
-    required init() {
+    public required init() {
         super.init(color: .random, shape: .random, filling: .random, number: .random);
     }
 
-    required init(color: CardColor, shape: CardShape, filling: CardFilling, number: CardNumber) {
+    public required init(color: CardColor, shape: CardShape, filling: CardFilling, number: CardNumber) {
         super.init(color: color, shape: shape, filling: filling, number: number);
     }
 
-    required init(_ card : Card) {
+    public required init(_ card : Card) {
         super.init(card);
     }
 
-    override func toString(_ verbose : Bool = false) -> String {
+    public override func toString(_ verbose : Bool = false) -> String {
         return super.toString(verbose) + ":\(self.selected)";
     }
 

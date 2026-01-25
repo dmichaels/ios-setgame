@@ -10,7 +10,7 @@ public class Card {
     /// Creates a card from a String representation of the card or nil if not unparsable.
     /// Required so we (CardList) can create a generic Card or subclass thereof.
     ///
-    required convenience init?(_ value: String) {
+    public required convenience init?(_ value: String) {
         if let card = Card.from(value) {
             self.init(card);
         }
