@@ -189,7 +189,7 @@ public struct HelpView: View  {
             for i in self.magicSquareIndices[self.magicSquareCurrent!] {
                 self.magicSquare[i].selected = false;
             }
-           self.magicSquareCurrent = self.magicSquareCurrent! + 1;
+            self.magicSquareCurrent = self.magicSquareCurrent! + 1;
             if (self.magicSquareCurrent! == magicSquareIndices.count) {
                 self.magicSquareCurrent = nil;
             }
