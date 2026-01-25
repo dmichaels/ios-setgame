@@ -28,7 +28,6 @@ public struct DelayBy: ExpressibleByIntegerLiteral, ExpressibleByFloatLiteral {
     public init(_ r: ClosedRange<Double>) { c = 0; self.r = r; }
     public init(random r: ClosedRange<Int>) { self.init(Double(r.lowerBound)...Double(r.upperBound)); }
     public var value: Double {
-        print("DelayBy> c: \(self.c) r: \(self.r)")
         if let r: ClosedRange<Double> = r {
             return Double.random(in: r);
         }

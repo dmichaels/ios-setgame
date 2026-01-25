@@ -9,11 +9,36 @@ public struct CardView : View {
                     var alternate: Int?                         = nil;
                     var touchedCallback: ((TableCard) -> Void)? = nil;
 
-    private struct MaterializeLimits {
-        public static let durationMin: Double   = 0.05;
-        public static let durationMax: Double   = 2.00;
-        public static let elasticityMin: Double = 0.0;
-        public static let elasticityMax: Double = 1.0;
+    fileprivate struct Materialize {
+
+        fileprivate static let durationRange: ClosedRange<Double>   = 0.05...2.00;
+        fileprivate static let durationMax: Double                  = durationRange.upperBound;
+        fileprivate static let durationMin: Double                  = durationRange.lowerBound;
+
+        fileprivate static let elasticityRange: ClosedRange<Double> = 0.00...1.00;
+        fileprivate static let elasticityMax: Double                = elasticityRange.upperBound;
+        fileprivate static let elasticityMin: Double                = elasticityRange.lowerBound;
+
+        private static let springResponseRange: ClosedRange<Double>  = 0.05...2.00;
+        private static let springResponseMin: Double                 = springResponseRange.lowerBound;
+        private static let springResponseMax: Double                 = springResponseRange.upperBound;
+
+        private static let springDampingRange: ClosedRange<Double>   = 0.08...1.00;
+        private static let springDampingMin: Double                  = springDampingRange.lowerBound;
+        private static let springDampingMax: Double                  = springDampingRange.upperBound;
+
+        fileprivate static func springArgs(duration: Double, elasticity: Double) -> (response: Double, damping: Double) {
+            //
+            // With help from ChatGPT.
+            //
+            let duration = duration.clamp(to: durationRange);
+            let elasticity = elasticity.clamp(to: elasticityRange);
+            let elasticityInverse = elasticityMax - elasticity;
+            let damping = elasticityInverse;
+            let responseAdjustment = 0.85 + 0.5 * (elasticity / (elasticityMax - elasticityMin));
+            let response = duration / responseAdjustment;
+            return (response.clamp(to: springResponseRange), damping.clamp(to: springDampingRange))
+        }
     }
 
     public enum InitialEffect {
@@ -29,69 +54,21 @@ public struct CardView : View {
 
         fileprivate var materializeDuration: Double {
             if case let .materialize(duration, _, _) = self {
-                duration;
+                return duration;
             }
-            else {
-                MaterializeLimits.durationMin;
-            }
+            return Materialize.durationMin;
         }
 
         fileprivate var materializeElasticity: Double {
             if case let .materialize(_, elasticity, _) = self {
-                elasticity;
+                return elasticity;
             }
-            else {
-                MaterializeLimits.elasticityMin;
-            }
+            return Materialize.elasticityMin;
         }
 
         fileprivate var materializeDelay: DelayBy? {
             if case let .materialize(_, _, delay) = self { delay } else { nil }
         }
-    }
-
-    private static func springResponse(duration: Double, damping: Double) -> Double {
-
-        // Computes the SwiftUI response value for the .spring qualifier for
-        // the given duration value, for the materialization functionality.
-        // The given damping value is the SwiftUI dampingFraction
-        // based value, i.e from the below springDamping function.
-        // The external duration min/max values are defined by
-        // durationMin and durationMax in MaterializationLimits.
-
-        let durationMin: Double = 0.1;
-        let durationMax: Double = 2.0;
-        let duration = max(0.2, min(duration, 2.0));
-
-        let responseMin: Double = 0.05;
-        let responseMax: Double = 1.00;
-        //
-        // From ChatGPT ...
-        // Adjust response to compensate for bounce stretching time
-        // Bouncier (lower damping) → lower response needed to keep duration similar
-        //
-        let responseAdjustment = 0.85 + 0.3 * (1.0 - damping); // 0.85...1.15
-        let response = duration / responseAdjustment;
-
-        return response;
-    }
-
-    private static func springDamping(elasticity: Double) -> Double {
-
-        // Computes the SwiftUI dampingFraction value for the .spring qualifier
-        // from the given elasticity value, for the materialization functionality.
-        // Externally advertise the elasticity as 0.0...1.0 where 0.0 is least
-        // elastic and 1.0 is most elastic; but from SwiftUI POV it is reversed.
-        // The external elasticity min/max values are defined by
-        // elasticityMin and elasticityMax in MaterializationLimits.
-
-        let elasticity: Double = min(max(elasticity, MaterializeLimits.elasticityMin), MaterializeLimits.elasticityMax);
-
-        let dampingMin: Double = 0.05;
-        let dampingMax: Double = 1.00;
-        let damping: Double = MaterializeLimits.elasticityMax - elasticity;
-
-        return min(max(damping, dampingMin), dampingMax);
     }
 
     @State private var blinking: Bool;
@@ -226,9 +203,10 @@ public struct CardView : View {
                 //   and in fact if it is zero (ChatGPT at least) says it could lead
                 //   to undefined behavior or even a crash (TODO: enforce prevent this).
                 //
-                let damping: Double = CardView.springDamping(elasticity: card.materializeElasticity);
-                let response: Double = CardView.springResponse(duration: card.materializeDuration, damping: damping);
-                withAnimation(.spring(response: response, dampingFraction: damping)) {
+                let springArgs = CardView.Materialize.springArgs(
+                    duration: card.materializeDuration,
+                    elasticity: card.materializeElasticity);
+                withAnimation(.spring(response: springArgs.response, dampingFraction: springArgs.damping)) {
                     self.materializing = false;
                 }
             }
@@ -264,10 +242,11 @@ public struct CardView : View {
         }
         .onAppear {
             guard self.materializing else { return }
-            let damping: Double = CardView.springDamping(elasticity: self.initialEffect.materializeElasticity);
-            let response: Double = CardView.springResponse(duration: self.initialEffect.materializeDuration, damping: damping);
+            let springArgs = CardView.Materialize.springArgs(
+                duration: card.materializeDuration,
+                elasticity: self.initialEffect.materializeElasticity);
             Delay(by: self.initialEffect.materializeDelay) {
-                withAnimation(.spring(response: response, dampingFraction: damping)) {
+                withAnimation(.spring(response: springArgs.response, dampingFraction: springArgs.damping)) {
                     self.materializing = false;
                 }
             }
