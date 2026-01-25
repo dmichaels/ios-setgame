@@ -196,6 +196,8 @@ public struct HelpView: View  {
             else {
                 for i in self.magicSquareIndices[self.magicSquareCurrent!] {
                     self.magicSquare[i].selected = true;
+                    self.magicSquare[i].materialize();
+                    self.magicSquare[i].shake();
                 }
             }
         }
@@ -203,6 +205,8 @@ public struct HelpView: View  {
             self.magicSquareCurrent = 0;
             for i in magicSquareIndices[self.magicSquareCurrent!] {
                 self.magicSquare[i].selected = true;
+                    self.magicSquare[i].materialize();
+                    self.magicSquare[i].shake();
             }
         }
     }
