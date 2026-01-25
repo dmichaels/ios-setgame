@@ -358,7 +358,6 @@ public class Table: ObservableObject, MultiPlayerReceiver /* , MultiPlayerReceiv
 
     private func addToSetsLastFound(_ cards: [TableCard]) {
         cards.unselect();
-        // cards.select(false);
         self.state.setsLastFound.append(cards);
     }
 

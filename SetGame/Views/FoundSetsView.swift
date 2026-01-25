@@ -71,7 +71,6 @@ public struct FoundSetsView: View {
             ForEach(set, id: \.id) { card in
                 CardView(
                     card,
-                    // TableCard(card),
                     selectable: false,
                     initialEffect: materialize && recent ? .materialize : .none,
                     askew: settings.cardsAskew,
