@@ -28,7 +28,24 @@ public struct CardView : View {
 
         fileprivate static func springArgs(duration: Double, elasticity: Double) -> (response: Double, damping: Double) {
             //
-            // With help from ChatGPT.
+            // Computes the SwiftUI response value for the .spring qualifier
+            // based on given duration value, for the materialization.
+            //
+            // Computes the SwiftUI dampingFraction value for the .spring qualifier
+            // based on the given elasticity value, for materialization.
+            // Externally advertise elasticity as 0.0...1.0 where 0.0 is least
+            // elastic and 1.0 is most elastic; but from SwiftUI POV it is reversed.
+            //
+            // The response argument to the .spring qualifier controls how fast
+            // the spring is; the lower the faster; the higher the slower.
+            //
+            // The dampingFraction argument to .spring qualifier controls how flexible,
+            // elastic, or bouncing it is; the lower the bouncier/elastic; the higher
+            // the more rigid; if it is very low (close to zero) it is VERY bouncy
+            // indeed; and in fact if it is zero (ChatGPT at least) says it could
+            // lead to undefined behavior or even a crash.
+            //
+            // Code here with help from ChatGPT.
             //
             let duration = duration.clamp(to: durationRange);
             let elasticity = elasticity.clamp(to: elasticityRange);
@@ -184,23 +201,11 @@ public struct CardView : View {
         .onChange(of: card.materializeTrigger) { value in
             self.materializing = true;
             //
-            // Note no materializeDelay used here; if we want a delay
-            // for on-demand (i.e. not on-appear) materialization
+            // Note no materializeDelay used here; if we want a delay for
+            // on-demand (i.e. not onAppear/initialEffect) materialization
             // then use the delay argument in TableCard.materialize.
             //
             Delay {
-                //
-                // Animation for newly added "materialized" cards.
-                // - The response argument to the .spring qualifier
-                //   qualifier controls how fast the spring is;
-                //   the lower the faster; the higher the slower.
-                // - The dampingFraction argument to .spring qualifier
-                //   qualifier controls how flexible/elastic the bounce is;
-                //   the lower the bouncier/elastic; the higher the more rigid.
-                //   If it is very low (close to zero) it is VERY bouncy indeed;
-                //   and in fact if it is zero (ChatGPT at least) says it could lead
-                //   to undefined behavior or even a crash (TODO: enforce prevent this).
-                //
                 let springArgs = CardView.Materialize.springArgs(
                     duration: card.materializeDuration,
                     elasticity: card.materializeElasticity);
