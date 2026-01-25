@@ -19,3 +19,8 @@ DEVELOPMENT NOTES
     Branch (off game-center-20260109-with-possible-ios-18-animation-regression-fixes):
     - game-center-20260109-with-possible-ios-18-animation-regression-fixes-initial-effect-type-taketwo
     So far so good ... Not yet finished ...
+    Finally got it. Works with iOS 26 and 18 and refactored.
+
+> 2026-01-25:
+  - Merged game-center-20260109-with-possible-ios-18-animation-regression-fixes-initial-effect-type-taketwo
+    back into game-center-20260109-with-possible-ios-18-animation-regression-fixes
