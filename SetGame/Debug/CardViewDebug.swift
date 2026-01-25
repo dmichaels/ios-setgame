@@ -53,6 +53,8 @@ public struct CardViewDebug: View {
             }.padding(.top, margint)
             HStack(spacing: spacing) {
                 Control(label: "Clear") { self.table.removeCards() }
+                Control(label: "Fade HI")   { self.table.cards.materialize(duration: 0.9, elasticity: 0.9) }
+                Control(label: "Fade LO")   { self.table.cards.materialize(duration: 0.9, elasticity: 0.1) }
             }.padding(.top, margint)
         }
 

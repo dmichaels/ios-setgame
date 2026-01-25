@@ -9,6 +9,13 @@ public struct CardView : View {
                     var alternate: Int?                         = nil;
                     var touchedCallback: ((TableCard) -> Void)? = nil;
 
+    private struct MaterializeLimits {
+        public static let durationMin: Double   = 0.05;
+        public static let durationMax: Double   = 2.00;
+        public static let elasticityMin: Double = 0.0;
+        public static let elasticityMax: Double = 1.0;
+    }
+
     public enum InitialEffect {
 
         case none;
@@ -16,36 +23,70 @@ public struct CardView : View {
                          elasticity: Double = Defaults.Effects.materializeElasticity,
                          delay: DelayBy? = nil);
 
-        private enum Limits {
-            static let materializeDurationMin: Double   = 0.05;
-            static let materializeDurationMax: Double   = 2.00;
-            static let materializeElasticityMin: Double = 0.05;
-            static let materializeElasticityMax: Double = 1.00;
+        fileprivate var materialize: Bool {
+            if case .materialize = self { true } else { false }
         }
-
-        fileprivate var materialize: Bool { if case .materialize = self { true } else { false } }
 
         fileprivate var materializeDuration: Double {
             if case let .materialize(duration, _, _) = self {
-                min(max(duration, Limits.materializeDurationMin), Limits.materializeDurationMax);
+                duration;
             }
             else {
-                Limits.materializeDurationMin;
+                MaterializeLimits.durationMin;
             }
         }
 
         fileprivate var materializeElasticity: Double {
             if case let .materialize(_, elasticity, _) = self {
-                min(max(elasticity, Limits.materializeElasticityMin), Limits.materializeElasticityMax);
+                elasticity;
             }
             else {
-                Limits.materializeElasticityMin;
+                MaterializeLimits.elasticityMin;
             }
         }
 
         fileprivate var materializeDelay: DelayBy? {
             if case let .materialize(_, _, delay) = self { delay } else { nil }
         }
+    }
+
+    private static func springDamping(elasticity: Double) -> Double {
+
+        // Computes the SwiftUI dampingFraction value for the .spring
+        // qualifier for the materialization (fading in) functionality.
+        // Externally advertise "elasticity" as 0.0...1.0 where 0.0 is least
+        // elastic and 1.0 is most elastic; but from SwiftUI POV it is reversed.
+
+        let elasticity: Double = min(max(elasticity, MaterializeLimits.elasticityMin), MaterializeLimits.elasticityMax);
+
+        let dampingFractionMin: Double = 0.05;
+        let dampingFractionMax: Double = 1.00;
+        let dampingFraction: Double = MaterializeLimits.elasticityMax - elasticity;
+
+        return min(max(dampingFraction, dampingFractionMin), dampingFractionMax);
+    }
+
+    private static func springResponse(duration: Double, damping: Double) -> Double {
+
+        // Computes the SwiftUI response value for the .spring
+        // qualifier for the materialization (fading in) functionality.
+        // The given damping value is the SwiftUI dampingFraction
+        // based value, i.e from the above springDamping function.
+        //
+        // From ChatGPT ...
+        // Adjust response to compensate for bounce stretching time
+        // Bouncier (lower damping) → lower response needed to keep duration similar
+
+        let durationMin: Double = 0.1;
+        let durationMax: Double = 2.0;
+        let duration = max(0.2, min(duration, 2.0));
+
+        let responseMin: Double = 0.05;
+        let responseMax: Double = 1.00;
+        let responseAdjustment = 0.85 + 0.3 * (1.0 - damping); // 0.85...1.15
+        let response = duration / responseAdjustment
+
+        return response;
     }
 
     @State private var blinking: Bool;
@@ -180,8 +221,9 @@ public struct CardView : View {
                 //   and in fact if it is zero (ChatGPT at least) says it could lead
                 //   to undefined behavior or even a crash (TODO: enforce prevent this).
                 //
-                withAnimation(.spring(response: card.materializeDuration,
-                                      dampingFraction: card.materializeElasticity)) {
+                let damping: Double = CardView.springDamping(elasticity: card.materializeElasticity);
+                let response: Double = CardView.springResponse(duration: card.materializeDuration, damping: damping);
+                withAnimation(.spring(response: response, dampingFraction: damping)) {
                     self.materializing = false;
                 }
             }
@@ -217,9 +259,10 @@ public struct CardView : View {
         }
         .onAppear {
             guard self.materializing else { return }
+            let damping: Double = CardView.springDamping(elasticity: self.initialEffect.materializeElasticity);
+            let response: Double = CardView.springResponse(duration: self.initialEffect.materializeDuration, damping: damping);
             Delay(by: self.initialEffect.materializeDelay) {
-                withAnimation(.spring(response: self.initialEffect.materializeDuration,
-                                      dampingFraction: self.initialEffect.materializeElasticity)) {
+                withAnimation(.spring(response: response, dampingFraction: damping)) {
                     self.materializing = false;
                 }
             }
