@@ -39,9 +39,9 @@ public extension Array where Element : TableCard
         }
     }
 
-    public func materialize(duration: Double = 0, elasticity: Double = 0, delay: Double? = nil) {
+    public func materialize(responsivity: Double = 0, elasticity: Double = 0, delay: DelayBy? = nil) {
         for card in self {
-            card.materialize(duration: duration, elasticity: elasticity, delay: delay);
+            card.materialize(responsivity: responsivity, elasticity: elasticity, delay: delay);
         }
     }
 }

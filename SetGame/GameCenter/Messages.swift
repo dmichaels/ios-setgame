@@ -142,6 +142,7 @@ public extension GameCenter {
 
     // Actual send-to-host and broadcast-to-clients functions ...
 
+/*
     static func sendMessageToHost(_ message: Message, fromHost: Bool = false) {
         GameCenter.sendMessageToHost(message.serialize());
     }
@@ -168,6 +169,7 @@ public extension GameCenter {
     static func receiveMessageFromHost(_ data: Data?) {
         print("GAMECENTER-RECEIVE-MESSAGE> \(data)")
     }
+*/
 
 /*
     func sendMessageViaGameCenter(data: Data) {

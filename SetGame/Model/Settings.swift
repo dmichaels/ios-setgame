@@ -43,11 +43,11 @@ public class Defaults {
         public static let flipLeft: Bool                              = false;
         public static let shakeCount: Int                             = 11;
         public static let shakeDuration: Double                       = 0.90;
-        public static let materializeDuration: Double                 = 0.95;
+        public static let materializeResponsivity: Double                 = 0.95;
         public static let materializeElasticity: Double               = 0.65;
         public static var materializeRandomDelay: ClosedRange<Double> = 0.1...0.8;
         public static let initialEffect: CardView.InitialEffect = CardView.InitialEffect.materialize(
-                          duration: Defaults.Effects.materializeDuration,
+                          responsivity: Defaults.Effects.materializeResponsivity,
                           elasticity: Defaults.Effects.materializeElasticity,
                           delay: DelayBy(Defaults.Effects.materializeRandomDelay)
                       );

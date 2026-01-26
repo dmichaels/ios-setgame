@@ -1,29 +1,46 @@
 import Foundation
 
-public protocol MultiPlayerReceiver: AnyObject {
-    func receive(message: Data, from senderID: String);
+public protocol MultiPlayerHandler: AnyObject {
+    func handle(message: GameCenter.PlayerReadyMessage);
+    func handle(message: GameCenter.DealCardsMessage);
+    func handle(message: GameCenter.FoundSetMessage);
 }
 
-public protocol MultiPlayerTransport {
-    func send(message: Data, to recipientID: String);
-    func startReceiving();
+public protocol MultiPlayerSender: AnyObject {
+    func send(message: GameCenter.PlayerReadyMessage);
+    func send(message: GameCenter.DealCardsMessage);
+    func send(message: GameCenter.FoundSetMessage);
+}
+
+public protocol MultiPlayerTransport: MultiPlayerSender {
+    func send(message: Data, to player: String);
+    func startHandler();
     func stopReceiving();
 }
 
-public class RelayTransport: MultiPlayerTransport {
+public class RelayTransport /* MultiPlayerTransport*/ {
 
-    private weak let receiver: MultiPlayerReceiver?;
+    func receive(message: Data, from player: String) {}
+    func playerReady(message: GameCenter.PlayerReadyMessage) {}
+    func dealCards(message: GameCenter.DealCardsMessage) {}
+    func foundSet(message: GameCenter.FoundSetMessage) {}
+
+    func sendPlayerReady(message: GameCenter.PlayerReadyMessage) {}
+    func sendDealCards(message: GameCenter.DealCardsMessage) {}
+    func sendFoundSet(message: GameCenter.FoundSetMessage) {}
+
+    private weak let handler: MultiPlayerHandler?;
     private      let player: String;
     private      let url: URL;
     private      var pollingTimer: Timer?;
 
-    public init(player: String, receiver: MultiPlayerReceiver? = nil, url: URL? = nil) {
+    public init(player: String, handler: MultiPlayerHandler? = nil, url: URL? = nil) {
         self.player = player
-        self.receiver = receiver
+        self.handler = handler
         self.url = url ?? URL("http://127.0.0.1:5000")!
     }
 
-    public func send(message: Data, to recipientID: String) {
+    public func send(message: Data, to player: String) {
         let url = url.appendingPathComponent("POST")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -31,7 +48,7 @@ public class RelayTransport: MultiPlayerTransport {
 
         let base64Data = message.base64EncodedString()
         let json: [String: Any] = [
-            "to": recipientID,
+            "to": player,
             "data": base64Data
         ]
 
@@ -65,7 +82,7 @@ public class RelayTransport: MultiPlayerTransport {
                     let decoded = Data(base64Encoded: encodedData)
                 {
                     DispatchQueue.main.async {
-                        self.receiver?.receive(message: decoded, from: from)
+                        // TODO self.receiver?.receive(message: decoded, from: from)
                     }
                 }
             }

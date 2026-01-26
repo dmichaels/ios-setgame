@@ -19,7 +19,7 @@ public class TableCard : Card, ObservableObject {
                var shakeCount: Int                  = Defaults.Effects.shakeCount;
                var shakeDuration: Double            = Defaults.Effects.shakeDuration;
     @Published var materializeTrigger: Int          = 0;
-               var materializeDuration: Double      = Defaults.Effects.materializeDuration;
+               var materializeResponsivity: Double  = Defaults.Effects.materializeResponsivity;
                var materializeElasticity: Double    = Defaults.Effects.materializeElasticity;
 
     public required init() {
@@ -104,14 +104,14 @@ public class TableCard : Card, ObservableObject {
         self.shakeTrigger += 1;
     }
 
-    public func materialize(duration: Double = 0, elasticity: Double = 0, delay: Double? = nil) {
-        if let delay: Double = delay {
+    public func materialize(responsivity: Double = 0, elasticity: Double = 0, delay: DelayBy? = nil) {
+        if let delay: DelayBy = delay {
             Delay(by: delay) {
-                self.materialize(duration: duration, elasticity: elasticity, delay: nil);
+                self.materialize(responsivity: responsivity, elasticity: elasticity, delay: nil);
             }
             return;
         }
-        self.materializeDuration = duration > 0 ? duration : Defaults.Effects.materializeDuration;
+        self.materializeResponsivity = responsivity > 0 ? responsivity : Defaults.Effects.materializeResponsivity;
         self.materializeElasticity = elasticity > 0 ? elasticity : Defaults.Effects.materializeElasticity;
         self.materializeTrigger += 1;
     }
