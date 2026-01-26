@@ -114,12 +114,27 @@ public extension GameCenter {
         }
     }
 
-    public static func dispatch(data: Data?) {
-        if let data: Data = data {
-            if let message: [GameCenter.Message] = GameCenter.toMessages(data: data) {
-            }
-            else if let message: GameCenter.Message = GameCenter.toMessage(data: data) {
-            }
+    public static func dispatch(_ messages: [GameCenter.Message],
+                                  playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
+                                  dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
+                                  foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
+        for message in messages {
+            GameCenter.dispatch(message,
+                                playerReady: playerReady,
+                                dealCards: dealCards,
+                                foundSet: foundSet);
+        }
+    }
+
+    public static func dispatch(_ message: GameCenter.Message,
+                                  playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
+                                  dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
+                                  foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
+        switch message {
+            case let message as PlayerReadyMessage: playerReady?(message);
+            case let message as DealCardsMessage: dealCards?(message);
+            case let message as FoundSetMessage: foundSet?(message);
+            default: break;
         }
     }
 
@@ -153,6 +168,9 @@ public extension GameCenter {
                     }
                 }
             }
+        }
+        else {
+            return nil;
         }
         return messages;
     }
