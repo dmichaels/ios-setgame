@@ -47,10 +47,6 @@ public extension GameCenter {
             self.type   = .playerReady;
             self.player = player;
         }
-
-        public static func handle(_ data: Data?, handler: ((GameCenter.PlayerReadyMessage) -> Void)? = nil) {
-            GameCenter.handleMessage(data, playerReady: handler);
-        }
     }
 
     public struct DealCardsMessage: Message {
@@ -71,10 +67,6 @@ public extension GameCenter {
 
         public var cards: [TableCard] {
             return GameCenter.toCards(self.cardcodes).map { TableCard($0) }
-        }
-
-        public static func handle(_ data: Data?, _ handler: ((GameCenter.DealCardsMessage) -> Void)? = nil) {
-            GameCenter.handleMessage(data, dealCards: handler);
         }
     }
 
@@ -97,12 +89,9 @@ public extension GameCenter {
         public var cards: [TableCard] {
             return GameCenter.toCards(self.cardcodes).map { TableCard($0) }
         }
-
-        public static func handle(_ data: Data?, _ handler: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
-            GameCenter.handleMessage(data, foundSet: handler);
-        }
     }
 
+/* NEEDED?
     public static func handleMessage(_ data: Data?, _ handler: GameCenter.MessageHandler?) {
         if let data: Data = data,
            let handler: GameCenter.MessageHandler = handler {
@@ -112,6 +101,7 @@ public extension GameCenter {
                                      foundSet: handler.handle);
         }
     }
+*/
 
     public static func handleMessage(_ data: Data?,
                                        playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
@@ -136,26 +126,30 @@ public extension GameCenter {
         }
     }
 
+    public static func dispatch(data: Data?) {
+        if let data: Data = data {
+            if let message: GameCenter.Message = GameCenter.toMessage(data: data) {
+            }
+            else if let message: [GameCenter.Message] = GameCenter.toMessages(data: data) {
+            }
+        }
+    }
+
     public static func toMessages(data: Data?,
                                   playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
                                   dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
-                                  foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) -> [GameCenter.Message] {
+                                  foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) -> [GameCenter.Message]? {
 
         var messages: [GameCenter.Message] = [];
-        var xxx: MessageHandler? = nil;
-
         if let array: [Any] = GameCenter.fromJsonToArray(data) {
             for json: Any in array {
                 if let json: Data = try? JSONSerialization.data(withJSONObject: json) {
                     if let message: GameCenter.Message = GameCenter.toMessage(data: json) {
                         messages.append(message);
-                        if (message.type == .foundSet) {
-                        }
                     }
                 }
             }
         }
-
         return messages;
     }
 

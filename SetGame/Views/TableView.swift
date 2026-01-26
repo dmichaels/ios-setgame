@@ -55,7 +55,7 @@ public struct TableView: View {
 
 private struct DebugView: View {
     @ObservedObject var table: Table;
-    func receiveMessages(for playerID: String) async -> [String] {
+    func receiveMessages(for playerID: String) async {
         let url = URL(string: "http://127.0.0.1:5000/receive/\(playerID)")!
         print(url)
         let (data, _) = try! await URLSession.shared.data(from: url)
@@ -76,11 +76,12 @@ private struct DebugView: View {
             print("NIL-ARRAY-DATA")
         }
         */
-        let messages: [GameCenter.Message] = GameCenter.toMessages(data: data);
-        print("MESSAGES")
-        print(messages);
+        if let messages: [GameCenter.Message] = GameCenter.toMessages(data: data) {
+            print("MESSAGES")
+            print(messages);
+        }
 
-        return (try? JSONDecoder().decode([String].self, from: data)) ?? []
+        // return (try? JSONDecoder().decode([String].self, from: data)) ?? []
     }
 
 func sendMessage(_ messageData: Data, to playerID: String) async {
@@ -114,9 +115,8 @@ func sendMessage(_ messageData: Data, to playerID: String) async {
         Button {
 Task {
             print("HTTP-CALL")
-            let data = await receiveMessages(for: "A")
+            let _ = await receiveMessages(for: "A")
             print("HTTP-CALL-DONE")
-            print(data)
 }
         } label: {
             Text("GET")
