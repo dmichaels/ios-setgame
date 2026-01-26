@@ -2,34 +2,19 @@ import Foundation
 
 extension GameCenter
 {
-    public protocol Handler: AnyObject {
-        func handle(message: GameCenter.PlayerReadyMessage);
-        func handle(message: GameCenter.DealCardsMessage);
-        func handle(message: GameCenter.FoundSetMessage);
-    }
-
-    public protocol Sender: AnyObject {
-        func send(message: GameCenter.PlayerReadyMessage);
-        func send(message: GameCenter.DealCardsMessage);
-        func send(message: GameCenter.FoundSetMessage);
-    }
-}
-
-extension GameCenter
-{
-    public class Transport: GameCenter.Sender, GameCenter.Handler {
+    public class Transport: GameCenter.MessageSender, GameCenter.MessageHandler {
 
         private      let player: String;
-        private weak var handler: Handler?;
+        private weak var handler: MessageHandler?;
         private      let url: URL;
 
-        public init(player: String, handler: Handler? = nil, url: URL? = nil) {
+        public init(player: String, handler: MessageHandler? = nil, url: URL? = nil) {
             self.player = player;
             self.handler = handler;
             self.url = url ?? URL(string: Defaults.url)!
         }
 
-        public func setHandler(_ handler: Handler) {
+        public func setHandler(_ handler: MessageHandler) {
             self.handler = handler;
         }
 
@@ -104,7 +89,8 @@ extension GameCenter
                         let decoded = Data(base64Encoded: encodedData)
                     {
                         DispatchQueue.main.async {
-                            // TODO self.handler?.handle(message: decoded, from: from)
+                            // self.handler?.handle(message: decoded, from: from)
+                            GameCenter.handleMessage(decoded, self.handler);
                         }
                     }
                 }

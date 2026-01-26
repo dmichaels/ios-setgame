@@ -5,10 +5,10 @@ import SwiftUI
 /// table cards which are on display; and sundry other data points.
 /// Is this class technically, effectively acting as a "model-view"?
 ///
-public class Table: ObservableObject, GameCenter.Handler {
+public class Table: ObservableObject, GameCenter.MessageHandler {
 
     private var settings: Settings;
-    private var gameCenterSender: GameCenter.Sender?;
+    private var gameCenterSender: GameCenter.MessageSender?;
 
     public struct State {
         public private(set) var startTime: Date                     = Date();
@@ -41,7 +41,7 @@ public class Table: ObservableObject, GameCenter.Handler {
     public func handle(message: GameCenter.FoundSetMessage) {
     }
 
-    public init(settings: Settings, gameCenterSender: GameCenter.Sender? = nil) {
+    public init(settings: Settings, gameCenterSender: GameCenter.MessageSender? = nil) {
         self.settings = settings;
         self.gameCenterSender = gameCenterSender;
         self.cards = [];
