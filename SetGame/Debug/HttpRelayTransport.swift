@@ -2,7 +2,14 @@ import Foundation
 
 extension GameCenter
 {
-    public class Transport: GameCenter.MessageSender, GameCenter.MessageHandler {
+    protocol Transport: GameCenter.MessageSender, GameCenter.MessageHandler {
+        func setHandler(_ handler: MessageHandler);
+    }
+}
+
+extension GameCenter
+{
+    public class HttpTransport: Transport { // GameCenter.MessageSender, GameCenter.MessageHandler {
 
         private      let player: String;
         private weak var handler: MessageHandler?;
@@ -16,6 +23,9 @@ extension GameCenter
 
         public func setHandler(_ handler: MessageHandler) {
             self.handler = handler;
+            if (pollingTimer == nil) {
+                // self.startPolling();
+            }
         }
 
         private struct Defaults {
@@ -63,37 +73,55 @@ extension GameCenter
             URLSession.shared.dataTask(with: request).resume()
         }
 
-        public func startHandler() {
+        public func startPolling() {
             pollingTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                self.pollForMessages()
+                self.pollForMessages();
             }
         }
 
-        public func stopHandler() {
-            pollingTimer?.invalidate()
-            pollingTimer = nil
+        public func stopPolling() {
+            pollingTimer?.invalidate();
+            pollingTimer = nil;
         }
 
         private func pollForMessages() {
-            let url = url.appendingPathComponent("get/\(player)")
+            let url = url.appendingPathComponent("receive/\(player)")
+            print("POLL> [\(url)]");
             URLSession.shared.dataTask(with: url) { data, response, error in
-                guard
-                    let data = data,
-                    let messages = try? JSONSerialization.jsonObject(with: data) as? [[String: String]]
-                else { return }
-
+                if let data: Data = data {
+                    print("POLL> data: [\(data)]");
+                    let dataString = String(data: data, encoding: .utf8);
+                    print("POLL> dataString: [\(dataString)]");
+                    let messages = try? JSONSerialization.jsonObject(with: data) as? [[String: String]];
+                    print("POLL> messages: [\(messages)]");
+                    // GameCenter.xhandleMessage(data, dealCards: { message in
+                    GameCenter.handleMessage(data, dealCards: { message in
+                    });
+                }
+                else {
+                    print("POLL> nodata data: [\(data)]");
+                }
+/*
+                guard let data = data,
+                      let messages = try? JSONSerialization.jsonObject(with: data) as? [[String: String]]
+                else {
+                    let xyzzy = String(data: data, encoding: .utf8);
+                    print("POLL> nodata data: [\(data)] messages: [\(xyzzy)]");
+                    return;
+                }
+                print("POLL> data: \(data)");
                 for message in messages {
-                    if
-                        let from = message["from"],
+                    print("POLL> message: \(message)");
+                    if let from = message["from"],
                         let encodedData = message["data"],
-                        let decoded = Data(base64Encoded: encodedData)
-                    {
+                        let decoded = Data(base64Encoded: encodedData) {
                         DispatchQueue.main.async {
                             // self.handler?.handle(message: decoded, from: from)
                             GameCenter.handleMessage(decoded, self.handler);
                         }
                     }
                 }
+*/
             }.resume()
         }
     }

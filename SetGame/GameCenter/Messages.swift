@@ -17,6 +17,11 @@ public extension GameCenter {
         func serialize() -> Data?
     }
 
+    private struct MessageEnvelope: Decodable {
+        let type: GameCenter.MessageType
+    }
+
+
     public protocol MessageHandler: AnyObject {
         func handle(message: GameCenter.PlayerReadyMessage);
         func handle(message: GameCenter.DealCardsMessage);
@@ -108,16 +113,12 @@ public extension GameCenter {
         }
     }
 
-    private static func handleMessage(_ data: Data?,
-                                        playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
-                                        dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
-                                        foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
+    public static func handleMessage(_ data: Data?,
+                                       playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
+                                       dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
+                                       foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
 
-        struct MessageEnvelope: Decodable {
-            let type: GameCenter.MessageType
-        }
-
-        if let data = data, let envelope = GameCenter.fromJson(data, MessageEnvelope.self) {
+        if let data = data, let envelope = GameCenter.fromJson(data, GameCenter.MessageEnvelope.self) {
             switch envelope.type {
                 case .playerReady:
                     if let message: GameCenter.PlayerReadyMessage = GameCenter.PlayerReadyMessage(data) {
@@ -135,6 +136,49 @@ public extension GameCenter {
         }
     }
 
+    public static func dataToMessages(_ data: Data?,
+                                        playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
+                                        dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
+                                        foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) -> [GameCenter.Message] {
+
+        var messages: [GameCenter.Message] = [];
+        var xxx: MessageHandler? = nil;
+
+        if let array: [Any] = GameCenter.fromJsonToArray(data) {
+            for json: Any in array {
+                if let json: Data = try? JSONSerialization.data(withJSONObject: json) {
+                    if let message: GameCenter.Message = GameCenter.dataToMessage(json) {
+                        messages.append(message);
+                        if (message.type == .foundSet) {
+                        }
+                    }
+                }
+            }
+        }
+
+        return messages;
+    }
+
+    private static func dataToMessage(_ data: Data?) -> GameCenter.Message? {
+        if let data = data, let envelope = GameCenter.fromJson(data, GameCenter.MessageEnvelope.self) {
+            switch envelope.type {
+                case .playerReady:
+                    if let message: GameCenter.PlayerReadyMessage = GameCenter.PlayerReadyMessage(data) {
+                        return message;
+                    }
+                case .dealCards:
+                    if let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(data) {
+                        return message;
+                    }
+                case .foundSet:
+                    if let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(data) {
+                        return message;
+                    }
+            }
+        }
+        return nil;
+    }
+
     private static func toJson(_ data: GameCenter.Message) -> Data? {
         do {
             return try JSONEncoder().encode(data);
@@ -142,6 +186,15 @@ public extension GameCenter {
         catch {
             return nil;
         }
+    }
+
+    public static func fromJsonToArray(_ data: Data?) -> [Any]? {
+        if let data: Data = data {
+            if let array: [Any] = try? JSONSerialization.jsonObject(with: data) as? [Any] {
+                return array;
+            }
+        }
+        return nil;
     }
 
     private static func fromJson<T: Decodable>(_ data: Data?, _ type: T.Type) -> T? {

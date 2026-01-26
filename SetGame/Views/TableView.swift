@@ -62,12 +62,46 @@ private struct DebugView: View {
         print("RAW-DATA")
         print(data)
         print(type(of: data))
+
+        /*
         let s = String(data: data, encoding: .utf8)
         print("STRING-DATA")
         print(s)
+        // let xyzzy: [Any]? = try? JSONSerialization.jsonObject(with: data) as? [Any];
+        if let xyzzy: [Any] = GameCenter.fromJsonToArray(data) {
+            print("ARRAY-DATA")
+            print(xyzzy)
+        }
+        else {
+            print("NIL-ARRAY-DATA")
+        }
+        */
+        let messages: [GameCenter.Message] = GameCenter.dataToMessages(data);
+        print("MESSAGES")
+        print(messages);
+
         return (try? JSONDecoder().decode([String].self, from: data)) ?? []
     }
-    func sendMessage(_ msg: String, to playerID: String) async {
+
+func sendMessage(_ messageData: Data, to playerID: String) async {
+    let url = URL(string: "http://127.0.0.1:5000/send")!
+    var req = URLRequest(url: url)
+    req.httpMethod = "POST"
+    req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+    // Decode messageData into JSON so it nests correctly
+    let messageObject = try? JSONSerialization.jsonObject(with: messageData)
+
+    let payload: [String: Any] = [
+        "to": playerID,
+        "message": messageObject as Any
+    ]
+
+    req.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+    _ = try? await URLSession.shared.data(for: req)
+}
+
+    func xsendMessage(_ msg: String, to playerID: String) async {
         let url = URL(string: "http://127.0.0.1:5000/send")!
         var req = URLRequest(url: url)
         req.httpMethod = "POST"
@@ -85,21 +119,61 @@ Task {
             print(data)
 }
         } label: {
-            Text("HTTP-GET")
+            Text("GET")
         }
         Button { Task {
-            print("HTTP-POST")
+            print("POST")
             let cards: [TableCard] = [TableCard("ROS3")!];
             let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: cards);
             if let data: Data = message.serialize() {
                 if let stringToSend = String(data: data, encoding: .utf8) {
-                    let data = await sendMessage(stringToSend, to: "A")
+                    // xyzzy let data = await sendMessage(stringToSend, to: "A")
+                    let data = await sendMessage(data, to: "A")
                     print("HTTP-POST-DONE")
                     print(data)
                 }
             }
         } } label: {
-            Text("HTTP-POST")
+            Text("POST")
+        }
+        Button { Task {
+            print("POSTNEW")
+            let cards: [TableCard] = [TableCard("ROS3")!];
+            let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: cards);
+            if let data: Data = message.serialize() {
+                // let data = await xsend(message: data, to: "A")
+                let data = await sendMessage(data, to: "A")
+                print("HTTP-POST-DONE")
+                print(data)
+                func xsend(message: Data, to player: String) async {
+    let messageObject = try? JSONSerialization.jsonObject(with: message)
+                    let contentType: String = "application/json";
+                    let contentTypeName: String = "Content-Type";
+                    let baseUrl = URL(string: "http://127.0.0.1:5000/send")!
+                    let url = baseUrl.appendingPathComponent("POST")
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "POST"
+                    request.setValue(contentType, forHTTPHeaderField: contentTypeName)
+                    // let base64Data = message.base64EncodedString()
+                    // let payload: [String: Any] = [
+                    let payload = [
+                        "to": player,
+                        // "data": base64Data
+                        "message": messageObject as Any
+                    ]
+
+                    // request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+                    // URLSession.shared.dataTask(with: request).resume()
+
+                    // request.httpBody = try? JSONEncoder().encode(payload)
+                    // let _ = try? await URLSession.shared.data(for: request)
+
+                    request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+                    _ = try? await URLSession.shared.data(for: request)
+                }
+            }
+        } } label: {
+            Text("POSTNEW")
         }
 
 // xyzzy

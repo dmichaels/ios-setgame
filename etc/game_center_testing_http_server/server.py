@@ -16,7 +16,7 @@ def send():
 
 @app.route('/receive/<player_id>', methods=['GET'])
 def receive(player_id):
-    messages = inbox.pop(player_id, [1,2,3])
+    messages = inbox.pop(player_id, [])
     print("receive:")
     print(messages)
     return jsonify(messages)

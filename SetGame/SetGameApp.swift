@@ -8,7 +8,7 @@ struct SetGameApp: App {
     @StateObject private var table: Table;
 
     init() {
-        let gameCenterTransport: GameCenter.Transport? = Defaults.gameCenter ? GameCenter.Transport(player: "A") : nil;
+        let gameCenterTransport: GameCenter.Transport? = Defaults.gameCenter ? GameCenter.HttpTransport(player: "A") : nil;
         let settings: Settings = Settings();
         _settings = StateObject(wrappedValue: settings);
         _feedback = StateObject(wrappedValue: Feedback(sounds: settings.sounds,
