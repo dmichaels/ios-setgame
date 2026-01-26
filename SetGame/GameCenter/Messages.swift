@@ -68,7 +68,7 @@ public extension GameCenter {
             return GameCenter.toCards(self.cardcodes).map { TableCard($0) }
         }
 
-        public static func handle(_ data: Data?, handler: ((GameCenter.DealCardsMessage) -> Void)? = nil) {
+        public static func handle(_ data: Data?, _ handler: ((GameCenter.DealCardsMessage) -> Void)? = nil) {
             GameCenter.handleMessage(data, dealCards: handler);
         }
     }
@@ -93,7 +93,7 @@ public extension GameCenter {
             return GameCenter.toCards(self.cardcodes).map { TableCard($0) }
         }
 
-        public static func handle(_ data: Data?, handler: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
+        public static func handle(_ data: Data?, _ handler: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
             GameCenter.handleMessage(data, foundSet: handler);
         }
     }
@@ -108,7 +108,7 @@ public extension GameCenter {
         }
     }
 
-    public static func handleMessage(_ data: Data?,
+    private static func handleMessage(_ data: Data?,
                                        playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
                                        dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
                                        foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
