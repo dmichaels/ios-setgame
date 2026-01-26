@@ -51,13 +51,14 @@ public struct CardViewDebug: View {
                 Control(label: "Select") { self.table.cards.select(toggle: true) }
                 Control(label: "Blink")  { self.table.cards.blink(count: 5, interval: 0.15) }
                 Control(label: "Flip")   { self.table.cards.flip() }
-                Control(label: "Fade")   { self.table.cards.materialize(responsivity: 0.9, elasticity: 0.1, delay: 0.2) }
+                Control(label: "Fade")   { self.table.cards.materialize(responsivity: 0.9, elasticity: 0.1, delay: DelayBy(0...2)) }
                 Control(label: "Shake")  { self.table.cards.shake() }
                 Control(label: "Move")   { self.move() }.disabled(!self.moveEnabled)
             }.padding(.top, margint)
             HStack(spacing: spacing) {
                 Control(label: "Clear") { self.table.removeCards() }
                 Control(label: "Fade LO")   { self.table.cards.materialize(responsivity: 0.9, elasticity: 0.1) }
+                Control(label: "Fade HI")   { self.table.cards.materialize(responsivity: 0.9, elasticity: 0.9) }
             }.padding(.top, margint)
         }
 
