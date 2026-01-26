@@ -95,8 +95,8 @@ extension GameCenter
                     let messages = try? JSONSerialization.jsonObject(with: data) as? [[String: String]];
                     print("POLL> messages: [\(messages)]");
                     // GameCenter.xhandleMessage(data, dealCards: { message in
-                    GameCenter.handleMessage(data, dealCards: { message in
-                    });
+                    // GameCenter.handleMessage(data, dealCards: { message in
+                    // });
                 }
                 else {
                     print("POLL> nodata data: [\(data)]");

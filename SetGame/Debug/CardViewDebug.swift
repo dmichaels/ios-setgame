@@ -148,7 +148,10 @@ public struct CardViewDebug: View {
 
         // Use our GameCenter function to receive, decode, and dispatch the message.
 
-        GameCenter.handleMessage(data, dealCards: handleDealCardsMessage);
+        // GameCenter.handleMessage(data, dealCards: handleDealCardsMessage);
+        if let msg = GameCenter.DealCardsMessage(data) {
+            GameCenter.dispatch(msg, dealCards: handleDealCardsMessage)
+        }
     }
 
     private func simulateIncomingFoundSetMessage(_ cards: [TableCard]) {
@@ -163,6 +166,9 @@ public struct CardViewDebug: View {
 
         // Use our GameCenter function to receive, decode, and dispatch the message.
 
-        GameCenter.handleMessage(data, foundSet: handleFoundSetMessage);
+        // GameCenter.handleMessage(data, foundSet: handleFoundSetMessage);
+        if let msg = GameCenter.FoundSetMessage(data) {
+            GameCenter.dispatch(msg, foundSet: handleFoundSetMessage)
+        }
     }
 }

@@ -91,50 +91,31 @@ public extension GameCenter {
         }
     }
 
-    public static func handleMessage(_ data: Data?,
-                                       playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
-                                       dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
-                                       foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
-
-        if let data = data, let envelope = GameCenter.fromJson(data, GameCenter.MessageEnvelope.self) {
-            switch envelope.type {
-                case .playerReady:
-                    if let message: GameCenter.PlayerReadyMessage = GameCenter.PlayerReadyMessage(data) {
-                        playerReady?(message);
-                    }
-                case .dealCards:
-                    if let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(data) {
-                        dealCards?(message);
-                    }
-                case .foundSet:
-                    if let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(data) {
-                        foundSet?(message);
-                    }
+    public static func dispatch(_ messages: [GameCenter.Message]?,
+                                  playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
+                                  dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
+                                  foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
+        if let messages: [GameCenter.Message] = messages {
+            for message in messages {
+                GameCenter.dispatch(message,
+                                    playerReady: playerReady,
+                                    dealCards: dealCards,
+                                    foundSet: foundSet);
             }
         }
     }
 
-    public static func dispatch(_ messages: [GameCenter.Message],
+    public static func dispatch(_ message: GameCenter.Message?,
                                   playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
                                   dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
                                   foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
-        for message in messages {
-            GameCenter.dispatch(message,
-                                playerReady: playerReady,
-                                dealCards: dealCards,
-                                foundSet: foundSet);
-        }
-    }
-
-    public static func dispatch(_ message: GameCenter.Message,
-                                  playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
-                                  dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
-                                  foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
-        switch message {
-            case let message as PlayerReadyMessage: playerReady?(message);
-            case let message as DealCardsMessage: dealCards?(message);
-            case let message as FoundSetMessage: foundSet?(message);
-            default: break;
+        if let message: GameCenter.Message = message {
+            switch message {
+                case let message as PlayerReadyMessage: playerReady?(message);
+                case let message as DealCardsMessage: dealCards?(message);
+                case let message as FoundSetMessage: foundSet?(message);
+                default: break;
+            }
         }
     }
 
@@ -166,6 +147,13 @@ public extension GameCenter {
                     if let message: GameCenter.Message = GameCenter.toMessage(data: json) {
                         messages.append(message);
                     }
+                }
+            }
+        }
+        else if let object: Data = GameCenter.fromJsonToData(data) {
+            if let json: Data = GameCenter.fromJsonToData(object) {
+                if let message: GameCenter.Message = GameCenter.toMessage(data: json) {
+                    return [message];
                 }
             }
         }
