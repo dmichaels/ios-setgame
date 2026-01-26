@@ -116,9 +116,9 @@ public extension GameCenter {
 
     public static func dispatch(data: Data?) {
         if let data: Data = data {
-            if let message: GameCenter.Message = GameCenter.toMessage(data: data) {
+            if let message: [GameCenter.Message] = GameCenter.toMessages(data: data) {
             }
-            else if let message: [GameCenter.Message] = GameCenter.toMessages(data: data) {
+            else if let message: GameCenter.Message = GameCenter.toMessage(data: data) {
             }
         }
     }
@@ -147,12 +147,8 @@ public extension GameCenter {
         var messages: [GameCenter.Message] = [];
         if let array: [Any] = GameCenter.fromJsonToArray(data) {
             for json: Any in array {
-                print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-                // if let json: Data = try? JSONSerialization.data(withJSONObject: json) {
                 if let json: Data = GameCenter.fromJsonToData(json) {
-                    print("ZZZZ-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
                     if let message: GameCenter.Message = GameCenter.toMessage(data: json) {
-                        print("AAA-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
                         messages.append(message);
                     }
                 }
@@ -186,6 +182,15 @@ public extension GameCenter {
         return nil;
     }
 
+    private static func toJson(_ data: GameCenter.Message) -> Data? {
+        do {
+            return try JSONEncoder().encode(data);
+        }
+        catch {
+            return nil;
+        }
+    }
+
     private static func toCards(_ codes: [String]) -> [Card] {
         var cards: [Card] = [];
         for code in codes {
@@ -194,15 +199,6 @@ public extension GameCenter {
             }
         }
         return cards;
-    }
-
-    private static func toJson(_ data: GameCenter.Message) -> Data? {
-        do {
-            return try JSONEncoder().encode(data);
-        }
-        catch {
-            return nil;
-        }
     }
 }
 
