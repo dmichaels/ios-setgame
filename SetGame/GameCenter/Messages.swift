@@ -125,6 +125,13 @@ public extension GameCenter {
         }
     }
 
+    public static func handleMessage(_ data: Data?, handler: GameCenter.MessageHandler) {
+        GameCenter.handleMessage(data,
+                                 playerReady: handler.handle,
+                                 dealCards: handler.handle,
+                                 foundSet: handler.handle);
+    }
+
     private static func toJson(_ data: GameCenter.Message) -> Data? {
         do {
             return try JSONEncoder().encode(data);

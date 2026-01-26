@@ -166,5 +166,6 @@ public struct CardViewDebug: View {
         // GameCenter.handleMessage(data,  foundSet: handleFoundSetMessage);
         // GameCenter.FoundSetMessage.handle(data, foundSet: handleFoundSetMessage);
         GameCenter.FoundSetMessage.handle(data, handler: handleFoundSetMessage);
+        // GameCenter.FoundSetMessage.handle(data) { message in handleFoundSetMessage(message) };
     }
 }
