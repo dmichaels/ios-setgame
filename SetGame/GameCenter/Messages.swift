@@ -135,16 +135,16 @@ public extension GameCenter {
         }
     }
 
-    public static func toMessages(data: Data?,
-                                  playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
-                                  dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
-                                  foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) -> [GameCenter.Message]? {
-
+    public static func toMessages(data: Data?) -> [GameCenter.Message]? {
         var messages: [GameCenter.Message] = [];
-        if let array: [Any] = GameCenter.fromJsonToArray(data) {
+        if let array: [Any] = GameCenter.fromJsonDataToArray(data) {
             for json: Any in array {
-                if let json: Data = try? JSONSerialization.data(withJSONObject: json) {
+                print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+                // if let json: Data = try? JSONSerialization.data(withJSONObject: json) {
+                if let json: Data = GameCenter.fromJsonToData(json) {
+                    print("ZZZZ-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
                     if let message: GameCenter.Message = GameCenter.toMessage(data: json) {
+                        print("AAA-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
                         messages.append(message);
                     }
                 }
@@ -182,10 +182,19 @@ public extension GameCenter {
         }
     }
 
-    public static func fromJsonToArray(_ data: Data?) -> [Any]? {
+    private static func fromJsonDataToArray(_ data: Data?) -> [Any]? {
         if let data: Data = data {
             if let array: [Any] = try? JSONSerialization.jsonObject(with: data) as? [Any] {
                 return array;
+            }
+        }
+        return nil;
+    }
+
+    private static func fromJsonToData(_ data: Any?) -> Data? {
+        if let data: Any = data {
+            if let object: Data = try? JSONSerialization.data(withJSONObject: data) {
+                return object;
             }
         }
         return nil;
