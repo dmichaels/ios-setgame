@@ -109,9 +109,9 @@ public extension GameCenter {
     }
 
     private static func handleMessage(_ data: Data?,
-                                       playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
-                                       dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
-                                       foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
+                                        playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
+                                        dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
+                                        foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
 
         struct MessageEnvelope: Decodable {
             let type: GameCenter.MessageType
