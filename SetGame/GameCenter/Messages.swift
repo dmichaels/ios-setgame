@@ -1,6 +1,8 @@
 import SwiftUI
 
-public enum GameCenter {
+public enum GameCenter {}
+
+public extension GameCenter {
 
     public enum MessageType: String, Codable {
         case playerReady
@@ -137,87 +139,3 @@ public extension GameCenter.Message {
         return GameCenter.toJson(self)
     }
 }
-
-public extension GameCenter {
-
-    // Actual send-to-host and broadcast-to-clients functions ...
-
-/*
-    static func sendMessageToHost(_ message: Message, fromHost: Bool = false) {
-        GameCenter.sendMessageToHost(message.serialize());
-    }
-
-    static func sendMessageToHost(_ data: Data?, fromHost: Bool = false) {
-        if let data: Data = data {
-            let sendHostDelay: Double = 0.075;
-            if (true || fromHost) { // xyzzy
-                //
-                // For sending from host we simulate loopback with optional delay.
-                // Simplifies coding and puts the host on a more equal footing
-                // with the clients regarding latency-wise.
-                //
-                Delay(by: sendHostDelay) {
-                    GameCenter.receiveMessageFromHost(data);
-                }
-            }
-            else {
-                // self.sendMessageViaGameCenter(data);
-            }
-        }
-    }
-
-    static func receiveMessageFromHost(_ data: Data?) {
-        print("GAMECENTER-RECEIVE-MESSAGE> \(data)")
-    }
-*/
-
-/*
-    func sendMessageViaGameCenter(data: Data) {
-    }
-
-    func sendToClients(_ data: Data, fromHost: Bool = false) {
-        let sendHostDelay: Double = 0.075;
-        guard fromHost else {
-            print("Only the host should call this.")
-            return;
-        }
-        // Send to all remote players (non-hosts)
-        for player in match.players {
-            self.sendToPlayer(player, data: data)
-        }
-        // Optionally simulate loopback if host also needs to process the message
-        DispatchQueue.main.asyncAfter(deadline: .now() + sendHostDelay) {
-            self.receiveMessage(data);
-        }
-    }
-
-    func sendToPlayer(_ player: GKPlayer, data: Data, using match: GKMatch) {
-        do {
-            try match.send(data, to: [player], dataMode: .reliable)
-        } catch {
-            print("Failed to send to \(player.displayName): \(error)")
-        }
-    }
-*/
-}
-
-
-/*
-public protocol MultiPlayerSender {
-    func sendMessageFoundSet(_ cards: [TableCard]);
-    func sendMessageDealCards(_ cards: [TableCard]);
-}
-
-public protocol MultiPlayerReceiver {
-    func receiveMessageFoundSet(_ cards: [TableCard]);
-    func receiveMessageDealCards(_ cards: [TableCard]);
-}
-
-public class GameCenterSender: MultiPlayerSender {
-    public func sendMessageFoundSet(_ cards: [TableCard]) {
-    }
-
-    public func sendMessageDealCards(_ cards: [TableCard]) {
-    }
-}
-*/

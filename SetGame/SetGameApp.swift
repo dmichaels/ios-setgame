@@ -8,12 +8,13 @@ struct SetGameApp: App {
     @StateObject private var table: Table;
 
     init() {
-        let multiPlayerSender: MultiPlayerTransport? = Defaults.gameCenter ? nil : nil; // TODO
+        let gameCenterTransport: GameCenter.Transport? = Defaults.gameCenter ? GameCenter.Transport(player: "A") : nil;
         let settings: Settings = Settings();
         _settings = StateObject(wrappedValue: settings);
         _feedback = StateObject(wrappedValue: Feedback(sounds: settings.sounds,
                                                        haptics: settings.haptics));
-        _table = StateObject(wrappedValue: Table(settings: settings, multiPlayerSender: multiPlayerSender));
+        _table = StateObject(wrappedValue: Table(settings: settings, gameCenterSender: gameCenterTransport));
+        gameCenterTransport?.setHandler(self.table);
     }
 
     var body: some Scene {
