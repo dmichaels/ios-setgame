@@ -137,7 +137,7 @@ public extension GameCenter {
 
     public static func toMessages(data: Data?) -> [GameCenter.Message]? {
         var messages: [GameCenter.Message] = [];
-        if let array: [Any] = GameCenter.fromJsonDataToArray(data) {
+        if let array: [Any] = GameCenter.fromJsonToArray(data) {
             for json: Any in array {
                 print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
                 // if let json: Data = try? JSONSerialization.data(withJSONObject: json) {
@@ -182,7 +182,7 @@ public extension GameCenter {
         }
     }
 
-    private static func fromJsonDataToArray(_ data: Data?) -> [Any]? {
+    private static func fromJsonToArray(_ data: Data?) -> [Any]? {
         if let data: Data = data {
             if let array: [Any] = try? JSONSerialization.jsonObject(with: data) as? [Any] {
                 return array;
