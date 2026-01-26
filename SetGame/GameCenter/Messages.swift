@@ -91,18 +91,6 @@ public extension GameCenter {
         }
     }
 
-/* NEEDED?
-    public static func handleMessage(_ data: Data?, _ handler: GameCenter.MessageHandler?) {
-        if let data: Data = data,
-           let handler: GameCenter.MessageHandler = handler {
-            GameCenter.handleMessage(data,
-                                     playerReady: handler.handle,
-                                     dealCards: handler.handle,
-                                     foundSet: handler.handle);
-        }
-    }
-*/
-
     public static func handleMessage(_ data: Data?,
                                        playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
                                        dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
@@ -135,24 +123,6 @@ public extension GameCenter {
         }
     }
 
-    public static func toMessages(data: Data?) -> [GameCenter.Message]? {
-        var messages: [GameCenter.Message] = [];
-        if let array: [Any] = GameCenter.fromJsonToArray(data) {
-            for json: Any in array {
-                print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-                // if let json: Data = try? JSONSerialization.data(withJSONObject: json) {
-                if let json: Data = GameCenter.fromJsonToData(json) {
-                    print("ZZZZ-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-                    if let message: GameCenter.Message = GameCenter.toMessage(data: json) {
-                        print("AAA-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-                        messages.append(message);
-                    }
-                }
-            }
-        }
-        return messages;
-    }
-
     private static func toMessage(data: Data?) -> GameCenter.Message? {
         if let data = data, let envelope = GameCenter.fromJson(data, GameCenter.MessageEnvelope.self) {
             switch envelope.type {
@@ -173,13 +143,29 @@ public extension GameCenter {
         return nil;
     }
 
-    private static func toJson(_ data: GameCenter.Message) -> Data? {
-        do {
-            return try JSONEncoder().encode(data);
+    public static func toMessages(data: Data?) -> [GameCenter.Message]? {
+        var messages: [GameCenter.Message] = [];
+        if let array: [Any] = GameCenter.fromJsonToArray(data) {
+            for json: Any in array {
+                print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+                // if let json: Data = try? JSONSerialization.data(withJSONObject: json) {
+                if let json: Data = GameCenter.fromJsonToData(json) {
+                    print("ZZZZ-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+                    if let message: GameCenter.Message = GameCenter.toMessage(data: json) {
+                        print("AAA-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+                        messages.append(message);
+                    }
+                }
+            }
         }
-        catch {
-            return nil;
+        return messages;
+    }
+
+    private static func fromJson<T: Decodable>(_ data: Data?, _ type: T.Type) -> T? {
+        if let data: Data = data {
+            do { return try JSONDecoder().decode(type, from: data); } catch {}
         }
+        return nil;
     }
 
     private static func fromJsonToArray(_ data: Data?) -> [Any]? {
@@ -200,13 +186,6 @@ public extension GameCenter {
         return nil;
     }
 
-    private static func fromJson<T: Decodable>(_ data: Data?, _ type: T.Type) -> T? {
-        if let data: Data = data {
-            do { return try JSONDecoder().decode(type, from: data); } catch {}
-        }
-        return nil;
-    }
-
     private static func toCards(_ codes: [String]) -> [Card] {
         var cards: [Card] = [];
         for code in codes {
@@ -215,6 +194,15 @@ public extension GameCenter {
             }
         }
         return cards;
+    }
+
+    private static func toJson(_ data: GameCenter.Message) -> Data? {
+        do {
+            return try JSONEncoder().encode(data);
+        }
+        catch {
+            return nil;
+        }
     }
 }
 
