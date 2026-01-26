@@ -76,7 +76,7 @@ private struct DebugView: View {
             print("NIL-ARRAY-DATA")
         }
         */
-        let messages: [GameCenter.Message] = GameCenter.dataToMessages(data);
+        let messages: [GameCenter.Message] = GameCenter.toMessages(data: data);
         print("MESSAGES")
         print(messages);
 

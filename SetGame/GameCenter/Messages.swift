@@ -136,10 +136,10 @@ public extension GameCenter {
         }
     }
 
-    public static func dataToMessages(_ data: Data?,
-                                        playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
-                                        dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
-                                        foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) -> [GameCenter.Message] {
+    public static func toMessages(data: Data?,
+                                  playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
+                                  dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
+                                  foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) -> [GameCenter.Message] {
 
         var messages: [GameCenter.Message] = [];
         var xxx: MessageHandler? = nil;
@@ -147,7 +147,7 @@ public extension GameCenter {
         if let array: [Any] = GameCenter.fromJsonToArray(data) {
             for json: Any in array {
                 if let json: Data = try? JSONSerialization.data(withJSONObject: json) {
-                    if let message: GameCenter.Message = GameCenter.dataToMessage(json) {
+                    if let message: GameCenter.Message = GameCenter.toMessage(data: json) {
                         messages.append(message);
                         if (message.type == .foundSet) {
                         }
@@ -159,7 +159,7 @@ public extension GameCenter {
         return messages;
     }
 
-    private static func dataToMessage(_ data: Data?) -> GameCenter.Message? {
+    private static func toMessage(data: Data?) -> GameCenter.Message? {
         if let data = data, let envelope = GameCenter.fromJson(data, GameCenter.MessageEnvelope.self) {
             switch envelope.type {
                 case .playerReady:
