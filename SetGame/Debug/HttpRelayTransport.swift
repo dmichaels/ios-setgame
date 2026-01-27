@@ -3,8 +3,7 @@ import Foundation
 extension GameCenter
 {
     protocol Transport: GameCenter.MessageSender, GameCenter.MessageHandler {
-        func setHandler(_ handler: MessageHandler);
-        func configure();
+        func configure(handler: MessageHandler);
     }
 }
 
@@ -22,11 +21,8 @@ extension GameCenter
             self.url = url ?? URL(string: Defaults.url)!
         }
 
-        public func setHandler(_ handler: GameCenter.MessageHandler) {
+        public func configure(handler: GameCenter.MessageHandler) {
             self.handler = handler;
-        }
-
-        public func configure() {
             self.startPolling();
         }
 
@@ -96,13 +92,13 @@ extension GameCenter
         }
 
         private func startPolling() {
-            guard pollingTask == nil else { return }
-            pollingTask = Task {
+            guard self.pollingTask == nil else { return }
+            self.pollingTask = Task {
                 while !Task.isCancelled {
                     let messages = await self.retrieveMessages(for: player)
                     GameCenter.dispatch(messages: messages, handler: self);
                     print("POLL-FOR-MESSAGES> messages (\(messages.count)): \(messages)")
-                    try? await Task.sleep(nanoseconds: pollingInterval);
+                    try? await Task.sleep(nanoseconds: self.pollingInterval);
                 }
             }
         }

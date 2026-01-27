@@ -14,8 +14,7 @@ struct SetGameApp: App {
         _feedback = StateObject(wrappedValue: Feedback(sounds: settings.sounds,
                                                        haptics: settings.haptics));
         _table = StateObject(wrappedValue: Table(settings: settings, gameCenterSender: gameCenterTransport));
-        gameCenterTransport?.setHandler(self.table);
-        gameCenterTransport?.configure();
+        gameCenterTransport?.configure(handler: self.table);
         foo()
     }
     func foo() {
