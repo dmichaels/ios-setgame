@@ -4,6 +4,7 @@ extension GameCenter
 {
     protocol Transport: GameCenter.MessageSender, GameCenter.MessageHandler {
         func setHandler(_ handler: MessageHandler);
+        func initialize();
     }
 }
 
@@ -23,9 +24,6 @@ extension GameCenter
 
         public func setHandler(_ handler: MessageHandler) {
             self.handler = handler;
-            if (pollingTimer == nil) {
-                // self.startPolling();
-            }
         }
 
         private struct Defaults {
@@ -34,7 +32,8 @@ extension GameCenter
             public static let contentTypeName: String = "Content-Type";
         }
 
-        private var pollingTimer: Timer?;
+        private var pollingTask: Task<Void, Never>? = nil
+        private var pollingInterval: UInt64 = 300_000_000; // 100ms
 
         public func send(message: GameCenter.PlayerReadyMessage) {
         }
@@ -57,7 +56,7 @@ extension GameCenter
         public func handle(message: GameCenter.FoundSetMessage) {
         }
 
-        public func sendMessage(_ message: GameCenter.Message) {
+        public func sendMessage(message: GameCenter.Message) {
             self.sendMessage(data: message.serialize(), to: message.player);
         }
 
@@ -76,63 +75,33 @@ extension GameCenter
             }
         }
 
-        private func getMessages(for player: String) -> [GameCenter.Message] {
-            //
-            // TODO
-            //
+        public func retrieveMessages(for player: String) async -> [GameCenter.Message] {
+            let url: URL = URL(string: "/receive/\(player)", relativeTo: self.url)!;
+            let (data, _) = try! await URLSession.shared.data(from: url);
+            if let messages: [GameCenter.Message] = GameCenter.toMessages(data: data) {
+                return messages;
+            }
             return [];
         }
 
+        public func initialize() {
+            self.startPolling();
+        }
+
         public func startPolling() {
-            pollingTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                self.pollForMessages();
+            guard pollingTask == nil else { return }
+            pollingTask = Task {
+                while !Task.isCancelled {
+                    let messages = await self.retrieveMessages(for: player)
+                    print("POLL-FOR-MESSAGES> messages (\(messages.count)): \(messages)")
+                    try? await Task.sleep(nanoseconds: pollingInterval);
+                }
             }
         }
 
         public func stopPolling() {
-            pollingTimer?.invalidate();
-            pollingTimer = nil;
-        }
-
-        private func pollForMessages() {
-            let url = url.appendingPathComponent("receive/\(player)")
-            print("POLL> [\(url)]");
-            URLSession.shared.dataTask(with: url) { data, response, error in
-                if let data: Data = data {
-                    print("POLL> data: [\(data)]");
-                    let dataString = String(data: data, encoding: .utf8);
-                    print("POLL> dataString: [\(dataString)]");
-                    let messages = try? JSONSerialization.jsonObject(with: data) as? [[String: String]];
-                    print("POLL> messages: [\(messages)]");
-                    // GameCenter.xhandleMessage(data, dealCards: { message in
-                    // GameCenter.handleMessage(data, dealCards: { message in
-                    // });
-                }
-                else {
-                    print("POLL> nodata data: [\(data)]");
-                }
-/*
-                guard let data = data,
-                      let messages = try? JSONSerialization.jsonObject(with: data) as? [[String: String]]
-                else {
-                    let xyzzy = String(data: data, encoding: .utf8);
-                    print("POLL> nodata data: [\(data)] messages: [\(xyzzy)]");
-                    return;
-                }
-                print("POLL> data: \(data)");
-                for message in messages {
-                    print("POLL> message: \(message)");
-                    if let from = message["from"],
-                        let encodedData = message["data"],
-                        let decoded = Data(base64Encoded: encodedData) {
-                        DispatchQueue.main.async {
-                            // self.handler?.handle(message: decoded, from: from)
-                            GameCenter.handleMessage(decoded, self.handler);
-                        }
-                    }
-                }
-*/
-            }.resume()
+            pollingTask?.cancel();
+            pollingTask = nil;
         }
     }
 }

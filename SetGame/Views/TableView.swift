@@ -55,81 +55,25 @@ public struct TableView: View {
 
 private struct DebugView: View {
     @ObservedObject var table: Table;
-    func receiveMessages(for playerID: String) async {
-        let url = URL(string: "http://127.0.0.1:5000/receive/\(playerID)")!
-        print(url)
-        let (data, _) = try! await URLSession.shared.data(from: url)
-        print("RAW-DATA")
-        print(data)
-        print(type(of: data))
-
-        /*
-        let s = String(data: data, encoding: .utf8)
-        print("STRING-DATA")
-        print(s)
-        // let xyzzy: [Any]? = try? JSONSerialization.jsonObject(with: data) as? [Any];
-        if let xyzzy: [Any] = GameCenter.fromJsonToArray(data) {
-            print("ARRAY-DATA")
-            print(xyzzy)
-        }
-        else {
-            print("NIL-ARRAY-DATA")
-        }
-        */
-        if let messages: [GameCenter.Message] = GameCenter.toMessages(data: data) {
-            print("MESSAGES")
-            print(messages);
-        }
-
-        // return (try? JSONDecoder().decode([String].self, from: data)) ?? []
-    }
-
-func sendMessage(_ messageData: Data, to playerID: String) async {
-    let url = URL(string: "http://127.0.0.1:5000/send")!
-    var req = URLRequest(url: url)
-    req.httpMethod = "POST"
-    req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-    // Decode messageData into JSON so it nests correctly
-    let messageObject = try? JSONSerialization.jsonObject(with: messageData)
-    let x = GameCenter.toMessage(data: messageData)
-
-    let payload: [String: Any] = [
-        "to": playerID,
-        "message": messageObject as Any
-    ]
-
-    req.httpBody = try? JSONSerialization.data(withJSONObject: payload)
-    _ = try? await URLSession.shared.data(for: req)
-}
-
     var body: some View { HStack {
-        Button {
-Task {
-            print("HTTP-CALL")
-            let _ = await receiveMessages(for: "A")
-            print("HTTP-CALL-DONE")
-}
-        } label: {
-            Text("GET")
-        }
         Button { Task {
-            print("POST")
-            let cards: [TableCard] = [TableCard("ROS3")!];
+            print("HTTP-GET>")
+            let transport: GameCenter.HttpTransport = GameCenter.HttpTransport(player: "A");
+            let messages: [GameCenter.Message] = await transport.retrieveMessages(for: "A");
+            print("HTTP-GET> messages: \(messages)")
+            print("HTTP-GET> done")
+        } } label: { Text("GET") }
+        Button { Task {
+            print("HTTP-POST>")
+            let cards: [TableCard] = [TableCard("ROS1")!, TableCard("ROS2")!, TableCard("ROS3")!];
             let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: cards);
             let transport: GameCenter.HttpTransport = GameCenter.HttpTransport(player: "A");
-            transport.sendMessage(message);
-        } } label: {
-            Text("POST")
-        }
-
-// xyzzy
+            transport.sendMessage(message: message);
+            print("HTTP-POST> done")
+        } } label: { Text("POST") }
         Button {
             table.cards[0].materialize(responsivity: 1.5, elasticity: 0.8);
-        } label: {
-            Text("MATERIALIZE")
-        }
-// xyzzy
+        } label: { Text("MATERIALIZE") }
     } }
 }
 
