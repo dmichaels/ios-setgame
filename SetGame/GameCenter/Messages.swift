@@ -13,7 +13,7 @@ public extension GameCenter
     public protocol Message: Codable {
         var type: MessageType { get };
         var player: String { get };
-        init?(_ data: Data?);
+        // init?(_ data: Data?);
         func serialize() -> Data?;
     }
 
@@ -32,15 +32,10 @@ public extension GameCenter
 
 public extension GameCenter.Message
 {
-    public init?(_ data: Data?, internal: Bool) {
+    fileprivate init?(_ data: Data?, internal: Bool) {
         guard let message = GameCenter.toMessage(data: data) as? Self else { return nil }
         self = message;
     }
-
-    // public init?<T: Decodable>(_ data: Data?, as type: T.Type) {
-    //     guard let message = GameCenter.fromJson(data, type) as? Self else { return nil }
-    //     self = message;
-    // }
 
     public func serialize() -> Data? {
         do { return try JSONEncoder().encode(self); } catch { return nil; }
@@ -55,7 +50,6 @@ public extension GameCenter
         public let player: String
 
         public init?(_ data: Data?) {
-            // self.init(data, as: PlayerReadyMessage.self);
             self.init(data, internal: true);
         }
 
@@ -72,7 +66,6 @@ public extension GameCenter
         private let cardcodes: [String];
 
         public init?(_ data: Data?) {
-            // self.init(data, as: DealCardsMessage.self);
             self.init(data, internal: true);
         }
 
@@ -94,7 +87,6 @@ public extension GameCenter
         public let cardcodes: [String];
 
         public init?(_ data: Data?) {
-            // self.init(data, as: FoundSetMessage.self);
             self.init(data, internal: true);
         }
 
@@ -152,50 +144,9 @@ public extension GameCenter
         return nil;
     }
 
-    public static func old_toMessages(data: Data?) -> [Message]? {
-
-        func fromJsonToArray(_ data: Data?) -> [Any]? {
-            if let data: Data = data {
-                if let array: [Any] = try? JSONSerialization.jsonObject(with: data) as? [Any] {
-                    return array;
-                }
-            }
-            return nil;
-        }
-
-        if let array: [Any] = fromJsonToArray(data) {
-            var messages: [Message] = [];
-            for json: Any in array {
-                if let json: Data = GameCenter.fromJsonToData(json) {
-                    if let message: Message = GameCenter.toMessage(data: json) {
-                        messages.append(message);
-                    }
-                }
-            }
-            return messages;
-        }
-        else if let object: Data = GameCenter.fromJsonToData(data) {
-            if let json: Data = GameCenter.fromJsonToData(object) {
-                if let message: Message = GameCenter.toMessage(data: json) {
-                    return [message];
-                }
-            }
-        }
-        return nil;
-    }
-
     private static func fromJson<T: Decodable>(_ data: Data?, _ type: T.Type) -> T? {
         if let data: Data = data {
             do { return try JSONDecoder().decode(type, from: data); } catch {}
-        }
-        return nil;
-    }
-
-    private static func fromJsonToData(_ data: Any?) -> Data? {
-        if let data: Any = data {
-            if let object: Data = try? JSONSerialization.data(withJSONObject: data) {
-                return object;
-            }
         }
         return nil;
     }
