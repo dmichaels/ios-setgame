@@ -70,16 +70,6 @@ private struct DebugView: View {
             let message: GameCenter.Message = GameCenter.FoundSetMessage(player: "A", cards: cards);
             print("HTTP-POST> send")
             transport.send(message: message);
-            /*
-            if let transport: GameCenter.Transport = SetGameApp.gameCenterTransport {
-                let cards: [TableCard] = [TableCard("ROS1")!, TableCard("ROS2")!, TableCard("ROS3")!];
-                let message: GameCenter.Message = GameCenter.FoundSetMessage(player: "A", cards: cards);
-                let message2: GameCenter.Message = GameCenter.DealCardsMessage(player: "A", cards: cards);
-                print("HTTP-POST> send")
-                transport.send(message: message);
-                transport.send(message: message2);
-            }
-            */
             print("HTTP-POST> done")
         } } label: { Text("HTTP-POST") }
         Button {
