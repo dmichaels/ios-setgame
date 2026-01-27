@@ -36,25 +36,28 @@ extension GameCenter
      // private var pollingInterval: UInt64 = 100_000_000; // 100ms
         private var pollingInterval: UInt64 = 2_000_000_000; // 2s
 
-        public func send(message: GameCenter.Message) {
-            print("HttpTransport.send(Message)> \(message)");
-        }
+     // public func send(message: GameCenter.Message) {
+     //     print("HttpTransport.send(Message)> \(message)");
+     // }
 
         public func send(message: GameCenter.PlayerReadyMessage) {
             print("HttpTransport.send(PlayerReadyMessage)> \(message)");
+            self.sendMessage(message: message);
         }
 
         public func send(message: GameCenter.DealCardsMessage) {
             print("HttpTransport.send(DealCardsMessage)> \(message)");
+            self.sendMessage(message: message);
         }
 
         public func send(message: GameCenter.FoundSetMessage) {
             print("HttpTransport.send(FoundSetMessage)> \(message)");
+            self.sendMessage(message: message);
         }
 
-        public func handle(message: Data, from player: String) {
-            print("HttpTransport.handle(Data)> \(message)");
-        }
+     // public func handle(message: Data, from player: String) {
+     //     print("HttpTransport.handle(Data)> \(message)");
+     // }
 
         public func handle(message: GameCenter.PlayerReadyMessage) {
             print("HttpTransport.handle(PlayerReadyMessage)> \(message)");
