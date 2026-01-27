@@ -30,11 +30,11 @@ extension GameCenter
             public static let url: String             = "http://127.0.0.1:5000";
             public static let contentType: String     = "application/json";
             public static let contentTypeName: String = "Content-Type";
+            public static let pollingInterval: UInt64 = 2_000_000_000; // 2s
+         // public static let pollingInterval: UInt64 = 100_000_000; // 100s
         }
 
         private var pollingTask: Task<Void, Never>? = nil;
-     // private var pollingInterval: UInt64 = 100_000_000; // 100ms
-        private var pollingInterval: UInt64 = 2_000_000_000; // 2s
 
         public func send(message: GameCenter.PlayerReadyMessage) {
             print("HttpTransport.send(PlayerReadyMessage)> \(message)");
@@ -99,7 +99,7 @@ extension GameCenter
                 while (!Task.isCancelled) {
                     let messages = await self.retrieveMessages(for: player)
                     GameCenter.dispatch(messages: messages, handler: self);
-                    try? await Task.sleep(nanoseconds: self.pollingInterval);
+                    try? await Task.sleep(nanoseconds: Defaults.pollingInterval);
                 }
             }
         }
