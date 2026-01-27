@@ -118,17 +118,17 @@ public extension GameCenter
            let envelope: MessageEnvelope = GameCenter.fromJson(data, MessageEnvelope.self) {
             switch envelope.type {
                 case .playerReady:
-                    // if let message: PlayerReadyMessage = PlayerReadyMessage(data) {
+                    // if let message: PlayerReadyMessage = PlayerReadyMessage(data) ...
                     if let message: PlayerReadyMessage = GameCenter.fromJson(data, PlayerReadyMessage.self) {
                         return message;
                     }
                 case .dealCards:
-                    // if let message: DealCardsMessage = DealCardsMessage(data) {
+                    // if let message: DealCardsMessage = DealCardsMessage(data) ...
                     if let message: DealCardsMessage = GameCenter.fromJson(data, DealCardsMessage.self) {
                         return message;
                     }
                 case .foundSet:
-                    // if let message: FoundSetMessage = FoundSetMessage(data) {
+                    // if let message: FoundSetMessage = FoundSetMessage(data) ...
                     if let message: FoundSetMessage = GameCenter.fromJson(data, FoundSetMessage.self) {
                         return message;
                     }
@@ -158,7 +158,30 @@ public extension GameCenter
         return nil;
     }
 
-    public static func toMessages(data: Data?) -> [Message]? {
+    public static func toMessages(data: Data?) -> [GameCenter.Message]? {
+        guard let data = data else { return nil }
+        // Decode raw JSON array *once*
+        guard let rawArray = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else {
+            return nil
+        }
+        var messages: [GameCenter.Message] = []
+        messages.reserveCapacity(rawArray.count)
+        let decoder = JSONDecoder()
+        for object in rawArray {
+            // Convert one object → Data
+            guard JSONSerialization.isValidJSONObject(object),
+                let objectData = try? JSONSerialization.data(withJSONObject: object)
+            else { continue }
+
+            // Convert Data → Message
+            if let message = toMessage(data: objectData) {
+                messages.append(message)
+            }
+        }
+        return messages
+    }
+
+    public static func save_toMessages(data: Data?) -> [Message]? {
         if let array: [Any] = GameCenter.fromJsonToArray(data) {
             var messages: [Message] = [];
             for json: Any in array {

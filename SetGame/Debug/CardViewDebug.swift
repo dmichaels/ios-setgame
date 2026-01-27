@@ -22,7 +22,7 @@ public struct CardViewDebug: View {
                 let cards: [TableCard] = CardViewDebug.toCards(value);
                 self.simulateIncomingDealCardsMessage(cards);
             }
-            TextBoxWithButton(label: "SET!") { value in
+            TextBoxWithButton(label: "SET!", inputText: "1GSD 2GSD 3GSD") { value in
                 let cards: [TableCard] = CardViewDebug.toCards(value);
                 self.simulateIncomingFoundSetMessage(cards);
             }
@@ -91,7 +91,7 @@ public struct CardViewDebug: View {
     private struct TextBoxWithButton: View {
         var label: String;
         @State var callback: (String) -> Void;
-        @State private var inputText: String = "1GSQ"
+        @State var inputText: String = "1GSQ"
         public var body: some View {
             HStack(spacing: 20) {
                 TextField("Card", text: $inputText)
