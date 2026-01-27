@@ -181,7 +181,7 @@ public extension GameCenter
         }
     }
 
-    // These dispatch calls mey look weird, the three handler.handle references in a row,
+    // These dispatch calls may look weird, the three handler.handle references in a row,
     // but Swift typing works it magic and sorts it; so that for example, handler.handle for
     // dealCards handler.handle references MessageHandler.handle(message: DealCardsMessage).
     //
