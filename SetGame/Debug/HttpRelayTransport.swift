@@ -61,7 +61,7 @@ extension GameCenter
             self.sendMessage(data: message.serialize(), to: message.player);
         }
 
-        private func sendMessage(data: Data?, to player: String) {
+        private func old_sendMessage(data: Data?, to player: String) {
             guard let data = data else { return }
             let url: URL = URL(string: "/send", relativeTo: self.url)!;
             var request = URLRequest(url: url);
@@ -71,6 +71,28 @@ extension GameCenter
             let json: [String: Any] = [ "to": player, "message": payload ];
             request.httpBody = try? JSONSerialization.data(withJSONObject: json);
             URLSession.shared.dataTask(with: request).resume();
+        }
+
+        private func sendMessage(data: Data?, to player: String) {
+            guard let data = data else { return }
+
+            let url = URL(string: "/send", relativeTo: self.url)!
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue(Defaults.contentType, forHTTPHeaderField: Defaults.contentTypeName)
+
+            // Instead of decoding/re-encoding, build the wrapper manually
+            var payload = [String: Any]()
+            payload["to"] = player
+
+            if let messageObject = try? JSONSerialization.jsonObject(with: data) {
+                payload["message"] = messageObject
+            } else {
+                return // optionally fail early if data is not valid JSON
+            }
+
+            request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+            URLSession.shared.dataTask(with: request).resume()
         }
 
         public func startPolling() {
