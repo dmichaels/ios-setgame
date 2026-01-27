@@ -33,12 +33,15 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
 
 
     public func handle(message: GameCenter.PlayerReadyMessage) {
+        print("Table.handle(PlayerReady)> \(message)");
     }
 
     public func handle(message: GameCenter.DealCardsMessage) {
+        print("Table.handle(DealCards)> \(message)");
     }
 
     public func handle(message: GameCenter.FoundSetMessage) {
+        print("Table.handle(FoundSet)> \(message)");
     }
 
     public init(settings: Settings, gameCenterSender: GameCenter.MessageSender? = nil) {
@@ -47,6 +50,7 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
         self.cards = [];
         self.deck  = TableDeck(simple: self.settings.simpleDeck);
         self.state = State();
+        print("Table.init> id: \(ObjectIdentifier(self))");
     }
 
     public var disabled: Bool {

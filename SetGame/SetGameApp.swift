@@ -6,35 +6,16 @@ struct SetGameApp: App {
     @StateObject private var settings: Settings = Settings();
     @StateObject private var feedback: Feedback;
     @StateObject private var table: Table;
+        public static var gameCenterTransport: GameCenter.Transport? = nil;
 
     init() {
-        let gameCenterTransport: GameCenter.Transport? = Defaults.gameCenter ? GameCenter.HttpTransport(player: "A") : nil;
+        SetGameApp.gameCenterTransport = Defaults.gameCenter ? GameCenter.HttpTransport(player: "A") : nil;
         let settings: Settings = Settings();
         _settings = StateObject(wrappedValue: settings);
         _feedback = StateObject(wrappedValue: Feedback(sounds: settings.sounds,
                                                        haptics: settings.haptics));
-        _table = StateObject(wrappedValue: Table(settings: settings, gameCenterSender: gameCenterTransport));
-        gameCenterTransport?.configure(handler: self.table);
-        foo()
-    }
-    func foo() {
-        let cards: [TableCard] = [TableCard("ROS1")!, TableCard("ROS2")!, TableCard("ROS3")!];
-        // let message: GameCenter.PlayerReadyMessage = GameCenter.PlayerReadyMessage(player: "A");
-        let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(player: "A", cards: cards);
-        // let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: cards);
-        if let data: Data? = message.serialize() {
-            // let x = GameCenter.PlayerReadyMessage(data);
-            let x = GameCenter.DealCardsMessage(data);
-            // let x = GameCenter.FoundSetMessage(data);
-            print("FOFOFOFOFOFOFOFOF")
-            print(x)
-            print(type(of: x))
-            if let x = x {
-                print("CARDS:")
-                print(x.cards)
-            }
-            print("end-FOFOFOFOFOFOFOFOF")
-        }
+        _table = StateObject(wrappedValue: Table(settings: settings, gameCenterSender: SetGameApp.gameCenterTransport));
+        SetGameApp.gameCenterTransport?.configure(handler: self.table);
     }
 
     var body: some Scene {
