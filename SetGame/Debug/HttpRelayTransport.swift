@@ -80,8 +80,8 @@ extension GameCenter
             request.httpMethod = "POST";
             request.setValue(Defaults.contentType, forHTTPHeaderField: Defaults.contentTypeName);
             var payload = [String: Any](); // instead of decode/reencoded build wrapper manually
-            payload["to"] = player;
-            if let messageObject = try? JSONSerialization.jsonObject(with: data) {
+            if let messageObject: Any = try? JSONSerialization.jsonObject(with: data) {
+                payload["to"] = player;
                 payload["message"] = messageObject;
                 request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
                 URLSession.shared.dataTask(with: request).resume()
