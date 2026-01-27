@@ -102,15 +102,6 @@ func sendMessage(_ messageData: Data, to playerID: String) async {
     _ = try? await URLSession.shared.data(for: req)
 }
 
-    func xsendMessage(_ msg: String, to playerID: String) async {
-        let url = URL(string: "http://127.0.0.1:5000/send")!
-        var req = URLRequest(url: url)
-        req.httpMethod = "POST"
-        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let payload = ["to": playerID, "message": msg]
-        req.httpBody = try? JSONEncoder().encode(payload)
-        let _ = try? await URLSession.shared.data(for: req)
-    }
     var body: some View { HStack {
         Button {
 Task {
@@ -141,36 +132,9 @@ Task {
             let cards: [TableCard] = [TableCard("ROS3")!];
             let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: cards);
             if let data: Data = message.serialize() {
-                // let data = await xsend(message: data, to: "A")
                 let data = await sendMessage(data, to: "A")
                 print("HTTP-POST-DONE")
                 print(data)
-                func xsend(message: Data, to player: String) async {
-    let messageObject = try? JSONSerialization.jsonObject(with: message)
-                    let contentType: String = "application/json";
-                    let contentTypeName: String = "Content-Type";
-                    let baseUrl = URL(string: "http://127.0.0.1:5000/send")!
-                    let url = baseUrl.appendingPathComponent("POST")
-                    var request = URLRequest(url: url)
-                    request.httpMethod = "POST"
-                    request.setValue(contentType, forHTTPHeaderField: contentTypeName)
-                    // let base64Data = message.base64EncodedString()
-                    // let payload: [String: Any] = [
-                    let payload = [
-                        "to": player,
-                        // "data": base64Data
-                        "message": messageObject as Any
-                    ]
-
-                    // request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
-                    // URLSession.shared.dataTask(with: request).resume()
-
-                    // request.httpBody = try? JSONEncoder().encode(payload)
-                    // let _ = try? await URLSession.shared.data(for: request)
-
-                    request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
-                    _ = try? await URLSession.shared.data(for: request)
-                }
             }
         } } label: {
             Text("POSTNEW")
@@ -188,10 +152,10 @@ Task {
 
 private struct MultiPlayerGameButton: View {
     @ObservedObject private var gameCenter = GameCenterManager.shared;
-        var body: some View {
-            if (true) {
-                PlayButtonView(gameCenter: gameCenter)
-                    .padding(.horizontal)
-            }
+    var body: some View {
+        if (true) {
+            PlayButtonView(gameCenter: gameCenter)
+                .padding(.horizontal)
         }
     }
+}

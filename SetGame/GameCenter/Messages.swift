@@ -5,33 +5,33 @@ public enum GameCenter {}
 public extension GameCenter {
 
     public enum MessageType: String, Codable {
-        case playerReady
-        case dealCards
-        case foundSet
+        case playerReady;
+        case dealCards;
+        case foundSet;
     }
 
     public protocol Message: Codable {
-        var type: MessageType { get }
-        var player: String { get }
-        init?(_ data: Data?)
-        func serialize() -> Data?
+        var type: MessageType { get };
+        var player: String { get };
+        init?(_ data: Data?);
+        func serialize() -> Data?;
     }
 
     private struct MessageEnvelope: Decodable {
-        let type: GameCenter.MessageType
+        let type: MessageType;
     }
 
 
     public protocol MessageHandler: AnyObject {
-        func handle(message: GameCenter.PlayerReadyMessage);
-        func handle(message: GameCenter.DealCardsMessage);
-        func handle(message: GameCenter.FoundSetMessage);
+        func handle(message: PlayerReadyMessage);
+        func handle(message: DealCardsMessage);
+        func handle(message: FoundSetMessage);
     }
 
     public protocol MessageSender: AnyObject {
-        func send(message: GameCenter.PlayerReadyMessage);
-        func send(message: GameCenter.DealCardsMessage);
-        func send(message: GameCenter.FoundSetMessage);
+        func send(message: PlayerReadyMessage);
+        func send(message: DealCardsMessage);
+        func send(message: FoundSetMessage);
     }
 
     public struct PlayerReadyMessage: Message {
@@ -40,7 +40,7 @@ public extension GameCenter {
         public let player: String
 
         public init?(_ data: Data?) {
-            self.init(data, as: GameCenter.PlayerReadyMessage.self);
+            self.init(data, as: PlayerReadyMessage.self);
         }
 
         public init(player: String, cards: [Card]) {
@@ -56,7 +56,7 @@ public extension GameCenter {
         private let cardcodes: [String];
 
         public init?(_ data: Data?) {
-            self.init(data, as: GameCenter.DealCardsMessage.self);
+            self.init(data, as: DealCardsMessage.self);
         }
 
         public init(player: String, cards: [Card]) {
@@ -77,7 +77,7 @@ public extension GameCenter {
         public let cardcodes: [String];
 
         public init?(_ data: Data?) {
-            self.init(data, as: GameCenter.FoundSetMessage.self);
+            self.init(data, as: FoundSetMessage.self);
         }
 
         public init(player: String, cards: [Card]) {
@@ -91,11 +91,11 @@ public extension GameCenter {
         }
     }
 
-    public static func dispatch(_ messages: [GameCenter.Message]?,
-                                  playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
-                                  dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
-                                  foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
-        if let messages: [GameCenter.Message] = messages {
+    public static func dispatch(_ messages: [Message]?,
+                                  playerReady: ((PlayerReadyMessage) -> Void)? = nil,
+                                  dealCards: ((DealCardsMessage) -> Void)? = nil,
+                                  foundSet: ((FoundSetMessage) -> Void)? = nil) {
+        if let messages: [Message] = messages {
             for message in messages {
                 GameCenter.dispatch(message,
                                     playerReady: playerReady,
@@ -105,11 +105,11 @@ public extension GameCenter {
         }
     }
 
-    public static func dispatch(_ message: GameCenter.Message?,
-                                  playerReady: ((GameCenter.PlayerReadyMessage) -> Void)? = nil,
-                                  dealCards: ((GameCenter.DealCardsMessage) -> Void)? = nil,
-                                  foundSet: ((GameCenter.FoundSetMessage) -> Void)? = nil) {
-        if let message: GameCenter.Message = message {
+    public static func dispatch(_ message: Message?,
+                                  playerReady: ((PlayerReadyMessage) -> Void)? = nil,
+                                  dealCards: ((DealCardsMessage) -> Void)? = nil,
+                                  foundSet: ((FoundSetMessage) -> Void)? = nil) {
+        if let message: Message = message {
             switch message {
                 case let message as PlayerReadyMessage: playerReady?(message);
                 case let message as DealCardsMessage: dealCards?(message);
@@ -119,19 +119,19 @@ public extension GameCenter {
         }
     }
 
-    private static func toMessage(data: Data?) -> GameCenter.Message? {
-        if let data = data, let envelope = GameCenter.fromJson(data, GameCenter.MessageEnvelope.self) {
+    private static func toMessage(data: Data?) -> Message? {
+        if let data = data, let envelope = GameCenter.fromJson(data, MessageEnvelope.self) {
             switch envelope.type {
                 case .playerReady:
-                    if let message: GameCenter.PlayerReadyMessage = GameCenter.PlayerReadyMessage(data) {
+                    if let message: PlayerReadyMessage = PlayerReadyMessage(data) {
                         return message;
                     }
                 case .dealCards:
-                    if let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(data) {
+                    if let message: DealCardsMessage = DealCardsMessage(data) {
                         return message;
                     }
                 case .foundSet:
-                    if let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(data) {
+                    if let message: FoundSetMessage = FoundSetMessage(data) {
                         return message;
                     }
             }
@@ -139,28 +139,26 @@ public extension GameCenter {
         return nil;
     }
 
-    public static func toMessages(data: Data?) -> [GameCenter.Message]? {
-        var messages: [GameCenter.Message] = [];
+    public static func toMessages(data: Data?) -> [Message]? {
         if let array: [Any] = GameCenter.fromJsonToArray(data) {
+            var messages: [Message] = [];
             for json: Any in array {
                 if let json: Data = GameCenter.fromJsonToData(json) {
-                    if let message: GameCenter.Message = GameCenter.toMessage(data: json) {
+                    if let message: Message = GameCenter.toMessage(data: json) {
                         messages.append(message);
                     }
                 }
             }
+            return messages;
         }
         else if let object: Data = GameCenter.fromJsonToData(data) {
             if let json: Data = GameCenter.fromJsonToData(object) {
-                if let message: GameCenter.Message = GameCenter.toMessage(data: json) {
+                if let message: Message = GameCenter.toMessage(data: json) {
                     return [message];
                 }
             }
         }
-        else {
-            return nil;
-        }
-        return messages;
+        return nil;
     }
 
     private static func fromJson<T: Decodable>(_ data: Data?, _ type: T.Type) -> T? {
@@ -188,15 +186,6 @@ public extension GameCenter {
         return nil;
     }
 
-    private static func toJson(_ data: GameCenter.Message) -> Data? {
-        do {
-            return try JSONEncoder().encode(data);
-        }
-        catch {
-            return nil;
-        }
-    }
-
     private static func toCards(_ codes: [String]) -> [Card] {
         var cards: [Card] = [];
         for code in codes {
@@ -216,6 +205,11 @@ public extension GameCenter.Message {
     }
 
     public func serialize() -> Data? {
-        return GameCenter.toJson(self)
+        do {
+            return try JSONEncoder().encode(self);
+        }
+        catch {
+            return nil;
+        }
     }
 }
