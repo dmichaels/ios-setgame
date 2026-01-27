@@ -29,6 +29,10 @@ struct SetGameApp: App {
             print("FOFOFOFOFOFOFOFOF")
             print(x)
             print(type(of: x))
+            if let x = x {
+                print("CARDS:")
+                print(x.cards)
+            }
             print("end-FOFOFOFOFOFOFOFOF")
         }
     }

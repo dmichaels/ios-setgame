@@ -63,6 +63,7 @@ public extension GameCenter
         public  let type: MessageType;
         public  let player: String;
         private let cardcodes: [String];
+        public  var cards: [TableCard] { return GameCenter.toCards(self.cardcodes); }
 
         public init?(_ data: Data?) {
             self.init(data, internal: true);
@@ -73,35 +74,26 @@ public extension GameCenter
             self.player    = player;
             self.cardcodes = cards.map { $0.code };
         }
-
-        public var cards: [TableCard] {
-            return GameCenter.toCards(self.cardcodes).map { TableCard($0) }
-        }
     }
 
     public struct FoundSetMessage: Message {
 
-        public let type: MessageType;
-        public let player: String;
-        public let cardcodes: [String];
+        public  let type: MessageType;
+        public  let player: String;
+        private let cardcodes: [String];
+        public  var cards: [TableCard] { return GameCenter.toCards(self.cardcodes); }
 
-        public init?(_ data: Data?) {
-            self.init(data, internal: true);
-        }
+        public init?(_ data: Data?) { self.init(data, internal: true); }
 
         public init(player: String, cards: [Card]) {
             self.type      = .foundSet;
             self.player    = player;
             self.cardcodes = cards.map { $0.code };
         }
-
-        public var cards: [TableCard] {
-            return GameCenter.toCards(self.cardcodes).map { TableCard($0) }
-        }
     }
 
-    private static func toCards(_ codes: [String]) -> [Card] {
-        return codes.compactMap { Card($0) };
+    private static func toCards(_ codes: [String]) -> [TableCard] {
+        return codes.compactMap { TableCard($0) };
     }
 }
 
