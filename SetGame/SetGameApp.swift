@@ -15,6 +15,20 @@ struct SetGameApp: App {
                                                        haptics: settings.haptics));
         _table = StateObject(wrappedValue: Table(settings: settings, gameCenterSender: gameCenterTransport));
         gameCenterTransport?.setHandler(self.table);
+        foo()
+    }
+    func foo() {
+        let cards: [TableCard] = [TableCard("ROS3")!];
+        // let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: cards);
+        let message: GameCenter.PlayerReadyMessage = GameCenter.PlayerReadyMessage(player: "A");
+        if let data: Data? = message.serialize() {
+            let x = GameCenter.PlayerReadyMessage(data);
+            // let x = GameCenter.FoundSetMessage(data);
+            print("FOFOFOFOFOFOFOFOF")
+            print(x)
+            print(type(of: x))
+            print("end-FOFOFOFOFOFOFOFOF")
+        }
     }
 
     var body: some Scene {

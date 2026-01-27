@@ -32,10 +32,15 @@ public extension GameCenter
 
 public extension GameCenter.Message
 {
-    public init?<T: Decodable>(_ data: Data?, as type: T.Type) {
-        guard let message = GameCenter.fromJson(data, type) as? Self else { return nil }
+    public init?(_ data: Data?, internal: Bool) {
+        guard let message = GameCenter.toMessage(data: data) as? Self else { return nil }
         self = message;
     }
+
+    // public init?<T: Decodable>(_ data: Data?, as type: T.Type) {
+    //     guard let message = GameCenter.fromJson(data, type) as? Self else { return nil }
+    //     self = message;
+    // }
 
     public func serialize() -> Data? {
         do { return try JSONEncoder().encode(self); } catch { return nil; }
@@ -50,10 +55,11 @@ public extension GameCenter
         public let player: String
 
         public init?(_ data: Data?) {
-            self.init(data, as: PlayerReadyMessage.self);
+            // self.init(data, as: PlayerReadyMessage.self);
+            self.init(data, internal: true);
         }
 
-        public init(player: String, cards: [Card]) {
+        public init(player: String) {
             self.type   = .playerReady;
             self.player = player;
         }
@@ -66,7 +72,8 @@ public extension GameCenter
         private let cardcodes: [String];
 
         public init?(_ data: Data?) {
-            self.init(data, as: DealCardsMessage.self);
+            // self.init(data, as: DealCardsMessage.self);
+            self.init(data, internal: true);
         }
 
         public init(player: String, cards: [Card]) {
@@ -87,7 +94,8 @@ public extension GameCenter
         public let cardcodes: [String];
 
         public init?(_ data: Data?) {
-            self.init(data, as: FoundSetMessage.self);
+            // self.init(data, as: FoundSetMessage.self);
+            self.init(data, internal: true);
         }
 
         public init(player: String, cards: [Card]) {
@@ -105,6 +113,30 @@ public extension GameCenter
 public extension GameCenter
 {
     public static func toMessage(data: Data?) -> Message? {
+        struct MessageEnvelope: Decodable { let type: MessageType; }
+        if let data: Data = data,
+           let envelope: MessageEnvelope = GameCenter.fromJson(data, MessageEnvelope.self) {
+            switch envelope.type {
+                case .playerReady:
+                    // if let message: PlayerReadyMessage = PlayerReadyMessage(data) {
+                    if let message: PlayerReadyMessage = GameCenter.fromJson(data, PlayerReadyMessage.self) {
+                        return message;
+                    }
+                case .dealCards:
+                    // if let message: DealCardsMessage = DealCardsMessage(data) {
+                    if let message: DealCardsMessage = GameCenter.fromJson(data, DealCardsMessage.self) {
+                        return message;
+                    }
+                case .foundSet:
+                    // if let message: FoundSetMessage = FoundSetMessage(data) {
+                    if let message: FoundSetMessage = GameCenter.fromJson(data, FoundSetMessage.self) {
+                        return message;
+                    }
+            }
+        }
+        return nil;
+    }
+    public static func old_toMessage(data: Data?) -> Message? {
         struct MessageEnvelope: Decodable { let type: MessageType; }
         if let data: Data = data,
            let envelope: MessageEnvelope = GameCenter.fromJson(data, MessageEnvelope.self) {
