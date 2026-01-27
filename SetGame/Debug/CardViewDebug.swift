@@ -150,7 +150,7 @@ public struct CardViewDebug: View {
 
         // GameCenter.handleMessage(data, dealCards: handleDealCardsMessage);
         if let msg = GameCenter.DealCardsMessage(data) {
-            GameCenter.dispatch(msg, dealCards: handleDealCardsMessage)
+            GameCenter.dispatch(message: msg, dealCards: handleDealCardsMessage)
         }
     }
 
@@ -168,7 +168,7 @@ public struct CardViewDebug: View {
 
         // GameCenter.handleMessage(data, foundSet: handleFoundSetMessage);
         if let msg = GameCenter.FoundSetMessage(data) {
-            GameCenter.dispatch(msg, foundSet: handleFoundSetMessage)
+            GameCenter.dispatch(message: msg, foundSet: handleFoundSetMessage)
         }
     }
 }
