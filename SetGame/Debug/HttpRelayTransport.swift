@@ -4,7 +4,7 @@ extension GameCenter
 {
     protocol Transport: GameCenter.MessageSender, GameCenter.MessageHandler {
         func setHandler(_ handler: MessageHandler);
-        func initialize();
+        func configure();
     }
 }
 
@@ -24,6 +24,10 @@ extension GameCenter
 
         public func setHandler(_ handler: GameCenter.MessageHandler) {
             self.handler = handler;
+        }
+
+        public func configure() {
+            self.startPolling();
         }
 
         private struct Defaults {
@@ -86,11 +90,7 @@ extension GameCenter
             return [];
         }
 
-        public func initialize() {
-            self.startPolling();
-        }
-
-        public func startPolling() {
+        private func startPolling() {
             guard pollingTask == nil else { return }
             pollingTask = Task {
                 while !Task.isCancelled {
@@ -101,7 +101,7 @@ extension GameCenter
             }
         }
 
-        public func stopPolling() {
+        private func stopPolling() {
             pollingTask?.cancel();
             pollingTask = nil;
         }

@@ -15,7 +15,7 @@ struct SetGameApp: App {
                                                        haptics: settings.haptics));
         _table = StateObject(wrappedValue: Table(settings: settings, gameCenterSender: gameCenterTransport));
         gameCenterTransport?.setHandler(self.table);
-        gameCenterTransport?.initialize();
+        gameCenterTransport?.configure();
         foo()
     }
     func foo() {
