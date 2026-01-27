@@ -33,8 +33,8 @@ public extension GameCenter
 public extension GameCenter.Message
 {
     public init?<T: Decodable>(_ data: Data?, as type: T.Type) {
-        guard let decoded = GameCenter.fromJson(data, type) as? Self else { return nil }
-        self = decoded;
+        guard let message = GameCenter.fromJson(data, type) as? Self else { return nil }
+        self = message;
     }
 
     public func serialize() -> Data? {
