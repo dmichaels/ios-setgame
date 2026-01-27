@@ -10,19 +10,19 @@ extension GameCenter
 
 extension GameCenter
 {
-    public class HttpTransport: Transport { // GameCenter.MessageSender, GameCenter.MessageHandler {
+    public class HttpTransport: Transport {
 
         private      let player: String;
-        private weak var handler: MessageHandler?;
+        private weak var handler: GameCenter.MessageHandler?;
         private      let url: URL;
 
-        public init(player: String, handler: MessageHandler? = nil, url: URL? = nil) {
+        public init(player: String, handler: GameCenter.MessageHandler? = nil, url: URL? = nil) {
             self.player = player;
             self.handler = handler;
             self.url = url ?? URL(string: Defaults.url)!
         }
 
-        public func setHandler(_ handler: MessageHandler) {
+        public func setHandler(_ handler: GameCenter.MessageHandler) {
             self.handler = handler;
         }
 
@@ -32,8 +32,8 @@ extension GameCenter
             public static let contentTypeName: String = "Content-Type";
         }
 
-        private var pollingTask: Task<Void, Never>? = nil
-        private var pollingInterval: UInt64 = 300_000_000; // 100ms
+        private var pollingTask: Task<Void, Never>? = nil;
+        private var pollingInterval: UInt64 = 900_000_000; // 900ms
 
         public func send(message: GameCenter.PlayerReadyMessage) {
         }
@@ -77,9 +77,11 @@ extension GameCenter
 
         public func retrieveMessages(for player: String) async -> [GameCenter.Message] {
             let url: URL = URL(string: "/receive/\(player)", relativeTo: self.url)!;
-            let (data, _) = try! await URLSession.shared.data(from: url);
-            if let messages: [GameCenter.Message] = GameCenter.toMessages(data: data) {
-                return messages;
+            if let response = try? await URLSession.shared.data(from: url) {
+                let data: Data = response.0;
+                if let messages: [GameCenter.Message] = GameCenter.toMessages(data: data) {
+                    return messages;
+                }
             }
             return [];
         }
