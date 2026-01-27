@@ -75,24 +75,17 @@ extension GameCenter
 
         private func sendMessage(data: Data?, to player: String) {
             guard let data = data else { return }
-
-            let url = URL(string: "/send", relativeTo: self.url)!
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-            request.setValue(Defaults.contentType, forHTTPHeaderField: Defaults.contentTypeName)
-
-            // Instead of decoding/re-encoding, build the wrapper manually
-            var payload = [String: Any]()
-            payload["to"] = player
-
+            let url: URL = URL(string: "/send", relativeTo: self.url)!;
+            var request: URLRequest = URLRequest(url: url);
+            request.httpMethod = "POST";
+            request.setValue(Defaults.contentType, forHTTPHeaderField: Defaults.contentTypeName);
+            var payload = [String: Any](); // instead of decode/reencoded build wrapper manually
+            payload["to"] = player;
             if let messageObject = try? JSONSerialization.jsonObject(with: data) {
-                payload["message"] = messageObject
-            } else {
-                return // optionally fail early if data is not valid JSON
+                payload["message"] = messageObject;
+                request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+                URLSession.shared.dataTask(with: request).resume()
             }
-
-            request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
-            URLSession.shared.dataTask(with: request).resume()
         }
 
         public func startPolling() {
