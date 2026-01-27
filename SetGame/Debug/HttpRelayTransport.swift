@@ -76,14 +76,14 @@ extension GameCenter
         private func sendMessage(data: Data?, to player: String) {
             guard let data = data else { return }
             let url: URL = URL(string: "/send", relativeTo: self.url)!;
-            var request: URLRequest = URLRequest(url: url);
-            request.httpMethod = "POST";
-            request.setValue(Defaults.contentType, forHTTPHeaderField: Defaults.contentTypeName);
-            var payload = [String: Any](); // instead of decode/reencoded build wrapper manually
-            if let messageObject: Any = try? JSONSerialization.jsonObject(with: data) {
-                payload["to"] = player;
-                payload["message"] = messageObject;
-                request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+            if let payload = try? JSONSerialization.jsonObject(with: data) {
+                var body: [String: Any] = [String: Any](); // instead of decode/reencoded build wrapper manually
+                body["to"] = player;
+                body["message"] = payload;
+                var request: URLRequest = URLRequest(url: url);
+                request.httpMethod = "POST";
+                request.setValue(Defaults.contentType, forHTTPHeaderField: Defaults.contentTypeName);
+                request.httpBody = try? JSONSerialization.data(withJSONObject: body);
                 URLSession.shared.dataTask(with: request).resume()
             }
         }
