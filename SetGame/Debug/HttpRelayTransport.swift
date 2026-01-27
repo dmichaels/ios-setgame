@@ -61,18 +61,6 @@ extension GameCenter
             self.sendMessage(data: message.serialize(), to: message.player);
         }
 
-        private func old_sendMessage(data: Data?, to player: String) {
-            guard let data = data else { return }
-            let url: URL = URL(string: "/send", relativeTo: self.url)!;
-            var request = URLRequest(url: url);
-            request.httpMethod = "POST";
-            request.setValue(Defaults.contentType, forHTTPHeaderField: Defaults.contentTypeName);
-            let payload: Any = try? JSONSerialization.jsonObject(with: data) as Any;
-            let json: [String: Any] = [ "to": player, "message": payload ];
-            request.httpBody = try? JSONSerialization.data(withJSONObject: json);
-            URLSession.shared.dataTask(with: request).resume();
-        }
-
         private func sendMessage(data: Data?, to player: String) {
             guard let data = data else { return }
             let url: URL = URL(string: "/send", relativeTo: self.url)!;
@@ -84,8 +72,15 @@ extension GameCenter
                 request.httpMethod = "POST";
                 request.setValue(Defaults.contentType, forHTTPHeaderField: Defaults.contentTypeName);
                 request.httpBody = try? JSONSerialization.data(withJSONObject: body);
-                URLSession.shared.dataTask(with: request).resume()
+                URLSession.shared.dataTask(with: request).resume();
             }
+        }
+
+        private func getMessages(for player: String) -> [GameCenter.Message] {
+            //
+            // TODO
+            //
+            return [];
         }
 
         public func startPolling() {

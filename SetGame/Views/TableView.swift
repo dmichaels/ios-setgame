@@ -119,30 +119,8 @@ Task {
             let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: cards);
             let transport: GameCenter.HttpTransport = GameCenter.HttpTransport(player: "A");
             transport.sendMessage(message);
-            /* xxx ...
-            if let data: Data = message.serialize() {
-                if let stringToSend = String(data: data, encoding: .utf8) {
-                    // xyzzy let data = await sendMessage(stringToSend, to: "A")
-                    let data = await sendMessage(data, to: "A")
-                    print("HTTP-POST-DONE")
-                    print(data)
-                }
-            }
-            ... xxx */
         } } label: {
             Text("POST")
-        }
-        Button { Task {
-            print("POSTNEW")
-            let cards: [TableCard] = [TableCard("ROS3")!];
-            let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: cards);
-            if let data: Data = message.serialize() {
-                let data = await sendMessage(data, to: "A")
-                print("HTTP-POST-DONE")
-                print(data)
-            }
-        } } label: {
-            Text("POSTNEW")
         }
 
 // xyzzy

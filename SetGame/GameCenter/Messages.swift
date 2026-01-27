@@ -119,6 +119,18 @@ public extension GameCenter {
         }
     }
 
+    public static func dispatch(_ message: Message?, _ handler: MessageHandler) { // MAYBE
+        //
+        // This looks weird, the three handler.handle references, but Swift
+        // typing works it out; so for example, handler.handle for dealCards
+        // references MessageHandler.handle(message: DealCardsMessage).
+        //
+        dispatch(message,
+                 playerReady: handler.handle,
+                 dealCards: handler.handle,
+                 foundSet: handler.handle);
+    }
+
     public static func toMessage(data: Data?) -> Message? {
         if let data = data, let envelope = GameCenter.fromJson(data, MessageEnvelope.self) {
             switch envelope.type {
