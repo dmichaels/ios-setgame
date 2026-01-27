@@ -57,20 +57,20 @@ extension GameCenter
         public func handle(message: GameCenter.FoundSetMessage) {
         }
 
-        private func send(message: Data, to player: String) {
-            let url = url.appendingPathComponent("POST")
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-            request.setValue(Defaults.contentType, forHTTPHeaderField: Defaults.contentTypeName)
+        public func sendMessage(_ message: GameCenter.Message) {
+            self.sendMessage(data: message.serialize(), to: message.player);
+        }
 
-            let base64Data = message.base64EncodedString()
-            let json: [String: Any] = [
-                "to": player,
-                "data": base64Data
-            ]
-
-            request.httpBody = try? JSONSerialization.data(withJSONObject: json)
-            URLSession.shared.dataTask(with: request).resume()
+        private func sendMessage(data: Data?, to player: String) {
+            guard let data = data else { return }
+            let url: URL = URL(string: "/send", relativeTo: self.url)!;
+            var request = URLRequest(url: url);
+            request.httpMethod = "POST";
+            request.setValue(Defaults.contentType, forHTTPHeaderField: Defaults.contentTypeName);
+            let payload: Any = try? JSONSerialization.jsonObject(with: data) as Any;
+            let json: [String: Any] = [ "to": player, "message": payload ];
+            request.httpBody = try? JSONSerialization.data(withJSONObject: json);
+            URLSession.shared.dataTask(with: request).resume();
         }
 
         public func startPolling() {

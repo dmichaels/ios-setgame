@@ -92,6 +92,7 @@ func sendMessage(_ messageData: Data, to playerID: String) async {
 
     // Decode messageData into JSON so it nests correctly
     let messageObject = try? JSONSerialization.jsonObject(with: messageData)
+    let x = GameCenter.toMessage(data: messageData)
 
     let payload: [String: Any] = [
         "to": playerID,
@@ -116,6 +117,9 @@ Task {
             print("POST")
             let cards: [TableCard] = [TableCard("ROS3")!];
             let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: cards);
+            let transport: GameCenter.HttpTransport = GameCenter.HttpTransport(player: "A");
+            transport.sendMessage(message);
+            /* xxx ...
             if let data: Data = message.serialize() {
                 if let stringToSend = String(data: data, encoding: .utf8) {
                     // xyzzy let data = await sendMessage(stringToSend, to: "A")
@@ -124,6 +128,7 @@ Task {
                     print(data)
                 }
             }
+            ... xxx */
         } } label: {
             Text("POST")
         }

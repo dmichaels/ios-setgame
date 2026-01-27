@@ -119,7 +119,7 @@ public extension GameCenter {
         }
     }
 
-    private static func toMessage(data: Data?) -> Message? {
+    public static func toMessage(data: Data?) -> Message? {
         if let data = data, let envelope = GameCenter.fromJson(data, MessageEnvelope.self) {
             switch envelope.type {
                 case .playerReady:
