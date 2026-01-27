@@ -100,17 +100,24 @@ public extension GameCenter
             return GameCenter.toCards(self.cardcodes).map { TableCard($0) }
         }
     }
+
+    private static func toCards(_ codes: [String]) -> [Card] {
+        var cards: [Card] = [];
+        for code in codes {
+            if let card: Card = Card(code) {
+                cards.append(card);
+            }
+        }
+        return cards;
+    }
 }
 
 public extension GameCenter
 {
     public static func toMessage(data: Data?) -> Message? {
-
         struct MessageEnvelope: Decodable { let type: MessageType; }
-
         if let data: Data = data,
            let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
-
             switch envelope.type {
             case .playerReady: return try? JSONDecoder().decode(PlayerReadyMessage.self, from: data);
             case .dealCards:   return try? JSONDecoder().decode(DealCardsMessage.self, from: data);
@@ -136,16 +143,6 @@ public extension GameCenter
             return messages;
         }
         return nil;
-    }
-
-    private static func toCards(_ codes: [String]) -> [Card] {
-        var cards: [Card] = [];
-        for code in codes {
-            if let card: Card = Card(code) {
-                cards.append(card);
-            }
-        }
-        return cards;
     }
 }
 
