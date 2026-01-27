@@ -106,7 +106,8 @@ public extension GameCenter
 {
     public static func toMessage(data: Data?) -> Message? {
         struct MessageEnvelope: Decodable { let type: MessageType; }
-        if let data = data, let envelope = GameCenter.fromJson(data, MessageEnvelope.self) {
+        if let data: Data = data,
+           let envelope: MessageEnvelope = GameCenter.fromJson(data, MessageEnvelope.self) {
             switch envelope.type {
                 case .playerReady:
                     if let message: PlayerReadyMessage = PlayerReadyMessage(data) {
