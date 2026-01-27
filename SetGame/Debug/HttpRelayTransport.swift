@@ -37,7 +37,8 @@ extension GameCenter
         }
 
         private var pollingTask: Task<Void, Never>? = nil;
-        private var pollingInterval: UInt64 = 900_000_000; // 900ms
+     // private var pollingInterval: UInt64 = 100_000_000; // 100ms
+        private var pollingInterval: UInt64 = 2_000_000_000; // 2s
 
         public func send(message: GameCenter.PlayerReadyMessage) {
         }
@@ -49,15 +50,19 @@ extension GameCenter
         }
 
         public func handle(message: Data, from player: String) {
+            print("HttpTransport.handle(Data)> \(message)")
         }
 
         public func handle(message: GameCenter.PlayerReadyMessage) {
+            print("HttpTransport.handle(PlayerReadyMessage)> \(message)")
         }
 
         public func handle(message: GameCenter.DealCardsMessage) {
+            print("HttpTransport.handle(DealCardsMessage)> \(message)")
         }
 
         public func handle(message: GameCenter.FoundSetMessage) {
+            print("HttpTransport.handle(FoundSetMessage)> \(message)")
         }
 
         public func sendMessage(message: GameCenter.Message) {
@@ -95,6 +100,7 @@ extension GameCenter
             pollingTask = Task {
                 while !Task.isCancelled {
                     let messages = await self.retrieveMessages(for: player)
+                    GameCenter.dispatch(messages: messages, handler: self);
                     print("POLL-FOR-MESSAGES> messages (\(messages.count)): \(messages)")
                     try? await Task.sleep(nanoseconds: pollingInterval);
                 }
