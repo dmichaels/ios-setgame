@@ -56,17 +56,21 @@ public struct TableView: View {
 private struct DebugView: View {
     @ObservedObject var table: Table;
     var body: some View { HStack {
-/*
-        Button { Task {
-            print("HTTP-GET>")
-            let transport: GameCenter.HttpTransport = GameCenter.HttpTransport(player: "A");
-            let messages: [GameCenter.Message] = await transport.retrieveMessages(for: "A");
-            print("HTTP-GET> messages: \(messages)")
-            print("HTTP-GET> done")
-        } } label: { Text("HTTP-GET") }
-*/
+        // Button { Task {
+        //     print("HTTP-GET>")
+        //     let transport: GameCenter.HttpTransport = GameCenter.HttpTransport(player: "A");
+        //     let messages: [GameCenter.Message] = await transport.retrieveMessages(for: "A");
+        //     print("HTTP-GET> messages: \(messages)")
+        //     print("HTTP-GET> done")
+        // } } label: { Text("HTTP-GET") }
         Button { Task {
             print("HTTP-POST>")
+            let transport: GameCenter.Transport = GameCenter.HttpTransport.instance;
+            let cards: [TableCard] = [TableCard("ROS1")!, TableCard("ROS2")!, TableCard("ROS3")!];
+            let message: GameCenter.Message = GameCenter.FoundSetMessage(player: "A", cards: cards);
+            print("HTTP-POST> send")
+            transport.send(message: message);
+            /*
             if let transport: GameCenter.Transport = SetGameApp.gameCenterTransport {
                 let cards: [TableCard] = [TableCard("ROS1")!, TableCard("ROS2")!, TableCard("ROS3")!];
                 let message: GameCenter.Message = GameCenter.FoundSetMessage(player: "A", cards: cards);
@@ -75,6 +79,7 @@ private struct DebugView: View {
                 transport.send(message: message);
                 transport.send(message: message2);
             }
+            */
             print("HTTP-POST> done")
         } } label: { Text("HTTP-POST") }
         Button {

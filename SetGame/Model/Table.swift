@@ -38,11 +38,11 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
 
     public func handle(message: GameCenter.DealCardsMessage) {
         print("Table.handle(DealCards)> \(message)");
-        self.addCards(1);
     }
 
     public func handle(message: GameCenter.FoundSetMessage) {
         print("Table.handle(FoundSet)> \(message)");
+        self.addCards(1);
     }
 
     public init(settings: Settings, gameCenterSender: GameCenter.MessageSender? = nil) {
