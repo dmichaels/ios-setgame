@@ -105,22 +105,25 @@ public extension GameCenter
 public extension GameCenter
 {
     public static func toMessage(data: Data?) -> Message? {
+
         struct MessageEnvelope: Decodable { let type: MessageType; }
+
         if let data: Data = data,
-           let envelope: MessageEnvelope = GameCenter.fromJson(data, MessageEnvelope.self) {
+           let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
+
             switch envelope.type {
-                case .playerReady:
-                    if let message: PlayerReadyMessage = GameCenter.fromJson(data, PlayerReadyMessage.self) {
-                        return message;
-                    }
-                case .dealCards:
-                    if let message: DealCardsMessage = GameCenter.fromJson(data, DealCardsMessage.self) {
-                        return message;
-                    }
-                case .foundSet:
-                    if let message: FoundSetMessage = GameCenter.fromJson(data, FoundSetMessage.self) {
-                        return message;
-                    }
+            case .playerReady:
+                if let message: PlayerReadyMessage = try? JSONDecoder().decode(PlayerReadyMessage.self, from: data) {
+                    return message;
+                }
+            case .dealCards:
+                if let message: DealCardsMessage = try? JSONDecoder().decode(DealCardsMessage.self, from: data) {
+                    return message;
+                }
+            case .foundSet:
+                if let message: FoundSetMessage = try? JSONDecoder().decode(FoundSetMessage.self, from: data) {
+                    return message;
+                }
             }
         }
         return nil;
@@ -140,13 +143,6 @@ public extension GameCenter
                 }
             }
             return messages;
-        }
-        return nil;
-    }
-
-    private static func fromJson<T: Decodable>(_ data: Data?, _ type: T.Type) -> T? {
-        if let data: Data = data {
-            do { return try JSONDecoder().decode(type, from: data); } catch {}
         }
         return nil;
     }
@@ -182,10 +178,10 @@ public extension GameCenter
                                 foundSet: ((FoundSetMessage) -> Void)? = nil) {
         if let message: Message = message {
             switch message {
-                case let message as PlayerReadyMessage: playerReady?(message);
-                case let message as DealCardsMessage: dealCards?(message);
-                case let message as FoundSetMessage: foundSet?(message);
-                default: break;
+            case let message as PlayerReadyMessage: playerReady?(message);
+            case let message as DealCardsMessage: dealCards?(message);
+            case let message as FoundSetMessage: foundSet?(message);
+            default: break;
             }
         }
     }
