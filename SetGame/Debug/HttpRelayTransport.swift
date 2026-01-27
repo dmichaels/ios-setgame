@@ -36,29 +36,36 @@ extension GameCenter
      // private var pollingInterval: UInt64 = 100_000_000; // 100ms
         private var pollingInterval: UInt64 = 2_000_000_000; // 2s
 
+        public func send(message: GameCenter.Message) {
+            print("HttpTransport.send(Message)> \(message)");
+        }
+
         public func send(message: GameCenter.PlayerReadyMessage) {
+            print("HttpTransport.send(PlayerReadyMessage)> \(message)");
         }
 
         public func send(message: GameCenter.DealCardsMessage) {
+            print("HttpTransport.send(DealCardsMessage)> \(message)");
         }
 
         public func send(message: GameCenter.FoundSetMessage) {
+            print("HttpTransport.send(FoundSetMessage)> \(message)");
         }
 
         public func handle(message: Data, from player: String) {
-            print("HttpTransport.handle(Data)> \(message)")
+            print("HttpTransport.handle(Data)> \(message)");
         }
 
         public func handle(message: GameCenter.PlayerReadyMessage) {
-            print("HttpTransport.handle(PlayerReadyMessage)> \(message)")
+            print("HttpTransport.handle(PlayerReadyMessage)> \(message)");
         }
 
         public func handle(message: GameCenter.DealCardsMessage) {
-            print("HttpTransport.handle(DealCardsMessage)> \(message)")
+            print("HttpTransport.handle(DealCardsMessage)> \(message)");
         }
 
         public func handle(message: GameCenter.FoundSetMessage) {
-            print("HttpTransport.handle(FoundSetMessage)> \(message)")
+            print("HttpTransport.handle(FoundSetMessage)> \(message)");
         }
 
         public func sendMessage(message: GameCenter.Message) {
@@ -94,10 +101,9 @@ extension GameCenter
         private func startPolling() {
             guard self.pollingTask == nil else { return }
             self.pollingTask = Task {
-                while !Task.isCancelled {
+                while (!Task.isCancelled) {
                     let messages = await self.retrieveMessages(for: player)
                     GameCenter.dispatch(messages: messages, handler: self);
-                    print("POLL-FOR-MESSAGES> messages (\(messages.count)): \(messages)")
                     try? await Task.sleep(nanoseconds: self.pollingInterval);
                 }
             }
