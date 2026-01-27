@@ -135,29 +135,35 @@ public extension GameCenter
     }
 
     public static func toMessages(data: Data?) -> [GameCenter.Message]? {
-        guard let data = data else { return nil }
-        guard let rawArray: [[String: Any]] = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else {
-            return nil
-        }
-        var messages: [GameCenter.Message] = []
-        messages.reserveCapacity(rawArray.count)
-        let decoder: JSONDecoder = JSONDecoder()
-        for object: [String: Any] in rawArray {
-            // Convert one object → Data
-            guard JSONSerialization.isValidJSONObject(object),
-                let objectData = try? JSONSerialization.data(withJSONObject: object)
-            else { continue }
-
-            // Convert Data → Message
-            if let message: Message = toMessage(data: objectData) {
-                messages.append(message)
+        if let data: Data = data,
+           let array: [[String: Any]] = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
+            var messages: [GameCenter.Message] = []; messages.reserveCapacity(array.count);
+            let decoder: JSONDecoder = JSONDecoder();
+            for object: [String: Any] in array {
+                if JSONSerialization.isValidJSONObject(object),
+                   let item: Data = try? JSONSerialization.data(withJSONObject: object) {
+                    if let message: Message = toMessage(data: item) {
+                        messages.append(message);
+                    }
+                }
             }
+            return messages;
         }
-        return messages
+        return nil;
     }
 
     public static func old_toMessages(data: Data?) -> [Message]? {
-        if let array: [Any] = GameCenter.fromJsonToArray(data) {
+
+        func fromJsonToArray(_ data: Data?) -> [Any]? {
+            if let data: Data = data {
+                if let array: [Any] = try? JSONSerialization.jsonObject(with: data) as? [Any] {
+                    return array;
+                }
+            }
+            return nil;
+        }
+
+        if let array: [Any] = fromJsonToArray(data) {
             var messages: [Message] = [];
             for json: Any in array {
                 if let json: Data = GameCenter.fromJsonToData(json) {
@@ -181,15 +187,6 @@ public extension GameCenter
     private static func fromJson<T: Decodable>(_ data: Data?, _ type: T.Type) -> T? {
         if let data: Data = data {
             do { return try JSONDecoder().decode(type, from: data); } catch {}
-        }
-        return nil;
-    }
-
-    private static func fromJsonToArray(_ data: Data?) -> [Any]? {
-        if let data: Data = data {
-            if let array: [Any] = try? JSONSerialization.jsonObject(with: data) as? [Any] {
-                return array;
-            }
         }
         return nil;
     }
