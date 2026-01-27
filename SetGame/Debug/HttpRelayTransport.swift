@@ -71,7 +71,7 @@ extension GameCenter
             print("HttpTransport.handle(FoundSetMessage)> \(message)");
         }
 
-        public func sendMessage(message: GameCenter.Message) {
+        private func sendMessage(message: GameCenter.Message) {
             self.sendMessage(data: message.serialize(), to: message.player);
         }
 
