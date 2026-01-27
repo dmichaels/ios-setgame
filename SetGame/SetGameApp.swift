@@ -15,7 +15,6 @@ struct SetGameApp: App {
         _feedback = StateObject(wrappedValue: Feedback(sounds: settings.sounds,
                                                        haptics: settings.haptics));
         _table = StateObject(wrappedValue: Table(settings: settings, gameCenterSender: SetGameApp.gameCenterTransport));
-        SetGameApp.gameCenterTransport?.configure(handler: self.table);
     }
 
     var body: some Scene {
@@ -25,7 +24,8 @@ struct SetGameApp: App {
                 .environmentObject(self.settings)
                 .environmentObject(self.feedback)
                 .task {
-                    await GameCenterAuthentication.authenticate()
+                    await GameCenterAuthentication.authenticate();
+                    SetGameApp.gameCenterTransport?.configure(handler: self.table);
                 }
         }
     }

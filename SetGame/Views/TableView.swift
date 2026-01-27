@@ -56,24 +56,27 @@ public struct TableView: View {
 private struct DebugView: View {
     @ObservedObject var table: Table;
     var body: some View { HStack {
+/*
         Button { Task {
             print("HTTP-GET>")
             let transport: GameCenter.HttpTransport = GameCenter.HttpTransport(player: "A");
             let messages: [GameCenter.Message] = await transport.retrieveMessages(for: "A");
             print("HTTP-GET> messages: \(messages)")
             print("HTTP-GET> done")
-        } } label: { Text("GET") }
+        } } label: { Text("HTTP-GET") }
+*/
         Button { Task {
             print("HTTP-POST>")
-            let cards: [TableCard] = [TableCard("ROS1")!, TableCard("ROS2")!, TableCard("ROS3")!];
-            let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: cards);
-            // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport(player: "A");
             if let transport: GameCenter.Transport = SetGameApp.gameCenterTransport {
+                let cards: [TableCard] = [TableCard("ROS1")!, TableCard("ROS2")!, TableCard("ROS3")!];
+                let message: GameCenter.Message = GameCenter.FoundSetMessage(player: "A", cards: cards);
+                let message2: GameCenter.Message = GameCenter.DealCardsMessage(player: "A", cards: cards);
                 print("HTTP-POST> send")
                 transport.send(message: message);
+                transport.send(message: message2);
             }
             print("HTTP-POST> done")
-        } } label: { Text("POST") }
+        } } label: { Text("HTTP-POST") }
         Button {
             table.cards[0].materialize(responsivity: 1.5, elasticity: 0.8);
         } label: { Text("MATERIALIZE") }

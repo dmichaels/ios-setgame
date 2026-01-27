@@ -19,13 +19,11 @@ extension GameCenter
             self.player = player;
             self.handler = handler;
             self.url = url ?? URL(string: Defaults.url)!
-            print("HttpTransport.init> id: \(ObjectIdentifier(self))");
         }
 
         public func configure(handler: GameCenter.MessageHandler) {
             self.handler = handler;
-            self.startPolling();
-            print("HttpTransport.configure> id: \(ObjectIdentifier(self)) handler: \(self.handler != nil)");
+            self.startMessagePolling();
         }
 
         private struct Defaults {
@@ -37,33 +35,31 @@ extension GameCenter
 
         private var pollingTask: Task<Void, Never>? = nil;
 
+        public func send(message: GameCenter.Message) {
+            self.sendMessage(message: message);
+        }
+
         public func send(message: GameCenter.PlayerReadyMessage) {
-            print("HttpTransport.send(PlayerReady)> \(message) id: \(ObjectIdentifier(self)) handler: \(self.handler != nil)");
             self.sendMessage(message: message);
         }
 
         public func send(message: GameCenter.DealCardsMessage) {
-            print("HttpTransport.send(DealCards)> \(message) id: \(ObjectIdentifier(self)) handler: \(self.handler != nil)");
             self.sendMessage(message: message);
         }
 
         public func send(message: GameCenter.FoundSetMessage) {
-            print("HttpTransport.send(FoundSet)> \(message) id: \(ObjectIdentifier(self)) handler: \(self.handler != nil)");
             self.sendMessage(message: message);
         }
 
         public func handle(message: GameCenter.PlayerReadyMessage) {
-            print("HttpTransport.handle(PlayerReady)> \(message) id: \(ObjectIdentifier(self)) handler: \(self.handler != nil)");
             self.handler?.handle(message: message);
         }
 
         public func handle(message: GameCenter.DealCardsMessage) {
-            print("HttpTransport.handle(DealCards)> \(message) id: \(ObjectIdentifier(self)) handler: \(self.handler != nil)");
             self.handler?.handle(message: message);
         }
 
         public func handle(message: GameCenter.FoundSetMessage) {
-            print("HttpTransport.handle(FoundSet)> \(message) id: \(ObjectIdentifier(self)) handler: \(self.handler != nil)");
             self.handler?.handle(message: message);
         }
 
@@ -97,24 +93,23 @@ extension GameCenter
             return [];
         }
 
-        private func startPolling() {
-            print("HttpTransport.startpolling> id: \(ObjectIdentifier(self)) handler: \(self.handler != nil)");
+        private func dispatchMessages(messages: [GameCenter.Message]) {
+            DispatchQueue.main.async {
+                GameCenter.dispatch(messages: messages, handler: self);
+            }
+        }
+
+        private func startMessagePolling() {
             guard self.pollingTask == nil else { return }
-            print("HttpTransport.startpolling.2> id: \(ObjectIdentifier(self)) handler: \(self.handler != nil)");
             self.pollingTask = Task {
-                print("HttpTransport.startpolling.3> id: \(ObjectIdentifier(self)) handler: \(self.handler != nil)");
                 while (!Task.isCancelled) {
-                    print("HttpTransport.startpolling.4> id: \(ObjectIdentifier(self)) handler: \(self.handler != nil)");
-                    let messages = await self.retrieveMessages(for: player)
-                    print("HttpTransport.startpolling.5> id: \(ObjectIdentifier(self)) handler: \(self.handler != nil)");
-                    GameCenter.dispatch(messages: messages, handler: self);
+                    self.dispatchMessages(messages: await self.retrieveMessages(for: player));
                     try? await Task.sleep(nanoseconds: Defaults.pollingInterval);
-                    print("HttpTransport.startpolling.6> id: \(ObjectIdentifier(self)) handler: \(self.handler != nil)");
                 }
             }
         }
 
-        private func stopPolling() {
+        private func stopMessagePolling() {
             pollingTask?.cancel();
             pollingTask = nil;
         }

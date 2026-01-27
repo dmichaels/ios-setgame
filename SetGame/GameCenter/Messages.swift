@@ -23,6 +23,7 @@ public extension GameCenter
     }
 
     public protocol MessageSender: AnyObject {
+        func send(message: Message);
         func send(message: PlayerReadyMessage);
         func send(message: DealCardsMessage);
         func send(message: FoundSetMessage);
