@@ -112,18 +112,9 @@ public extension GameCenter
            let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
 
             switch envelope.type {
-            case .playerReady:
-                if let message: PlayerReadyMessage = try? JSONDecoder().decode(PlayerReadyMessage.self, from: data) {
-                    return message;
-                }
-            case .dealCards:
-                if let message: DealCardsMessage = try? JSONDecoder().decode(DealCardsMessage.self, from: data) {
-                    return message;
-                }
-            case .foundSet:
-                if let message: FoundSetMessage = try? JSONDecoder().decode(FoundSetMessage.self, from: data) {
-                    return message;
-                }
+            case .playerReady: return try? JSONDecoder().decode(PlayerReadyMessage.self, from: data);
+            case .dealCards:   return try? JSONDecoder().decode(DealCardsMessage.self, from: data);
+            case .foundSet:    return try? JSONDecoder().decode(FoundSetMessage.self, from: data);
             }
         }
         return nil;

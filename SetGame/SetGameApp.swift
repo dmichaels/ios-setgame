@@ -19,10 +19,12 @@ struct SetGameApp: App {
     }
     func foo() {
         let cards: [TableCard] = [TableCard("ROS3")!];
+        // let message: GameCenter.PlayerReadyMessage = GameCenter.PlayerReadyMessage(player: "A");
+        let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(player: "A", cards: cards);
         // let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: cards);
-        let message: GameCenter.PlayerReadyMessage = GameCenter.PlayerReadyMessage(player: "A");
         if let data: Data? = message.serialize() {
-            let x = GameCenter.PlayerReadyMessage(data);
+            // let x = GameCenter.PlayerReadyMessage(data);
+            let x = GameCenter.DealCardsMessage(data);
             // let x = GameCenter.FoundSetMessage(data);
             print("FOFOFOFOFOFOFOFOF")
             print(x)
