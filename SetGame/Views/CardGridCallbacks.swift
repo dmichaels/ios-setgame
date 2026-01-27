@@ -36,6 +36,18 @@ enum CardGridCallbacks
     }
 
     private static func onSet(cards: [TableCard], resolve: @escaping () -> Void) {
+        if (Defaults.multiPlayer) {
+            GameCenter.HttpTransport.instance.send(message: GameCenter.FoundSetMessage(player: "A", cards: cards));
+            return;
+        }
+        cards.blink {
+            Delay(by: Defaults.Effects.selectAfterDelay) {
+                resolve();
+            }
+        }
+    }
+
+    public static func onSetMultiPlayer(cards: [TableCard], resolve: @escaping () -> Void) {
         cards.blink {
             Delay(by: Defaults.Effects.selectAfterDelay) {
                 resolve();

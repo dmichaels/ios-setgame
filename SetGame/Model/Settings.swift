@@ -29,9 +29,10 @@ public class Defaults {
 
     // These settings are NOT persisted across game instances.
 
-    public static let title: String    = "Logicard";
-    public static let gameCenter: Bool = true;
-    public static let debugView: Bool  = true;
+    public static let title: String     = "Logicard";
+    public static let gameCenter: Bool  = true;
+    public static let multiPlayer: Bool = true;
+    public static let debugView: Bool   = true;
 
     public struct Effects {
         public static let selectBeforeDelay: Double                   = 0.80;

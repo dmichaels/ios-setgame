@@ -31,18 +31,26 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
     @Published public private(set) var state: State;
                private             var deck: TableDeck;
 
-
     public func handle(message: GameCenter.PlayerReadyMessage) {
         print("Table.handle(PlayerReady)> \(message)");
     }
 
     public func handle(message: GameCenter.DealCardsMessage) {
         print("Table.handle(DealCards)> \(message)");
+        // self.addCards(1);
     }
 
     public func handle(message: GameCenter.FoundSetMessage) {
         print("Table.handle(FoundSet)> \(message)");
-        self.addCards(1);
+        let cards: [TableCard] = self.cards.find(message.cards);
+        CardGridCallbacks.onSetMultiPlayer(cards: cards, resolve: { self.resolveSet() });
+        /*
+        cards.blink {
+            Delay(by: Defaults.Effects.selectAfterDelay) {
+                self.resolveSet();
+            }
+        }
+        */
     }
 
     public init(settings: Settings, gameCenterSender: GameCenter.MessageSender? = nil) {
@@ -218,7 +226,7 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
 
         func resolve() {
             self.resolveSet(onCardsMoved);
-            self.state.resolving = false;
+            // self.state.resolving = false;
         }
 
         // Allowing a little delay gives us time to briefly see the cards
@@ -360,6 +368,7 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
             self.noteIncorrectGuess(selectedCards);
             self.unselectCards();
         }
+        self.state.resolving = false;
     }
 
     private func addToSetsLastFound(_ cards: [TableCard]) {
