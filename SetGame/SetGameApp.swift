@@ -18,7 +18,7 @@ struct SetGameApp: App {
         foo()
     }
     func foo() {
-        let cards: [TableCard] = [TableCard("ROS3")!];
+        let cards: [TableCard] = [TableCard("ROS1")!, TableCard("ROS2")!, TableCard("ROS3")!];
         // let message: GameCenter.PlayerReadyMessage = GameCenter.PlayerReadyMessage(player: "A");
         let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(player: "A", cards: cards);
         // let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: cards);

@@ -102,13 +102,7 @@ public extension GameCenter
     }
 
     private static func toCards(_ codes: [String]) -> [Card] {
-        var cards: [Card] = [];
-        for code in codes {
-            if let card: Card = Card(code) {
-                cards.append(card);
-            }
-        }
-        return cards;
+        return codes.compactMap { Card($0) };
     }
 }
 
