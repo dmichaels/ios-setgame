@@ -46,7 +46,17 @@ extension GameCenter
         private var pollingTask: Task<Void, Never>? = nil;
 
         public func send(message: GameCenter.Message, to player: String) {
-            self.sendMessage(message: message);
+            Task {
+                if (self.hosting) {
+                    let players: [String] = await self.retrievePlayers();
+                    for player in players {
+                        self.sendMessage(message: message, to: player);
+                    }
+                }
+                else if (self.host != "") {
+                    self.sendMessage(message: message, to: self.host);
+                }
+            }
         }
 
         public func handle(message: GameCenter.PlayerReadyMessage) {
@@ -61,8 +71,8 @@ extension GameCenter
             self.handler?.handle(message: message);
         }
 
-        private func sendMessage(message: GameCenter.Message) {
-            self.sendMessage(data: message.serialize(), to: message.player);
+        private func sendMessage(message: GameCenter.Message, to player: String? = nil) {
+            self.sendMessage(data: message.serialize(), to: player ?? message.player);
         }
 
         private func sendMessage(data: Data?, to player: String) {
