@@ -47,7 +47,7 @@ extension GameCenter
             self.handler?.handle(message: message);
         }
 
-        public func handle(message: GameCenter.DealCardsMessage) {
+        public func handle(message: GameCenter.NewGameMessage) {
             self.handler?.handle(message: message);
         }
 

@@ -20,7 +20,7 @@ public struct CardViewDebug: View {
             CardControls(table: table)
             TextBoxWithButton(label: "DEAL") { value in
                 let cards: [TableCard] = CardViewDebug.toCards(value);
-                self.simulateIncomingDealCardsMessage(cards);
+                self.simulateIncomingNewGameMessage(cards);
             }
             TextBoxWithButton(label: "SET!", inputText: "1GSD 2GSD 3GSD") { value in
                 let cards: [TableCard] = CardViewDebug.toCards(value);
@@ -113,7 +113,7 @@ public struct CardViewDebug: View {
         return cards;
     }
 
-    private func handleDealCardsMessage(_ message: GameCenter.DealCardsMessage) {
+    private func handleNewGameMessage(_ message: GameCenter.NewGameMessage) {
         let cards: [TableCard] = message.cards;
         self.table.addCards(cards);
     }
@@ -136,11 +136,11 @@ public struct CardViewDebug: View {
         CardViewDebug.possibleSetSelected(table: self.table);
     }
 
-    private func simulateIncomingDealCardsMessage(_ cards: [TableCard]) {
+    private func simulateIncomingNewGameMessage(_ cards: [TableCard]) {
 
         // Create a test message.
 
-        let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(player: GameCenter.HttpTransport.instance.player, cards: cards);
+        let message: GameCenter.NewGameMessage = GameCenter.NewGameMessage(player: GameCenter.HttpTransport.instance.player, cards: cards);
 
         // Serialize the test message to a Data object.
 
@@ -148,9 +148,9 @@ public struct CardViewDebug: View {
 
         // Use our GameCenter function to receive, decode, and dispatch the message.
 
-        // GameCenter.handleMessage(data, dealCards: handleDealCardsMessage);
-        if let msg = GameCenter.DealCardsMessage(data) {
-            GameCenter.dispatch(message: msg, dealCards: handleDealCardsMessage)
+        // GameCenter.handleMessage(data, newGame: handleNewGameMessage);
+        if let msg = GameCenter.NewGameMessage(data) {
+            GameCenter.dispatch(message: msg, newGame: handleNewGameMessage)
         }
     }
 

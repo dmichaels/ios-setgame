@@ -6,7 +6,7 @@ public extension GameCenter
 {
     public enum MessageType: String, Codable {
         case playerReady;
-        case dealCards;
+        case newGame;
         case foundSet;
     }
 
@@ -18,14 +18,14 @@ public extension GameCenter
 
     public protocol MessageHandler: AnyObject {
         func handle(message: PlayerReadyMessage);
-        func handle(message: DealCardsMessage);
+        func handle(message: NewGameMessage);
         func handle(message: FoundSetMessage);
     }
 
     public protocol MessageSender: AnyObject {
         func send(message: Message);
         // func send(message: PlayerReadyMessage);
-        // func send(message: DealCardsMessage);
+        // func send(message: NewGameMessage);
         // func send(message: FoundSetMessage);
     }
 }
@@ -59,7 +59,7 @@ public extension GameCenter
         }
     }
 
-    public struct DealCardsMessage: Message {
+    public struct NewGameMessage: Message {
 
         public  let type: MessageType;
         public  let player: String;
@@ -71,7 +71,7 @@ public extension GameCenter
         }
 
         public init(player: String, cards: [Card]) {
-            self.type      = .dealCards;
+            self.type      = .newGame;
             self.player    = player;
             self.cardcodes = cards.map { $0.code };
         }
@@ -106,7 +106,7 @@ public extension GameCenter
            let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
             switch envelope.type {
             case .playerReady: return try? JSONDecoder().decode(PlayerReadyMessage.self, from: data);
-            case .dealCards:   return try? JSONDecoder().decode(DealCardsMessage.self, from: data);
+            case .newGame:     return try? JSONDecoder().decode(NewGameMessage.self, from: data);
             case .foundSet:    return try? JSONDecoder().decode(FoundSetMessage.self, from: data);
             }
         }
@@ -136,24 +136,24 @@ public extension GameCenter
 {
     public static func dispatch(data: Data?,
                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
-                                dealCards: ((DealCardsMessage) -> Void)? = nil,
+                                newGame: ((NewGameMessage) -> Void)? = nil,
                                 foundSet: ((FoundSetMessage) -> Void)? = nil) {
         if let messages: [Message] = GameCenter.toMessages(data: data) {
             GameCenter.dispatch(messages: messages,
                                 playerReady: playerReady,
-                                dealCards: dealCards,
+                                newGame: newGame,
                                 foundSet: foundSet);
         }
     }
 
     public static func dispatch(message: Message?,
                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
-                                dealCards: ((DealCardsMessage) -> Void)? = nil,
+                                newGame: ((NewGameMessage) -> Void)? = nil,
                                 foundSet: ((FoundSetMessage) -> Void)? = nil) {
         if let message: Message = message {
             switch message {
             case let message as PlayerReadyMessage: playerReady?(message);
-            case let message as DealCardsMessage: dealCards?(message);
+            case let message as NewGameMessage: newGame?(message);
             case let message as FoundSetMessage: foundSet?(message);
             default: break;
             }
@@ -162,13 +162,13 @@ public extension GameCenter
 
     public static func dispatch(messages: [Message]?,
                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
-                                dealCards: ((DealCardsMessage) -> Void)? = nil,
+                                newGame: ((NewGameMessage) -> Void)? = nil,
                                 foundSet: ((FoundSetMessage) -> Void)? = nil) {
         if let messages: [Message] = messages {
             for message: Message in messages {
                 GameCenter.dispatch(message: message,
                                     playerReady: playerReady,
-                                    dealCards: dealCards,
+                                    newGame: newGame,
                                     foundSet: foundSet);
             }
         }
@@ -176,26 +176,26 @@ public extension GameCenter
 
     // These dispatch calls may look weird, the three handler.handle references in a row,
     // but Swift typing works it magic and sorts it; so that for example, handler.handle for
-    // dealCards handler.handle references MessageHandler.handle(message: DealCardsMessage).
+    // newGame handler.handle references MessageHandler.handle(message: NewGameMessage).
     //
     public static func dispatch(data: Data?, handler: MessageHandler) {
         GameCenter.dispatch(data: data,
                             playerReady: handler.handle,
-                            dealCards: handler.handle,
+                            newGame: handler.handle,
                             foundSet: handler.handle);
     }
 
     public static func dispatch(message: Message?, handler: MessageHandler) {
         GameCenter.dispatch(message: message,
                             playerReady: handler.handle,
-                            dealCards: handler.handle,
+                            newGame: handler.handle,
                             foundSet: handler.handle);
     }
 
     public static func dispatch(messages: [Message]?, handler: MessageHandler) {
         GameCenter.dispatch(messages: messages,
                             playerReady: handler.handle,
-                            dealCards: handler.handle,
+                            newGame: handler.handle,
                             foundSet: handler.handle);
     }
 }
