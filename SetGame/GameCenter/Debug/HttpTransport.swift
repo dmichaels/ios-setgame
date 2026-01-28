@@ -34,7 +34,7 @@ extension GameCenter
             public static let url: String             = "http://127.0.0.1:5000";
             public static let contentType: String     = "application/json";
             public static let contentTypeName: String = "Content-Type";
-            public static let pollingInterval: UInt64 = 2_000_000_000; // 2s // 100_000_000; // 100s
+            public static let pollingInterval: UInt64 = 300_000_000; // 2s // 100_000_000; // 100s
         }
 
         private var pollingTask: Task<Void, Never>? = nil;

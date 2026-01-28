@@ -83,11 +83,13 @@ public struct MultiPlayerInfoPanel: View {
                     .onDisappear {
                         taskHandle?.cancel();
                     }
+                    .padding(.trailing, 4)
                 Text("sent:")
                     .font(.caption)
                     .fontWeight(.bold)
                 Text("\(messageSentCount)")
                     .font(.caption)
+                    .padding(.trailing, 4)
                 Text("retrieved:")
                     .font(.caption)
                     .fontWeight(.bold)
