@@ -30,16 +30,7 @@ public class Defaults {
     // These settings are NOT persisted across game instances.
 
     public static let title: String     = "Logicard";
-    // public static let gameCenter: Bool  = true;
     public static let debugView: Bool   = true;
-
-    public struct MultiPlayer {
-        public var enabled: Bool = true;
-        public var http: Bool    = true;
-        public var host: Bool    = true;
-        public var poll: Bool    = true;
-    }
-    public static let multiPlayer: MultiPlayer = MultiPlayer();
 
     public struct Effects {
         public static let selectBeforeDelay: Double                   = 0.80;
@@ -60,6 +51,17 @@ public class Defaults {
                           delay: DelayBy(Defaults.Effects.materializeRandomDelay)
                       );
     }
+
+    // GameCenter/MultiPlayer related properties.
+
+    public struct MultiPlayer {
+        public var enabled: Bool = true;
+        public var http: Bool    = true;
+        public var host: Bool    = true;
+        public var poll: Bool    = true;
+    }
+
+    public static let multiPlayer: MultiPlayer = MultiPlayer();
 }
 
 public final class Settings: ObservableObject {
@@ -248,25 +250,25 @@ public final class Settings: ObservableObject {
 
     // These are the actual app settings properties.
 
-    @Published var showPartialSetHint: Bool   = Defaults.showPartialSetHint;
-    @Published var showSetsPresentCount: Bool = Defaults.showSetsPresentCount;
-    @Published var showPeekButton: Bool       = Defaults.showPeekButton;
-    @Published var showTimer: Bool            = Defaults.showTimer;
-    @Published var peekDisjoint: Bool         = Defaults.peekDisjoint;
-    @Published var additionalCards: Int       = Defaults.additionalCards;
-    @Published var plantSet: Bool             = Defaults.plantSet;
-    @Published var plantMagicSquare: Bool     = Defaults.plantMagicSquare;
-    @Published var moveSetFront: Bool         = Defaults.moveSetFront;
-    @Published var showFoundSets: Bool        = Defaults.showFoundSets;
-    @Published var displayCardCount: Int      = Defaults.displayCardCount;
-    @Published var cardsPerRow: Int           = Defaults.cardsPerRow;
-    @Published var cardsAskew: Bool           = Defaults.cardsAskew;
-    @Published var alternateCards: Int        = Defaults.alternateCards;
-    @Published var simpleDeck: Bool           = Defaults.simpleDeck;
-    @Published var sounds: Bool               = Defaults.sounds;
-    @Published var haptics: Bool              = Defaults.haptics;
-    @Published var hideHelpButton: Bool       = Defaults.hideHelpButton;
-    @Published var debugMode: Bool            = Defaults.debugMode;
-    @Published var demoMode: Bool             = Defaults.demoMode;
+    @Published var showPartialSetHint: Bool          = Defaults.showPartialSetHint;
+    @Published var showSetsPresentCount: Bool        = Defaults.showSetsPresentCount;
+    @Published var showPeekButton: Bool              = Defaults.showPeekButton;
+    @Published var showTimer: Bool                   = Defaults.showTimer;
+    @Published var peekDisjoint: Bool                = Defaults.peekDisjoint;
+    @Published var additionalCards: Int              = Defaults.additionalCards;
+    @Published var plantSet: Bool                    = Defaults.plantSet;
+    @Published var plantMagicSquare: Bool            = Defaults.plantMagicSquare;
+    @Published var moveSetFront: Bool                = Defaults.moveSetFront;
+    @Published var showFoundSets: Bool               = Defaults.showFoundSets;
+    @Published var displayCardCount: Int             = Defaults.displayCardCount;
+    @Published var cardsPerRow: Int                  = Defaults.cardsPerRow;
+    @Published var cardsAskew: Bool                  = Defaults.cardsAskew;
+    @Published var alternateCards: Int               = Defaults.alternateCards;
+    @Published var simpleDeck: Bool                  = Defaults.simpleDeck;
+    @Published var sounds: Bool                      = Defaults.sounds;
+    @Published var haptics: Bool                     = Defaults.haptics;
+    @Published var hideHelpButton: Bool              = Defaults.hideHelpButton;
+    @Published var debugMode: Bool                   = Defaults.debugMode;
+    @Published var demoMode: Bool                    = Defaults.demoMode;
     @Published var multiPlayer: Defaults.MultiPlayer = Defaults.multiPlayer;
 }
