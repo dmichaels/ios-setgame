@@ -37,6 +37,7 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
 
     public func handle(message: GameCenter.NewGameMessage) {
         print("Table.handle(NewGame)> \(message)");
+        self.startNewGame(cards: message.cards);
         // self.addCards(1);
     }
 
@@ -65,11 +66,22 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
         return self.state.resolving || self.settings.demoMode;
     }
 
-    public func startNewGame() {
+    public func startNewGame(cards: [TableCard]? = nil) {
 
         self.cards = [];
         self.deck  = TableDeck(simple: self.settings.simpleDeck);
         self.state = State();
+
+        if let cards: [TableCard] = cards {
+            //
+            // Must be multi-player mode where we deal the specified cards,
+            // via the NewGameMessage, specifically are taken from the deck.
+            //
+            if let cards: [TableCard] = self.deck.takeCards(cards, strict: true) {
+                self.cards = cards;
+                return;
+            }
+        }
 
         if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [TableCard] = TableDeck.randomMagicSquare(simple: self.settings.simpleDeck)

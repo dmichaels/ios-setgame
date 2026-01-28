@@ -80,6 +80,16 @@ private struct DebugView: View {
             transport.send(message: message);
             print("HTTP-POST> done")
         } } label: { Text("HTTP-POST") }
+        Button { Task {
+            print("HTTP-NEWGAME>")
+            let transport: GameCenter.Transport = GameCenter.HttpTransport.instance;
+            let cards: [TableCard] = [TableCard("ROS1")!, TableCard("ROS2")!, TableCard("ROS3")!];
+            let message: GameCenter.Message = GameCenter.NewGameMessage(player: GameCenter.HttpTransport.instance.player, cards: cards);
+            print("HTTP-NEWGAME> send player: \(GameCenter.HttpTransport.instance.player)")
+            print(message)
+            transport.send(message: message);
+            print("HTTP-NEWGAME> done")
+        } } label: { Text("HTTP-NEWGAME") }
         Button {
             table.cards[0].materialize(responsivity: 1.5, elasticity: 0.8);
         } label: { Text("MATERIALIZE") }

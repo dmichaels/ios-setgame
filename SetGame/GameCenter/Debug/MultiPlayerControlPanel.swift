@@ -8,18 +8,18 @@ public struct MultiPlayerControlPanel: View {
     public var body: some View {
         VStack(spacing: 80) {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
-                ToggleItem("multiplayer:", on: $settings.multiPlayer.enabled, disabled: false)
-                ToggleItem("host:", on: $settings.multiPlayer.host, disabled: !settings.multiPlayer.enabled)
-                ToggleItem("http:", on: $settings.multiPlayer.http, disabled: !settings.multiPlayer.enabled)
-                ToggleItem("polling:", on: $settings.multiPlayer.poll, disabled: !settings.multiPlayer.enabled || !settings.multiPlayer.http) { value in
+                ToggleItem("mult", on: $settings.multiPlayer.enabled, disabled: false)
+                ToggleItem("host", on: $settings.multiPlayer.host, disabled: !settings.multiPlayer.enabled)
+                ToggleItem("http", on: $settings.multiPlayer.http, disabled: !settings.multiPlayer.enabled)
+                ToggleItem("poll", on: $settings.multiPlayer.poll, disabled: !settings.multiPlayer.enabled || !settings.multiPlayer.http) { value in
                     print("Toggle polling changed to: \(value)")
                     if (value) { transport.startMessagePolling() } else { transport.stopMessagePolling() }
                 }
                 Spacer()
             }
-            .padding(.leading, 10)
+            .padding(.leading, 11)
             .padding(.vertical, 2)
-            .frame(width: 410)
+            .frame(width: 380)
             .background(
                 RoundedRectangle(cornerRadius: 11, style: .continuous)
                     .fill(self.background.opacity(0.2))
@@ -62,12 +62,11 @@ public struct MultiPlayerInfoPanel: View {
                     .fontWeight(.bold)
                     .padding(.trailing, -8)
                 CopyableText(text: transport.player, background: self.background)
-                Text("queued:")
+                Text("queue:")
                     .font(.caption)
                     .fontWeight(.bold)
                 Text("\(messageQueuedCount)")
                     .font(.caption)
-                    // .padding(.trailing, -8)
                     .onAppear {
                         taskHandle = Task {
                             while !Task.isCancelled {
@@ -77,6 +76,9 @@ public struct MultiPlayerInfoPanel: View {
                                 print("MC: \(count)");
                                 await MainActor.run { messageQueuedCount = count };
                                 try? await Task.sleep(nanoseconds: 300_000_000);
+                                let players = await transport.retrievePlayers();
+                                print("PLAYERS...........")
+                                print(players)
                             }
                         }
                     }
@@ -99,7 +101,7 @@ public struct MultiPlayerInfoPanel: View {
             }
             .padding(.leading, 10)
             .padding(.vertical, 2)
-            .frame(width: 410)
+            .frame(width: 380)
             .background(
                 RoundedRectangle(cornerRadius: 11, style: .continuous)
                     .fill(self.background.opacity(0.2))

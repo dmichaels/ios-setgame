@@ -108,6 +108,23 @@ extension GameCenter
             return self.retrievedCount;
         }
 
+        public func retrievePlayers() async -> [String] {
+            let url: URL = URL(string: "/players", relativeTo: self.url)!;
+            if let response = try? await URLSession.shared.data(from: url) {
+                let data: Data = response.0;
+                if let players = try? JSONDecoder().decode([String].self, from: data) {
+                    print("PLAYERS")
+                    return players;
+                }
+            }
+            return [];
+            /*
+            let (data, _) = try await URLSession.shared.data(from: url);
+            let players = try JSONDecoder().decode([String].self, from: data);
+            return players;
+            */
+        }
+
         private func dispatchMessages(messages: [GameCenter.Message]) {
             DispatchQueue.main.async {
                 GameCenter.dispatch(messages: messages, handler: self);
