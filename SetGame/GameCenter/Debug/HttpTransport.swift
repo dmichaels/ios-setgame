@@ -41,6 +41,7 @@ extension GameCenter
             self.sendMessage(message: message);
         }
 
+/*
         public func send(message: GameCenter.PlayerReadyMessage) {
             self.sendMessage(message: message);
         }
@@ -52,6 +53,7 @@ extension GameCenter
         public func send(message: GameCenter.FoundSetMessage) {
             self.sendMessage(message: message);
         }
+*/
 
         public func handle(message: GameCenter.PlayerReadyMessage) {
             self.handler?.handle(message: message);
@@ -102,7 +104,6 @@ extension GameCenter
         }
 
         private func startMessagePolling() {
-            return
             guard self.pollingTask == nil else { return }
             self.pollingTask = Task {
                 while (!Task.isCancelled) {
