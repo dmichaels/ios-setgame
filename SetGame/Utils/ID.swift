@@ -7,7 +7,7 @@ import Foundation
 ///
 public struct ID: ExpressibleByStringLiteral, CustomStringConvertible, Equatable, Hashable {
 
-    private let value: String;
+    public let value: String;
 
     public init(size: Int? = nil) {
         let size: Int = min(max(size ?? 32, 1), 32);

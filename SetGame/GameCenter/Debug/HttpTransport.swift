@@ -11,15 +11,14 @@ extension GameCenter
 {
     public class HttpTransport: Transport {
 
-        public static let instance: HttpTransport = HttpTransport(player: "A");
+        public static let instance: HttpTransport = HttpTransport();
 
-        private let player: String;
+        public let player: String = ID().value;
         private var handler: GameCenter.MessageHandler?;
         private let url: URL;
 
-        public init(player: String, handler: GameCenter.MessageHandler? = nil, url: URL? = nil) {
-            print("INITTTTTTTTTTTTTTTTTTTTTTTT")
-            self.player = player;
+        public init(player: String? = nil, handler: GameCenter.MessageHandler? = nil, url: URL? = nil) {
+            // self.player = player;
             self.handler = handler;
             self.url = url ?? URL(string: Defaults.url)!
         }

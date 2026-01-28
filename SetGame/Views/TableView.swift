@@ -67,7 +67,7 @@ private struct DebugView: View {
             print("HTTP-POST>")
             let transport: GameCenter.Transport = GameCenter.HttpTransport.instance;
             let cards: [TableCard] = [TableCard("ROS1")!, TableCard("ROS2")!, TableCard("ROS3")!];
-            let message: GameCenter.Message = GameCenter.FoundSetMessage(player: "A", cards: cards);
+            let message: GameCenter.Message = GameCenter.FoundSetMessage(player: GameCenter.HttpTransport.instance.player, cards: cards);
             print("HTTP-POST> send")
             transport.send(message: message);
             print("HTTP-POST> done")

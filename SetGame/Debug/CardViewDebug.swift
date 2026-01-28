@@ -133,14 +133,14 @@ public struct CardViewDebug: View {
         }
 
         tablecards.select();
-        CardGridCallbacks.possibleSetSelected(table: self.table);
+        CardViewDebug.possibleSetSelected(table: self.table);
     }
 
     private func simulateIncomingDealCardsMessage(_ cards: [TableCard]) {
 
         // Create a test message.
 
-        let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(player: "A", cards: cards);
+        let message: GameCenter.DealCardsMessage = GameCenter.DealCardsMessage(player: GameCenter.HttpTransport.instance.player, cards: cards);
 
         // Serialize the test message to a Data object.
 
@@ -158,7 +158,7 @@ public struct CardViewDebug: View {
 
         // Create a test message.
 
-        let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: cards);
+        let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: GameCenter.HttpTransport.instance.player, cards: cards);
 
         // Serialize the test message to a Data object.
 
@@ -170,5 +170,21 @@ public struct CardViewDebug: View {
         if let msg = GameCenter.FoundSetMessage(data) {
             GameCenter.dispatch(message: msg, foundSet: handleFoundSetMessage)
         }
+    }
+
+    public static func possibleSetSelected(table: Table) {
+        table.possibleSetSelected(
+            //
+            // The delay argument to cardTouched is the amount of time (seconds)
+            // to let the selected SET show as selected BEFORE we start blinking;
+            // the delay within the blink callback is the amount of time to let
+            // the selected SET show as selected AFTER the blinking is done and
+            // BEFORE we replace them with new cards (via resolve).
+            //
+            delay: Defaults.Effects.selectBeforeDelay,
+            onSet: CardGridCallbacks.onSet,
+            onNoSet: CardGridCallbacks.onNoSet,
+            onCardsMoved: CardGridCallbacks.onCardsMoved
+        )
     }
 }
