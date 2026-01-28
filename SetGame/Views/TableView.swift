@@ -23,7 +23,7 @@ public struct TableView: View {
             StatusBar(marginx: marginx)
             Space(size: 24)
             MultiPlayerControlPanel(table: table, settings: settings)
-            Space(size: 8)
+            Space(size: 4)
             MultiPlayerInfoPanel(table: table, settings: settings)
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)

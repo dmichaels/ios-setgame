@@ -16,6 +16,8 @@ extension GameCenter
         public  let player: String;
         private var handler: GameCenter.MessageHandler?;
         private let url: URL;
+        private var retrievedCount: Int = 0;
+        private var sentCount: Int = 0;
 
         public init(player: String, handler: GameCenter.MessageHandler? = nil, url: URL? = nil) {
             self.player = player;
@@ -69,6 +71,7 @@ extension GameCenter
                 request.setValue(Defaults.contentType, forHTTPHeaderField: Defaults.contentTypeName);
                 request.httpBody = try? JSONSerialization.data(withJSONObject: body);
                 URLSession.shared.dataTask(with: request).resume();
+                self.sentCount += 1;
             }
         }
 
@@ -77,13 +80,14 @@ extension GameCenter
             if let response = try? await URLSession.shared.data(from: url) {
                 let data: Data = response.0;
                 if let messages: [GameCenter.Message] = GameCenter.toMessages(data: data) {
+                    self.retrievedCount += messages.count;
                     return messages;
                 }
             }
             return [];
         }
 
-        public func retrieveMessageCount(for player: String? = nil) async -> Int {
+        public func retrieveMessageQueuedCount(for player: String? = nil) async -> Int {
             let player: String = player ?? self.player;
             struct MessageEnvelope: Decodable { let player: String ; let count: Int }
             let url: URL = URL(string: "/count/\(player)", relativeTo: self.url)!;
@@ -94,6 +98,14 @@ extension GameCenter
                 }
             }
             return 0;
+        }
+
+        public func messageSentCount() -> Int {
+            return self.sentCount;
+        }
+
+        public func messageRetrievedCount() -> Int {
+            return self.retrievedCount;
         }
 
         private func dispatchMessages(messages: [GameCenter.Message]) {

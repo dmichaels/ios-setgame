@@ -49,7 +49,9 @@ public struct MultiPlayerInfoPanel: View {
     @ObservedObject var table: Table
     @ObservedObject var settings: Settings;
     @State private var taskHandle: Task<Void, Never>? = nil
-    @State private var messageCount: Int = 0;
+    @State private var messageQueuedCount: Int = 0;
+    @State private var messageSentCount: Int = 0;
+    @State private var messageRetrievedCount: Int = 0;
     let background: Color = Color.gray;
     let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
     public var body: some View {
@@ -60,28 +62,37 @@ public struct MultiPlayerInfoPanel: View {
                     .fontWeight(.bold)
                     .padding(.trailing, -8)
                 CopyableText(text: transport.player, background: self.background)
-                Spacer()
-                Text("messages:")
+                Text("queued:")
                     .font(.caption)
                     .fontWeight(.bold)
-                    .padding(.trailing, -8)
-                Text("\(messageCount)")
+                Text("\(messageQueuedCount)")
                     .font(.caption)
-                    .padding(.trailing, -8)
-                    .task { messageCount = await transport.retrieveMessageCount() }
+                    // .padding(.trailing, -8)
                     .onAppear {
                         taskHandle = Task {
                             while !Task.isCancelled {
-                                let count = await transport.retrieveMessageCount()
-                                print("MC: \(count)")
-                                await MainActor.run { messageCount = count }
-                                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                                self.messageSentCount = transport.messageSentCount();
+                                self.messageRetrievedCount = transport.messageRetrievedCount();
+                                let count = await transport.retrieveMessageQueuedCount();
+                                print("MC: \(count)");
+                                await MainActor.run { messageQueuedCount = count };
+                                try? await Task.sleep(nanoseconds: 300_000_000);
                             }
                         }
                     }
-            .onDisappear {
-                taskHandle?.cancel()
-            }
+                    .onDisappear {
+                        taskHandle?.cancel();
+                    }
+                Text("sent:")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                Text("\(messageSentCount)")
+                    .font(.caption)
+                Text("retrieved:")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                Text("\(messageRetrievedCount)")
+                    .font(.caption)
                 Spacer()
             }
             .padding(.leading, 10)
@@ -122,5 +133,6 @@ private struct CopyableText: View {
                     .transition(.opacity)
                 : nil
             )
+            .padding(.trailing, -4)
     }
 }
