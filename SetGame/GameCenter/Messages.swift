@@ -23,7 +23,7 @@ public extension GameCenter
     }
 
     public protocol MessageSender: AnyObject {
-        func send(message: Message, to: String);
+        func send(message: Message);
     }
 }
 

@@ -45,7 +45,7 @@ extension GameCenter
 
         private var pollingTask: Task<Void, Never>? = nil;
 
-        public func send(message: GameCenter.Message, to player: String) {
+        public func send(message: GameCenter.Message) {
             Task {
                 if (self.hosting) {
                     let players: [String] = await self.retrievePlayers();

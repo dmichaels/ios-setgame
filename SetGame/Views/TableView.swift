@@ -77,7 +77,7 @@ private struct DebugView: View {
             let message: GameCenter.Message = GameCenter.FoundSetMessage(player: GameCenter.HttpTransport.instance.player, cards: cards);
             print("HTTP-POST> send player: \(GameCenter.HttpTransport.instance.player)")
             print(message)
-            transport.send(message: message, to: "TODO");
+            transport.send(message: message);
             print("HTTP-POST> done")
         } } label: { Text("POST") }
         Button { Task {
@@ -87,7 +87,7 @@ private struct DebugView: View {
             let message: GameCenter.Message = GameCenter.NewGameMessage(player: GameCenter.HttpTransport.instance.player, cards: cards);
             print("HTTP-NEWGAME> send player: \(GameCenter.HttpTransport.instance.player)")
             print(message)
-            transport.send(message: message, to: "DUMMY");
+            transport.send(message: message);
             print("HTTP-NEWGAME> done")
         } } label: { Text("NEWGAME") }
         Button { Task {
