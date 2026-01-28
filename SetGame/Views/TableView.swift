@@ -13,11 +13,16 @@ public struct TableView: View {
     let marginx: CGFloat = 6;
     let spacing: CGFloat = 6;
 
+    @State var multiPlayerHost: Bool = true;
+    @State var multiPlayerPoll: Bool = true;
+
     public var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             CardGridView(table: table, settings: settings, spacing: spacing, marginx: marginx)
             Space(size: 18)
             StatusBar(marginx: marginx)
+            Space(size: 24)
+            MultiPlayerDevelopmentPanel(table: table, host: multiPlayerHost, poll: multiPlayerPoll)
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)
             DebugView(table: table)
@@ -68,7 +73,8 @@ private struct DebugView: View {
             let transport: GameCenter.Transport = GameCenter.HttpTransport.instance;
             let cards: [TableCard] = [TableCard("ROS1")!, TableCard("ROS2")!, TableCard("ROS3")!];
             let message: GameCenter.Message = GameCenter.FoundSetMessage(player: GameCenter.HttpTransport.instance.player, cards: cards);
-            print("HTTP-POST> send")
+            print("HTTP-POST> send player: \(GameCenter.HttpTransport.instance.player)")
+            print(message)
             transport.send(message: message);
             print("HTTP-POST> done")
         } } label: { Text("HTTP-POST") }
@@ -76,6 +82,66 @@ private struct DebugView: View {
             table.cards[0].materialize(responsivity: 1.5, elasticity: 0.8);
         } label: { Text("MATERIALIZE") }
     } }
+}
+private struct MultiPlayerDevelopmentPanel: View {
+    @ObservedObject var table: Table
+    @State var host: Bool
+    @State var poll: Bool
+    var body: some View {
+VStack(spacing: 80) {
+        HStack(alignment: .firstTextBaseline, spacing: 30) {
+            toggleGroup(label: "Host:", isOn: $host)
+            toggleGroup(label: "Poll:", isOn: $poll)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 2)
+        .frame(width: 410)
+        // .frame(maxWidth: .infinity) 
+        .background(
+            RoundedRectangle(cornerRadius: 11, style: .continuous)
+                .fill(Color.gray.opacity(0.2))
+        )
+    } }
+    private func toggleGroup(label: String, isOn: Binding<Bool>) -> some View {
+        HStack(spacing: 3) {
+            Text(label)
+                .font(.caption)
+                .lineLimit(1)
+            Toggle("", isOn: isOn)
+                .labelsHidden()
+                .scaleEffect(0.65)
+        }
+    }
+}
+
+private struct XMultiPlayerDevelopmentPanel: View {
+    @ObservedObject var table: Table;
+    @State var host: Bool;
+    @State var poll: Bool;
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 30) {
+            toggleGroup(label: "Host:", isOn: $host)
+            toggleGroup(label: "Poll:", isOn: $poll)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity) 
+        .background(
+            RoundedRectangle(cornerRadius: 11, style: .continuous)
+                .fill(Color.gray.opacity(0.2))
+        )
+    }
+    private func toggleGroup(label: String, isOn: Binding<Bool>) -> some View {
+        HStack(spacing: 5) {
+            Text(label)
+                .font(.subheadline)
+                .lineLimit(1)
+                .scaleEffect(0.7)
+            Toggle("", isOn: isOn)
+                .labelsHidden()
+                .scaleEffect(0.7)
+        }
+    }
 }
 
 private struct MultiPlayerGameButton: View {

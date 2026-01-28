@@ -102,6 +102,7 @@ extension GameCenter
         }
 
         private func startMessagePolling() {
+            return
             guard self.pollingTask == nil else { return }
             self.pollingTask = Task {
                 while (!Task.isCancelled) {
