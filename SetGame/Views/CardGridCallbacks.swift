@@ -20,7 +20,7 @@ enum CardGridCallbacks
     }
 
     public static func onSet(cards: [TableCard], resolve: @escaping () -> Void) {
-        if (Defaults.multiPlayer) {
+        if (Defaults.multiplayer.enabled) {
             GameCenter.HttpTransport.instance.send(
                 message: GameCenter.FoundSetMessage(player: GameCenter.HttpTransport.instance.player, cards: cards));
             return;

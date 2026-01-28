@@ -93,10 +93,10 @@ private struct MultiPlayerDevelopmentPanel: View {
                 ToggleItem("multiplayer:", on: $settings.multiplayer.enabled, disabled: false)
                 ToggleItem("host:", on: $settings.multiplayer.host, disabled: !settings.multiplayer.enabled)
                 ToggleItem("http:", on: $settings.multiplayer.http, disabled: !settings.multiplayer.enabled)
-                ToggleItem("polling:", on: $settings.multiplayer.poll, disabled: !settings.multiplayer.enabled || settings.multiplayer.http)
+                ToggleItem("polling:", on: $settings.multiplayer.poll, disabled: !settings.multiplayer.enabled || !settings.multiplayer.http)
                 Spacer()
             }
-            .padding(.leading, 8)
+            .padding(.leading, 10)
             .padding(.vertical, 2)
             .frame(width: 410)
             .background(
