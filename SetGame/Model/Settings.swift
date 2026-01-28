@@ -30,8 +30,7 @@ public class Defaults {
     // These settings are NOT persisted across game instances.
 
     public static let title: String     = "Logicard";
-    public static let gameCenter: Bool  = true;
-    public static let multiPlayer: Bool = true;
+    // public static let gameCenter: Bool  = true;
     public static let debugView: Bool   = true;
 
     public struct MultiPlayer {
@@ -40,7 +39,7 @@ public class Defaults {
         public var host: Bool    = true;
         public var poll: Bool    = true;
     }
-    public static let multiplayer: MultiPlayer = MultiPlayer();
+    public static let multiPlayer: MultiPlayer = MultiPlayer();
 
     public struct Effects {
         public static let selectBeforeDelay: Double                   = 0.80;
@@ -269,5 +268,5 @@ public final class Settings: ObservableObject {
     @Published var hideHelpButton: Bool       = Defaults.hideHelpButton;
     @Published var debugMode: Bool            = Defaults.debugMode;
     @Published var demoMode: Bool             = Defaults.demoMode;
-    @Published var multiplayer: Defaults.MultiPlayer   = Defaults.multiplayer;
+    @Published var multiPlayer: Defaults.MultiPlayer = Defaults.multiPlayer;
 }

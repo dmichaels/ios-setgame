@@ -90,10 +90,10 @@ private struct MultiPlayerDevelopmentPanel: View {
     var body: some View {
         VStack(spacing: 80) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
-                ToggleItem("multiplayer:", on: $settings.multiplayer.enabled, disabled: false)
-                ToggleItem("host:", on: $settings.multiplayer.host, disabled: !settings.multiplayer.enabled)
-                ToggleItem("http:", on: $settings.multiplayer.http, disabled: !settings.multiplayer.enabled)
-                ToggleItem("polling:", on: $settings.multiplayer.poll, disabled: !settings.multiplayer.enabled || !settings.multiplayer.http)
+                ToggleItem("multiplayer:", on: $settings.multiPlayer.enabled, disabled: false)
+                ToggleItem("host:", on: $settings.multiPlayer.host, disabled: !settings.multiPlayer.enabled)
+                ToggleItem("http:", on: $settings.multiPlayer.http, disabled: !settings.multiPlayer.enabled)
+                ToggleItem("polling:", on: $settings.multiPlayer.poll, disabled: !settings.multiPlayer.enabled || !settings.multiPlayer.http)
                 Spacer()
             }
             .padding(.leading, 10)
