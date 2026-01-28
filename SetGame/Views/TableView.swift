@@ -22,7 +22,7 @@ public struct TableView: View {
             Space(size: 18)
             StatusBar(marginx: marginx)
             Space(size: 24)
-            MultiPlayerDevelopmentPanel(table: table, host: multiPlayerHost, poll: multiPlayerPoll)
+            MultiPlayerDevelopmentPanel(table: table, settings: settings)
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)
             DebugView(table: table)
@@ -83,63 +83,40 @@ private struct DebugView: View {
         } label: { Text("MATERIALIZE") }
     } }
 }
+
 private struct MultiPlayerDevelopmentPanel: View {
     @ObservedObject var table: Table
-    @State var host: Bool
-    @State var poll: Bool
+    @ObservedObject var settings: Settings;
     var body: some View {
-VStack(spacing: 80) {
-        HStack(alignment: .firstTextBaseline, spacing: 30) {
-            toggleGroup(label: "Host:", isOn: $host)
-            toggleGroup(label: "Poll:", isOn: $poll)
+        VStack(spacing: 80) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                ToggleItem("multiplayer:", on: $settings.multiplayer.enabled, disabled: false)
+                ToggleItem("host:", on: $settings.multiplayer.host, disabled: !settings.multiplayer.enabled)
+                ToggleItem("http:", on: $settings.multiplayer.http, disabled: !settings.multiplayer.enabled)
+                ToggleItem("polling:", on: $settings.multiplayer.poll, disabled: !settings.multiplayer.enabled || settings.multiplayer.http)
+                Spacer()
+            }
+            .padding(.leading, 8)
+            .padding(.vertical, 2)
+            .frame(width: 410)
+            .background(
+                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                    .fill(Color.gray.opacity(0.2))
+            )
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 2)
-        .frame(width: 410)
-        // .frame(maxWidth: .infinity) 
-        .background(
-            RoundedRectangle(cornerRadius: 11, style: .continuous)
-                .fill(Color.gray.opacity(0.2))
-        )
-    } }
-    private func toggleGroup(label: String, isOn: Binding<Bool>) -> some View {
-        HStack(spacing: 3) {
+    }
+    private func ToggleItem(_ label: String, on: Binding<Bool>, disabled: Bool = false) -> some View {
+        HStack(spacing: 0) {
             Text(label)
                 .font(.caption)
+                .fontWeight(.bold)
                 .lineLimit(1)
-            Toggle("", isOn: isOn)
+                .layoutPriority(1)
+                .padding(.trailing, -8)
+            Toggle("", isOn: on)
                 .labelsHidden()
-                .scaleEffect(0.65)
-        }
-    }
-}
-
-private struct XMultiPlayerDevelopmentPanel: View {
-    @ObservedObject var table: Table;
-    @State var host: Bool;
-    @State var poll: Bool;
-    var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 30) {
-            toggleGroup(label: "Host:", isOn: $host)
-            toggleGroup(label: "Poll:", isOn: $poll)
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 10)
-        .frame(maxWidth: .infinity) 
-        .background(
-            RoundedRectangle(cornerRadius: 11, style: .continuous)
-                .fill(Color.gray.opacity(0.2))
-        )
-    }
-    private func toggleGroup(label: String, isOn: Binding<Bool>) -> some View {
-        HStack(spacing: 5) {
-            Text(label)
-                .font(.subheadline)
-                .lineLimit(1)
-                .scaleEffect(0.7)
-            Toggle("", isOn: isOn)
-                .labelsHidden()
-                .scaleEffect(0.7)
+                .scaleEffect(0.55)
+                .disabled(disabled)
         }
     }
 }

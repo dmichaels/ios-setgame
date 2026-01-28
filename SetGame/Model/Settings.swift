@@ -34,6 +34,14 @@ public class Defaults {
     public static let multiPlayer: Bool = true;
     public static let debugView: Bool   = true;
 
+    public struct MultiPlayer {
+        public var enabled: Bool = true;
+        public var http: Bool    = true;
+        public var host: Bool    = true;
+        public var poll: Bool    = true;
+    }
+    public static let multiplayer: MultiPlayer = MultiPlayer();
+
     public struct Effects {
         public static let selectBeforeDelay: Double                   = 0.80;
         public static let selectAfterDelay: Double                    = 0.40;
@@ -261,4 +269,5 @@ public final class Settings: ObservableObject {
     @Published var hideHelpButton: Bool       = Defaults.hideHelpButton;
     @Published var debugMode: Bool            = Defaults.debugMode;
     @Published var demoMode: Bool             = Defaults.demoMode;
+    @Published var multiplayer: Defaults.MultiPlayer   = Defaults.multiplayer;
 }
