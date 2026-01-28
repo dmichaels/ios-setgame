@@ -45,7 +45,7 @@ extension GameCenter
 
         private var pollingTask: Task<Void, Never>? = nil;
 
-        public func send(message: GameCenter.Message) {
+        public func send(message: GameCenter.Message, to player: String) {
             self.sendMessage(message: message);
         }
 
