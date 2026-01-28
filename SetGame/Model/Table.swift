@@ -72,14 +72,17 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
         self.deck  = TableDeck(simple: self.settings.simpleDeck);
         self.state = State();
 
-        if let cards: [TableCard] = cards {
-            //
-            // Must be multi-player mode where we deal the specified cards,
-            // via the NewGameMessage, specifically are taken from the deck.
-            //
-            if let cards: [TableCard] = self.deck.takeCards(cards, strict: true) {
-                self.cards = cards;
-                return;
+        if (self.settings.multiPlayer.enabled) {
+            if let cards: [TableCard] = cards {
+                //
+                // Must be multi-player mode where we are the client
+                // and are here responding to a NewGameMessage to deal
+                // the specific given cards from the deck.
+                //
+                if let cards: [TableCard] = self.deck.takeCards(cards, strict: true) {
+                    self.cards = cards;
+                    return;
+                }
             }
         }
 
@@ -125,6 +128,21 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
         }
         else {
             self.fillTable();
+        }
+
+        if (self.settings.multiPlayer.enabled) {
+            //
+            // Must be multi-player mode where we are the HOST and
+            // are here responding to a simple local request, from
+            // the menu-item, to start a new game; need to notify clients.
+            //
+            if let transport = self.gameCenterSender {
+                let message: GameCenter.NewGameMessage = GameCenter.NewGameMessage(
+                    player: GameCenter.HttpTransport.instance.player,
+                    cards: self.cards
+                );
+                transport.send(message: message);
+            }
         }
     }
 
