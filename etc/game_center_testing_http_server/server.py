@@ -23,13 +23,24 @@ def receive(player_id):
     print(messages)
     return jsonify(messages)
 
-# @app.route('/players', methods=['GET'])
-# def players():
-#     return jsonify(list(inbox.keys()))
-
 @app.route('/players', methods=['GET'])
 def players_endpoint():
     return jsonify(sorted(players))
+
+@app.route('/peek/<player_id>', methods=['GET'])
+def peek(player_id):
+    messages = inbox.get(player_id, [])
+    print("peek:")
+    print(messages)
+    return jsonify(messages)
+
+@app.route('/count/<player_id>', methods=['GET'])
+def count(player_id):
+    count = len(inbox.get(player_id, []))
+    return jsonify({
+        'player': player_id,
+        'count': count
+    })
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000)

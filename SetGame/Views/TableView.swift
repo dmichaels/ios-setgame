@@ -22,7 +22,9 @@ public struct TableView: View {
             Space(size: 18)
             StatusBar(marginx: marginx)
             Space(size: 24)
-            MultiPlayerDevelopmentPanel(table: table, settings: settings)
+            MultiPlayerControlPanel(table: table, settings: settings)
+            Space(size: 8)
+            MultiPlayerInfoPanel(table: table, settings: settings)
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)
             DebugView(table: table)
@@ -84,42 +86,6 @@ private struct DebugView: View {
     } }
 }
 
-private struct MultiPlayerDevelopmentPanel: View {
-    @ObservedObject var table: Table
-    @ObservedObject var settings: Settings;
-    var body: some View {
-        VStack(spacing: 80) {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                ToggleItem("multiplayer:", on: $settings.multiPlayer.enabled, disabled: false)
-                ToggleItem("host:", on: $settings.multiPlayer.host, disabled: !settings.multiPlayer.enabled)
-                ToggleItem("http:", on: $settings.multiPlayer.http, disabled: !settings.multiPlayer.enabled)
-                ToggleItem("polling:", on: $settings.multiPlayer.poll, disabled: !settings.multiPlayer.enabled || !settings.multiPlayer.http)
-                Spacer()
-            }
-            .padding(.leading, 10)
-            .padding(.vertical, 2)
-            .frame(width: 410)
-            .background(
-                RoundedRectangle(cornerRadius: 11, style: .continuous)
-                    .fill(Color.gray.opacity(0.2))
-            )
-        }
-    }
-    private func ToggleItem(_ label: String, on: Binding<Bool>, disabled: Bool = false) -> some View {
-        HStack(spacing: 0) {
-            Text(label)
-                .font(.caption)
-                .fontWeight(.bold)
-                .lineLimit(1)
-                .layoutPriority(1)
-                .padding(.trailing, -8)
-            Toggle("", isOn: on)
-                .labelsHidden()
-                .scaleEffect(0.55)
-                .disabled(disabled)
-        }
-    }
-}
 
 private struct MultiPlayerGameButton: View {
     @ObservedObject private var gameCenter = GameCenterManager.shared;

@@ -83,23 +83,38 @@ extension GameCenter
             return [];
         }
 
+        public func retrieveMessageCount(for player: String? = nil) async -> Int {
+            let player: String = player ?? self.player;
+            struct MessageEnvelope: Decodable { let player: String ; let count: Int }
+            let url: URL = URL(string: "/count/\(player)", relativeTo: self.url)!;
+            if let response = try? await URLSession.shared.data(from: url) {
+                let data: Data = response.0;
+                if let envelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
+                    return envelope.count;
+                }
+            }
+            return 0;
+        }
+
         private func dispatchMessages(messages: [GameCenter.Message]) {
             DispatchQueue.main.async {
                 GameCenter.dispatch(messages: messages, handler: self);
             }
         }
 
-        private func startMessagePolling() {
+        public func startMessagePolling() {
             guard self.pollingTask == nil else { return }
             self.pollingTask = Task {
                 while (!Task.isCancelled) {
-                    self.dispatchMessages(messages: await self.retrieveMessages(for: player));
+                    let messages: [GameCenter.Message] = await self.retrieveMessages(for: self.player);
+                    print("POLL-MESSAGES(\(self.player)): \(messages)")
+                    self.dispatchMessages(messages: messages);
                     try? await Task.sleep(nanoseconds: Defaults.pollingInterval);
                 }
             }
         }
 
-        private func stopMessagePolling() {
+        public func stopMessagePolling() {
             pollingTask?.cancel();
             pollingTask = nil;
         }
