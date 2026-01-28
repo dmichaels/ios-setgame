@@ -11,14 +11,14 @@ extension GameCenter
 {
     public class HttpTransport: Transport {
 
-        public static let instance: HttpTransport = HttpTransport();
+        public static let instance: HttpTransport = HttpTransport(player: ID(short: true).value);
 
-        public let player: String = ID().value;
+        public  let player: String;
         private var handler: GameCenter.MessageHandler?;
         private let url: URL;
 
-        public init(player: String? = nil, handler: GameCenter.MessageHandler? = nil, url: URL? = nil) {
-            // self.player = player;
+        public init(player: String, handler: GameCenter.MessageHandler? = nil, url: URL? = nil) {
+            self.player = player;
             self.handler = handler;
             self.url = url ?? URL(string: Defaults.url)!
         }
@@ -40,20 +40,6 @@ extension GameCenter
         public func send(message: GameCenter.Message) {
             self.sendMessage(message: message);
         }
-
-/*
-        public func send(message: GameCenter.PlayerReadyMessage) {
-            self.sendMessage(message: message);
-        }
-
-        public func send(message: GameCenter.DealCardsMessage) {
-            self.sendMessage(message: message);
-        }
-
-        public func send(message: GameCenter.FoundSetMessage) {
-            self.sendMessage(message: message);
-        }
-*/
 
         public func handle(message: GameCenter.PlayerReadyMessage) {
             self.handler?.handle(message: message);
