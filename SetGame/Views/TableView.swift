@@ -79,7 +79,7 @@ private struct DebugView: View {
             print(message)
             transport.send(message: message);
             print("HTTP-POST> done")
-        } } label: { Text("HTTP-POST") }
+        } } label: { Text("POST") }
         Button { Task {
             print("HTTP-NEWGAME>")
             let transport: GameCenter.Transport = GameCenter.HttpTransport.instance;
@@ -89,10 +89,24 @@ private struct DebugView: View {
             print(message)
             transport.send(message: message);
             print("HTTP-NEWGAME> done")
-        } } label: { Text("HTTP-NEWGAME") }
+        } } label: { Text("NEWGAME") }
+        Button { Task {
+            print("HTTP-REGISTER>")
+            let transport: GameCenter.Transport = GameCenter.HttpTransport.instance;
+            let response = await transport.register();
+            print(response);
+            print("HTTP-REGISTER> done")
+        } } label: { Text("REG") }
+        Button { Task {
+            print("HTTP-REGISTER>")
+            let transport: GameCenter.Transport = GameCenter.HttpTransport.instance;
+            let response = await transport.reset();
+            print(response);
+            print("HTTP-REGISTER> done")
+        } } label: { Text("RESET") }
         Button {
             table.cards[0].materialize(responsivity: 1.5, elasticity: 0.8);
-        } label: { Text("MATERIALIZE") }
+        } label: { Text("MAT") }
     } }
 }
 

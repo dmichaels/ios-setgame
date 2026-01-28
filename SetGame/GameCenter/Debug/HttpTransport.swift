@@ -4,6 +4,9 @@ extension GameCenter
 {
     protocol Transport: GameCenter.MessageSender, GameCenter.MessageHandler {
         func configure(handler: MessageHandler);
+	    func register() async;
+	    func reset() async -> Bool;
+        var hosting: Bool { get }
     }
 }
 
@@ -14,10 +17,13 @@ extension GameCenter
         public static let instance: HttpTransport = HttpTransport(player: ID(short: true).value);
 
         public  let player: String;
+        public  var host: String = "";
         private var handler: GameCenter.MessageHandler?;
         private let url: URL;
         private var retrievedCount: Int = 0;
         private var sentCount: Int = 0;
+
+        public var hosting: Bool { self.player == self.host }
 
         public init(player: String, handler: GameCenter.MessageHandler? = nil, url: URL? = nil) {
             self.player = player;
@@ -108,22 +114,57 @@ extension GameCenter
             return self.retrievedCount;
         }
 
+	    public func register() async {
+            if let response: (player: String, host: String) = await self.registerPlayer(self.player) {
+                self.host = response.host;
+                print("REGISTER!!! player: \(self.player) host: \(self.host) hosting: \(self.hosting)");
+            }
+        }
+
+	    public func registerPlayer(_ player: String? = nil) async -> (player: String, host: String)? {
+            let player: String = player ?? self.player;
+		    struct Response: Decodable { let player: String ; let host: String };
+    	    let baseURL = URL(string: "http://127.0.0.1:5000")!
+    	    let url = baseURL.appendingPathComponent("register/\(player)")
+    	    var request = URLRequest(url: url)
+    	    request.httpMethod = "POST"
+    	    if let response = try? await URLSession.shared.data(for: request) {
+                let data: Data = response.0;
+                if let response: [String: String] = try? JSONSerialization.jsonObject(with: data) as? [String: String] {
+                    if let player = response["player"], let host = response["host"] {
+                        return (player: player, host: host);
+                    }
+                }
+            }
+            return nil;
+	    }
+
         public func retrievePlayers() async -> [String] {
             let url: URL = URL(string: "/players", relativeTo: self.url)!;
             if let response = try? await URLSession.shared.data(from: url) {
                 let data: Data = response.0;
                 if let players = try? JSONDecoder().decode([String].self, from: data) {
-                    print("PLAYERS")
                     return players;
                 }
             }
             return [];
-            /*
-            let (data, _) = try await URLSession.shared.data(from: url);
-            let players = try JSONDecoder().decode([String].self, from: data);
-            return players;
-            */
         }
+
+		public func reset() async -> Bool {
+            let url: URL = URL(string: "/reset", relativeTo: self.url)!;
+    		var request = URLRequest(url: url);
+    		request.httpMethod = "POST";
+            if let response = try? await URLSession.shared.data(for: request) {
+                let data: Data = response.0;
+        		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
+        		    let result = String(data: data, encoding: .utf8);
+                    print("RESET!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    print(result)
+                    return true;
+                }
+            }
+            return false;
+		}
 
         private func dispatchMessages(messages: [GameCenter.Message]) {
             DispatchQueue.main.async {

@@ -8,7 +8,7 @@ public struct MultiPlayerControlPanel: View {
     public var body: some View {
         VStack(spacing: 80) {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
-                ToggleItem("mult", on: $settings.multiPlayer.enabled, disabled: false)
+                ToggleItem("multi", on: $settings.multiPlayer.enabled, disabled: false)
                 ToggleItem("host", on: $settings.multiPlayer.host, disabled: !settings.multiPlayer.enabled)
                 ToggleItem("http", on: $settings.multiPlayer.http, disabled: !settings.multiPlayer.enabled)
                 ToggleItem("poll", on: $settings.multiPlayer.poll, disabled: !settings.multiPlayer.enabled || !settings.multiPlayer.http) { value in
@@ -52,16 +52,32 @@ public struct MultiPlayerInfoPanel: View {
     @State private var messageQueuedCount: Int = 0;
     @State private var messageSentCount: Int = 0;
     @State private var messageRetrievedCount: Int = 0;
+    @State private var host: String = "";
+    @State private var hosting: Bool = false;
     let background: Color = Color.gray;
     let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
     public var body: some View {
         VStack(spacing: 80) {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
-                Text("player:")
+                Text("id:")
                     .font(.caption)
                     .fontWeight(.bold)
                     .padding(.trailing, -8)
-                CopyableText(text: transport.player, background: self.background)
+                    .foregroundColor(self.hosting ? .red : .primary)
+                    .underline(self.hosting)
+                CopyableText(text: transport.player,
+                             foreground: self.hosting ? .red : .primary,
+                             background: self.background,
+                             bold: self.hosting,
+                             underline: self.hosting)
+                if (!self.hosting) {
+                    Text("host:")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                    Text("\(self.host)")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                }
                 Text("queue:")
                     .font(.caption)
                     .fontWeight(.bold)
@@ -70,6 +86,8 @@ public struct MultiPlayerInfoPanel: View {
                     .onAppear {
                         taskHandle = Task {
                             while !Task.isCancelled {
+                                self.host = transport.host;
+                                self.hosting = transport.hosting;
                                 self.messageSentCount = transport.messageSentCount();
                                 self.messageRetrievedCount = transport.messageRetrievedCount();
                                 let count = await transport.retrieveMessageQueuedCount();
@@ -112,13 +130,19 @@ public struct MultiPlayerInfoPanel: View {
 
 private struct CopyableText: View {
     let text: String;
+    let foreground: Color;
     let background: Color;
+    let bold: Bool;
+    let underline: Bool;
     @State private var copied = false;
     var body: some View {
         Text(text)
             .font(.caption)
+            .fontWeight(bold ? .bold : .regular)
+            .underline(underline)
             .padding(8)
             .cornerRadius(8)
+            .foregroundColor(foreground)
             .onTapGesture {
                 UIPasteboard.general.string = text
                 copied = true
