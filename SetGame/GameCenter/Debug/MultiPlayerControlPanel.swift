@@ -193,7 +193,7 @@ public struct MultiPlayerInfoPanel: View {
                     await transport.send(message: message);
                 }
             } label: {
-                Image(systemName: "target")
+                Image(systemName: "paperplane.fill")
                     .foregroundColor(.red)
                     .font(.system(size: 14))
                     .fontWeight(.bold)

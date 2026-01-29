@@ -148,7 +148,9 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
                     player: GameCenter.HttpTransport.instance.player,
                     cards: self.cards
                 );
-                transport.send(message: message);
+                if (GameCenter.HttpTransport.instance.hosting) {
+                    transport.send(message: message);
+                }
             }
         }
     }
