@@ -53,6 +53,29 @@ public extension GameCenter.Message
     }
 }
 
+// TODO: Suggested by ChatGPT - MessageTransport and Session.
+//
+public extension GameCenter
+{
+    public protocol MessageTransport {
+        var  player: String { get };
+        func send(_ message: Message);
+        func start();
+        func stop();
+    }
+
+    public protocol Session {
+        var player: String { get };
+        var host: String { get };
+        var hosting: Bool { get };
+        var players: [String] { get };
+    }
+}
+
+public extension GameCenter.Session {
+    var hosting: Bool { self.player == self.host };
+}
+
 public extension GameCenter
 {
     public struct PingMessage: Message {

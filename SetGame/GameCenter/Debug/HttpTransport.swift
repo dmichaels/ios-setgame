@@ -6,7 +6,7 @@ extension GameCenter
 {
     protocol Transport: GameCenter.MessageSender, GameCenter.MessageHandler {
         func configure(handler: MessageHandler);
-        var hosting: Bool { get }
+        var hosting: Bool { get } // TODO get rid of
     }
 }
 
