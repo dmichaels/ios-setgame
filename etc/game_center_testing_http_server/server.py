@@ -24,8 +24,8 @@ def register_endpoint(player_id):
 @app.route('/send', methods=['POST'])
 def send_endpoint():
     data = request.get_json()
-    print("send:")
-    print(data)
+    # print("send:")
+    # print(data)
     recipient = data['to']
     message = data['message']
     inbox.setdefault(recipient, []).append(message)
@@ -35,8 +35,8 @@ def send_endpoint():
 @app.route('/receive/<player_id>', methods=['GET'])
 def receive_endpoint(player_id):
     messages = inbox.pop(player_id, [])
-    print("receive:")
-    print(messages)
+    # print("receive:")
+    # print(messages)
     return jsonify(messages)
 
 @app.route('/players', methods=['GET'])
@@ -46,8 +46,8 @@ def players_endpoint():
 @app.route('/peek/<player_id>', methods=['GET'])
 def peek_endpoint(player_id):
     messages = inbox.get(player_id, [])
-    print("peek:")
-    print(messages)
+    # print("peek:")
+    # print(messages)
     return jsonify(messages)
 
 @app.route('/messagecount/<player_id>', methods=['GET'])
@@ -71,7 +71,8 @@ def reset_endpoint():
     players.clear()
     global host_player
     host_player = None
-    print("Server state reset.")
+    # print("Server state reset.")
+    print("DEBUG:RESET>")
     return jsonify({'status': 'OK'})
 
 @app.route('/resetmessages/<player_id>', methods=['POST'])
@@ -89,6 +90,16 @@ def reset_messages_all_endpoint():
 def reset_host_endpoint():
     global host_player
     host_player = None
+    print("DEBUG:RESET_HOST>")
+    return jsonify({'status': 'OK'})
+
+@app.route('/nohost/<host>', methods=['POST'])
+def nohost_endpoint(host):
+    print("DEBUG:NOHOST> {host} ({host_player})")
+    global host_player
+    if host == host_player:
+        print("DEBUG:NOHOST> {host} unset")
+        host_player = None
     return jsonify({'status': 'OK'})
 
 @app.route('/host', methods=['GET'])
@@ -104,6 +115,7 @@ def set_host_endpoint(host):
     if host not in players:
         players.add(host)
     host_player = host
+    print(f"DEBUG:SET_HOST> [{host}]")
     return jsonify({'status': 'OK'})
 
 @app.route('/peek', methods=['GET'])

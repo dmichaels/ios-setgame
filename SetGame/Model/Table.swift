@@ -42,7 +42,6 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
     public func handle(message: GameCenter.NewGameMessage) {
         print("Table.handle(NewGame)> \(message)");
         self.startNewGame(cards: message.cards);
-        // self.addCards(1);
     }
 
     public func handle(message: GameCenter.FoundSetMessage) {

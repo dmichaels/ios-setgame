@@ -1,5 +1,7 @@
 import Foundation
 
+public let AID: String = ID(veryshort: true).value;
+
 extension GameCenter
 {
     protocol Transport: GameCenter.MessageSender, GameCenter.MessageHandler {
@@ -70,32 +72,32 @@ extension GameCenter
         }
 
         public func handle(message: GameCenter.PingMessage) {
-            print("DEBUG:HANDLE(Ping)> message: \(message.type) player: \(message.player)");
+            print("DEBUG-\(AID):HANDLE(Ping)> message: \(message.type) player: \(message.player)");
             self.handler?.handle(message: message);
         }
 
         public func handle(message: GameCenter.PlayerReadyMessage) {
-            print("DEBUG:HANDLE(PlayerReady)> message: \(message.type) player: \(message.player)");
+            print("DEBUG-\(AID):HANDLE(PlayerReady)> message: \(message.type) player: \(message.player)");
             self.handler?.handle(message: message);
         }
 
         public func handle(message: GameCenter.NewGameMessage) {
-            print("DEBUG:HANDLE(NewGame)> message: \(message.type) player: \(message.player)");
+            print("DEBUG-\(AID):HANDLE(NewGame)> message: \(message.type) player: \(message.player)");
             self.handler?.handle(message: message);
         }
 
         public func handle(message: GameCenter.FoundSetMessage) {
-            print("DEBUG:HANDLE(FoundSet)> message: \(message.type) player: \(message.player)");
+            print("DEBUG-\(AID):HANDLE(FoundSet)> message: \(message.type) player: \(message.player)");
             self.handler?.handle(message: message);
         }
 
         public func handle(message: GameCenter.ConfirmedSetMessage) {
-            print("DEBUG:HANDLE(ConfirmedSet)> message: \(message.type) player: \(message.player)");
+            print("DEBUG-\(AID):HANDLE(ConfirmedSet)> message: \(message.type) player: \(message.player)");
             self.handler?.handle(message: message);
         }
 
         private func sendMessage(message: GameCenter.Message, to player: String? = nil) {
-            print("DEBUG:SEND> message: \(message.type) player: \(message.player)");
+            print("DEBUG-\(AID):SEND> message: \(message.type) player: \(message.player)");
             self.sendMessage(data: message.serialize(), to: player ?? message.player);
         }
 
@@ -162,6 +164,7 @@ extension GameCenter
 
 	    public func register() async {
             if let response: (player: String, host: String) = await self.registerPlayer(self.player) {
+                print("DEBUG-\(AID):REGISTER> set-host: \(response.host)")
                 self.host = response.host;
             }
         }
@@ -263,6 +266,25 @@ extension GameCenter
                 let data: Data = response.0;
         		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
         		    let result = String(data: data, encoding: .utf8);
+                    print("DEBUG-\(AID):RESET-HOST> set-host: \(self.host) -> unset")
+                    self.host = "";
+                    return true;
+                }
+            }
+            return false;
+		}
+
+		public func unsetHost(host: String? = nil) async -> Bool {
+            let host: String = host ?? self.player;
+            let url: URL = URL(string: "/nohost/\(host)", relativeTo: self.url)!;
+    		var request = URLRequest(url: url);
+    		request.httpMethod = "POST";
+            if let response = try? await URLSession.shared.data(for: request) {
+                let data: Data = response.0;
+        		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
+        		    let result = String(data: data, encoding: .utf8);
+                    print("DEBUG-\(AID):SET-HOST> set-host: \(self.host) -> \(host)")
+                    self.host = host;
                     return true;
                 }
             }
@@ -278,6 +300,7 @@ extension GameCenter
                 let data: Data = response.0;
         		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
         		    let result = String(data: data, encoding: .utf8);
+                    print("DEBUG-\(AID):SET-HOST> set-host: \(self.host) -> \(host)")
                     self.host = host;
                     return true;
                 }
@@ -296,8 +319,13 @@ extension GameCenter
             self.pollingTask = Task {
                 while (!Task.isCancelled) {
                     let messages: [GameCenter.Message] = await self.retrieveMessages(for: self.player);
-                    if (messages.count > 0) { print("DEBUG:POLL> messages: \(messages.count)"); }
+                    if (messages.count > 0) { print("DEBUG-\(AID):POLL> messages: \(messages.count)"); }
                     self.dispatchMessages(messages: messages);
+                    //
+                    // Also BTW check that the host has not changed out from under
+                    // us as could happen with our test/debug/development panel.
+                    //
+                    self.host = await self.retrieveHost();
                     try? await Task.sleep(nanoseconds: Defaults.pollingInterval);
                 }
             }

@@ -90,10 +90,12 @@ public struct MultiPlayerControlPanel: View {
                 }
                 ToggleItem("host", on: $info.isHost, disabled: !settings.multiPlayer.enabled) { value in
                     if (value) {
-                        Task { await transport.setHost(); }
+                        Task {
+                            await transport.setHost();
+                        }
                     }
                     else {
-                        Task { await transport.resetHost(); }
+                        Task { await transport.unsetHost(); }
                     }
                 }
                 // ToggleItem("http", on: $settings.multiPlayer.http, disabled: !settings.multiPlayer.enabled)
@@ -169,6 +171,7 @@ public struct MultiPlayerInfoPanel: View {
                     .font(.caption)
                 Spacer()
                 PingButton()
+                RegisterPlayerButton()
                 ResetServerButton()
             }
             .padding(.leading, 10)
@@ -199,12 +202,30 @@ public struct MultiPlayerInfoPanel: View {
         }
     }
 
+    private struct RegisterPlayerButton: View {
+        let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+        public var body: some View {
+            Button {
+                Task {
+                    await transport.register();
+                }
+            } label: {
+                Image(systemName: "person.fill.checkmark")
+                    .foregroundColor(.red)
+                    .font(.system(size: 14))
+                    .fontWeight(.bold)
+            }
+            .padding(.trailing, 10)
+        }
+    }
+
     private struct ResetServerButton: View {
         let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
                     await transport.reset();
+                    // await transport.register();
                 }
             } label: {
                 // Text("reset")
@@ -255,7 +276,7 @@ public struct MultiPlayerInfoPanelMessages: View {
                     .font(.caption)
                 Spacer()
                 ResetMessagesButton()
-                ResetMessagesAllButton()
+                // ResetMessagesAllButton()
             }
             .padding(.leading, 10)
             .padding(.vertical, 10)
