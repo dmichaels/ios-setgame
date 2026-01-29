@@ -31,6 +31,10 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
     @Published public private(set) var state: State;
                private             var deck: TableDeck;
 
+    public func handle(message: GameCenter.PingMessage) {
+        print("Table.handle(Ping)> \(message)");
+    }
+
     public func handle(message: GameCenter.PlayerReadyMessage) {
         print("Table.handle(PlayerReady)> \(message)");
     }

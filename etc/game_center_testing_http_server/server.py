@@ -7,7 +7,7 @@ players = set()
 host_player = None
 
 @app.route('/register/<player_id>', methods=['POST'])
-def register(player_id):
+def register_endpoint(player_id):
     global host_player
 
     was_empty = len(players) == 0
@@ -22,7 +22,7 @@ def register(player_id):
     })
 
 @app.route('/send', methods=['POST'])
-def send():
+def send_endpoint():
     data = request.get_json()
     print("send:")
     print(data)
@@ -33,7 +33,7 @@ def send():
     return {'status': 'OK'}
 
 @app.route('/receive/<player_id>', methods=['GET'])
-def receive(player_id):
+def receive_endpoint(player_id):
     messages = inbox.pop(player_id, [])
     print("receive:")
     print(messages)
@@ -44,14 +44,14 @@ def players_endpoint():
     return jsonify(sorted(players))
 
 @app.route('/peek/<player_id>', methods=['GET'])
-def peek(player_id):
+def peek_endpoint(player_id):
     messages = inbox.get(player_id, [])
     print("peek:")
     print(messages)
     return jsonify(messages)
 
 @app.route('/messagecount/<player_id>', methods=['GET'])
-def message_count(player_id):
+def message_count_endpoint(player_id):
     count = len(inbox.get(player_id, []))
     return jsonify({
         'player': player_id,
@@ -59,14 +59,14 @@ def message_count(player_id):
     })
 
 @app.route('/messagecount', methods=['GET'])
-def message_count_all():
+def message_count_all_endpoint():
     count = sum(len(messages) for messages in inbox.values())
     return jsonify({
         'count': count
     })
 
 @app.route('/reset', methods=['POST'])
-def reset():
+def reset_endpoint():
     inbox.clear()
     players.clear()
     global host_player
@@ -74,13 +74,19 @@ def reset():
     print("Server state reset.")
     return jsonify({'status': 'OK'})
 
+@app.route('/resetmessages/<player_id>', methods=['POST'])
+def reset_messages_endpoint(player_id):
+    if player_id in inbox:
+        del inbox[player_id]
+    return jsonify({'status': 'OK', 'player': player_id})
+
 @app.route('/resetmessages', methods=['POST'])
-def reset_messages():
+def reset_messages_all_endpoint():
     inbox.clear()
     return jsonify({'status': 'OK'})
 
 @app.route('/resethost', methods=['POST'])
-def reset_host():
+def reset_host_endpoint():
     global host_player
     host_player = None
     return jsonify({'status': 'OK'})
@@ -101,7 +107,7 @@ def set_host_endpoint(host):
     return jsonify({'status': 'OK'})
 
 @app.route('/peek', methods=['GET'])
-def peek_all():
+def peek_all_endpoint():
     return jsonify(inbox)
 
 if __name__ == '__main__':

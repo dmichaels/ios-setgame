@@ -5,6 +5,7 @@ public enum GameCenter {}
 public extension GameCenter
 {
     public enum MessageType: String, Codable {
+        case ping;
         case playerReady;
         case newGame;
         case foundSet;
@@ -18,6 +19,7 @@ public extension GameCenter
     }
 
     public protocol MessageHandler: AnyObject {
+        func handle(message: PingMessage);
         func handle(message: PlayerReadyMessage);
         func handle(message: NewGameMessage);
         func handle(message: FoundSetMessage);
@@ -43,10 +45,25 @@ public extension GameCenter.Message
 
 public extension GameCenter
 {
+    public struct PingMessage: Message {
+
+        public let type: MessageType;
+        public let player: String;
+
+        public init?(_ data: Data?) {
+            self.init(data, internal: true);
+        }
+
+        public init(player: String) {
+            self.type   = .ping;
+            self.player = player;
+        }
+    }
+
     public struct PlayerReadyMessage: Message {
 
         public let type: MessageType;
-        public let player: String
+        public let player: String;
 
         public init?(_ data: Data?) {
             self.init(data, internal: true);
@@ -123,6 +140,7 @@ public extension GameCenter
         if let data: Data = data,
            let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
             switch envelope.type {
+            case .ping:         return try? JSONDecoder().decode(PingMessage.self, from: data);
             case .playerReady:  return try? JSONDecoder().decode(PlayerReadyMessage.self, from: data);
             case .newGame:      return try? JSONDecoder().decode(NewGameMessage.self, from: data);
             case .foundSet:     return try? JSONDecoder().decode(FoundSetMessage.self, from: data);
@@ -155,12 +173,14 @@ public extension GameCenter
 public extension GameCenter
 {
     private static func dispatch(data: Data?,
+                                 ping: ((PingMessage) -> Void)? = nil,
                                  playerReady: ((PlayerReadyMessage) -> Void)? = nil,
                                  newGame: ((NewGameMessage) -> Void)? = nil,
                                  foundSet: ((FoundSetMessage) -> Void)? = nil,
                                  confirmedSet: ((ConfirmedSetMessage) -> Void)? = nil) {
         if let messages: [Message] = GameCenter.toMessages(data: data) {
             GameCenter.dispatch(messages: messages,
+                                ping: ping,
                                 playerReady: playerReady,
                                 newGame: newGame,
                                 foundSet: foundSet,
@@ -169,12 +189,14 @@ public extension GameCenter
     }
 
     public static func dispatch(message: Message?,
+                                ping: ((PingMessage) -> Void)? = nil,
                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
                                 newGame: ((NewGameMessage) -> Void)? = nil,
                                 foundSet: ((FoundSetMessage) -> Void)? = nil,
                                 confirmedSet: ((ConfirmedSetMessage) -> Void)? = nil) {
         if let message: Message = message {
             switch message {
+            case let message as PingMessage: ping?(message);
             case let message as PlayerReadyMessage: playerReady?(message);
             case let message as NewGameMessage: newGame?(message);
             case let message as FoundSetMessage: foundSet?(message);
@@ -185,6 +207,7 @@ public extension GameCenter
     }
 
     private static func dispatch(messages: [Message]?,
+                                 ping: ((PingMessage) -> Void)? = nil,
                                  playerReady: ((PlayerReadyMessage) -> Void)? = nil,
                                  newGame: ((NewGameMessage) -> Void)? = nil,
                                  foundSet: ((FoundSetMessage) -> Void)? = nil,
@@ -192,6 +215,7 @@ public extension GameCenter
         if let messages: [Message] = messages {
             for message: Message in messages {
                 GameCenter.dispatch(message: message,
+                                    ping: ping,
                                     playerReady: playerReady,
                                     newGame: newGame,
                                     confirmedSet: confirmedSet);
@@ -206,6 +230,7 @@ public extension GameCenter
     //
     private static func dispatch(data: Data?, handler: MessageHandler) {
         GameCenter.dispatch(data: data,
+                            ping: handler.handle,
                             playerReady: handler.handle,
                             newGame: handler.handle,
                             foundSet: handler.handle,
@@ -214,6 +239,7 @@ public extension GameCenter
 
     private static func dispatch(message: Message?, handler: MessageHandler) {
         GameCenter.dispatch(message: message,
+                            ping: handler.handle,
                             playerReady: handler.handle,
                             newGame: handler.handle,
                             foundSet: handler.handle,
@@ -222,6 +248,7 @@ public extension GameCenter
 
     public static func dispatch(messages: [Message]?, handler: MessageHandler) {
         GameCenter.dispatch(messages: messages,
+                            ping: handler.handle,
                             playerReady: handler.handle,
                             newGame: handler.handle,
                             foundSet: handler.handle,

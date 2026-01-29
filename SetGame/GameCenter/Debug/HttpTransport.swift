@@ -12,7 +12,7 @@ extension GameCenter
 {
     public class HttpTransport: Transport {
 
-        public static let instance: HttpTransport = HttpTransport(player: ID(short: true).value);
+        public static let instance: HttpTransport = HttpTransport(player: ID(veryshort: true).value);
 
         public  let player: String;
         public  var host: String = "";
@@ -49,34 +49,53 @@ extension GameCenter
         public func send(message: GameCenter.Message) {
             Task {
                 if (self.hosting) {
+                    //
+                    // If we are the host, then send the message to all clients;
+                    // and also send it to ourself the host, so that we the host
+                    // act as much as possible like the clients.
+                    //
                     let players: [String] = await self.retrievePlayers();
                     for player in players {
                         self.sendMessage(message: message, to: player);
                     }
                 }
                 else if (self.host != "") {
+                    //
+                    // If we are the client (i.e. we are not the host),
+                    // then sen the message only to the host.
+                    //
                     self.sendMessage(message: message, to: self.host);
                 }
             }
         }
 
+        public func handle(message: GameCenter.PingMessage) {
+            print("DEBUG:HANDLE(Ping)> message: \(message.type) player: \(message.player)");
+            self.handler?.handle(message: message);
+        }
+
         public func handle(message: GameCenter.PlayerReadyMessage) {
+            print("DEBUG:HANDLE(PlayerReady)> message: \(message.type) player: \(message.player)");
             self.handler?.handle(message: message);
         }
 
         public func handle(message: GameCenter.NewGameMessage) {
+            print("DEBUG:HANDLE(NewGame)> message: \(message.type) player: \(message.player)");
             self.handler?.handle(message: message);
         }
 
         public func handle(message: GameCenter.FoundSetMessage) {
+            print("DEBUG:HANDLE(FoundSet)> message: \(message.type) player: \(message.player)");
             self.handler?.handle(message: message);
         }
 
         public func handle(message: GameCenter.ConfirmedSetMessage) {
+            print("DEBUG:HANDLE(ConfirmedSet)> message: \(message.type) player: \(message.player)");
             self.handler?.handle(message: message);
         }
 
         private func sendMessage(message: GameCenter.Message, to player: String? = nil) {
+            print("DEBUG:SEND> message: \(message.type) player: \(message.player)");
             self.sendMessage(data: message.serialize(), to: player ?? message.player);
         }
 
@@ -121,7 +140,7 @@ extension GameCenter
             return 0;
         }
 
-        public func retrieveMessageQueuedTotalCount() async -> Int {
+        public func retrieveMessageQueuedCountAll() async -> Int {
             struct MessageEnvelope: Decodable { let count: Int }
             let url: URL = URL(string: "/messagecount", relativeTo: self.url)!;
             if let response = try? await URLSession.shared.data(from: url) {
@@ -202,7 +221,25 @@ extension GameCenter
             return false;
 		}
 
-		public func resetMessages() async -> Bool {
+		public func resetMessages(player: String? = nil) async -> Bool {
+            // Clears out all messages for given (or this) player on the server.
+            let url: URL = URL(string: "/resetmessages/\(player)", relativeTo: self.url)!;
+    		var request = URLRequest(url: url);
+    		request.httpMethod = "POST";
+            if let response = try? await URLSession.shared.data(for: request) {
+                let data: Data = response.0;
+        		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
+        		    let result = String(data: data, encoding: .utf8);
+                    self.sentCount = 0;
+                    self.retrievedCount = 0;
+                    return true;
+                }
+            }
+            return false;
+		}
+
+		public func resetMessagesAll() async -> Bool {
+            // Clears out ALL messages on the server.
             let url: URL = URL(string: "/resetmessages", relativeTo: self.url)!;
     		var request = URLRequest(url: url);
     		request.httpMethod = "POST";
@@ -241,6 +278,7 @@ extension GameCenter
                 let data: Data = response.0;
         		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
         		    let result = String(data: data, encoding: .utf8);
+                    self.host = host;
                     return true;
                 }
             }
@@ -258,7 +296,7 @@ extension GameCenter
             self.pollingTask = Task {
                 while (!Task.isCancelled) {
                     let messages: [GameCenter.Message] = await self.retrieveMessages(for: self.player);
-                    print("POLL> messages: \(messages.count)");
+                    if (messages.count > 0) { print("DEBUG:POLL> messages: \(messages.count)"); }
                     self.dispatchMessages(messages: messages);
                     try? await Task.sleep(nanoseconds: Defaults.pollingInterval);
                 }

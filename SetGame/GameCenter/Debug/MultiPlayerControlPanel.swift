@@ -6,7 +6,7 @@ private struct HttpServerInfo {
     public var playerCount: Int = 0;
     public var host: String = "";
     public var messageQueuedCount: Int = 0;
-    public var messageQueuedTotalCount: Int = 0;
+    public var messageQueuedCountAll: Int = 0;
     public var messageSentCount: Int = 0;
     public var messageRetrievedCount: Int = 0;
     public var poll: Bool = true;
@@ -58,13 +58,13 @@ public struct MultiPlayerDevelopmentPanel: View {
                 self.info.messageSentCount = transport.messageSentCount();
                 self.info.messageRetrievedCount = transport.messageRetrievedCount();
                 self.info.messageQueuedCount = await transport.retrieveMessageQueuedCount();
-                self.info.messageQueuedTotalCount = await transport.retrieveMessageQueuedTotalCount();
+                self.info.messageQueuedCountAll = await transport.retrieveMessageQueuedCountAll();
                 let players = await transport.retrievePlayers();
                 self.info.playerCount = players.count;
                 let host = await transport.retrieveHost();
                 self.info.host = host;
                 self.info.isHost = transport.player == host;
-                print("WATCH> players: \(players) host: \(host)");
+                // print("WATCH> players: \(players) host: \(host)");
                 try? await Task.sleep(nanoseconds: 300_000_000);
             }
         }
@@ -168,6 +168,8 @@ public struct MultiPlayerInfoPanel: View {
                 Text("\(self.info.playerCount)")
                     .font(.caption)
                 Spacer()
+                PingButton()
+                ResetServerButton()
             }
             .padding(.leading, 10)
             .padding(.vertical, 2)
@@ -176,6 +178,45 @@ public struct MultiPlayerInfoPanel: View {
                 RoundedRectangle(cornerRadius: 11, style: .continuous)
                     .fill(self.background.opacity(0.2))
             )
+        }
+    }
+
+    private struct PingButton: View {
+        let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+        public var body: some View {
+            Button {
+                Task {
+                    let message: GameCenter.PingMessage = GameCenter.PingMessage(player: transport.player);
+                    await transport.send(message: message);
+                }
+            } label: {
+                Image(systemName: "target")
+                    .foregroundColor(.red)
+                    .font(.system(size: 14))
+                    .fontWeight(.bold)
+            }
+            .padding(.trailing, 10)
+        }
+    }
+
+    private struct ResetServerButton: View {
+        let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+        public var body: some View {
+            Button {
+                Task {
+                    await transport.reset();
+                }
+            } label: {
+                // Text("reset")
+                //     .font(.caption)
+                //     .fontWeight(.bold)
+                //     .padding(.leading, 8)
+                Image(systemName: "arrow.clockwise.circle")
+                    .foregroundColor(.red)
+                    .font(.system(size: 14))
+                    .fontWeight(.bold)
+            }
+            .padding(.trailing, 10)
         }
     }
 }
@@ -198,7 +239,7 @@ public struct MultiPlayerInfoPanelMessages: View {
                 Text("total:")
                     .font(.caption)
                     .fontWeight(.bold)
-                Text("\(self.info.messageQueuedTotalCount)")
+                Text("\(self.info.messageQueuedCountAll)")
                     .font(.caption)
                     .padding(.trailing, 4)
                 Text("sent:")
@@ -212,8 +253,9 @@ public struct MultiPlayerInfoPanelMessages: View {
                     .fontWeight(.bold)
                 Text("\(self.info.messageRetrievedCount)")
                     .font(.caption)
-                ResetMessagesButton()
                 Spacer()
+                ResetMessagesButton()
+                ResetMessagesAllButton()
             }
             .padding(.leading, 10)
             .padding(.vertical, 10)
@@ -233,11 +275,29 @@ public struct MultiPlayerInfoPanelMessages: View {
                     await transport.resetMessages();
                 }
             } label: {
-                Text("clear")
-                    .font(.caption)
+                Image(systemName: "trash")
+                    .foregroundColor(.red)
+                    .font(.system(size: 14))
                     .fontWeight(.bold)
-                    .padding(.leading, 8)
             }
+            .padding(.trailing, 10)
+        }
+    }
+
+    private struct ResetMessagesAllButton: View {
+        let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+        public var body: some View {
+            Button {
+                Task {
+                    await transport.resetMessagesAll();
+                }
+            } label: {
+                Image(systemName: "arrow.clockwise.circle")
+                    .foregroundColor(.red)
+                    .font(.system(size: 14))
+                    .fontWeight(.bold)
+            }
+            .padding(.trailing, 10)
         }
     }
 }
