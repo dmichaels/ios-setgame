@@ -157,10 +157,10 @@ public extension GameCenter
 public extension GameCenter
 {
     private static func dispatch(data: Data?,
-                                playerReady: ((PlayerReadyMessage) -> Void)? = nil,
-                                newGame: ((NewGameMessage) -> Void)? = nil,
-                                foundSet: ((FoundSetMessage) -> Void)? = nil,
-                                confirmedSet: ((ConfirmedSetMessage) -> Void)? = nil) {
+                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
+                                 newGame: ((NewGameMessage) -> Void)? = nil,
+                                 foundSet: ((FoundSetMessage) -> Void)? = nil,
+                                 confirmedSet: ((ConfirmedSetMessage) -> Void)? = nil) {
         if let messages: [Message] = GameCenter.toMessages(data: data) {
             GameCenter.dispatch(messages: messages,
                                 playerReady: playerReady,
