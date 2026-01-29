@@ -4,6 +4,16 @@ public enum GameCenter {}
 
 public extension GameCenter
 {
+    // TODO
+    // Think about if/how message sending restrictions
+    // to/from client/host depending on message type.
+    //
+    // ping:         any
+    // playerReady:  undecided
+    // newGame:      host   -> client | host -> host
+    // foundSet:     client -> host   | host -> host
+    // confirmedSet: host   -> client | host -> host
+    //
     public enum MessageType: String, Codable {
         case ping;
         case playerReady;
