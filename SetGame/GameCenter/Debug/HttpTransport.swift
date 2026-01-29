@@ -133,7 +133,7 @@ extension GameCenter
             }
         }
 
-	    public func registerPlayer(_ player: String? = nil) async -> (player: String, host: String)? {
+	    private func registerPlayer(_ player: String? = nil) async -> (player: String, host: String)? {
             let player: String = player ?? self.player;
 		    struct Response: Decodable { let player: String ; let host: String };
     	    let baseURL = URL(string: "http://127.0.0.1:5000")!
