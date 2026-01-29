@@ -1,13 +1,96 @@
 import SwiftUI
 
+private struct HttpServerInfo {
+    public var isHost: Bool = false;
+    public var players: [String] = [];
+    public var playerCount: Int = 0;
+    public var host: String = "";
+    public var messageQueuedCount: Int = 0;
+    public var messageSentCount: Int = 0;
+    public var messageRetrievedCount: Int = 0;
+    public var poll: Bool = true;
+}
+
+public struct MultiPlayerDevelopmentPanel: View {
+
+    @ObservedObject var table: Table
+    @ObservedObject var settings: Settings;
+
+    @State fileprivate var info: HttpServerInfo = HttpServerInfo();
+    @State private var taskHandle: Task<Void, Never>? = nil
+
+    let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+
+    public var body: some View {
+        VStack {
+            Space(size: 24)
+            MultiPlayerControlPanel(table: table, settings: settings, info: $info)
+            Space(size: 4)
+            MultiPlayerInfoPanel(table: table, settings: settings, info: $info)
+            Space(size: 4)
+            MultiPlayerInfoPanelMessages(table: table, settings: settings, info: $info)
+        }
+        .onAppear {
+            if (self.info.poll) {
+                self.pollingTask();
+            }
+        }
+        .onChange(of: self.info.poll) { value in
+            self.pollingTaskStop();
+            if (value) { self.pollingTask() }
+        }
+/*
+        .onChange(of: self.settings.multiPlayer.enabled) { value in
+            if (!value) {
+                self.pollingTaskStop();
+            }
+            else if (self.settings.multiPlayer.enabled) {
+                self.pollingTask();
+            }
+        }
+*/
+        .onDisappear {
+            self.taskHandle?.cancel();
+            self.taskHandle = nil;
+        }
+    }
+
+    private func pollingTaskStop() {
+        self.taskHandle?.cancel();
+        self.taskHandle = nil;
+    }
+
+    private func pollingTask() {
+        guard self.settings.multiPlayer.enabled else { return }
+        self.taskHandle = Task {
+            while !Task.isCancelled {
+                self.info.messageSentCount = transport.messageSentCount();
+                self.info.messageRetrievedCount = transport.messageRetrievedCount();
+                let count = await transport.retrieveMessageQueuedCount();
+                await MainActor.run {
+                    self.info.messageQueuedCount = count;
+                }
+                let players = await transport.retrievePlayers();
+                self.info.playerCount = players.count;
+                let host = await transport.retrieveHost();
+                self.info.host = host;
+                self.info.isHost = transport.player == host;
+                print("WATCH> players: \(players) host: \(host)");
+                try? await Task.sleep(nanoseconds: 300_000_000);
+            }
+        }
+    }
+}
+
 public struct MultiPlayerControlPanel: View {
     @ObservedObject var table: Table
     @ObservedObject var settings: Settings;
+    @Binding fileprivate var info: HttpServerInfo;
     let background: Color = Color.gray;
     let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
     public var body: some View {
         VStack(spacing: 80) {
-            HStack(alignment: .firstTextBaseline, spacing: 4) {
+            HStack(alignment: .firstTextBaseline, spacing: 0) {
                 ToggleItem("multi", on: $settings.multiPlayer.enabled, disabled: false) { value in
                     if (!value) {
                         transport.stopMessagePolling();
@@ -16,10 +99,16 @@ public struct MultiPlayerControlPanel: View {
                         transport.startMessagePolling();
                     }
                 }
-                ToggleItem("host", on: $settings.multiPlayer.host, disabled: !settings.multiPlayer.enabled)
-                ToggleItem("http", on: $settings.multiPlayer.http, disabled: !settings.multiPlayer.enabled)
+                ToggleItem("host", on: $info.isHost, disabled: !settings.multiPlayer.enabled) { value in
+                    if (value) {
+                        Task { await transport.setHost(); }
+                    }
+                    else {
+                        Task { await transport.resetHost(); }
+                    }
+                }
+                // ToggleItem("http", on: $settings.multiPlayer.http, disabled: !settings.multiPlayer.enabled)
                 ToggleItem("poll", on: $settings.multiPlayer.poll, disabled: !settings.multiPlayer.enabled || !settings.multiPlayer.http) { value in
-                    print("Toggle polling changed to: \(value)")
                     if (value) {
                         transport.startMessagePolling();
                     }
@@ -27,6 +116,7 @@ public struct MultiPlayerControlPanel: View {
                         transport.stopMessagePolling();
                     }
                 }
+                ToggleItem("watch", on: $info.poll, disabled: !settings.multiPlayer.enabled || !settings.multiPlayer.http)
                 Spacer()
             }
             .padding(.leading, 11)
@@ -48,7 +138,7 @@ public struct MultiPlayerControlPanel: View {
                 .padding(.trailing, -8)
             Toggle("", isOn: on)
                 .labelsHidden()
-                .scaleEffect(0.55)
+                .scaleEffect(0.50)
                 .disabled(disabled)
                 .onChange(of: on.wrappedValue) { value in
                     callback?(value)
@@ -60,12 +150,7 @@ public struct MultiPlayerControlPanel: View {
 public struct MultiPlayerInfoPanel: View {
     @ObservedObject var table: Table
     @ObservedObject var settings: Settings;
-    @State private var taskHandle: Task<Void, Never>? = nil
-    @State private var messageQueuedCount: Int = 0;
-    @State private var messageSentCount: Int = 0;
-    @State private var messageRetrievedCount: Int = 0;
-    @State private var host: String = "";
-    @State private var hosting: Bool = false;
+    @Binding fileprivate var info: HttpServerInfo;
     let background: Color = Color.gray;
     let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
     public var body: some View {
@@ -75,36 +160,23 @@ public struct MultiPlayerInfoPanel: View {
                     .font(.caption)
                     .fontWeight(.bold)
                     .padding(.trailing, -8)
-                    .foregroundColor(self.hosting ? .red : .primary)
-                    .underline(self.hosting)
+                    .foregroundColor(self.info.isHost ? .red : .primary)
+                    .underline(self.info.isHost)
                 CopyableText(text: transport.player,
-                             foreground: self.hosting ? .red : .primary,
+                             foreground: self.info.isHost ? .red : .primary,
                              background: self.background,
-                             bold: self.hosting,
-                             underline: self.hosting)
-                if (!self.hosting) {
-                    Text("host:")
-                        .font(.caption)
-                        .fontWeight(.bold)
-                    Text("\(self.host)")
-                        .font(.caption)
-                }
-                Text("queue:")
+                             bold: self.info.isHost,
+                             underline: self.info.isHost)
+                Text("host:")
                     .font(.caption)
                     .fontWeight(.bold)
-                Text("\(messageQueuedCount)")
+                Text("\(self.info.host != "" ? self.info.host : "∅")")
                     .font(.caption)
                     .padding(.trailing, 4)
-                Text("sent:")
+                Text("players:")
                     .font(.caption)
                     .fontWeight(.bold)
-                Text("\(messageSentCount)")
-                    .font(.caption)
-                    .padding(.trailing, 4)
-                Text("retrieved:")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                Text("\(messageRetrievedCount)")
+                Text("\(self.info.playerCount)")
                     .font(.caption)
                 Spacer()
             }
@@ -115,55 +187,66 @@ public struct MultiPlayerInfoPanel: View {
                 RoundedRectangle(cornerRadius: 11, style: .continuous)
                     .fill(self.background.opacity(0.2))
             )
-            .onAppear {
-                if (self.settings.multiPlayer.poll) {
-                    self.pollingTask();
-                }
+        }
+    }
+}
+
+public struct MultiPlayerInfoPanelMessages: View {
+    @ObservedObject var table: Table
+    @ObservedObject var settings: Settings;
+    @Binding fileprivate var info: HttpServerInfo;
+    @State private var taskHandle: Task<Void, Never>? = nil
+    let background: Color = Color.gray;
+    public var body: some View {
+        VStack(spacing: 80) {
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                Text("queued:")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                Text("\(self.info.messageQueuedCount)")
+                    .font(.caption)
+                    .padding(.trailing, 4)
+                Text("sent:")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                Text("\(self.info.messageSentCount)")
+                    .font(.caption)
+                    .padding(.trailing, 4)
+                Text("retrieved:")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                Text("\(self.info.messageRetrievedCount)")
+                    .font(.caption)
+                ResetMessagesButton()
+                Spacer()
             }
-            .onChange(of: self.settings.multiPlayer.poll) { value in
-                self.pollingTaskStop();
-                if (value) { self.pollingTask() }
-            }
-            .onChange(of: self.settings.multiPlayer.enabled) { value in
-                if (!value) {
-                    self.pollingTaskStop();
-                }
-                else if (self.settings.multiPlayer.enabled) {
-                    self.pollingTask();
-                }
-            }
-            .onDisappear {
-                self.taskHandle?.cancel();
-                self.taskHandle = nil;
-            }
+            .padding(.leading, 10)
+            .padding(.vertical, 10)
+            .frame(width: 380)
+            .background(
+                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                    .fill(self.background.opacity(0.2))
+            )
         }
     }
 
-    private func pollingTaskStop() {
-        self.taskHandle?.cancel();
-        self.taskHandle = nil;
-    }
-
-    private func pollingTask() {
-        guard self.settings.multiPlayer.enabled else { return }
-        self.taskHandle = Task {
-            while !Task.isCancelled {
-                self.host = transport.host;
-                self.hosting = transport.hosting;
-                self.messageSentCount = transport.messageSentCount();
-                self.messageRetrievedCount = transport.messageRetrievedCount();
-                let count = await transport.retrieveMessageQueuedCount();
-                await MainActor.run {
-                    messageQueuedCount = count;
+    private struct ResetMessagesButton: View {
+        let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+        public var body: some View {
+            Button {
+                Task {
+                    await transport.resetMessages();
                 }
-                let players = await transport.retrievePlayers();
-                print("PANEL-POLLING>");
-                print(players);
-                try? await Task.sleep(nanoseconds: 300_000_000);
+            } label: {
+                Text("clear")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .padding(.leading, 8)
             }
         }
     }
 }
+
 
 private struct CopyableText: View {
     let text: String;

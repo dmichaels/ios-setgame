@@ -21,10 +21,13 @@ public struct TableView: View {
             CardGridView(table: table, settings: settings, spacing: spacing, marginx: marginx)
             Space(size: 18)
             StatusBar(marginx: marginx)
+            MultiPlayerDevelopmentPanel(table: table, settings: settings)
+/*
             Space(size: 24)
             MultiPlayerControlPanel(table: table, settings: settings)
             Space(size: 4)
             MultiPlayerInfoPanel(table: table, settings: settings)
+*/
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)
             DebugView(table: table)

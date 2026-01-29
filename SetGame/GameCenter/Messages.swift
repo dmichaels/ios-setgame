@@ -135,8 +135,6 @@ public extension GameCenter
     public static func toMessages(data: Data?) -> [Message]? {
         if let data: Data = data,
            let array: [[String: Any]] = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
-            print("TO-MESSAGES:");
-            print(JSON.format(data: data));
             var messages: [Message] = []; messages.reserveCapacity(array.count);
             let decoder: JSONDecoder = JSONDecoder();
             for object: [String: Any] in array {

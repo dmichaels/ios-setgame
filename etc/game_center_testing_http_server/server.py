@@ -62,15 +62,35 @@ def count(player_id):
 def reset():
     inbox.clear()
     players.clear()
-    global host
-    host = None
+    global host_player
+    host_player = None
     print("Server state reset.")
     return jsonify({'status': 'OK'})
 
+@app.route('/resetmessages', methods=['POST'])
+def reset_messages():
+    inbox.clear()
+    return jsonify({'status': 'OK'})
+
 @app.route('/resethost', methods=['POST'])
-def reset():
-    global host
-    host = None
+def reset_host():
+    global host_player
+    host_player = None
+    return jsonify({'status': 'OK'})
+
+@app.route('/host', methods=['GET'])
+def host_endpoint():
+    if host_player:
+        return jsonify({"host": host_player})
+    else:
+        return jsonify({})
+
+@app.route('/host/<host>', methods=['POST'])
+def set_host_endpoint(host):
+    global host_player
+    if host not in players:
+        players.add(host)
+    host_player = host
     return jsonify({'status': 'OK'})
 
 if __name__ == '__main__':

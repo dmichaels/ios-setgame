@@ -31,6 +31,9 @@ extension GameCenter
 
         public func configure(handler: GameCenter.MessageHandler) {
             self.handler = handler;
+            Task {
+                await self.register();
+            }
             self.startMessagePolling();
         }
 
@@ -129,7 +132,6 @@ extension GameCenter
 	    public func register() async {
             if let response: (player: String, host: String) = await self.registerPlayer(self.player) {
                 self.host = response.host;
-                print("REGISTER!!! player: \(self.player) host: \(self.host) hosting: \(self.hosting)");
             }
         }
 
@@ -162,6 +164,18 @@ extension GameCenter
             return [];
         }
 
+        public func retrieveHost() async -> String {
+            let url: URL = URL(string: "/host", relativeTo: self.url)!;
+            if let response = try? await URLSession.shared.data(from: url) {
+                let data: Data = response.0;
+                if let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let host = object["host"] as? String {
+                    return host;
+                }
+            }
+            return "";
+        }
+
 		public func reset() async -> Bool {
             let url: URL = URL(string: "/reset", relativeTo: self.url)!;
     		var request = URLRequest(url: url);
@@ -170,8 +184,22 @@ extension GameCenter
                 let data: Data = response.0;
         		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
         		    let result = String(data: data, encoding: .utf8);
-                    print("RESET!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                    print(result)
+                    return true;
+                }
+            }
+            return false;
+		}
+
+		public func resetMessages() async -> Bool {
+            let url: URL = URL(string: "/resetmessages", relativeTo: self.url)!;
+    		var request = URLRequest(url: url);
+    		request.httpMethod = "POST";
+            if let response = try? await URLSession.shared.data(for: request) {
+                let data: Data = response.0;
+        		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
+        		    let result = String(data: data, encoding: .utf8);
+                    self.sentCount = 0;
+                    self.retrievedCount = 0;
                     return true;
                 }
             }
@@ -186,8 +214,21 @@ extension GameCenter
                 let data: Data = response.0;
         		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
         		    let result = String(data: data, encoding: .utf8);
-                    print("RESET-HOST!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                    print(result)
+                    return true;
+                }
+            }
+            return false;
+		}
+
+		public func setHost(host: String? = nil) async -> Bool {
+            let host: String = host ?? self.player;
+            let url: URL = URL(string: "/host/\(host)", relativeTo: self.url)!;
+    		var request = URLRequest(url: url);
+    		request.httpMethod = "POST";
+            if let response = try? await URLSession.shared.data(for: request) {
+                let data: Data = response.0;
+        		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
+        		    let result = String(data: data, encoding: .utf8);
                     return true;
                 }
             }
@@ -205,7 +246,7 @@ extension GameCenter
             self.pollingTask = Task {
                 while (!Task.isCancelled) {
                     let messages: [GameCenter.Message] = await self.retrieveMessages(for: self.player);
-                    print("POLL-MESSAGES(\(self.player)): \(messages)")
+                    print("POLL> messages: \(messages.count)");
                     self.dispatchMessages(messages: messages);
                     try? await Task.sleep(nanoseconds: Defaults.pollingInterval);
                 }
