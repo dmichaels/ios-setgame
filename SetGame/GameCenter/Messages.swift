@@ -156,7 +156,7 @@ public extension GameCenter
 
 public extension GameCenter
 {
-    public static func dispatch(data: Data?,
+    private static func dispatch(data: Data?,
                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
                                 newGame: ((NewGameMessage) -> Void)? = nil,
                                 foundSet: ((FoundSetMessage) -> Void)? = nil,
@@ -186,11 +186,11 @@ public extension GameCenter
         }
     }
 
-    public static func dispatch(messages: [Message]?,
-                                playerReady: ((PlayerReadyMessage) -> Void)? = nil,
-                                newGame: ((NewGameMessage) -> Void)? = nil,
-                                foundSet: ((FoundSetMessage) -> Void)? = nil,
-                                confirmedSet: ((ConfirmedSetMessage) -> Void)? = nil) {
+    private static func dispatch(messages: [Message]?,
+                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
+                                 newGame: ((NewGameMessage) -> Void)? = nil,
+                                 foundSet: ((FoundSetMessage) -> Void)? = nil,
+                                 confirmedSet: ((ConfirmedSetMessage) -> Void)? = nil) {
         if let messages: [Message] = messages {
             for message: Message in messages {
                 GameCenter.dispatch(message: message,
@@ -201,11 +201,12 @@ public extension GameCenter
         }
     }
 
+    // TODO: Probably dont need both these kind and the above kind ...
     // These dispatch calls may look weird, the three handler.handle references in a row,
     // but Swift typing works it magic and sorts it; so that for example, handler.handle for
     // newGame handler.handle references MessageHandler.handle(message: NewGameMessage).
     //
-    public static func dispatch(data: Data?, handler: MessageHandler) {
+    private static func dispatch(data: Data?, handler: MessageHandler) {
         GameCenter.dispatch(data: data,
                             playerReady: handler.handle,
                             newGame: handler.handle,
@@ -213,7 +214,7 @@ public extension GameCenter
                             confirmedSet: handler.handle);
     }
 
-    public static func dispatch(message: Message?, handler: MessageHandler) {
+    private static func dispatch(message: Message?, handler: MessageHandler) {
         GameCenter.dispatch(message: message,
                             playerReady: handler.handle,
                             newGame: handler.handle,
