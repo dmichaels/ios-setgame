@@ -178,6 +178,22 @@ extension GameCenter
             return false;
 		}
 
+		public func resetHost() async -> Bool {
+            let url: URL = URL(string: "/resethost", relativeTo: self.url)!;
+    		var request = URLRequest(url: url);
+    		request.httpMethod = "POST";
+            if let response = try? await URLSession.shared.data(for: request) {
+                let data: Data = response.0;
+        		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
+        		    let result = String(data: data, encoding: .utf8);
+                    print("RESET-HOST!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    print(result)
+                    return true;
+                }
+            }
+            return false;
+		}
+
         private func dispatchMessages(messages: [GameCenter.Message]) {
             DispatchQueue.main.async {
                 GameCenter.dispatch(messages: messages, handler: self);

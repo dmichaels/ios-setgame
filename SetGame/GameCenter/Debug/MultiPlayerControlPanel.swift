@@ -8,12 +8,24 @@ public struct MultiPlayerControlPanel: View {
     public var body: some View {
         VStack(spacing: 80) {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
-                ToggleItem("multi", on: $settings.multiPlayer.enabled, disabled: false)
+                ToggleItem("multi", on: $settings.multiPlayer.enabled, disabled: false) { value in
+                    if (!value) {
+                        transport.stopMessagePolling();
+                    }
+                    else if (settings.multiPlayer.poll) {
+                        transport.startMessagePolling();
+                    }
+                }
                 ToggleItem("host", on: $settings.multiPlayer.host, disabled: !settings.multiPlayer.enabled)
                 ToggleItem("http", on: $settings.multiPlayer.http, disabled: !settings.multiPlayer.enabled)
                 ToggleItem("poll", on: $settings.multiPlayer.poll, disabled: !settings.multiPlayer.enabled || !settings.multiPlayer.http) { value in
                     print("Toggle polling changed to: \(value)")
-                    if (value) { transport.startMessagePolling() } else { transport.stopMessagePolling() }
+                    if (value) {
+                        transport.startMessagePolling();
+                    }
+                    else {
+                        transport.stopMessagePolling();
+                    }
                 }
                 Spacer()
             }

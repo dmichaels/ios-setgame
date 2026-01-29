@@ -67,5 +67,11 @@ def reset():
     print("Server state reset.")
     return jsonify({'status': 'OK'})
 
+@app.route('/resethost', methods=['POST'])
+def reset():
+    global host
+    host = None
+    return jsonify({'status': 'OK'})
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000)
