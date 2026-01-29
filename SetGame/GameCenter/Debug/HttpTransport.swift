@@ -111,7 +111,19 @@ extension GameCenter
         public func retrieveMessageQueuedCount(for player: String? = nil) async -> Int {
             let player: String = player ?? self.player;
             struct MessageEnvelope: Decodable { let player: String ; let count: Int }
-            let url: URL = URL(string: "/count/\(player)", relativeTo: self.url)!;
+            let url: URL = URL(string: "/messagecount/\(player)", relativeTo: self.url)!;
+            if let response = try? await URLSession.shared.data(from: url) {
+                let data: Data = response.0;
+                if let envelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
+                    return envelope.count;
+                }
+            }
+            return 0;
+        }
+
+        public func retrieveMessageQueuedTotalCount() async -> Int {
+            struct MessageEnvelope: Decodable { let count: Int }
+            let url: URL = URL(string: "/messagecount", relativeTo: self.url)!;
             if let response = try? await URLSession.shared.data(from: url) {
                 let data: Data = response.0;
                 if let envelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {

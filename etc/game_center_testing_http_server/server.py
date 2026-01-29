@@ -50,11 +50,18 @@ def peek(player_id):
     print(messages)
     return jsonify(messages)
 
-@app.route('/count/<player_id>', methods=['GET'])
-def count(player_id):
+@app.route('/messagecount/<player_id>', methods=['GET'])
+def message_count(player_id):
     count = len(inbox.get(player_id, []))
     return jsonify({
         'player': player_id,
+        'count': count
+    })
+
+@app.route('/messagecount', methods=['GET'])
+def message_count_all():
+    count = sum(len(messages) for messages in inbox.values())
+    return jsonify({
         'count': count
     })
 
@@ -92,6 +99,10 @@ def set_host_endpoint(host):
         players.add(host)
     host_player = host
     return jsonify({'status': 'OK'})
+
+@app.route('/peek', methods=['GET'])
+def peek_all():
+    return jsonify(inbox)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000)

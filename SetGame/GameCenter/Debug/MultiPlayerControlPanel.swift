@@ -6,6 +6,7 @@ private struct HttpServerInfo {
     public var playerCount: Int = 0;
     public var host: String = "";
     public var messageQueuedCount: Int = 0;
+    public var messageQueuedTotalCount: Int = 0;
     public var messageSentCount: Int = 0;
     public var messageRetrievedCount: Int = 0;
     public var poll: Bool = true;
@@ -39,16 +40,6 @@ public struct MultiPlayerDevelopmentPanel: View {
             self.pollingTaskStop();
             if (value) { self.pollingTask() }
         }
-/*
-        .onChange(of: self.settings.multiPlayer.enabled) { value in
-            if (!value) {
-                self.pollingTaskStop();
-            }
-            else if (self.settings.multiPlayer.enabled) {
-                self.pollingTask();
-            }
-        }
-*/
         .onDisappear {
             self.taskHandle?.cancel();
             self.taskHandle = nil;
@@ -66,10 +57,8 @@ public struct MultiPlayerDevelopmentPanel: View {
             while !Task.isCancelled {
                 self.info.messageSentCount = transport.messageSentCount();
                 self.info.messageRetrievedCount = transport.messageRetrievedCount();
-                let count = await transport.retrieveMessageQueuedCount();
-                await MainActor.run {
-                    self.info.messageQueuedCount = count;
-                }
+                self.info.messageQueuedCount = await transport.retrieveMessageQueuedCount();
+                self.info.messageQueuedTotalCount = await transport.retrieveMessageQueuedTotalCount();
                 let players = await transport.retrievePlayers();
                 self.info.playerCount = players.count;
                 let host = await transport.retrieveHost();
@@ -204,6 +193,12 @@ public struct MultiPlayerInfoPanelMessages: View {
                     .font(.caption)
                     .fontWeight(.bold)
                 Text("\(self.info.messageQueuedCount)")
+                    .font(.caption)
+                    .padding(.trailing, 4)
+                Text("total:")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                Text("\(self.info.messageQueuedTotalCount)")
                     .font(.caption)
                     .padding(.trailing, 4)
                 Text("sent:")
