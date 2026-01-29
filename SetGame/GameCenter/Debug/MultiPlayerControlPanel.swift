@@ -160,6 +160,14 @@ public struct MultiPlayerInfoPanel: View {
                              bold: self.info.isHost,
                              underline: self.info.isHost,
                              strikeout: !self.info.playerRegistered)
+                if (self.info.playerRegistered) {
+                    Text("✓")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .padding(.leading, -5)
+                        .padding(.trailing, 2)
+                        .offset(y: -1)
+                }
                 Text("host:")
                     .font(.caption)
                     .fontWeight(.bold)
