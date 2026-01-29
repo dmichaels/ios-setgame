@@ -5,8 +5,8 @@ public enum GameCenter {}
 public extension GameCenter
 {
     // TODO
-    // Think about if/how message sending restrictions
-    // to/from client/host depending on message type.
+    // Think about message sending restrictions to
+    // and from client/host depending on message type.
     //
     // ping:         any
     // playerReady:  undecided
@@ -53,12 +53,13 @@ public extension GameCenter.Message
     }
 }
 
-// TODO: Suggested by ChatGPT - MessageTransport and Session.
+// TODO: Suggested by ChatGPT - MessageTransport (to rename to Transport) and Session.
 //
 public extension GameCenter
 {
     public protocol MessageTransport {
         var  player: String { get };
+        var  handler: MessageHandler? { get set }
         func send(_ message: Message);
         func start();
         func stop();
@@ -69,6 +70,31 @@ public extension GameCenter
         var host: String { get };
         var hosting: Bool { get };
         var players: [String] { get };
+    }
+
+    public final class Manager {
+
+        private let transport: MessageTransport;
+        private let session: Session;
+
+        public init(transport: MessageTransport, session: Session) {
+            self.transport = transport;
+            self.session = session;
+        }
+
+        public var hosting: Bool {
+            self.session.hosting;
+        }
+
+        public func send(_ message: GameCenter.Message) {
+            if self.session.hosting {
+                for player in session.players {
+                    transport.send(message);
+                }
+            } else {
+                transport.send(message);
+            }
+        }
     }
 }
 

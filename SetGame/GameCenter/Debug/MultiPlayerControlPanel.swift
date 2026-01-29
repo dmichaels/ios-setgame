@@ -4,6 +4,7 @@ private struct HttpServerInfo {
     public var isHost: Bool = false;
     public var players: [String] = [];
     public var playerCount: Int = 0;
+    public var playerRegistered: Bool = false;
     public var host: String = "";
     public var messageQueuedCount: Int = 0;
     public var messageQueuedCountAll: Int = 0;
@@ -41,8 +42,7 @@ public struct MultiPlayerDevelopmentPanel: View {
             if (value) { self.pollingTask() }
         }
         .onDisappear {
-            self.taskHandle?.cancel();
-            self.taskHandle = nil;
+            self.pollingTaskStop();
         }
     }
 
@@ -61,6 +61,7 @@ public struct MultiPlayerDevelopmentPanel: View {
                 self.info.messageQueuedCountAll = await transport.retrieveMessageQueuedCountAll();
                 let players = await transport.retrievePlayers();
                 self.info.playerCount = players.count;
+                self.info.playerRegistered = players.contains(transport.player);
                 let host = await transport.retrieveHost();
                 self.info.host = host;
                 self.info.isHost = transport.player == host;
@@ -157,7 +158,8 @@ public struct MultiPlayerInfoPanel: View {
                              foreground: self.info.isHost ? .red : .primary,
                              background: self.background,
                              bold: self.info.isHost,
-                             underline: self.info.isHost)
+                             underline: self.info.isHost,
+                             strikeout: !self.info.playerRegistered)
                 Text("host:")
                     .font(.caption)
                     .fontWeight(.bold)
@@ -330,12 +332,14 @@ private struct CopyableText: View {
     let background: Color;
     let bold: Bool;
     let underline: Bool;
+    let strikeout: Bool;
     @State private var copied = false;
     var body: some View {
         Text(text)
             .font(.caption)
             .fontWeight(bold ? .bold : .regular)
             .underline(underline)
+            .strikethrough(strikeout)
             .padding(8)
             .cornerRadius(8)
             .foregroundColor(foreground)

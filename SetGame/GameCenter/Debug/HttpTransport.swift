@@ -5,8 +5,8 @@ public let AID: String = ID(veryshort: true).value;
 extension GameCenter
 {
     protocol Transport: GameCenter.MessageSender, GameCenter.MessageHandler {
-        func configure(handler: MessageHandler);
-        var hosting: Bool { get } // TODO get rid of
+        var handler: MessageHandler? { get set }
+        var hosting: Bool { get } // TODO get rid of - move to Session
     }
 }
 
@@ -18,25 +18,15 @@ extension GameCenter
 
         public  let player: String;
         public  var host: String = "";
-        private var handler: GameCenter.MessageHandler?;
+        public var handler: GameCenter.MessageHandler?;
         private let url: URL;
         private var retrievedCount: Int = 0;
         private var sentCount: Int = 0;
-
         public var hosting: Bool { self.player == self.host }
 
-        public init(player: String, handler: GameCenter.MessageHandler? = nil, url: URL? = nil) {
+        public init(player: String, url: URL? = nil) {
             self.player = player;
-            self.handler = handler;
             self.url = url ?? URL(string: Defaults.url)!
-        }
-
-        public func configure(handler: GameCenter.MessageHandler) {
-            self.handler = handler;
-            Task {
-                await self.register();
-            }
-            self.startMessagePolling();
         }
 
         private struct Defaults {
