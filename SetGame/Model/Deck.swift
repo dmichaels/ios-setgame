@@ -1,7 +1,7 @@
 /// Deck represents a deck of SET Game® card deck.
 /// Can be created with a subclass of Card if you like.
 ///
-public class Deck<T : Card> {
+public class Deck<T: Card> {
 
     public private(set) var cards: [T];
 
@@ -17,7 +17,7 @@ public class Deck<T : Card> {
         return self.cards.count;
     }
 
-    func takeCard(_ card : T) -> T? {
+    func takeCard(_ card: T) -> T? {
         if (self.cards.contains(card)) {
             self.cards.remove(card);
             return card;
@@ -29,13 +29,13 @@ public class Deck<T : Card> {
         return self.cards.takeCards(cards, strict: strict);
     }
 
-    func takeRandomCards(_ n : Int, plantSet: Bool = false, existingCards: [T] = []) -> [T] {
+    func takeRandomCards(_ n: Int, plantSet: Bool = false, existingCards: [T] = []) -> [T] {
         return self.cards.takeRandomCards(n, plantSet: plantSet, existingCards: existingCards);
     }
 
     public static func createCards(simple: Bool = false) -> [T] {
         var cards: [T] = [];
-        let fillings: [CardFilling] = simple ? [CardFilling.Solid] : CardFilling.allCases;
+        let fillings: [CardFilling] = simple ? [CardFilling.Solid]: CardFilling.allCases;
         for color in CardColor.allCases {
             for shape in CardShape.allCases {
                 for filling in fillings {

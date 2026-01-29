@@ -1,6 +1,6 @@
 /// CardNumber represents the number attributes of a SET card.
 ///
-public enum CardNumber : Int, CaseIterable  {
+public enum CardNumber: Int, CaseIterable  {
 
     case One   = 1;
     case Two   = 2;
@@ -8,7 +8,7 @@ public enum CardNumber : Int, CaseIterable  {
 
     /// Returns the single  'code' character/string for this attribute.
     ///
-    var code : String {
+    var code: String {
         switch self {
             case .One:   return "1";
             case .Two:   return "2";
@@ -69,7 +69,7 @@ public enum CardNumber : Int, CaseIterable  {
 
     /// Returns a random enumerated value.
     ///
-    static var random : CardNumber {
+    static var random: CardNumber {
         return CardNumber.allCases.randomElement()!;
     }
 }

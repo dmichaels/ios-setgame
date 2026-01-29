@@ -1,6 +1,6 @@
 /// CardFilling represents the filling attributes of a SET card.
 ///
-public enum CardFilling : Int, CaseIterable {
+public enum CardFilling: Int, CaseIterable {
 
     case Hollow;
     case Stripped;
@@ -8,7 +8,7 @@ public enum CardFilling : Int, CaseIterable {
 
     /// Returns the single  'code' character/string for this attribute.
     ///
-    var code : String {
+    var code: String {
         switch self {
             case .Hollow:   return "H";
             case .Stripped: return "T";
@@ -71,7 +71,7 @@ public enum CardFilling : Int, CaseIterable {
 
     /// Returns a random enumerated value.
     ///
-    static var random : CardFilling {
+    static var random: CardFilling {
         return CardFilling.allCases.randomElement()!;
     }
 }

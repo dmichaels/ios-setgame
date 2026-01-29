@@ -1,6 +1,6 @@
 /// CardColor represents the color attributes of a SET card.
 ///
-public enum CardColor : Int, CaseIterable {
+public enum CardColor: Int, CaseIterable {
 
     case Red;
     case Purple;
@@ -8,7 +8,7 @@ public enum CardColor : Int, CaseIterable {
 
     /// Returns the single  'code' character/string for this attribute.
     ///
-    var code : String {
+    var code: String {
         switch self {
             case .Red:    return "R";
             case .Purple: return "P";
@@ -69,7 +69,7 @@ public enum CardColor : Int, CaseIterable {
 
     /// Returns a random enumerated value.
     ///
-    static var random : CardColor {
+    static var random: CardColor {
         return CardColor.allCases.randomElement()!;
     }
 }

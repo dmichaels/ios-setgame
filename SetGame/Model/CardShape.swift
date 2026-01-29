@@ -1,6 +1,6 @@
 /// CardShape represents the shape attributes of a SET card.
 ///
-public enum CardShape : Int, CaseIterable {
+public enum CardShape: Int, CaseIterable {
 
     case Oval;
     case Diamond;
@@ -8,7 +8,7 @@ public enum CardShape : Int, CaseIterable {
 
     /// Returns the single  'code' character/string for this attribute.
     ///
-    var code : String {
+    var code: String {
         switch self {
             case .Oval:     return "O";
             case .Diamond:  return "D";
@@ -72,7 +72,7 @@ public enum CardShape : Int, CaseIterable {
 
     /// Returns a random enumerated value.
     ///
-    static var random : CardShape {
+    static var random: CardShape {
         return CardShape.allCases.randomElement()!;
     }
 }
