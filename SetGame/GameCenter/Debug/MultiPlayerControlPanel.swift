@@ -76,33 +76,12 @@ public struct MultiPlayerInfoPanel: View {
                         .fontWeight(.bold)
                     Text("\(self.host)")
                         .font(.caption)
-                        .fontWeight(.bold)
                 }
                 Text("queue:")
                     .font(.caption)
                     .fontWeight(.bold)
                 Text("\(messageQueuedCount)")
                     .font(.caption)
-                    .onAppear {
-                        taskHandle = Task {
-                            while !Task.isCancelled {
-                                self.host = transport.host;
-                                self.hosting = transport.hosting;
-                                self.messageSentCount = transport.messageSentCount();
-                                self.messageRetrievedCount = transport.messageRetrievedCount();
-                                let count = await transport.retrieveMessageQueuedCount();
-                                print("MC: \(count)");
-                                await MainActor.run { messageQueuedCount = count };
-                                try? await Task.sleep(nanoseconds: 300_000_000);
-                                let players = await transport.retrievePlayers();
-                                print("PLAYERS...........")
-                                print(players)
-                            }
-                        }
-                    }
-                    .onDisappear {
-                        taskHandle?.cancel();
-                    }
                     .padding(.trailing, 4)
                 Text("sent:")
                     .font(.caption)
@@ -124,6 +103,52 @@ public struct MultiPlayerInfoPanel: View {
                 RoundedRectangle(cornerRadius: 11, style: .continuous)
                     .fill(self.background.opacity(0.2))
             )
+            .onAppear {
+                if (self.settings.multiPlayer.poll) {
+                    self.pollingTask();
+                }
+            }
+            .onChange(of: self.settings.multiPlayer.poll) { value in
+                self.pollingTaskStop();
+                if (value) { self.pollingTask() }
+            }
+            .onChange(of: self.settings.multiPlayer.enabled) { value in
+                if (!value) {
+                    self.pollingTaskStop();
+                }
+                else if (self.settings.multiPlayer.enabled) {
+                    self.pollingTask();
+                }
+            }
+            .onDisappear {
+                self.taskHandle?.cancel();
+                self.taskHandle = nil;
+            }
+        }
+    }
+
+    private func pollingTaskStop() {
+        self.taskHandle?.cancel();
+        self.taskHandle = nil;
+    }
+
+    private func pollingTask() {
+        guard self.settings.multiPlayer.enabled else { return }
+        self.taskHandle = Task {
+            while !Task.isCancelled {
+                self.host = transport.host;
+                self.hosting = transport.hosting;
+                self.messageSentCount = transport.messageSentCount();
+                self.messageRetrievedCount = transport.messageRetrievedCount();
+                let count = await transport.retrieveMessageQueuedCount();
+                await MainActor.run {
+                    messageQueuedCount = count;
+                }
+                let players = await transport.retrievePlayers();
+                print("PANEL-POLLING>");
+                print(players);
+                try? await Task.sleep(nanoseconds: 300_000_000);
+            }
         }
     }
 }

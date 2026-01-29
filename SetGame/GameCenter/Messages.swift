@@ -8,6 +8,7 @@ public extension GameCenter
         case playerReady;
         case newGame;
         case foundSet;
+        case confirmedSet;
     }
 
     public protocol Message: Codable {
@@ -20,6 +21,7 @@ public extension GameCenter
         func handle(message: PlayerReadyMessage);
         func handle(message: NewGameMessage);
         func handle(message: FoundSetMessage);
+        func handle(message: ConfirmedSetMessage);
     }
 
     public protocol MessageSender: AnyObject {
@@ -90,6 +92,25 @@ public extension GameCenter
         }
     }
 
+    public struct ConfirmedSetMessage: Message {
+
+        public  let type: MessageType;
+        public  let player: String;
+        private let cardcodes: [String];
+        private let cardcodesReplacements: [String];
+        public  var cards: [TableCard] { return GameCenter.toCards(self.cardcodes); }
+        public  var replacements: [TableCard] { return GameCenter.toCards(self.cardcodesReplacements); }
+
+        public init?(_ data: Data?) { self.init(data, internal: true); }
+
+        public init(player: String, cards: [Card], replacements: [Card]) {
+            self.type      = .confirmedSet;
+            self.player    = player;
+            self.cardcodes = cards.map { $0.code };
+            self.cardcodesReplacements = cards.map { $0.code };
+        }
+    }
+
     private static func toCards(_ codes: [String]) -> [TableCard] {
         return codes.compactMap { TableCard($0) };
     }
@@ -102,9 +123,10 @@ public extension GameCenter
         if let data: Data = data,
            let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
             switch envelope.type {
-            case .playerReady: return try? JSONDecoder().decode(PlayerReadyMessage.self, from: data);
-            case .newGame:     return try? JSONDecoder().decode(NewGameMessage.self, from: data);
-            case .foundSet:    return try? JSONDecoder().decode(FoundSetMessage.self, from: data);
+            case .playerReady:  return try? JSONDecoder().decode(PlayerReadyMessage.self, from: data);
+            case .newGame:      return try? JSONDecoder().decode(NewGameMessage.self, from: data);
+            case .foundSet:     return try? JSONDecoder().decode(FoundSetMessage.self, from: data);
+            case .confirmedSet: return try? JSONDecoder().decode(ConfirmedSetMessage.self, from: data);
             }
         }
         return nil;
@@ -113,6 +135,8 @@ public extension GameCenter
     public static func toMessages(data: Data?) -> [Message]? {
         if let data: Data = data,
            let array: [[String: Any]] = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
+            print("TO-MESSAGES:");
+            print(JSON.format(data: data));
             var messages: [Message] = []; messages.reserveCapacity(array.count);
             let decoder: JSONDecoder = JSONDecoder();
             for object: [String: Any] in array {
@@ -129,29 +153,34 @@ public extension GameCenter
     }
 }
 
+
 public extension GameCenter
 {
     public static func dispatch(data: Data?,
                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
                                 newGame: ((NewGameMessage) -> Void)? = nil,
-                                foundSet: ((FoundSetMessage) -> Void)? = nil) {
+                                foundSet: ((FoundSetMessage) -> Void)? = nil,
+                                confirmedSet: ((ConfirmedSetMessage) -> Void)? = nil) {
         if let messages: [Message] = GameCenter.toMessages(data: data) {
             GameCenter.dispatch(messages: messages,
                                 playerReady: playerReady,
                                 newGame: newGame,
-                                foundSet: foundSet);
+                                foundSet: foundSet,
+                                confirmedSet: confirmedSet);
         }
     }
 
     public static func dispatch(message: Message?,
                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
                                 newGame: ((NewGameMessage) -> Void)? = nil,
-                                foundSet: ((FoundSetMessage) -> Void)? = nil) {
+                                foundSet: ((FoundSetMessage) -> Void)? = nil,
+                                confirmedSet: ((ConfirmedSetMessage) -> Void)? = nil) {
         if let message: Message = message {
             switch message {
             case let message as PlayerReadyMessage: playerReady?(message);
             case let message as NewGameMessage: newGame?(message);
             case let message as FoundSetMessage: foundSet?(message);
+            case let message as ConfirmedSetMessage: confirmedSet?(message);
             default: break;
             }
         }
@@ -160,13 +189,14 @@ public extension GameCenter
     public static func dispatch(messages: [Message]?,
                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
                                 newGame: ((NewGameMessage) -> Void)? = nil,
-                                foundSet: ((FoundSetMessage) -> Void)? = nil) {
+                                foundSet: ((FoundSetMessage) -> Void)? = nil,
+                                confirmedSet: ((ConfirmedSetMessage) -> Void)? = nil) {
         if let messages: [Message] = messages {
             for message: Message in messages {
                 GameCenter.dispatch(message: message,
                                     playerReady: playerReady,
                                     newGame: newGame,
-                                    foundSet: foundSet);
+                                    confirmedSet: confirmedSet);
             }
         }
     }
@@ -179,20 +209,23 @@ public extension GameCenter
         GameCenter.dispatch(data: data,
                             playerReady: handler.handle,
                             newGame: handler.handle,
-                            foundSet: handler.handle);
+                            foundSet: handler.handle,
+                            confirmedSet: handler.handle);
     }
 
     public static func dispatch(message: Message?, handler: MessageHandler) {
         GameCenter.dispatch(message: message,
                             playerReady: handler.handle,
                             newGame: handler.handle,
-                            foundSet: handler.handle);
+                            foundSet: handler.handle,
+                            confirmedSet: handler.handle);
     }
 
     public static func dispatch(messages: [Message]?, handler: MessageHandler) {
         GameCenter.dispatch(messages: messages,
                             playerReady: handler.handle,
                             newGame: handler.handle,
-                            foundSet: handler.handle);
+                            foundSet: handler.handle,
+                            confirmedSet: handler.handle);
     }
 }

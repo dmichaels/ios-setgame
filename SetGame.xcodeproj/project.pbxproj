@@ -49,6 +49,7 @@
 		98A5C74B2F098D02009E708D /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A5C74A2F098D02009E708D /* HelpView.swift */; };
 		98A5C74F2F09BBF6009E708D /* Help.md in Resources */ = {isa = PBXBuildFile; fileRef = 98A5C74E2F09BBF6009E708D /* Help.md */; };
 		98C2CA8225F3C1E40050ACDC /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2CA8125F3C1E40050ACDC /* StatsView.swift */; };
+		98C9D20B2F2B12680094E251 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C9D20A2F2B12680094E251 /* JSON.swift */; };
 		98E4E3232773B0AC000EEC5A /* SetGame.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98E4E3222773B0AC000EEC5A /* SetGame.xcassets */; };
 		98EF7E0E2F167C5800A45F63 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E0B2F167C5800A45F63 /* CardView.swift */; };
 		98EF7E0F2F167C5800A45F63 /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E0C2F167C5800A45F63 /* TableView.swift */; };
@@ -124,6 +125,7 @@
 		98A5C74A2F098D02009E708D /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
 		98A5C74E2F09BBF6009E708D /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Help.md; sourceTree = "<group>"; };
 		98C2CA8125F3C1E40050ACDC /* StatsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		98C9D20A2F2B12680094E251 /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		98E4E3222773B0AC000EEC5A /* SetGame.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SetGame.xcassets; sourceTree = "<group>"; };
 		98EF7E0B2F167C5800A45F63 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		98EF7E0C2F167C5800A45F63 /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
@@ -270,6 +272,7 @@
 		9867E12E2F1E573000CB221F /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				98C9D20A2F2B12680094E251 /* JSON.swift */,
 				9867E1522F262CB500CB221F /* Comparable.swift */,
 				9867E12D2F1E573000CB221F /* Delay.swift */,
 				98EF7E102F19661F00A45F63 /* ID.swift */,
@@ -496,6 +499,7 @@
 				9811914525ED5ACF0083606B /* CardFilling.swift in Sources */,
 				98C2CA8225F3C1E40050ACDC /* StatsView.swift in Sources */,
 				9867E1332F1E86FE00CB221F /* CardGridView.swift in Sources */,
+				98C9D20B2F2B12680094E251 /* JSON.swift in Sources */,
 				989FF92B25F11872002AE44A /* StatusBarView.swift in Sources */,
 				981190F025ED59CC0083606B /* SetGameApp.swift in Sources */,
 				989FF92625F10F08002AE44A /* SettingsView.swift in Sources */,

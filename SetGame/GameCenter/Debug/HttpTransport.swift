@@ -4,8 +4,6 @@ extension GameCenter
 {
     protocol Transport: GameCenter.MessageSender, GameCenter.MessageHandler {
         func configure(handler: MessageHandler);
-	    func register() async;
-	    func reset() async -> Bool;
         var hosting: Bool { get }
     }
 }
@@ -68,6 +66,10 @@ extension GameCenter
         }
 
         public func handle(message: GameCenter.FoundSetMessage) {
+            self.handler?.handle(message: message);
+        }
+
+        public func handle(message: GameCenter.ConfirmedSetMessage) {
             self.handler?.handle(message: message);
         }
 

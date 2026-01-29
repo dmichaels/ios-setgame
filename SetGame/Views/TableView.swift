@@ -93,14 +93,14 @@ private struct DebugView: View {
         Button { Task {
             print("HTTP-REGISTER>")
             let transport: GameCenter.Transport = GameCenter.HttpTransport.instance;
-            let response = await transport.register();
+            let response = await GameCenter.HttpTransport.instance.register();
             print(response);
             print("HTTP-REGISTER> done")
         } } label: { Text("REG") }
         Button { Task {
             print("HTTP-REGISTER>")
             let transport: GameCenter.Transport = GameCenter.HttpTransport.instance;
-            let response = await transport.reset();
+            let response = await GameCenter.HttpTransport.instance.reset();
             print(response);
             print("HTTP-REGISTER> done")
         } } label: { Text("RESET") }

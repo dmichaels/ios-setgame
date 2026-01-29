@@ -54,6 +54,10 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
         */
     }
 
+    public func handle(message: GameCenter.ConfirmedSetMessage) {
+        print("Table.handle(ConfirmedSet)> \(message)");
+    }
+
     public init(settings: Settings, gameCenterSender: GameCenter.MessageSender? = nil) {
         self.settings = settings;
         self.gameCenterSender = gameCenterSender;
