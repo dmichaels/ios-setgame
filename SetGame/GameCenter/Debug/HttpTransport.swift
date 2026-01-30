@@ -56,14 +56,12 @@ extension GameCenter
 	    }
 
         fileprivate func retrieveHost() async -> String {
-            struct ResponseType: Decodable { let host: String };
-            if let data: ResponseType = await self.url.get("/host", as: ResponseType.self) {
-                let host = data.host;
+            if let response: [String: Any] = await self.url.get("/host", as: [String: Any].self),
+               let host = response["host"] as? String {
                 return host;
             }
             return "";
         }
-
     }
 
     public class HttpSession_New: GameCenter.Session_New {
@@ -268,6 +266,13 @@ extension GameCenter
         }
 
         public func retrieveHost() async -> String {
+            if let response: [String: Any] = await self.url.get("/host", as: [String: Any].self),
+               let host = response["host"] as? String {
+                return host;
+            }
+            return "";
+        }
+        public func xoldretrieveHost() async -> String {
             if let data: [String: Any] = await self.url.get("/host", as: [String: Any].self) {
                 if let host = data["host"] as? String {
                     return host;
