@@ -12,6 +12,77 @@ extension GameCenter
 
 extension GameCenter
 {
+/*
+    public protocol Transport_New {
+        var  player: String { get };
+        var  handler: MessageHandler? { get set }
+        func send(_ message: Message);
+        func start();
+        func stop();
+    }
+*/
+    public class HttpTransport_New: GameCenter.Transport_New {
+
+        public let player: String = ID(veryshort: true).value;
+        public var handler: GameCenter.MessageHandler?;
+
+        public func send(_ message: Message) {
+        }
+
+        public func start() {
+        }
+
+        public func stop() {
+        }
+
+	    fileprivate func register(_ player: String) async -> (player: String, host: String)? {
+		    struct Response: Decodable { let player: String ; let host: String };
+    	    let baseURL = URL(string: "http://127.0.0.1:5000")!
+    	    let url = baseURL.appendingPathComponent("register/\(player)")
+    	    var request = URLRequest(url: url)
+    	    request.httpMethod = "POST"
+    	    if let response = try? await URLSession.shared.data(for: request) {
+                let data: Data = response.0;
+                if let response: [String: String] = try? JSONSerialization.jsonObject(with: data) as? [String: String] {
+                    if let player = response["player"], let host = response["host"] {
+                        return (player: player, host: host);
+                    }
+                }
+            }
+            return nil;
+	    }
+    }
+
+    public class HttpSession_New: GameCenter.Session {
+
+        public var player: String { self.transport.player };
+        public var host: String { "" };
+        public var hosting: Bool { self.player == self.hostPlayer };
+        public var players: [String] { [""] };
+
+        private var hostPlayer: String = "";
+
+        private let transport: GameCenter.HttpTransport_New;
+
+        public init(transport: GameCenter.HttpTransport_New) {
+            self.transport = transport;
+        }
+
+	    private func register() async {
+            if let response: (player: String, host: String) = await self.transport.register(self.player) {
+                self.hostPlayer = response.host;
+            }
+        }
+/*
+    public protocol Session {
+        var player: String { get };
+        var host: String { get };
+        var hosting: Bool { get };
+        var players: [String] { get };
+    }
+*/
+    }
+
     public class HttpTransport: Transport {
 
         public static let instance: HttpTransport = HttpTransport(player: ID(veryshort: true).value);
@@ -54,7 +125,7 @@ extension GameCenter
                 else if (self.host != "") {
                     //
                     // If we are the client (i.e. we are not the host),
-                    // then sen the message only to the host.
+                    // then send the message only to the host.
                     //
                     self.sendMessage(message: message, to: self.host);
                 }

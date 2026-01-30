@@ -99,8 +99,7 @@ public struct MultiPlayerControlPanel: View {
                         Task { await transport.unsetHost(); }
                     }
                 }
-                // ToggleItem("http", on: $settings.multiPlayer.http, disabled: !settings.multiPlayer.enabled)
-                ToggleItem("poll", on: $settings.multiPlayer.poll, disabled: !settings.multiPlayer.enabled || !settings.multiPlayer.http) { value in
+                ToggleItem("poll", on: $settings.multiPlayer.poll, disabled: !settings.multiPlayer.enabled) { value in
                     if (value) {
                         transport.startMessagePolling();
                     }
@@ -108,7 +107,7 @@ public struct MultiPlayerControlPanel: View {
                         transport.stopMessagePolling();
                     }
                 }
-                ToggleItem("watch", on: $info.poll, disabled: !settings.multiPlayer.enabled || !settings.multiPlayer.http)
+                ToggleItem("watch", on: $info.poll, disabled: !settings.multiPlayer.enabled)
                 Spacer()
             }
             .padding(.leading, 11)

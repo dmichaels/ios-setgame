@@ -24,7 +24,6 @@ struct SetGameApp: App {
                 .environmentObject(self.feedback)
                 .task {
                     await GameCenterAuthentication.authenticate();
-                    // GameCenter.HttpTransport.instance.configure(handler: self.table);
                     GameCenter.HttpTransport.instance.handler = self.table;
                 }
         }

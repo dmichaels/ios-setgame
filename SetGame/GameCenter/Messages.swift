@@ -53,11 +53,11 @@ public extension GameCenter.Message
     }
 }
 
-// TODO: Suggested by ChatGPT - MessageTransport (to rename to Transport) and Session.
+// TODO: Suggested by ChatGPT - Transport_New (to rename to Transport) and Session.
 //
 public extension GameCenter
 {
-    public protocol MessageTransport {
+    public protocol Transport_New {
         var  player: String { get };
         var  handler: MessageHandler? { get set }
         func send(_ message: Message);
@@ -72,12 +72,13 @@ public extension GameCenter
         var players: [String] { get };
     }
 
-    public final class Manager {
+    public final class Manager_New {
 
-        private let transport: MessageTransport;
+        private let transport: Transport_New;
         private let session: Session;
+        private let hostOnlyMessages: [MessageType] = [.newGame, .confirmedSet];
 
-        public init(transport: MessageTransport, session: Session) {
+        public init(transport: Transport_New, session: Session) {
             self.transport = transport;
             self.session = session;
         }
@@ -91,7 +92,7 @@ public extension GameCenter
                 for player in session.players {
                     transport.send(message);
                 }
-            } else {
+            } else if (!self.hostOnlyMessages.contains(message.type)) {
                 transport.send(message);
             }
         }
