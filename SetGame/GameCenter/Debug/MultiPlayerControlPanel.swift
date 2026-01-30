@@ -6,8 +6,8 @@ private struct HttpServerInfo {
     public var playerCount: Int = 0;
     public var playerRegistered: Bool = false;
     public var host: String = "";
-    public var messageQueuedCount: Int = 0;
-    public var messageQueuedCountAll: Int = 0;
+    public var messageQueueLength: Int = 0;
+    public var messageQueueLengthAll: Int = 0;
     public var messageSentCount: Int = 0;
     public var messageRetrievedCount: Int = 0;
     public var poll: Bool = true;
@@ -57,8 +57,8 @@ public struct MultiPlayerDevelopmentPanel: View {
             while !Task.isCancelled {
                 self.info.messageSentCount = transport.messageSentCount();
                 self.info.messageRetrievedCount = transport.messageRetrievedCount();
-                self.info.messageQueuedCount = await transport.retrieveMessageQueuedCount();
-                self.info.messageQueuedCountAll = await transport.retrieveMessageQueuedCountAll();
+                self.info.messageQueueLength = await transport.retrieveMessageQueueLength();
+                self.info.messageQueueLengthAll = await transport.retrieveMessageQueueLength(all: true);
                 let players = await transport.retrievePlayers();
                 self.info.playerCount = players.count;
                 self.info.playerRegistered = players.contains(transport.player);
@@ -263,13 +263,13 @@ public struct MultiPlayerInfoPanelMessages: View {
                 Text("queued:")
                     .font(.caption)
                     .fontWeight(.bold)
-                Text("\(self.info.messageQueuedCount)")
+                Text("\(self.info.messageQueueLength)")
                     .font(.caption)
                     .padding(.trailing, 4)
                 Text("total:")
                     .font(.caption)
                     .fontWeight(.bold)
-                Text("\(self.info.messageQueuedCountAll)")
+                Text("\(self.info.messageQueueLengthAll)")
                     .font(.caption)
                     .padding(.trailing, 4)
                 Text("sent:")

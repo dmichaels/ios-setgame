@@ -54,7 +54,7 @@ def peek_endpoint(player_id):
 def message_count_endpoint(player_id):
     count = len(inbox.get(player_id, []))
     return jsonify({
-        'player': player_id,
+        # 'player': player_id,
         'count': count
     })
 

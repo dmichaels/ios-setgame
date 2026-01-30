@@ -54,6 +54,16 @@ extension GameCenter
             }
             return nil;
 	    }
+
+        fileprivate func retrieveHost() async -> String {
+            struct ResponseType: Decodable { let host: String };
+            if let data: ResponseType = await self.url.get("/host", as: ResponseType.self) {
+                let host = data.host;
+                return host;
+            }
+            return "";
+        }
+
     }
 
     public class HttpSession_New: GameCenter.Session_New {
@@ -200,25 +210,13 @@ extension GameCenter
             return [];
         }
 
-        public func retrieveMessageQueuedCount(for player: String? = nil) async -> Int {
-            let player: String = player ?? self.player;
-            struct MessageEnvelope: Decodable { let player: String ; let count: Int }
-            let url: URL = URL(string: "/messagecount/\(player)", relativeTo: self.url)!;
-            if let response = try? await URLSession.shared.data(from: url) {
-                let data: Data = response.0;
+        public func retrieveMessageQueueLength(all: Bool = false) async -> Int {
+            struct MessageEnvelope: Decodable { let count: Int };
+            // if let data: Data = await url.get(all ? "/messagecount/\(self.player)" : "/messagecount") {
+            if let data: Data = await url.get("/messagecount", all ? self.player : nil) {
+                print("DEBUG:retrieveMessageQueueLength(\(all)): \(data)")
                 if let envelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
-                    return envelope.count;
-                }
-            }
-            return 0;
-        }
-
-        public func retrieveMessageQueuedCountAll() async -> Int {
-            struct MessageEnvelope: Decodable { let count: Int }
-            let url: URL = URL(string: "/messagecount", relativeTo: self.url)!;
-            if let response = try? await URLSession.shared.data(from: url) {
-                let data: Data = response.0;
-                if let envelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
+                    print("DEBUG:retrieveMessageQueueLength(\(all)): done \(envelope.count)")
                     return envelope.count;
                 }
             }
@@ -270,6 +268,14 @@ extension GameCenter
         }
 
         public func retrieveHost() async -> String {
+            if let data: [String: Any] = await self.url.get("/host", as: [String: Any].self) {
+                if let host = data["host"] as? String {
+                    return host;
+                }
+            }
+            return "";
+        }
+        public func oldretrieveHost() async -> String {
             let url: URL = URL(string: "/host", relativeTo: self.url)!;
             if let response = try? await URLSession.shared.data(from: url) {
                 let data: Data = response.0;
@@ -289,6 +295,8 @@ extension GameCenter
                 let data: Data = response.0;
         		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
         		    let result = String(data: data, encoding: .utf8);
+                    self.sentCount = 0;
+                    self.retrievedCount = 0;
                     return true;
                 }
             }
@@ -385,7 +393,7 @@ extension GameCenter
             }
         }
 
-        public func startMessagePolling() {
+        public func startMessagePolling() { // TODO: currently (2026-01-30) not called at startup - should
             guard self.pollingTask == nil else { return }
             self.pollingTask = Task {
                 while (!Task.isCancelled) {
