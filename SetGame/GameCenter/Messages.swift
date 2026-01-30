@@ -4,6 +4,12 @@ public enum GameCenter {}
 
 public extension GameCenter
 {
+
+    public struct Player { // TODO: not yet using
+        public let id: String;
+        public let name: String;
+    }
+
     // TODO
     // Think about message sending restrictions to
     // and from client/host depending on message type.
