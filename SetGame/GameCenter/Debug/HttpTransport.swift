@@ -6,41 +6,44 @@ extension GameCenter
 {
     protocol Transport: GameCenter.MessageSender, GameCenter.MessageHandler {
         var handler: MessageHandler? { get set }
-        var hosting: Bool { get } // TODO get rid of - move to Session
+        var hosting: Bool { get } // TODO get rid of - move to Session_New
     }
 }
 
 extension GameCenter
 {
-/*
-    public protocol Transport_New {
-        var  player: String { get };
-        var  handler: MessageHandler? { get set }
-        func send(_ message: Message);
-        func start();
-        func stop();
-    }
-*/
-    public class HttpTransport_New: GameCenter.Transport_New {
+    public class HttpTransport_New: Transport_New {
 
-        public let player: String = ID(veryshort: true).value;
-        public var handler: GameCenter.MessageHandler?;
+        public private(set) var player: String = ID(veryshort: true).value; // Transport_New imp
+        public              var handler: MessageHandler? = nil;  // Transport_New imp
 
-        public func send(_ message: Message) {
+        public func send(_ message: Message) { // Transport_New imp
         }
 
-        public func start() {
+        public func start() { // Transport_New imp
         }
 
-        public func stop() {
+        public func stop() { // Transport_New imp
+        }
+
+        private struct Defaults {
+            public static let url: String             = "http://127.0.0.1:5000";
+            public static let contentType: String     = "application/json";
+            public static let contentTypeName: String = "Content-Type";
+            public static let pollingInterval: UInt64 = 300_000_000; // 300ms
+        }
+
+        private let url: URL;
+
+        public init(player: String? = nil, url: URL? = nil) {
+            self.player = player ?? ID(veryshort: true).value;
+            self.handler = nil;
+            self.url = url ?? URL(string: Defaults.url)!
         }
 
 	    fileprivate func register(_ player: String) async -> (player: String, host: String)? {
 		    struct Response: Decodable { let player: String ; let host: String };
-    	    let baseURL = URL(string: "http://127.0.0.1:5000")!
-    	    let url = baseURL.appendingPathComponent("register/\(player)")
-    	    var request = URLRequest(url: url)
-    	    request.httpMethod = "POST"
+    	    var request: URLRequest = self.url.request("/register/\(player)", method: "POST");
     	    if let response = try? await URLSession.shared.data(for: request) {
                 let data: Data = response.0;
                 if let response: [String: String] = try? JSONSerialization.jsonObject(with: data) as? [String: String] {
@@ -53,34 +56,41 @@ extension GameCenter
 	    }
     }
 
-    public class HttpSession_New: GameCenter.Session {
+    public class HttpSession_New: GameCenter.Session_New {
 
-        public var player: String { self.transport.player };
-        public var host: String { "" };
-        public var hosting: Bool { self.player == self.hostPlayer };
-        public var players: [String] { [""] };
-
-        private var hostPlayer: String = "";
+        public                  var player: String { self.transport.player };   // Session_New imp
+        public fileprivate(set) var host: String = "";                          // Session_New imp
+        public                  var hosting: Bool { self.player == self.host }; // Session_New imp
+        public                  var players: [String] { [""] };                 // Session_New imp
 
         private let transport: GameCenter.HttpTransport_New;
 
         public init(transport: GameCenter.HttpTransport_New) {
             self.transport = transport;
         }
+    }
 
-	    private func register() async {
-            if let response: (player: String, host: String) = await self.transport.register(self.player) {
-                self.hostPlayer = response.host;
+    public class HttpManager_New: GameCenter.Manager_New {
+
+        public var transport: GameCenter.Transport_New { self.transportImp }; // Manager_New imp
+        public var session: GameCenter.Session_New { self.sessionImp };       // Manager_New imp
+
+        private var transportImp: HttpTransport_New;
+        private var sessionImp: HttpSession_New;
+
+        public init() {
+            self.transportImp = HttpTransport_New();
+            self.sessionImp = HttpSession_New(transport: self.transportImp);
+        }
+
+        public func start() async { // Manager_New imp
+            if let response = await self.transportImp.register(self.transport.player) {
+                self.sessionImp.host = response.host;
             }
         }
-/*
-    public protocol Session {
-        var player: String { get };
-        var host: String { get };
-        var hosting: Bool { get };
-        var players: [String] { get };
-    }
-*/
+
+        public func stop() { // Manager_New imp
+        }
     }
 
     public class HttpTransport: Transport {

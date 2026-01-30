@@ -53,7 +53,8 @@ public extension GameCenter.Message
     }
 }
 
-// TODO: Suggested by ChatGPT - Transport_New (to rename to Transport) and Session.
+// TODO: Suggested by ChatGPT ...
+// Transport_New (rename to Transport) and Session_New (rename to Session).
 //
 public extension GameCenter
 {
@@ -65,20 +66,27 @@ public extension GameCenter
         func stop();
     }
 
-    public protocol Session {
+    public protocol Session_New {
         var player: String { get };
         var host: String { get };
         var hosting: Bool { get };
         var players: [String] { get };
     }
 
-    public final class Manager_New {
+    public protocol Manager_New {
+        var session: Session_New { get };
+        var transport: Transport_New { get };
+        func start() async;
+        func stop();
+    }
 
-        private let transport: Transport_New;
-        private let session: Session;
-        private let hostOnlyMessages: [MessageType] = [.newGame, .confirmedSet];
+    public final class Manager_New_Old {
 
-        public init(transport: Transport_New, session: Session) {
+        private let transport: GameCenter.Transport_New;
+        private let session: GameCenter.Session_New;
+        private let hostOnlyMessages: [GameCenter.MessageType] = [.newGame, .confirmedSet];
+
+        public init(transport: Transport_New, session: Session_New) {
             self.transport = transport;
             self.session = session;
         }
@@ -99,7 +107,7 @@ public extension GameCenter
     }
 }
 
-public extension GameCenter.Session {
+public extension GameCenter.Session_New {
     var hosting: Bool { self.player == self.host };
 }
 
