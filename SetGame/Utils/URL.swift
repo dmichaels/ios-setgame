@@ -4,6 +4,10 @@ public extension URL {
 
     public typealias JSON = [String: Any];
 
+    public static func create(_ url: String) -> URL {
+        return URL(string: url)!
+    }
+
     // Simple URL constrution/append methods.
 
     public func append(_ components: [String?]) -> URL {
