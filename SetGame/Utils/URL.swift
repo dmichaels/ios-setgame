@@ -16,6 +16,10 @@ public extension URL {
         return self.append(components)
     }
 
+    public func request(_ path: String?..., method: String? = nil, data: Data? = nil) -> URLRequest {
+        return self.request(path, method: method, data: data);
+    }
+
     public func get(_ path: [String?], status: Int? = 200) async -> Data? {
         if let response = try? await URLSession.shared.data(from: self.append(path)) {
             if let status: Int = status {
@@ -65,10 +69,6 @@ public extension URL {
             request.httpBody = data;
         }
         return request;
-    }
-
-    public func request(_ path: String?..., method: String? = nil, data: Data? = nil) -> URLRequest {
-        return self.request(path, method: method, data: data);
     }
 
     public func post(_ path: [String?], data: Data? = nil, status: Int? = nil) async -> Data? {
