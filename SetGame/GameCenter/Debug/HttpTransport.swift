@@ -184,6 +184,17 @@ extension GameCenter
 
         private func sendMessage(data: Data?, to player: String) {
             guard let data = data else { return }
+            if let payload: Any = try? JSONSerialization.jsonObject(with: data) {
+                var body: [String: Any] = [String: Any]();
+                body["to"] = player;
+                body["message"] = payload;
+                if (self.url.post("send", data: body)) {
+                    self.sentCount += 1;
+                }
+            }
+        }
+        private func old_sendMessage(data: Data?, to player: String) {
+            guard let data = data else { return }
             let url: URL = URL(string: "/send", relativeTo: self.url)!;
             if let payload: Any = try? JSONSerialization.jsonObject(with: data) {
                 // var body: [String: Any] = [String: Any](); // instead of decode/reencoded build wrapper manually

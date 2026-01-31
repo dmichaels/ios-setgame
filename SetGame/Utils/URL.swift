@@ -2,6 +2,10 @@ import Foundation
 
 public extension URL {
 
+    public typealias JSON = [String: Any];
+
+    // Simple URL constrution/append methods.
+
     public func append(_ components: [String?]) -> URL {
         var result: URL = self;
         for component in components {
@@ -16,54 +20,13 @@ public extension URL {
         return self.append(components)
     }
 
-    public func request(_ path: String?..., method: String? = nil, data: Data? = nil) -> URLRequest {
-        return self.request(path, method: method, data: data);
-    }
-
-    public func get(_ path: [String?], status: Int? = 200) async -> Data? {
-        if let response = try? await URLSession.shared.data(from: self.append(path)) {
-            if let status: Int = status {
-        		guard let response = response.1 as? HTTPURLResponse,
-                          response.statusCode == status else {
-                    return nil;
-                }
-            }
-            return response.0;
-        }
-        return nil;
-    }
-
-    public func get(_ path: String?..., status: Int? = 200) async -> Data? {
-        return await self.get(path, status: status);
-    }
-
-    public func get<T: Decodable>(_ path: [String?], as type: T.Type, status: Int? = 200) async -> T? {
-        if let response = await self.get(path, status: status) {
-            if let response = URL.decode(data: response, as: type) {
-                return response;
-            }
-        }
-        return nil;
-    }
-
-    public func get<T: Decodable>(_ path: String?..., as type: T.Type, status: Int? = 200) async -> T? {
-        return await self.get(path, as: type, status: status);
-    }
-
-    public func get(_ path: [String?], as type: [String: Any].Type, status: Int? = 200) async -> [String: Any]? {
-        if let response = await self.get(path, status: status) {
-            return try? JSONSerialization.jsonObject(with: response) as? [String: Any];
-        }
-        return nil;
-    }
-
-    public func get(_ path: String?..., as type: [String: Any].Type, status: Int? = 200) async -> [String: Any]? {
-        await self.get(path, as: type, status: status);
-    }
+    // Request methods.
 
     public func request(_ path: [String?], method: String? = nil, data: Data? = nil) -> URLRequest {
 	    var request = URLRequest(url: self.append(path));
-        if let method: String = method { request.httpMethod = method; }
+        if let method: String = method {
+            request.httpMethod = method;
+        }
         if let data: Data = data { 
             request.setValue("application/json", forHTTPHeaderField: "Content-Type");
             request.httpBody = data;
@@ -71,9 +34,110 @@ public extension URL {
         return request;
     }
 
-    public func post(_ path: [String?], data: Data? = nil, status: Int? = nil) async -> Data? {
-        let request: URLRequest = self.request(path, method: "POST", data: data);
-        if let response = try? await URLSession.shared.data(for: request) {
+    public func request(_ path: String?..., method: String? = nil, data: Data? = nil) -> URLRequest {
+        return self.request(path, method: method, data: data);
+    }
+
+    // GET methods.
+
+    public func get(_ path: [String?],
+                      status: Int? = 200) async -> Data? {
+        return await self.exec(path, method: nil, data: nil, status: status);
+    }
+
+    public func get(_ path: String?...,
+                      status: Int? = 200) async -> Data? {
+        return await self.exec(path, method: nil, data: nil, status: status);
+    }
+
+    public func get<T: Decodable>(_ path: [String?],
+                                    as type: T.Type,
+                                    status: Int? = 200) async -> T? {
+        return await self.exec(path, method: nil, data: nil, as: type, status: status);
+    }
+
+    public func get<T: Decodable>(_ path: String?...,
+                                    as type: T.Type,
+                                    status: Int? = 200) async -> T? {
+        return await self.exec(path, method: nil, data: nil, as: type, status: status);
+    }
+
+    public func get(_ path: [String?],
+                      as type: JSON.Type,
+                      status: Int? = 200) async -> JSON? {
+        return await self.exec(path, method: nil, data: nil, as: type, status: status);
+    }
+
+    public func get(_ path: String?...,
+                      as type: JSON.Type,
+                      status: Int? = 200) async -> JSON? {
+        await self.get(path, as: type, status: status);
+    }
+
+    // POST methods.
+
+    public func post(_ path: [String?], data: Data? = nil,
+                       status: Int? = nil) async -> Data? {
+        return await self.exec(path, method: "POST", data: data, status: status);
+    }
+
+    public func post(_ path: String?..., data: Data? = nil,
+                       status: Int? = nil) async -> Data? {
+        return await self.exec(path, method: "POST", data: data, status: status);
+    }
+
+    public func post<T: Decodable>(_ path: [String?], data: Data? = nil,
+                                     as type: T.Type,
+                                     status: Int? = nil) async -> T? {
+        return await self.exec(path, method: "POST", data: data, as: type, status: status);
+    }
+
+    public func post<T: Decodable>(_ path: String?..., data: Data? = nil,
+                                     as type: T.Type,
+                                     status: Int? = nil) async -> T? {
+        return await self.exec(path, method: "POST", data: data, as: type, status: status);
+    }
+
+    public func post(_ path: [String?], data: Data? = nil,
+                       as type: JSON.Type,
+                       status: Int? = nil) async -> JSON? {
+        return await self.exec(path, method: "POST", data: data, as: type, status: status);
+    }
+
+    public func post(_ path: String?..., data: Data? = nil,
+                       as type: JSON.Type,
+                       status: Int? = nil) async -> JSON? {
+        return await self.exec(path, method: "POST", data: data, as: type, status: status);
+    }
+
+    // POST fire-and-forget (synchronous) methods.
+
+    public func post(_ path: [String?], data: Data? = nil) -> Bool {
+        return self.execfaf(path, method: "POST", data: data);
+    }
+
+    public func post(_ path: String?..., data: Data? = nil) -> Bool {
+        return self.execfaf(path, method: "POST", data: data);
+    }
+
+    // Note that currently only POST fire-and-forget methods support
+    // JSON (i.e. [String: Any]) for the data body/payload type;
+    // doing the other POST methods would double the number.
+
+    public func post(_ path: [String?], data: JSON) -> Bool {
+        return self.execfaf(path, method: "POST", data: data);
+    }
+
+    public func post(_ path: String?..., data: JSON) -> Bool {
+        return self.execfaf(path, data: data);
+    }
+
+    // Implementation methods.
+
+    private func exec(_ path: [String?], method: String? = nil,
+                        data: Data? = nil,
+                        status: Int? = nil) async -> Data? {
+        if let response = try? await URLSession.shared.data(for: self.request(path, method: method, data: data)) {
             if let status: Int = status {
         		guard let response = response.1 as? HTTPURLResponse,
                           response.statusCode == status else {
@@ -85,30 +149,39 @@ public extension URL {
         return nil;
     }
 
-    public func post(_ path: String?..., data: Data? = nil, status: Int? = nil) async -> Data? {
-        return await self.post(path, data: data, status: status);
-    }
-
-    public func post<T: Decodable>(_ path: [String?], data: Data? = nil, as type: T.Type, status: Int? = nil) async -> T? {
-        if let response = try? await self.post(path, data: data, status: status) {
-            return URL.decode(data: response, as: type);
+    private func exec<T: Decodable>(_ path: [String?], method: String? = nil,
+                                      data: Data? = nil,
+                                      as type: T.Type,
+                                      status: Int? = nil) async -> T? {
+        if let response = await self.exec(path, method: method, data: data, status: status) {
+            if let response = try? JSONDecoder().decode(type, from: response) {
+                return response;
+            }
         }
         return nil;
     }
 
-    public func post<T: Decodable>(_ path: String?..., data: Data? = nil, as type: T.Type, status: Int? = nil) async -> T? {
-        return await self.post(path, data: data, as: type, status: status);
-    }
-
-    private static func decode<T: Decodable>(data: Data, as type: T.Type) -> T? {
-        return try? JSONDecoder().decode(type, from: data);
-    }
-
-    public func old_request(_ path: String? = nil, method: String? = nil) -> URLRequest { // TODO DELETE USE ABOVE
-	    var request = URLRequest(url: (path != nil) ? self.append(path!) : self);
-        if let method: String = method {
-            request.httpMethod = method;
+    private func exec(_ path: [String?], method: String? = nil,
+                        data: Data? = nil,
+                        as type: JSON.Type,
+                        status: Int? = nil) async -> JSON? {
+        if let response = await self.exec(path, method: method, data: data, status: status) {
+            return try? JSONSerialization.jsonObject(with: response) as? JSON;
         }
-        return request;
+        return nil;
+    }
+
+    // Implementation methods for first-and-forget.
+
+    private func execfaf(_ path: [String?], method: String? = nil, data: Data? = nil) -> Bool {
+        URLSession.shared.dataTask(with: self.request(path, method: method, data: data)).resume();
+        return true;
+    }
+
+    private func execfaf(_ path: [String?], method: String? = nil, data: JSON) -> Bool {
+        if let data: Data = try? JSONSerialization.data(withJSONObject: data) {
+            return self.execfaf(path, method: "POST", data: data);
+        }
+        return false;
     }
 }
