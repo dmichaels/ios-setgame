@@ -121,6 +121,7 @@ extension GameCenter
         public var handler: GameCenter.MessageHandler?;
         private let url: URL;
         private var retrievedCount: Int = 0;
+        private var handledCount: Int = 0;
         private var sentCount: Int = 0;
         public var hosting: Bool { self.player == self.host }
 
@@ -163,32 +164,49 @@ extension GameCenter
 
         public func handle(message: GameCenter.PingMessage) {
             print("DEBUG-\(AID):HANDLE(Ping)> message: \(message.type) player: \(message.player)");
+            self.handledCount += 1;
             self.handler?.handle(message: message);
         }
 
         public func handle(message: GameCenter.PlayerReadyMessage) {
             print("DEBUG-\(AID):HANDLE(PlayerReady)> message: \(message.type) player: \(message.player)");
+            self.handledCount += 1;
             self.handler?.handle(message: message);
         }
 
         public func handle(message: GameCenter.NewGameMessage) {
             print("DEBUG-\(AID):HANDLE(NewGame)> message: \(message.type) player: \(message.player)");
+            self.handledCount += 1;
             self.handler?.handle(message: message);
         }
 
         public func handle(message: GameCenter.FoundSetMessage) {
             print("DEBUG-\(AID):HANDLE(FoundSet)> message: \(message.type) player: \(message.player)");
+            self.handledCount += 1;
             self.handler?.handle(message: message);
         }
 
         public func handle(message: GameCenter.ConfirmedSetMessage) {
             print("DEBUG-\(AID):HANDLE(ConfirmedSet)> message: \(message.type) player: \(message.player)");
+            self.handledCount += 1;
             self.handler?.handle(message: message);
         }
 
         private func sendMessage(message: GameCenter.Message, to player: String? = nil) {
             print("DEBUG-\(AID):SEND> message: \(message.type) player: \(message.player)");
-            self.sendMessage(data: message.serialize(), to: player ?? message.player);
+            self.new_sendMessage(message: message, to: player ?? message.player);
+            // self.sendMessage(data: message.serialize(), to: player ?? message.player);
+        }
+
+        public func new_sendMessage(message: Message, to player: String? = nil) {
+            guard let payload = message.json else { return }
+            let body: [String: Any] = [
+                "to": player ?? message.player,
+                "message": payload
+            ]
+            if self.url.post("send", data: body) {
+                self.sentCount += 1
+            }
         }
 
         private func sendMessage(data: Data?, to player: String) {
@@ -250,6 +268,10 @@ extension GameCenter
 
         public func messageRetrievedCount() -> Int {
             return self.retrievedCount;
+        }
+
+        public func messageHandledCount() -> Int {
+            return self.handledCount;
         }
 
 	    public func register() async {

@@ -10,6 +10,7 @@ private struct HttpServerInfo {
     public var messageQueueLengthAll: Int = 0;
     public var messageSentCount: Int = 0;
     public var messageRetrievedCount: Int = 0;
+    public var messageHandledCount: Int = 0;
     public var poll: Bool = true;
 }
 
@@ -57,6 +58,7 @@ public struct MultiPlayerDevelopmentPanel: View {
             while !Task.isCancelled {
                 self.info.messageSentCount = transport.messageSentCount();
                 self.info.messageRetrievedCount = transport.messageRetrievedCount();
+                self.info.messageHandledCount = transport.messageHandledCount();
                 self.info.messageQueueLength = await transport.retrieveMessageQueueLength();
                 self.info.messageQueueLengthAll = await transport.retrieveMessageQueueLength(all: true);
                 let players = await transport.retrievePlayers();
@@ -283,6 +285,8 @@ public struct MultiPlayerInfoPanelMessages: View {
                     .fontWeight(.bold)
                 Text("\(self.info.messageRetrievedCount)")
                     .font(.caption)
+                    .foregroundColor(self.info.messageRetrievedCount != self.info.messageHandledCount ? .red : .primary)
+                    .bold(self.info.messageRetrievedCount != self.info.messageHandledCount)
                 Spacer()
                 ResetMessagesButton()
                 // ResetMessagesAllButton()
