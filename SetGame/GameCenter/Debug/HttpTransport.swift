@@ -59,7 +59,17 @@ extension GameCenter
         }
 
         private func send(message: Message, to player: String) {
+            if let message: [String: Any] = message.json {
+                if self.url.post("send", data: ["to": player, "message": message]) {
+                    self.sentCount += 1
+                }
+            }
+        }
+
+/*
+        private func old_send(message: Message, to player: String) {
             guard let payload = message.json else { return }
+            // let xxx: [String: Any] = GameCenter.HttpTransport_New.toJSON("to", player, "message", message.json); // EXPERIMENTAL
             let body: [String: Any] = [
                 "to": player,
                 "message": payload
@@ -68,6 +78,20 @@ extension GameCenter
                 self.sentCount += 1
             }
         }
+
+        private static func toJSON(_ data: Any?...) -> [String: Any] { // EXPERIMENTAL
+            var name: String? = nil;
+            var value: Any? = nil;
+            var json: [String: Any] = [String: Any]();
+            for i in stride(from: 0, to: data.count, by: 2) {
+                if let first: String = data[i] as? String {
+                    let second: Any? = (i + 1 < data.count) ? data[i + 1] : nil;
+                    json[first] = second ?? NSNull();
+                }
+            }
+            return json;
+        }
+*/
     }
 
     public class HttpSession_New: GameCenter.Session_New {
