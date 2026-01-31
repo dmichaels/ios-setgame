@@ -56,6 +56,8 @@ extension GameCenter
 	    }
 
         fileprivate func retrieveHost() async -> String {
+		    struct XXX: Decodable { let status: String };
+            let xxx = await self.url.post(["register"], as: XXX.self)
             if let response: [String: Any] = await self.url.get("/host", as: [String: Any].self),
                let host = response["host"] as? String {
                 return host;
@@ -183,7 +185,8 @@ extension GameCenter
         private func sendMessage(data: Data?, to player: String) {
             guard let data = data else { return }
             let url: URL = URL(string: "/send", relativeTo: self.url)!;
-            if let payload = try? JSONSerialization.jsonObject(with: data) {
+            if let payload: Any = try? JSONSerialization.jsonObject(with: data) {
+                // var body: [String: Any] = [String: Any](); // instead of decode/reencoded build wrapper manually
                 var body: [String: Any] = [String: Any](); // instead of decode/reencoded build wrapper manually
                 body["to"] = player;
                 body["message"] = payload;
@@ -255,39 +258,13 @@ extension GameCenter
 	    }
 
         public func retrievePlayers() async -> [String] {
-            let url: URL = URL(string: "/players", relativeTo: self.url)!;
-            if let response = try? await URLSession.shared.data(from: url) {
-                let data: Data = response.0;
-                if let players = try? JSONDecoder().decode([String].self, from: data) {
-                    return players;
-                }
-            }
-            return [];
+            return await self.url.get("/players", as: [String].self) ?? [];
         }
 
         public func retrieveHost() async -> String {
             if let response: [String: Any] = await self.url.get("/host", as: [String: Any].self),
-               let host = response["host"] as? String {
+               let host: String = response["host"] as? String {
                 return host;
-            }
-            return "";
-        }
-        public func xoldretrieveHost() async -> String {
-            if let data: [String: Any] = await self.url.get("/host", as: [String: Any].self) {
-                if let host = data["host"] as? String {
-                    return host;
-                }
-            }
-            return "";
-        }
-        public func oldretrieveHost() async -> String {
-            let url: URL = URL(string: "/host", relativeTo: self.url)!;
-            if let response = try? await URLSession.shared.data(from: url) {
-                let data: Data = response.0;
-                if let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                   let host = object["host"] as? String {
-                    return host;
-                }
             }
             return "";
         }
@@ -299,7 +276,7 @@ extension GameCenter
             if let response = try? await URLSession.shared.data(for: request) {
                 let data: Data = response.0;
         		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
-        		    let result = String(data: data, encoding: .utf8);
+        		    // let result = String(data: data, encoding: .utf8);
                     self.sentCount = 0;
                     self.retrievedCount = 0;
                     return true;
@@ -316,7 +293,7 @@ extension GameCenter
             if let response = try? await URLSession.shared.data(for: request) {
                 let data: Data = response.0;
         		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
-        		    let result = String(data: data, encoding: .utf8);
+        		    // let result = String(data: data, encoding: .utf8);
                     self.sentCount = 0;
                     self.retrievedCount = 0;
                     return true;
@@ -333,7 +310,7 @@ extension GameCenter
             if let response = try? await URLSession.shared.data(for: request) {
                 let data: Data = response.0;
         		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
-        		    let result = String(data: data, encoding: .utf8);
+        		    // let result = String(data: data, encoding: .utf8);
                     self.sentCount = 0;
                     self.retrievedCount = 0;
                     return true;
@@ -349,7 +326,7 @@ extension GameCenter
             if let response = try? await URLSession.shared.data(for: request) {
                 let data: Data = response.0;
         		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
-        		    let result = String(data: data, encoding: .utf8);
+        		    // let result = String(data: data, encoding: .utf8);
                     print("DEBUG-\(AID):RESET-HOST> set-host: \(self.host) -> unset")
                     self.host = "";
                     return true;
@@ -366,7 +343,7 @@ extension GameCenter
             if let response = try? await URLSession.shared.data(for: request) {
                 let data: Data = response.0;
         		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
-        		    let result = String(data: data, encoding: .utf8);
+        		    // let result = String(data: data, encoding: .utf8);
                     print("DEBUG-\(AID):SET-HOST> set-host: \(self.host) -> \(host)")
                     self.host = host;
                     return true;
@@ -383,7 +360,7 @@ extension GameCenter
             if let response = try? await URLSession.shared.data(for: request) {
                 let data: Data = response.0;
         		if let response = response.1 as? HTTPURLResponse, response.statusCode == 200 {
-        		    let result = String(data: data, encoding: .utf8);
+        		    // let result = String(data: data, encoding: .utf8);
                     print("DEBUG-\(AID):SET-HOST> set-host: \(self.host) -> \(host)")
                     self.host = host;
                     return true;
