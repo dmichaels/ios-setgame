@@ -118,12 +118,12 @@ extension GameCenter
 
         public  let player: String;
         public  var host: String = "";
-        public var handler: GameCenter.MessageHandler?;
+        public  var handler: GameCenter.MessageHandler?;
         private let url: URL;
         private var retrievedCount: Int = 0;
         private var handledCount: Int = 0;
         private var sentCount: Int = 0;
-        public var hosting: Bool { self.player == self.host }
+        public  var hosting: Bool { self.player == self.host }
 
         public init(player: String, url: URL? = nil) {
             self.player = player;
