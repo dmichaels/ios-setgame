@@ -41,32 +41,15 @@ extension GameCenter
             self.url = url ?? URL(string: Defaults.url)!
         }
 
-	    fileprivate func register(_ player: String) async -> (player: String, host: String)? {
+	    fileprivate func register(player: String) async -> (player: String, host: String)? {
 		    struct Response: Decodable { let player: String ; let host: String };
             if let response = await self.url.post("register", player, as: Response.self) {
                 return (player: response.player, host: response.host);
             }
             return nil;
 	    }
-        /*
-	    fileprivate func register(_ player: String) async -> (player: String, host: String)? {
-		    struct Response: Decodable { let player: String ; let host: String };
-    	    var request: URLRequest = self.url.request("/register/\(player)", method: "POST");
-    	    if let response = try? await URLSession.shared.data(for: request) {
-                let data: Data = response.0;
-                if let response: [String: String] = try? JSONSerialization.jsonObject(with: data) as? [String: String] {
-                    if let player = response["player"], let host = response["host"] {
-                        return (player: player, host: host);
-                    }
-                }
-            }
-            return nil;
-	    }
-        */
 
         fileprivate func retrieveHost() async -> String {
-		    struct XXX: Decodable { let status: String };
-            let xxx = await self.url.post(["register"], as: XXX.self)
             if let response: [String: Any] = await self.url.get("/host", as: [String: Any].self),
                let host = response["host"] as? String {
                 return host;
@@ -103,7 +86,7 @@ extension GameCenter
         }
 
         public func start() async { // Manager_New imp
-            if let response = await self.transportImp.register(self.transport.player) {
+            if let response = await self.transportImp.register(player: self.transport.player) {
                 self.sessionImp.host = response.host;
             }
         }
