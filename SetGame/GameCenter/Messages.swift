@@ -1,6 +1,6 @@
 import SwiftUI
 
-public enum GameCenter {}
+public struct GameCenter {}
 
 public extension GameCenter
 {
