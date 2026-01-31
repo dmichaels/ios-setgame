@@ -43,6 +43,14 @@ extension GameCenter
 
 	    fileprivate func register(_ player: String) async -> (player: String, host: String)? {
 		    struct Response: Decodable { let player: String ; let host: String };
+            if let response = await self.url.post("register", player, as: Response.self) {
+                return (player: response.player, host: response.host);
+            }
+            return nil;
+	    }
+        /*
+	    fileprivate func register(_ player: String) async -> (player: String, host: String)? {
+		    struct Response: Decodable { let player: String ; let host: String };
     	    var request: URLRequest = self.url.request("/register/\(player)", method: "POST");
     	    if let response = try? await URLSession.shared.data(for: request) {
                 let data: Data = response.0;
@@ -54,6 +62,7 @@ extension GameCenter
             }
             return nil;
 	    }
+        */
 
         fileprivate func retrieveHost() async -> String {
 		    struct XXX: Decodable { let status: String };
@@ -244,13 +253,20 @@ extension GameCenter
         }
 
 	    public func register() async {
-            if let response: (player: String, host: String) = await self.registerPlayer(self.player) {
+		    struct Response: Decodable { let player: String ; let host: String };
+            if let response = await self.url.post("register", player, as: Response.self) {
+                self.host = response.host;
+            }
+	    }
+
+	    public func old_register() async {
+            if let response: (player: String, host: String) = await self.old_registerPlayer(self.player) {
                 print("DEBUG-\(AID):REGISTER> set-host: \(response.host)")
                 self.host = response.host;
             }
         }
 
-	    private func registerPlayer(_ player: String? = nil) async -> (player: String, host: String)? {
+	    private func old_registerPlayer(_ player: String? = nil) async -> (player: String, host: String)? {
             let player: String = player ?? self.player;
 		    struct Response: Decodable { let player: String ; let host: String };
     	    let baseURL = URL(string: "http://127.0.0.1:5000")!
