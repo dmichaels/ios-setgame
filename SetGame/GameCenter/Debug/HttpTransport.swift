@@ -34,6 +34,7 @@ extension GameCenter
         }
 
         private let url: URL;
+        private var sentCount: Int = 0;
 
         public init(player: String? = nil, url: URL? = nil) {
             self.player = player ?? ID(veryshort: true).value;
@@ -55,6 +56,17 @@ extension GameCenter
                 return host;
             }
             return "";
+        }
+
+        private func send(message: Message, to player: String) {
+            guard let payload = message.json else { return }
+            let body: [String: Any] = [
+                "to": player,
+                "message": payload
+            ]
+            if self.url.post("send", data: body) {
+                self.sentCount += 1
+            }
         }
     }
 
