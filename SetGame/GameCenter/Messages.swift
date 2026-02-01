@@ -60,9 +60,9 @@ public extension GameCenter.MessageHandler {
 
 public extension GameCenter.Message
 {
-    fileprivate init?(_ data: Data?, internal: Bool) {
-        guard let message = GameCenter.toMessage(data: data) as? Self else { return nil }
-        self = message;
+    public init?(_ data: Data?) {
+         guard let message = GameCenter.toMessage(data: data) as? Self else { return nil }
+         self = message;
     }
 
     public func serialize() -> Data? {
@@ -145,10 +145,6 @@ public extension GameCenter
         public let type: MessageType;
         public let player: String;
 
-        public init?(_ data: Data?) {
-            self.init(data, internal: true);
-        }
-
         public init(player: String) {
             self.type   = .ping;
             self.player = player;
@@ -159,10 +155,6 @@ public extension GameCenter
 
         public let type: MessageType;
         public let player: String;
-
-        public init?(_ data: Data?) {
-            self.init(data, internal: true);
-        }
 
         public init(player: String) {
             self.type   = .playerReady;
@@ -177,10 +169,6 @@ public extension GameCenter
         private let cardcodes: [String];
         public  var cards: [TableCard] { return GameCenter.toCards(self.cardcodes); }
 
-        public init?(_ data: Data?) {
-            self.init(data, internal: true);
-        }
-
         public init(player: String, cards: [Card]) {
             self.type      = .newGame;
             self.player    = player;
@@ -194,8 +182,6 @@ public extension GameCenter
         public  let player: String;
         private let cardcodes: [String];
         public  var cards: [TableCard] { return GameCenter.toCards(self.cardcodes); }
-
-        public init?(_ data: Data?) { self.init(data, internal: true); }
 
         public init(player: String, cards: [Card]) {
             self.type      = .foundSet;
@@ -213,8 +199,6 @@ public extension GameCenter
         public  var cards: [TableCard] { return GameCenter.toCards(self.cardcodes); }
         public  var replacements: [TableCard] { return GameCenter.toCards(self.cardcodesReplacements); }
 
-        public init?(_ data: Data?) { self.init(data, internal: true); }
-
         public init(player: String, cards: [Card], replacements: [Card]) {
             self.type      = .confirmedSet;
             self.player    = player;
@@ -230,7 +214,7 @@ public extension GameCenter
 
 public extension GameCenter
 {
-    public static func toMessage(data: Data?) -> Message? {
+    private static func toMessage(data: Data?) -> Message? {
         struct MessageEnvelope: Decodable { let type: MessageType; }
         if let data: Data = data,
            let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {

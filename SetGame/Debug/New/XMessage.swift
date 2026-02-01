@@ -4,6 +4,10 @@ public extension XGameCenter
 {
     public enum MessageType: String, Codable {
         case ping;
+        case playerReady;
+        case newGame;
+        case foundSet;
+        case confirmedSet;
     }
 
     public protocol Message: Codable {

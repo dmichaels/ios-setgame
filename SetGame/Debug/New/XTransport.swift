@@ -8,6 +8,10 @@ public extension XGameCenter
 
     public protocol MessageHandler {
         func handle(message: PingMessage);
+        func handle(message: PlayerReadyMessage);
+        func handle(message: NewGameMessage);
+        func handle(message: FoundSetMessage);
+        func handle(message: ConfirmedSetMessage);
         var  sender: MessageSender? { get set }
     }
 }
