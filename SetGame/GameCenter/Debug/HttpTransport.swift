@@ -12,12 +12,32 @@ extension GameCenter
 
 extension GameCenter
 {
-    public class HttpTransport_New: Transport_New {
+    public class HttpTransport_New: Transport_New { // where Transport_New imps MessageSender, MessageHandler
+        // public var sender: GameCenter.MessageSender? = nil; // EXPERIMENTAL FOR New_ STUFF
+                    public func bind(to handler: Table) {
+                        self.handler = handler;
+                        handler.sender = self;
+                    }
 
         public private(set) var player: String = ID(veryshort: true).value; // Transport_New imp
         public              var handler: MessageHandler? = nil;  // Transport_New imp
 
-        public func send(_ message: Message) { // Transport_New imp
+        public func send(message: Message) { // Transport_New imp
+        }
+
+        public func handle(message: GameCenter.PingMessage) { // MessageHandler imp
+        }
+
+        public func handle(message: GameCenter.PlayerReadyMessage) { // MessageHandler imp
+        }
+
+        public func handle(message: GameCenter.NewGameMessage) { // MessageHandler imp
+        }
+
+        public func handle(message: GameCenter.FoundSetMessage) { // MessageHandler imp
+        }
+
+        public func handle(message: GameCenter.ConfirmedSetMessage) { // MessageHandler imp
         }
 
         public func start() { // Transport_New imp
@@ -132,6 +152,12 @@ extension GameCenter
     }
 
     public class HttpTransport: Transport {
+        // public var sender: GameCenter.MessageSender? = nil; // EXPERIMENTAL FOR New_ STUFF
+
+                    public func bind(handler: Table) {
+                        self.handler = handler;
+                        handler.sender = self;
+                    }
 
         public static let instance: HttpTransport = HttpTransport(player: ID(veryshort: true).value);
 
@@ -347,6 +373,7 @@ extension GameCenter
         		    // let result = String(data: data, encoding: .utf8);
                     self.sentCount = 0;
                     self.retrievedCount = 0;
+                    self.handledCount = 0;
                     return true;
                 }
             }
@@ -364,6 +391,7 @@ extension GameCenter
         		    // let result = String(data: data, encoding: .utf8);
                     self.sentCount = 0;
                     self.retrievedCount = 0;
+                    self.handledCount = 0;
                     return true;
                 }
             }
@@ -381,6 +409,7 @@ extension GameCenter
         		    // let result = String(data: data, encoding: .utf8);
                     self.sentCount = 0;
                     self.retrievedCount = 0;
+                    self.handledCount = 0;
                     return true;
                 }
             }

@@ -138,6 +138,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		98C9D1E72F2941160094E251 /* Debug */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Debug; sourceTree = "<group>"; };
+		98C9D2242F2F9D180094E251 /* New */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = New; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -319,6 +320,7 @@
 		98EF7E192F1D070500A45F63 /* Debug */ = {
 			isa = PBXGroup;
 			children = (
+				98C9D2242F2F9D180094E251 /* New */,
 				9867E1442F2182AB00CB221F /* CardViewDebug.swift */,
 				9867E1422F21821800CB221F /* CardArrayDebug.swift */,
 			);
@@ -343,6 +345,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				98C9D1E72F2941160094E251 /* Debug */,
+				98C9D2242F2F9D180094E251 /* New */,
 			);
 			name = SetGame;
 			productName = SetGame;

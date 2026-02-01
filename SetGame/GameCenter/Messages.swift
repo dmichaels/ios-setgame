@@ -35,17 +35,27 @@ public extension GameCenter
         var  json: [String: Any]? { get };
     }
 
-    public protocol MessageHandler: AnyObject {
+    public protocol MessageHandler /*: AnyObject*/ { // TODO: WHY from AnyObject
         func handle(message: PingMessage);
         func handle(message: PlayerReadyMessage);
         func handle(message: NewGameMessage);
         func handle(message: FoundSetMessage);
         func handle(message: ConfirmedSetMessage);
+        // func bind(to: GameCenter.MessageSender);
+        //// func bind(to: GameCenter.Transport_New);
+        //// func bindTo(_: GameCenter.Transport_New);
+        var sender: MessageSender? { get set } // EXPERIMENTAL FOR New_ STUFF
     }
 
-    public protocol MessageSender: AnyObject {
+    public protocol MessageSender /*: AnyObject*/ {
         func send(message: Message);
     }
+}
+
+public extension GameCenter.MessageHandler {
+    //// func bind(to: GameCenter.Transport_New) {}
+    //// func bindTo(_ to: GameCenter.Transport_New) { to.handler = self; }
+        var sender: GameCenter.MessageSender? { get { nil } set {} }
 }
 
 public extension GameCenter.Message
@@ -73,10 +83,10 @@ public extension GameCenter.Message
 //
 public extension GameCenter
 {
-    public protocol Transport_New {
+    public protocol Transport_New: MessageSender, MessageHandler {
         var  player: String { get };
         var  handler: MessageHandler? { get set }
-        func send(_ message: Message);
+        // func send(message: Message); // from MessageSender
         func start();
         func stop();
     }
@@ -95,6 +105,7 @@ public extension GameCenter
         func stop();
     }
 
+    /*
     public final class Manager_New_Old {
 
         private let transport: GameCenter.Transport_New;
@@ -120,6 +131,7 @@ public extension GameCenter
             }
         }
     }
+    */
 }
 
 public extension GameCenter.Session_New {

@@ -10,6 +10,21 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
     private var settings: Settings;
     private var gameCenterSender: GameCenter.MessageSender?;
 
+    // TODO for New_ stuff ...
+    public var sender: GameCenter.MessageSender?;
+    // public func bind(to: GameCenter.MessageSender) {
+        // self.sender = to;
+        // to.handler = self;
+    // }
+    // OR ...
+    /*
+    public func bind(to: GameCenter.Transport_New) {
+        self.bindTo(to);
+        self.sender = to;
+        to.handler = self;
+    }
+    */
+
     public struct State {
         public private(set) var startTime: Date                     = Date();
         public              var partialSetSelected: Bool            = false;
