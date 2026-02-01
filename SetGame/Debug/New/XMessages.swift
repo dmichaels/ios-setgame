@@ -22,24 +22,6 @@ public extension XGameCenter.Message
 
 public extension XGameCenter
 {
-    private static func toMessage(data: Data?) -> Message? {
-        struct MessageEnvelope: Decodable { let type: MessageType; }
-        if let data: Data = data,
-           let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
-            switch envelope.type {
-            case .ping:         return try? JSONDecoder().decode(PingMessage.self, from: data);
-            case .playerReady:  return try? JSONDecoder().decode(PlayerReadyMessage.self, from: data);
-            case .newGame:      return try? JSONDecoder().decode(NewGameMessage.self, from: data);
-            case .foundSet:     return try? JSONDecoder().decode(FoundSetMessage.self, from: data);
-            case .confirmedSet: return try? JSONDecoder().decode(ConfirmedSetMessage.self, from: data);
-            }
-        }
-        return nil;
-    }
-}
-
-public extension XGameCenter
-{
     public struct PingMessage: Message {
 
         public let type: MessageType;
@@ -109,5 +91,20 @@ public extension XGameCenter
 
     private static func toCards(_ codes: [String]) -> [TableCard] {
         return codes.compactMap { TableCard($0) };
+    }
+
+    private static func toMessage(data: Data?) -> Message? {
+        struct MessageEnvelope: Decodable { let type: MessageType; }
+        if let data: Data = data,
+           let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
+            switch envelope.type {
+            case .ping:         return try? JSONDecoder().decode(PingMessage.self, from: data);
+            case .playerReady:  return try? JSONDecoder().decode(PlayerReadyMessage.self, from: data);
+            case .newGame:      return try? JSONDecoder().decode(NewGameMessage.self, from: data);
+            case .foundSet:     return try? JSONDecoder().decode(FoundSetMessage.self, from: data);
+            case .confirmedSet: return try? JSONDecoder().decode(ConfirmedSetMessage.self, from: data);
+            }
+        }
+        return nil;
     }
 }
