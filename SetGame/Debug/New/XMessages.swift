@@ -39,18 +39,6 @@ public extension XGameCenter
 
 public extension XGameCenter
 {
-    /*
-    public struct PingMessage: Message {
-
-        public let type: MessageType;
-        public let player: String;
-
-        public init(player: String) {
-            self.type   = .ping;
-            self.player = player;
-        }
-    }
-    */
     public struct PingMessage: Message {
 
         public let type: MessageType;
