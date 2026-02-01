@@ -89,8 +89,8 @@ public extension GameCenter
     }
 
     public protocol Manager_New {
-        var session: Session_New { get };
         var transport: Transport_New { get };
+        var session: Session_New { get };
         func start() async;
         func stop();
     }

@@ -24,6 +24,10 @@ struct SetGameApp: App {
                 .environmentObject(self.feedback)
                 .task {
                     await GameCenterAuthentication.authenticate();
+                    //
+                    // This is key:
+                    // The Transport which as-a (implements) MessageSende
+                    // points at Table which implement
                     GameCenter.HttpTransport.instance.handler = self.table;
                 }
         }
