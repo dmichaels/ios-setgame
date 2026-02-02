@@ -6,19 +6,14 @@ public extension XGameCenter
         func send(message: Message);
     }
 
-    public protocol MessageHandler {
+    public protocol MessageHandler: AnyObject {
+        var  sender: MessageSender? { get set }
         func handle(message: PingMessage);
         func handle(message: PlayerReadyMessage);
         func handle(message: NewGameMessage);
         func handle(message: FoundSetMessage);
         func handle(message: ConfirmedSetMessage);
-        var  sender: MessageSender? { get set }
     }
-}
-
-public extension XGameCenter.MessageHandler
-{
-    public var sender: XGameCenter.MessageSender? { get { nil } set {} }
 }
 
 public extension XGameCenter
@@ -27,16 +22,17 @@ public extension XGameCenter
         var  player: String { get };
         func start();
         func stop();
+        func bind(to: MessageHandler);
     }
 
-    public protocol Session{
+    public protocol Session {
         var player: String { get };
         var host: String { get };
         var hosting: Bool { get };
         var players: [String] { get };
     }
 
-    public protocol Manager{
+    public protocol Manager {
         var transport: Transport { get };
         var session: Session { get };
         func start() async;

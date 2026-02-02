@@ -6,18 +6,6 @@ public extension XGameCenter.Message
         guard let message = XGameCenter.toMessage(data: data) as? Self else { return nil }
         self = message;
     }
-
-    public func serialize() -> Data? {
-        do { return try JSONEncoder().encode(self); } catch { return nil; }
-    }
-
-    public var json: [String: Any]? {
-        if let data = self.serialize(),
-           let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-            return json;
-        }
-        return nil;
-    }
 }
 
 public extension XGameCenter
