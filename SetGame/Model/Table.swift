@@ -10,20 +10,7 @@ public class Table: ObservableObject, XGameCenter.MessageHandler {
     private var settings: Settings;
     private var gameCenterSender: XGameCenter.MessageSender?;
 
-    // TODO for New_ stuff ...
     public var sender: XGameCenter.MessageSender?;
-    // public func bind(to: GameCenter.MessageSender) {
-        // self.sender = to;
-        // to.handler = self;
-    // }
-    // OR ...
-    /*
-    public func bind(to: GameCenter.Transport_New) {
-        self.bindTo(to);
-        self.sender = to;
-        to.handler = self;
-    }
-    */
 
     public struct State {
         public private(set) var startTime: Date                     = Date();
