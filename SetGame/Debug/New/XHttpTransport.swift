@@ -30,8 +30,7 @@ public extension XGameCenter
         // MessageHandler protocol implementation.
 
         public var sender: MessageSender? {
-            get { self }
-            set { }
+            get { self } set { }
         }
 
         public func handle(message: PingMessage) {
