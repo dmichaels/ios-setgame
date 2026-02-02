@@ -25,7 +25,6 @@
 		9867E12F2F1E573000CB221F /* Delay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E12D2F1E573000CB221F /* Delay.swift */; };
 		9867E1332F1E86FE00CB221F /* CardGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1322F1E86FE00CB221F /* CardGridView.swift */; };
 		9867E1392F1FC98E00CB221F /* TableDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1382F1FC98E00CB221F /* TableDemo.swift */; };
-		9867E13F2F213EE100CB221F /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E13E2F213EE100CB221F /* Messages.swift */; };
 		9867E1412F217D4200CB221F /* CardGridCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1402F217D4200CB221F /* CardGridCallbacks.swift */; };
 		9867E1432F21821800CB221F /* CardArrayDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1422F21821800CB221F /* CardArrayDebug.swift */; };
 		9867E1452F2182AB00CB221F /* CardViewDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1442F2182AB00CB221F /* CardViewDebug.swift */; };
@@ -102,7 +101,6 @@
 		9867E12D2F1E573000CB221F /* Delay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delay.swift; sourceTree = "<group>"; };
 		9867E1322F1E86FE00CB221F /* CardGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardGridView.swift; sourceTree = "<group>"; };
 		9867E1382F1FC98E00CB221F /* TableDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableDemo.swift; sourceTree = "<group>"; };
-		9867E13E2F213EE100CB221F /* Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messages.swift; sourceTree = "<group>"; };
 		9867E1402F217D4200CB221F /* CardGridCallbacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardGridCallbacks.swift; sourceTree = "<group>"; };
 		9867E1422F21821800CB221F /* CardArrayDebug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardArrayDebug.swift; sourceTree = "<group>"; };
 		9867E1442F2182AB00CB221F /* CardViewDebug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardViewDebug.swift; sourceTree = "<group>"; };
@@ -304,7 +302,6 @@
 				9867E1482F21CF4300CB221F /* PlayButtonView.swift */,
 				9867E1492F21CF4300CB221F /* TopViewController.swift */,
 				9867E14A2F21CF4300CB221F /* UIApplication+TopMostViewController.swift */,
-				9867E13E2F213EE100CB221F /* Messages.swift */,
 			);
 			path = GameCenter;
 			sourceTree = "<group>";
@@ -486,7 +483,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				989FF8FB25EF3708002AE44A /* CardArray.swift in Sources */,
-				9867E13F2F213EE100CB221F /* Messages.swift in Sources */,
 				98A5C7422EFED67E009E708D /* VersionInfo.swift in Sources */,
 				9811914225ED5ACF0083606B /* Deck.swift in Sources */,
 				981190F225ED59CC0083606B /* ContentView.swift in Sources */,

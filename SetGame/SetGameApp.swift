@@ -49,8 +49,7 @@ struct SetGameApp: App {
                     }
                     var transport: XGameCenter.HttpTransport = XGameCenter.HttpTransport();
                     var session: XGameCenter.Session = XGameCenter.HttpSession(transport: transport);
-                    var table: XTable = XTable();
-                    await session.start(bind: table);
+                    await session.start(bind: self.table);
                 }
         }
     }
