@@ -9,16 +9,10 @@ public extension XGameCenter
         public var player: String = ID(veryshort: true).value;
 
         public func start() {
-            //
-            // TODO
-            //
             self.poll();
         }
 
         public func stop() {
-            //
-            // TODO
-            //
             self.nopoll();
         }
 
