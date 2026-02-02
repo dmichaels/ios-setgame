@@ -36,13 +36,13 @@ public extension XGameCenter
 
         public  let type: MessageType;
         public  let player: String;
-        private let cardcodes: [String];
-        public  var cards: [TableCard] { return MessageConversion.toCards(self.cardcodes); }
+        private let codes: [String];
+        public  var cards: [TableCard] { return MessageConversion.toCards(self.codes); }
 
         public init(player: String, cards: [Card]) {
             self.type      = .newGame;
             self.player    = player;
-            self.cardcodes = cards.map { $0.code };
+            self.codes = cards.map { $0.code };
         }
     }
 
@@ -50,13 +50,13 @@ public extension XGameCenter
 
         public  let type: MessageType;
         public  let player: String;
-        private let cardcodes: [String];
-        public  var cards: [TableCard] { return MessageConversion.toCards(self.cardcodes); }
+        private let codes: [String];
+        public  var cards: [TableCard] { return MessageConversion.toCards(self.codes); }
 
         public init(player: String, cards: [Card]) {
             self.type      = .foundSet;
             self.player    = player;
-            self.cardcodes = cards.map { $0.code };
+            self.codes = cards.map { $0.code };
         }
     }
 
@@ -64,37 +64,22 @@ public extension XGameCenter
 
         public  let type: MessageType;
         public  let player: String;
-        private let cardcodes: [String];
-        private let cardcodesReplacements: [String];
-        public  var cards: [TableCard] { return MessageConversion.toCards(self.cardcodes); }
-        public  var replacements: [TableCard] { return MessageConversion.toCards(self.cardcodesReplacements); }
+        private let codes: [String];
+        private let replacementCodes: [String];
+        public  var cards: [TableCard] { return MessageConversion.toCards(self.codes); }
+        public  var replacements: [TableCard] { return MessageConversion.toCards(self.replacementCodes); }
 
         public init(player: String, cards: [Card], replacements: [Card]) {
             self.type      = .confirmedSet;
             self.player    = player;
-            self.cardcodes = cards.map { $0.code };
-            self.cardcodesReplacements = cards.map { $0.code };
+            self.codes = cards.map { $0.code };
+            self.replacementCodes = cards.map { $0.code };
         }
     }
 }
 
 public extension XGameCenter { public struct MessageConversion
 {
-    fileprivate static func toMessage(data: Data?) -> Message? {
-        struct MessageEnvelope: Decodable { let type: MessageType; }
-        if let data: Data = data,
-        let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
-            switch envelope.type {
-                case .ping:         return try? JSONDecoder().decode(PingMessage.self, from: data);
-                case .playerReady:  return try? JSONDecoder().decode(PlayerReadyMessage.self, from: data);
-                case .newGame:      return try? JSONDecoder().decode(NewGameMessage.self, from: data);
-                case .foundSet:     return try? JSONDecoder().decode(FoundSetMessage.self, from: data);
-                case .confirmedSet: return try? JSONDecoder().decode(ConfirmedSetMessage.self, from: data);
-            }
-        }
-        return nil;
-    }
-
     public static func toMessages(data: Data?) -> [Message]? {
         if let data: Data = data,
            let array: [[String: Any]] = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
@@ -109,6 +94,21 @@ public extension XGameCenter { public struct MessageConversion
                  }
             }
             return messages;
+        }
+        return nil;
+    }
+
+    fileprivate static func toMessage(data: Data?) -> Message? {
+        struct MessageEnvelope: Decodable { let type: MessageType; }
+        if let data: Data = data,
+        let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
+            switch envelope.type {
+                case .ping:         return try? JSONDecoder().decode(PingMessage.self, from: data);
+                case .playerReady:  return try? JSONDecoder().decode(PlayerReadyMessage.self, from: data);
+                case .newGame:      return try? JSONDecoder().decode(NewGameMessage.self, from: data);
+                case .foundSet:     return try? JSONDecoder().decode(FoundSetMessage.self, from: data);
+                case .confirmedSet: return try? JSONDecoder().decode(ConfirmedSetMessage.self, from: data);
+            }
         }
         return nil;
     }
