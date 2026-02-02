@@ -40,6 +40,10 @@ struct SetGameApp: App {
                     // self.table.sender = transport;
                     // transport.bind(to: self.table);
                     //
+                    if (self.settings.multiPlayer.http) {
+                    }
+                    else {
+                    }
                     var transport: XGameCenter.HttpTransport = XGameCenter.HttpTransport();
                     var session: XGameCenter.Session = XGameCenter.HttpSession(transport: transport);
                     var table: XTable = XTable();

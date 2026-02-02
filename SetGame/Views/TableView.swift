@@ -22,15 +22,8 @@ public struct TableView: View {
             Space(size: 18)
             StatusBar(marginx: marginx)
             MultiPlayerDevelopmentPanel(table: table, settings: settings)
-/*
-            Space(size: 24)
-            MultiPlayerControlPanel(table: table, settings: settings)
-            Space(size: 4)
-            MultiPlayerInfoPanel(table: table, settings: settings)
-*/
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)
-            DebugView(table: table)
             MultiPlayerGameButton()
         }
         .allowsHitTesting(!self.table.disabled)
@@ -62,57 +55,6 @@ public struct TableView: View {
         }
     }
 }
-
-private struct DebugView: View {
-    @ObservedObject var table: Table;
-    var body: some View { HStack {
-        // Button { Task {
-        //     print("HTTP-GET>")
-        //     let transport: GameCenter.HttpTransport = GameCenter.HttpTransport(player: "A");
-        //     let messages: [GameCenter.Message] = await transport.retrieveMessages(for: "A");
-        //     print("HTTP-GET> messages: \(messages)")
-        //     print("HTTP-GET> done")
-        // } } label: { Text("HTTP-GET") }
-        Button { Task {
-            print("HTTP-POST>")
-            let transport: GameCenter.Transport = GameCenter.HttpTransport.instance;
-            let cards: [TableCard] = [TableCard("ROS1")!, TableCard("ROS2")!, TableCard("ROS3")!];
-            let message: GameCenter.Message = GameCenter.FoundSetMessage(player: GameCenter.HttpTransport.instance.player, cards: cards);
-            print("HTTP-POST> send player: \(GameCenter.HttpTransport.instance.player)")
-            print(message)
-            transport.send(message: message);
-            print("HTTP-POST> done")
-        } } label: { Text("POST") }
-        Button { Task {
-            print("HTTP-NEWGAME>")
-            let transport: GameCenter.Transport = GameCenter.HttpTransport.instance;
-            let cards: [TableCard] = [TableCard("ROS1")!, TableCard("ROS2")!, TableCard("ROS3")!];
-            let message: GameCenter.Message = GameCenter.NewGameMessage(player: GameCenter.HttpTransport.instance.player, cards: cards);
-            print("HTTP-NEWGAME> send player: \(GameCenter.HttpTransport.instance.player)")
-            print(message)
-            transport.send(message: message);
-            print("HTTP-NEWGAME> done")
-        } } label: { Text("NEWGAME") }
-        Button { Task {
-            print("HTTP-REGISTER>")
-            let transport: GameCenter.Transport = GameCenter.HttpTransport.instance;
-            let response = await GameCenter.HttpTransport.instance.register();
-            print(response);
-            print("HTTP-REGISTER> done")
-        } } label: { Text("REG") }
-        Button { Task {
-            print("HTTP-REGISTER>")
-            let transport: GameCenter.Transport = GameCenter.HttpTransport.instance;
-            let response = await GameCenter.HttpTransport.instance.reset();
-            print(response);
-            print("HTTP-REGISTER> done")
-        } } label: { Text("RESET") }
-        Button {
-            table.cards[0].materialize(responsivity: 1.5, elasticity: 0.8);
-        } label: { Text("MAT") }
-    } }
-}
-
 
 private struct MultiPlayerGameButton: View {
     @ObservedObject private var gameCenter = GameCenterManager.shared;

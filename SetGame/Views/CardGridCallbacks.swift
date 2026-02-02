@@ -19,8 +19,9 @@ enum CardGridCallbacks
         )
     }
 
-    public static func onSet(cards: [TableCard], resolve: @escaping () -> Void) {
-        if (Defaults.multiPlayer.enabled) {
+    public static func onSet(cards: [TableCard], multiplayer: Bool = false, resolve: @escaping () -> Void) {
+        // if (Defaults.multiPlayer.enabled) {
+        if (multiplayer) {
             let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(
                 player: GameCenter.HttpTransport.instance.player,
                 cards: cards

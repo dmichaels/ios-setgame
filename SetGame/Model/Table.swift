@@ -227,7 +227,7 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
     public func cardTouched(_ card: TableCard,
                               select: Bool = true,
                               delay: Double? = nil,
-                              onSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
+                              onSet: (([TableCard], Bool, @escaping () -> Void) -> Void)? = nil,
                               onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
                               onCardsMoved: (([TableCard]) -> Void)? = nil) {
 
@@ -258,7 +258,7 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
     }
 
     public func possibleSetSelected(delay: Double? = nil,
-                                    onSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
+                                    onSet: (([TableCard], Bool, @escaping () -> Void) -> Void)? = nil,
                                     onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
                                     onCardsMoved: (([TableCard]) -> Void)? = nil) {
 
@@ -313,7 +313,7 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
                     // The given onSet function implementation is responsible for
                     // and MUST call the passed resolve function or else undefined!
                     //
-                    onSet(selectedCards, resolve);
+                    onSet(selectedCards, self.settings.multiPlayer.enabled, resolve);
                 }
                 else {
                     resolve();
