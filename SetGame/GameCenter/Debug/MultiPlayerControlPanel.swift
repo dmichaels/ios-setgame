@@ -22,7 +22,7 @@ public struct MultiPlayerDevelopmentPanel: View {
     @State fileprivate var info: HttpServerInfo = HttpServerInfo();
     @State private var taskHandle: Task<Void, Never>? = nil
 
-    let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+    let transport: XGameCenter.HttpTransport = XGameCenter.HttpTransport.instance;
 
     public var body: some View {
         VStack {
@@ -56,11 +56,11 @@ public struct MultiPlayerDevelopmentPanel: View {
         guard self.settings.multiPlayer.enabled else { return }
         self.taskHandle = Task {
             while !Task.isCancelled {
-                self.info.messageSentCount = transport.messageSentCount();
-                self.info.messageRetrievedCount = transport.messageRetrievedCount();
-                self.info.messageHandledCount = transport.messageHandledCount();
-                self.info.messageQueueLength = await transport.retrieveMessageQueueLength();
-                self.info.messageQueueLengthAll = await transport.retrieveMessageQueueLength(all: true);
+                self.info.messageSentCount = transport.info.counts.sent;
+                self.info.messageRetrievedCount = transport.info.counts.retrieved;
+                self.info.messageHandledCount = transport.info.counts.handled;
+                self.info.messageQueueLength = transport.info.counts.queued;
+                self.info.messageQueueLengthAll = transport.info.counts.queuedTotal;
                 let players = await transport.retrievePlayers();
                 self.info.playerCount = players.count;
                 self.info.playerRegistered = players.contains(transport.player);
@@ -79,7 +79,7 @@ public struct MultiPlayerControlPanel: View {
     @ObservedObject var settings: Settings;
     @Binding fileprivate var info: HttpServerInfo;
     let background: Color = Color.gray;
-    let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+    let transport: XGameCenter.HttpTransport = XGameCenter.HttpTransport.instance;
     public var body: some View {
         VStack(spacing: 80) {
             HStack(alignment: .firstTextBaseline, spacing: 0) {
@@ -145,7 +145,7 @@ public struct MultiPlayerInfoPanel: View {
     @ObservedObject var settings: Settings;
     @Binding fileprivate var info: HttpServerInfo;
     let background: Color = Color.gray;
-    let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+    let transport: XGameCenter.HttpTransport = XGameCenter.HttpTransport.instance;
     public var body: some View {
         VStack(spacing: 80) {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
@@ -196,11 +196,11 @@ public struct MultiPlayerInfoPanel: View {
     }
 
     private struct PingButton: View {
-        let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+        let transport: XGameCenter.HttpTransport = XGameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
-                    let message: GameCenter.PingMessage = GameCenter.PingMessage(player: transport.player);
+                    let message: XGameCenter.PingMessage = XGameCenter.PingMessage(player: transport.player);
                     await transport.send(message: message);
                 }
             } label: {
@@ -214,7 +214,7 @@ public struct MultiPlayerInfoPanel: View {
     }
 
     private struct RegisterPlayerButton: View {
-        let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+        let transport: XGameCenter.HttpTransport = XGameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
@@ -231,7 +231,7 @@ public struct MultiPlayerInfoPanel: View {
     }
 
     private struct ResetServerButton: View {
-        let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+        let transport: XGameCenter.HttpTransport = XGameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
@@ -302,7 +302,7 @@ public struct MultiPlayerInfoPanelMessages: View {
     }
 
     private struct ResetMessagesButton: View {
-        let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+        let transport: XGameCenter.HttpTransport = XGameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
@@ -319,11 +319,11 @@ public struct MultiPlayerInfoPanelMessages: View {
     }
 
     private struct ResetMessagesAllButton: View {
-        let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+        let transport: XGameCenter.HttpTransport = XGameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
-                    await transport.resetMessagesAll();
+                    await transport.resetMessages(all: true);
                 }
             } label: {
                 Image(systemName: "arrow.clockwise.circle")

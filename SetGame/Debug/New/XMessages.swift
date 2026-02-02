@@ -98,7 +98,10 @@ public extension XGameCenter { public struct MessageConversion
         return nil;
     }
 
-    fileprivate static func toMessage(data: Data?) -> Message? {
+    // TEMPORARY WHILE MIGRATING TO THIS ...
+    public static func toMessage(data: Data?) -> Message? {
+    // fileprivate static func toMessage(data: Data?) -> Message? {
+    // ... END TEMPORARY WHILE MIGRATING TO THIS
         struct MessageEnvelope: Decodable { let type: MessageType; }
         if let data: Data = data,
         let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
@@ -133,7 +136,10 @@ public extension XGameCenter { public struct MessageConveyance
         }
     }
 
-    private static func dispatch(message: Message?,
+    // TEMPORARY WHILE MIGRATING TO THIS ...
+    // private static func dispatch(message: Message?,
+    public static func dispatch(message: Message?,
+    // ... END TEMPORARY WHILE MIGRATING TO THIS
                                 ping: ((PingMessage) -> Void)? = nil,
                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
                                 newGame: ((NewGameMessage) -> Void)? = nil,

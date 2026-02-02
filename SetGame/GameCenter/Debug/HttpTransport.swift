@@ -12,6 +12,7 @@ extension GameCenter
 
 extension GameCenter
 {
+/*
     public class HttpTransport_New: Transport_New { // where Transport_New imps MessageSender, MessageHandler
         // public var sender: GameCenter.MessageSender? = nil; // EXPERIMENTAL FOR New_ STUFF
                     public func bind(to handler: Table) {
@@ -85,33 +86,6 @@ extension GameCenter
                 }
             }
         }
-
-/*
-        private func old_send(message: Message, to player: String) {
-            guard let payload = message.json else { return }
-            // let xxx: [String: Any] = GameCenter.HttpTransport_New.toJSON("to", player, "message", message.json); // EXPERIMENTAL
-            let body: [String: Any] = [
-                "to": player,
-                "message": payload
-            ]
-            if self.url.post("send", data: body) {
-                self.sentCount += 1
-            }
-        }
-
-        private static func toJSON(_ data: Any?...) -> [String: Any] { // EXPERIMENTAL
-            var name: String? = nil;
-            var value: Any? = nil;
-            var json: [String: Any] = [String: Any]();
-            for i in stride(from: 0, to: data.count, by: 2) {
-                if let first: String = data[i] as? String {
-                    let second: Any? = (i + 1 < data.count) ? data[i + 1] : nil;
-                    json[first] = second ?? NSNull();
-                }
-            }
-            return json;
-        }
-*/
     }
 
     public class HttpSession_New: GameCenter.Session_New {
@@ -150,7 +124,9 @@ extension GameCenter
         public func stop() { // Manager_New imp
         }
     }
+*/
 
+/*
     public class HttpTransport: Transport {
         // public var sender: GameCenter.MessageSender? = nil; // EXPERIMENTAL FOR New_ STUFF
 
@@ -501,4 +477,5 @@ extension GameCenter
             pollingTask = nil;
         }
     }
+*/
 }

@@ -22,11 +22,11 @@ enum CardGridCallbacks
     public static func onSet(cards: [TableCard], multiplayer: Bool = false, resolve: @escaping () -> Void) {
         // if (Defaults.multiPlayer.enabled) {
         if (multiplayer) {
-            let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(
-                player: GameCenter.HttpTransport.instance.player,
+            let message: XGameCenter.FoundSetMessage = XGameCenter.FoundSetMessage(
+                player: XGameCenter.HttpTransport.instance.player,
                 cards: cards
             );
-            GameCenter.HttpTransport.instance.send(message: message);
+            XGameCenter.HttpTransport.instance.send(message: message);
             return;
         }
         cards.blink {

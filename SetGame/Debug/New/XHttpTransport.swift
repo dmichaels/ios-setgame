@@ -4,6 +4,13 @@ public extension XGameCenter
 {
     public class HttpTransport: Transport {
 
+        // TEMPORARY WHILE MIGRATING TO THIS ...
+        public static let instance: HttpTransport = HttpTransport(player: ID(veryshort: true).value); // TEMPORARY
+        public var hosting: Bool { self.player == self.info.host }
+        public func startMessagePolling() { self.poll() }
+        public func stopMessagePolling() { self.nopoll() }
+        // ... END TEMPORARY WHILE MIGRATING TO THIS
+
         // Transport protocol implementation.
 
         public var player: String = ID(veryshort: true).value;
@@ -71,6 +78,7 @@ public extension XGameCenter
                 public var retrieved: Int = 0;
                 public var handled: Int = 0;
                 public var queued: Int = 0;
+                public var queuedTotal: Int = 0;
                 public var players: Int = 0;
             }
             public var counts: Counts = Counts();
@@ -104,9 +112,9 @@ public extension XGameCenter
             return [];
         }
 
-	    public func register(player: String) async -> (player: String, host: String)? {
+	    public func register(player: String? = nil) async -> (player: String, host: String)? {
 		    struct Response: Decodable { let player: String ; let host: String };
-            if let response = await self.url.post("register", player, as: Response.self) {
+            if let response = await self.url.post("register", player ?? self.player, as: Response.self) {
                 return (player: response.player, host: response.host);
             }
             return nil;
@@ -161,8 +169,9 @@ public extension XGameCenter
             self.pollTask = Task {
                 while (!Task.isCancelled) {
                     let messages: [XGameCenter.Message] = await self.retrieveMessages(for: self.player);
-                    self.dispatchMessages(messages: messages, async: false);
+                    self.dispatchMessages(messages: messages);
                     self.info.counts.queued = await self.retrieveMessagesQueuedCount();
+                    self.info.counts.queuedTotal = await self.retrieveMessagesQueuedCount(all: true);
                     self.info.counts.players = await self.retrievePlayers().count;
                     self.info.host = await self.retrieveHost();
                     try? await Task.sleep(nanoseconds: Defaults.pollInterval);
@@ -175,13 +184,8 @@ public extension XGameCenter
             self.pollTask = nil;
         }
 
-        private func dispatchMessages(messages: [XGameCenter.Message], async: Bool = false) {
-            if (async) {
-                DispatchQueue.main.async {
-                    XGameCenter.MessageConveyance.dispatch(messages: messages, handler: self);
-                }
-            }
-            else {
+        private func dispatchMessages(messages: [XGameCenter.Message]) {
+            DispatchQueue.main.async {
                 XGameCenter.MessageConveyance.dispatch(messages: messages, handler: self);
             }
         }

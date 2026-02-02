@@ -5,13 +5,13 @@ import SwiftUI
 /// table cards which are on display; and sundry other data points.
 /// Is this class technically, effectively acting as a "model-view"?
 ///
-public class Table: ObservableObject, GameCenter.MessageHandler {
+public class Table: ObservableObject, XGameCenter.MessageHandler {
 
     private var settings: Settings;
-    private var gameCenterSender: GameCenter.MessageSender?;
+    private var gameCenterSender: XGameCenter.MessageSender?;
 
     // TODO for New_ stuff ...
-    public var sender: GameCenter.MessageSender?;
+    public var sender: XGameCenter.MessageSender?;
     // public func bind(to: GameCenter.MessageSender) {
         // self.sender = to;
         // to.handler = self;
@@ -46,20 +46,20 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
     @Published public private(set) var state: State;
                private             var deck: TableDeck;
 
-    public func handle(message: GameCenter.PingMessage) {
+    public func handle(message: XGameCenter.PingMessage) {
         print("Table.handle(Ping)> \(message)");
     }
 
-    public func handle(message: GameCenter.PlayerReadyMessage) {
+    public func handle(message: XGameCenter.PlayerReadyMessage) {
         print("Table.handle(PlayerReady)> \(message)");
     }
 
-    public func handle(message: GameCenter.NewGameMessage) {
+    public func handle(message: XGameCenter.NewGameMessage) {
         print("Table.handle(NewGame)> \(message)");
         self.startNewGame(cards: message.cards);
     }
 
-    public func handle(message: GameCenter.FoundSetMessage) {
+    public func handle(message: XGameCenter.FoundSetMessage) {
         print("Table.handle(FoundSet)> \(message)");
         let cards: [TableCard] = self.cards.find(message.cards);
         CardGridCallbacks.onSetMultiPlayer(cards: cards, resolve: { self.resolveSet() });
@@ -72,11 +72,11 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
         */
     }
 
-    public func handle(message: GameCenter.ConfirmedSetMessage) {
+    public func handle(message: XGameCenter.ConfirmedSetMessage) {
         print("Table.handle(ConfirmedSet)> \(message)");
     }
 
-    public init(settings: Settings, gameCenterSender: GameCenter.MessageSender? = nil) {
+    public init(settings: Settings, gameCenterSender: XGameCenter.MessageSender? = nil) {
         self.settings = settings;
         self.gameCenterSender = gameCenterSender;
         self.cards = [];
@@ -159,11 +159,11 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
             // the menu-item, to start a new game; need to notify clients.
             //
             if let transport = self.gameCenterSender {
-                let message: GameCenter.NewGameMessage = GameCenter.NewGameMessage(
-                    player: GameCenter.HttpTransport.instance.player,
+                let message: XGameCenter.NewGameMessage = XGameCenter.NewGameMessage(
+                    player: XGameCenter.HttpTransport.instance.player,
                     cards: self.cards
                 );
-                if (GameCenter.HttpTransport.instance.hosting) {
+                if (XGameCenter.HttpTransport.instance.hosting) {
                     transport.send(message: message);
                 }
             }

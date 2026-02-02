@@ -13,7 +13,7 @@ struct SetGameApp: App {
         _feedback = StateObject(wrappedValue: Feedback(sounds: settings.sounds,
                                                        haptics: settings.haptics));
         _table = StateObject(wrappedValue: Table(settings: settings,
-                                                 gameCenterSender: GameCenter.HttpTransport.instance));
+                                                 gameCenterSender: XGameCenter.HttpTransport.instance));
 
     }
 
@@ -31,7 +31,8 @@ struct SetGameApp: App {
                     // which isa (i.e. implements) MessageHandler; and Table has MessageSender (sender)
                     // which points back to the Transport, which is also a (i.e. implements) MessageSender.
                     //
-                    GameCenter.HttpTransport.instance.handler = self.table;
+                    // XGameCenter.HttpTransport.instance.handler = self.table;
+                    XGameCenter.HttpTransport.instance.bind(to: self.table);
                     //
                     // TODO for New_ stuff ...
                     //
