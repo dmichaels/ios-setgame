@@ -20,7 +20,7 @@ public extension XGameCenter
             //
         }
 
-        public func bind(to handler: XGameCenter.MessageHandler) {  // Transport imp
+        public func bind(to handler: XGameCenter.MessageHandler) {
             self.handler = handler;
             handler.sender = self;
         }
@@ -40,47 +40,52 @@ public extension XGameCenter
 
         public func handle(message: PingMessage) {
             self.handler?.handle(message: message);
-            self.counts.handled += 1;
+            self.info.counts.handled += 1;
         }
 
         public func handle(message: PlayerReadyMessage) {
             self.handler?.handle(message: message);
-            self.counts.handled += 1;
+            self.info.counts.handled += 1;
         }
 
         public func handle(message: NewGameMessage) {
             self.handler?.handle(message: message);
-            self.counts.handled += 1;
+            self.info.counts.handled += 1;
         }
 
         public func handle(message: FoundSetMessage) {
             self.handler?.handle(message: message);
-            self.counts.handled += 1;
+            self.info.counts.handled += 1;
         }
 
         public func handle(message: ConfirmedSetMessage) {
             self.handler?.handle(message: message);
-            self.counts.handled += 1;
+            self.info.counts.handled += 1;
         }
 
         // HttpTransport class implementation.
 
         private struct Defaults {
-            public static let url: String             = "http://127.0.0.1:5000";
-            public static let contentType: String     = "application/json";
-            public static let contentTypeName: String = "Content-Type";
-            public static let pollingInterval: UInt64 = 300_000_000; // 300ms
+            public static let url: String          = "http://127.0.0.1:5000";
+            public static let pollInterval: UInt64 = 300_000_000; // 300ms
         }
 
-        private struct Counts {
-            public var sent: Int = 0;
-            public var retrieved: Int = 0;
-            public var handled: Int = 0;
+        public struct Info {
+            public struct Counts {
+                public var sent: Int = 0;
+                public var retrieved: Int = 0;
+                public var handled: Int = 0;
+                public var queued: Int = 0;
+                public var players: Int = 0;
+            }
+            public var counts: Counts = Counts();
+            public var host: String = "";
         }
 
         private let url: URL;
         private var handler: XGameCenter.MessageHandler? = nil;
-        private var counts: Counts = Counts();
+        private var pollTask: Task<Void, Never>? = nil;
+        public  var info: Info = Info();
 
         public init(player: String? = nil,  url: URL? = nil) {
             self.player = player ?? ID(veryshort: true).value;
@@ -94,14 +99,14 @@ public extension XGameCenter
                 "message": payload
             ]
             if self.url.post("send", data: body) {
-                self.counts.sent += 1;
+                self.info.counts.sent += 1;
             }
         }
 
         public func retrieveMessages(for player: String? = nil) async -> [GameCenter.Message] {
             if let data: Data = await self.url.get("/receive", player ?? self.player) {
                 if let messages: [GameCenter.Message] = GameCenter.toMessages(data: data) {
-                    self.counts.retrieved += messages.count;
+                    self.info.counts.retrieved += messages.count;
                     return messages;
                 }
             }
@@ -124,12 +129,65 @@ public extension XGameCenter
             return "";
         }
 
-        public func retrieveMessageQueueLength(for player: String? = nil, all: Bool = false) async -> Int {
+        public func retrievePlayers() async -> [String] {
+            return await self.url.get("/players", as: [String].self) ?? [];
+        }
+
+        public func retrieveMessagesQueuedCount(for player: String? = nil, all: Bool = false) async -> Int {
             struct Response: Decodable { let count: Int };
             if let response: Response = await self.url.get ("/messagecount", all ? nil : (player ?? self.player), as: Response.self) {
                 return response.count;
             }
             return 0;
+        }
+
+		public func reset() {
+            self.url.post("/reset");
+		}
+
+		public func resetHost() {
+            self.url.post("/resethost");
+		}
+
+		public func setHost(host: String? = nil) {
+            self.url.post("/host", host ?? self.player);
+		}
+
+		public func unsetHost() {
+            self.url.post("/nohost");
+		}
+
+		public func resetMessages(player: String? = nil, all: Bool = false) {
+            if self.url.post("/resetmessages", all ? nil : (player ?? self.player)) {
+                self.info.counts.sent = 0;
+                self.info.counts.retrieved = 0;
+                self.info.counts.handled = 0;
+            }
+		}
+
+        public func poll() {
+            guard self.pollTask == nil else { return }
+            self.pollTask = Task {
+                while (!Task.isCancelled) {
+                    let messages: [GameCenter.Message] = await self.retrieveMessages(for: self.player);
+                    self.dispatchMessages(messages: messages);
+                    self.info.counts.queued = await self.retrieveMessagesQueuedCount();
+                    self.info.counts.players = await self.retrievePlayers().count;
+                    self.info.host = await self.retrieveHost();
+                    try? await Task.sleep(nanoseconds: Defaults.pollInterval);
+                }
+            }
+        }
+
+        public func nopoll() {
+            self.pollTask?.cancel();
+            self.pollTask = nil;
+        }
+
+        private func dispatchMessages(messages: [GameCenter.Message]) {
+            DispatchQueue.main.async {
+                // TODO XGameCenter.dispatch(messages: messages, handler: self);
+            }
         }
     }
 }
