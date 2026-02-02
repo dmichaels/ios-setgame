@@ -37,7 +37,7 @@ public extension XGameCenter
         public  let type: MessageType;
         public  let player: String;
         private let cardcodes: [String];
-        public  var cards: [TableCard] { return XGameCenter.toCards(self.cardcodes); }
+        public  var cards: [TableCard] { return MessageConversion.toCards(self.cardcodes); }
 
         public init(player: String, cards: [Card]) {
             self.type      = .newGame;
@@ -51,7 +51,7 @@ public extension XGameCenter
         public  let type: MessageType;
         public  let player: String;
         private let cardcodes: [String];
-        public  var cards: [TableCard] { return XGameCenter.toCards(self.cardcodes); }
+        public  var cards: [TableCard] { return MessageConversion.toCards(self.cardcodes); }
 
         public init(player: String, cards: [Card]) {
             self.type      = .foundSet;
@@ -66,8 +66,8 @@ public extension XGameCenter
         public  let player: String;
         private let cardcodes: [String];
         private let cardcodesReplacements: [String];
-        public  var cards: [TableCard] { return XGameCenter.toCards(self.cardcodes); }
-        public  var replacements: [TableCard] { return XGameCenter.toCards(self.cardcodesReplacements); }
+        public  var cards: [TableCard] { return MessageConversion.toCards(self.cardcodes); }
+        public  var replacements: [TableCard] { return MessageConversion.toCards(self.cardcodesReplacements); }
 
         public init(player: String, cards: [Card], replacements: [Card]) {
             self.type      = .confirmedSet;
@@ -75,10 +75,6 @@ public extension XGameCenter
             self.cardcodes = cards.map { $0.code };
             self.cardcodesReplacements = cards.map { $0.code };
         }
-    }
-
-    private static func toCards(_ codes: [String]) -> [TableCard] {
-        return codes.compactMap { TableCard($0) };
     }
 }
 
@@ -107,7 +103,7 @@ public extension XGameCenter { public struct MessageConversion
             for object: [String: Any] in array {
                 if JSONSerialization.isValidJSONObject(object),
                    let item: Data = try? JSONSerialization.data(withJSONObject: object) {
-                    if let message: Message = XGameCenter.MessageConversion.toMessage(data: item) {
+                    if let message: Message = MessageConversion.toMessage(data: item) {
                         messages.append(message);
                     }
                  }
@@ -115,6 +111,10 @@ public extension XGameCenter { public struct MessageConversion
             return messages;
         }
         return nil;
+    }
+
+    fileprivate static func toCards(_ codes: [String]) -> [TableCard] {
+        return codes.compactMap { TableCard($0) };
     }
 }}
 
