@@ -34,11 +34,16 @@ struct SetGameApp: App {
                     GameCenter.HttpTransport.instance.handler = self.table;
                     //
                     // TODO for New_ stuff ...
-                    ///
-                    var transport: GameCenter.HttpTransport_New = GameCenter.HttpTransport_New();
-                    transport.handler = self.table;
-                    self.table.sender = transport;
-                    transport.bind(to: self.table);
+                    //
+                    // var transport: GameCenter.HttpTransport_New = GameCenter.HttpTransport_New();
+                    // transport.handler = self.table;
+                    // self.table.sender = transport;
+                    // transport.bind(to: self.table);
+                    //
+                    var transport: XGameCenter.HttpTransport = XGameCenter.HttpTransport();
+                    var session: XGameCenter.Session = XGameCenter.HttpSession(transport: transport);
+                    var table: XTable = XTable();
+                    await session.start(bind: table);
                 }
         }
     }

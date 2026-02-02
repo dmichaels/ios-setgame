@@ -7,5 +7,6 @@ public extension XGameCenter
         var host: String { get };
         var hosting: Bool { get };
         var players: [String] { get };
+        func start(bind: MessageHandler) async -> Bool;
     }
 }

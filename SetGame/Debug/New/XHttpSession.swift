@@ -7,28 +7,36 @@ public extension XGameCenter
         // Session protocol implementation.
 
         public var player: String {
-            self.transportImp.player
+            return self.transportImp.player;
         }
 
         public var host: String {
-            // self.transportImp.retrieveHost()
-            ""
+            return self.hostImp;
         }
 
         public var hosting: Bool {
-            // self.transportImp.retrieveHost() == self.player
-            false
+            return self.player == self.host;
         }
 
         public var players: [String] {
-            // self.transportImp.retrievePlayers()
-            []
+            return self.playersImp;
         }
 
+        // HttpSession implementation.
+
         private var transportImp: XGameCenter.HttpTransport = XGameCenter.HttpTransport();
+        private var hostImp: String = "";
+        private var playersImp: [String] = [];
 
         public init(transport: XGameCenter.HttpTransport? = nil) {
             self.transportImp = transport ?? XGameCenter.HttpTransport();
+        }
+
+        public func start(bind: MessageHandler) async -> Bool {
+            self.hostImp = await self.transportImp.retrieveHost();
+            self.playersImp = await self.transportImp.retrievePlayers();
+            self.transportImp.bind(to: bind);
+            return true;
         }
     }
 }
