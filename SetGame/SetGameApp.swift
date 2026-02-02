@@ -1,5 +1,7 @@
 import SwiftUI
 
+public let AID: String = ID(veryshort: true).value;
+
 @main
 struct SetGameApp: App {
 
