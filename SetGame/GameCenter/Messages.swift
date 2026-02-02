@@ -297,6 +297,7 @@ public extension GameCenter
                                     ping: ping,
                                     playerReady: playerReady,
                                     newGame: newGame,
+                                    foundSet: foundSet,
                                     confirmedSet: confirmedSet);
             }
         }

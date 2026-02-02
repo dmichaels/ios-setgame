@@ -238,7 +238,7 @@ extension GameCenter
         }
 
         private func sendMessage(message: GameCenter.Message, to player: String? = nil) {
-            print("DEBUG-\(AID):SEND> message: \(message.type) player: \(message.player)");
+            // print("DEBUG-\(AID):SEND> message: \(message.type) player: \(message.player)");
             self.new_sendMessage(message: message, to: player ?? message.player);
             // self.sendMessage(data: message.serialize(), to: player ?? message.player);
         }
@@ -250,6 +250,7 @@ extension GameCenter
                 "message": payload
             ]
             if self.url.post("send", data: body) {
+                print("DEBUG-\(AID):SENDNEW> message: \(message.type) player: \(player ?? message.player)");
                 self.sentCount += 1
             }
         }
@@ -287,6 +288,9 @@ extension GameCenter
             if let response = try? await URLSession.shared.data(from: url) {
                 let data: Data = response.0;
                 if let messages: [GameCenter.Message] = GameCenter.toMessages(data: data) {
+                    if (messages.count > 0) {
+                        print("DEBUG-\(AID):RETRIEVE> messages: \(messages.count)");
+                    }
                     self.retrievedCount += messages.count;
                     return messages;
                 }
@@ -298,9 +302,7 @@ extension GameCenter
             struct MessageEnvelope: Decodable { let count: Int };
             // if let data: Data = await url.get(all ? "/messagecount/\(self.player)" : "/messagecount") {
             if let data: Data = await url.get("/messagecount", all ? self.player : nil) {
-                print("DEBUG:retrieveMessageQueueLength(\(all)): \(data)")
                 if let envelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
-                    print("DEBUG:retrieveMessageQueueLength(\(all)): done \(envelope.count)")
                     return envelope.count;
                 }
             }
@@ -478,6 +480,11 @@ extension GameCenter
                 while (!Task.isCancelled) {
                     let messages: [GameCenter.Message] = await self.retrieveMessages(for: self.player);
                     if (messages.count > 0) { print("DEBUG-\(AID):POLL> messages: \(messages.count)"); }
+                    if (messages.count > 0) {
+                        if messages[0].type == .foundSet {
+                            let x = 1
+                        }
+                    }
                     self.dispatchMessages(messages: messages);
                     //
                     // Also BTW check that the host has not changed out from under
