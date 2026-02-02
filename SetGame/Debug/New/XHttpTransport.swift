@@ -4,24 +4,75 @@ public extension XGameCenter
 {
     public class HttpTransport: XGameCenter.Transport {
 
-        public var  player: String = ID(veryshort: true).value;    // Transport imp
-        public func send(message: Message) {}                      // Transport imp
-        public func start() {}                                     // Transport imp
-        public func stop() {}                                      // Transport imp
+        // Transport protocol implementation.
 
-        public var  sender: MessageSender? { get { self } set {} } // MessageHandler imp
-        public func handle(message: PingMessage) {}                // MessageHandler imp
-        public func handle(message: PlayerReadyMessage) {}         // MessageHandler imp
-        public func handle(message: NewGameMessage) {}             // MessageHandler imp
-        public func handle(message: FoundSetMessage) {}            // MessageHandler imp
-        public func handle(message: ConfirmedSetMessage) {}        // MessageHandler imp
+        public var player: String = ID(veryshort: true).value;
 
-        private var  handler: XGameCenter.MessageHandler?
+        public func start() {
+            //
+            // TODO
+            //
+        }
 
-        public func bind(to handler: XGameCenter.MessageHandler) {
+        public func stop() {
+            //
+            // TODO
+            //
+        }
+
+        public func bind(to handler: XGameCenter.MessageHandler) {  // Transport imp
             self.handler = handler;
             handler.sender = self;
         }
+
+        // MessageSender protocol implementation.
+
+        public func send(message: Message) {
+            //
+            // TODO
+            //
+        }
+
+        // MessageHandler protocol implementation.
+
+        public var sender: MessageSender? {
+            get { self }
+            set { }
+        }
+
+        public func handle(message: PingMessage) {
+            //
+            // TODO
+            //
+        }
+
+        public func handle(message: PlayerReadyMessage) {
+            //
+            // TODO
+            //
+        }
+
+        public func handle(message: NewGameMessage) {
+            //
+            // TODO
+            //
+        }
+
+        public func handle(message: FoundSetMessage) {
+            //
+            // TODO
+            //
+        }
+
+        public func handle(message: ConfirmedSetMessage) {
+            //
+            // TODO
+            //
+        }
+
+        // HttpTransport class implementation.
+
+        private var handler: XGameCenter.MessageHandler? = nil;
 
         private struct Defaults {
             public static let url: String             = "http://127.0.0.1:5000";
@@ -30,12 +81,17 @@ public extension XGameCenter
             public static let pollingInterval: UInt64 = 300_000_000; // 300ms
         }
 
-        private let url: URL;
-        private var sentCount: Int = 0;
+        private struct Counts {
+            public var sent: Int = 0;
+            public var retrieved: Int = 0;
+            public var handled: Int = 0;
+        }
 
-        public init(player: String? = nil, handler: XGameCenter.MessageHandler? = nil, url: URL? = nil) {
+        private let url: URL;
+        private let counts: Counts = Counts();
+
+        public init(player: String? = nil,  url: URL? = nil) {
             self.player = player ?? ID(veryshort: true).value;
-            self.handler = handler;
             self.url = url ?? URL(string: Defaults.url)!
         }
     }
