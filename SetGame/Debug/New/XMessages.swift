@@ -120,7 +120,20 @@ public extension XGameCenter { public struct MessageConversion
 
 public extension XGameCenter { public struct MessageConveyance
 {
-    public static func dispatch(message: Message?,
+    public static func dispatch(messages: [Message]?, handler: MessageHandler) {
+        if let messages: [Message] = messages {
+            for message: Message in messages {
+                XGameCenter.MessageConveyance.dispatch(message: message,
+                             ping: handler.handle,
+                             playerReady: handler.handle,
+                             newGame: handler.handle,
+                             foundSet: handler.handle,
+                             confirmedSet: handler.handle);
+            }
+        }
+    }
+
+    private static func dispatch(message: Message?,
                                 ping: ((PingMessage) -> Void)? = nil,
                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
                                 newGame: ((NewGameMessage) -> Void)? = nil,
@@ -136,31 +149,5 @@ public extension XGameCenter { public struct MessageConveyance
                 default: break;
             }
         }
-    }
-
-    private static func dispatch(messages: [Message]?,
-                                 ping: ((PingMessage) -> Void)? = nil,
-                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
-                                 newGame: ((NewGameMessage) -> Void)? = nil,
-                                 foundSet: ((FoundSetMessage) -> Void)? = nil,
-                                 confirmedSet: ((ConfirmedSetMessage) -> Void)? = nil) {
-        if let messages: [Message] = messages {
-            for message: Message in messages {
-                XGameCenter.MessageConveyance.dispatch(message: message,
-                                    ping: ping,
-                                    playerReady: playerReady,
-                                    newGame: newGame,
-                                    confirmedSet: confirmedSet);
-            }
-        }
-    }
-
-    public static func dispatch(messages: [Message]?, handler: MessageHandler) {
-        XGameCenter.MessageConveyance.dispatch(messages: messages,
-                             ping: handler.handle,
-                             playerReady: handler.handle,
-                             newGame: handler.handle,
-                             foundSet: handler.handle,
-                             confirmedSet: handler.handle);
     }
 }}
