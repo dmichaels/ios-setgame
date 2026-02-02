@@ -28,9 +28,7 @@ public extension XGameCenter
         // MessageSender protocol implementation.
 
         public func send(message: Message) {
-            //
-            // TODO
-            //
+            self.sendMessage(message);
         }
 
         // MessageHandler protocol implementation.
@@ -41,38 +39,31 @@ public extension XGameCenter
         }
 
         public func handle(message: PingMessage) {
-            //
-            // TODO
-            //
+            self.handler?.handle(message: message);
+            self.counts.handled += 1;
         }
 
         public func handle(message: PlayerReadyMessage) {
-            //
-            // TODO
-            //
+            self.handler?.handle(message: message);
+            self.counts.handled += 1;
         }
 
         public func handle(message: NewGameMessage) {
-            //
-            // TODO
-            //
+            self.handler?.handle(message: message);
+            self.counts.handled += 1;
         }
 
         public func handle(message: FoundSetMessage) {
-            //
-            // TODO
-            //
+            self.handler?.handle(message: message);
+            self.counts.handled += 1;
         }
 
         public func handle(message: ConfirmedSetMessage) {
-            //
-            // TODO
-            //
+            self.handler?.handle(message: message);
+            self.counts.handled += 1;
         }
 
         // HttpTransport class implementation.
-
-        private var handler: XGameCenter.MessageHandler? = nil;
 
         private struct Defaults {
             public static let url: String             = "http://127.0.0.1:5000";
@@ -88,11 +79,57 @@ public extension XGameCenter
         }
 
         private let url: URL;
-        private let counts: Counts = Counts();
+        private var handler: XGameCenter.MessageHandler? = nil;
+        private var counts: Counts = Counts();
 
         public init(player: String? = nil,  url: URL? = nil) {
             self.player = player ?? ID(veryshort: true).value;
             self.url = url ?? URL(string: Defaults.url)!
+        }
+
+        public func sendMessage(_ message: Message, to player: String? = nil) {
+            guard let payload = message.json else { return }
+            let body: [String: Any] = [
+                "to": player ?? message.player,
+                "message": payload
+            ]
+            if self.url.post("send", data: body) {
+                self.counts.sent += 1;
+            }
+        }
+
+        public func retrieveMessages(for player: String? = nil) async -> [GameCenter.Message] {
+            if let data: Data = await self.url.get("/receive", player ?? self.player) {
+                if let messages: [GameCenter.Message] = GameCenter.toMessages(data: data) {
+                    self.counts.retrieved += messages.count;
+                    return messages;
+                }
+            }
+            return [];
+        }
+
+	    public func register(player: String) async -> (player: String, host: String)? {
+		    struct Response: Decodable { let player: String ; let host: String };
+            if let response = await self.url.post("register", player, as: Response.self) {
+                return (player: response.player, host: response.host);
+            }
+            return nil;
+	    }
+
+        public func retrieveHost() async -> String {
+            if let response: [String: Any] = await self.url.get("/host", as: [String: Any].self),
+               let host = response["host"] as? String {
+                return host;
+            }
+            return "";
+        }
+
+        public func retrieveMessageQueueLength(for player: String? = nil, all: Bool = false) async -> Int {
+            struct Response: Decodable { let count: Int };
+            if let response: Response = await self.url.get ("/messagecount", all ? nil : (player ?? self.player), as: Response.self) {
+                return response.count;
+            }
+            return 0;
         }
     }
 }
