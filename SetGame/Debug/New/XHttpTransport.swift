@@ -89,11 +89,7 @@ public extension XGameCenter
 
         public func sendMessage(_ message: Message, to player: String? = nil) {
             guard let payload = message.json else { return }
-            let body: [String: Any] = [
-                "to": player ?? message.player,
-                "message": payload
-            ]
-            if self.url.post("send", data: body) {
+            if self.url.post("send", data: ["to": player ?? message.player, "message": payload]) {
                 self.info.counts.sent += 1;
             }
         }
@@ -160,12 +156,12 @@ public extension XGameCenter
             }
 		}
 
-        public func poll() {
+        private func poll() {
             guard self.pollTask == nil else { return }
             self.pollTask = Task {
                 while (!Task.isCancelled) {
                     let messages: [XGameCenter.Message] = await self.retrieveMessages(for: self.player);
-                    self.dispatchMessages(messages: messages);
+                    self.dispatchMessages(messages: messages, async: false);
                     self.info.counts.queued = await self.retrieveMessagesQueuedCount();
                     self.info.counts.players = await self.retrievePlayers().count;
                     self.info.host = await self.retrieveHost();
@@ -174,13 +170,18 @@ public extension XGameCenter
             }
         }
 
-        public func nopoll() {
+        private func nopoll() {
             self.pollTask?.cancel();
             self.pollTask = nil;
         }
 
-        private func dispatchMessages(messages: [XGameCenter.Message]) {
-            DispatchQueue.main.async {
+        private func dispatchMessages(messages: [XGameCenter.Message], async: Bool = false) {
+            if (async) {
+                DispatchQueue.main.async {
+                    XGameCenter.MessageConveyance.dispatch(messages: messages, handler: self);
+                }
+            }
+            else {
                 XGameCenter.MessageConveyance.dispatch(messages: messages, handler: self);
             }
         }
