@@ -88,8 +88,8 @@ public extension XGameCenter
         }
 
         public func sendMessage(_ message: Message, to player: String? = nil) {
-            guard let payload = message.json else { return }
-            if self.url.post("send", data: ["to": player ?? message.player, "message": payload]) {
+            guard let data: [String: Any] = message.json else { return }
+            if self.url.post("send", data: ["to": player ?? message.player, "message": data]) {
                 self.info.counts.sent += 1;
             }
         }
