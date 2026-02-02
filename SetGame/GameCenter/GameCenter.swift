@@ -1,3 +1,3 @@
 import Foundation
 
-public struct XGameCenter {}
+public struct GameCenter {}

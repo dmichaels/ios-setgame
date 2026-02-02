@@ -1,8 +1,8 @@
 import Foundation
 
-public struct XGameCenter {}
+public struct GameCenter {}
 
-public extension XGameCenter
+public extension GameCenter
 {
     public enum MessageType: String, Codable {
         case ping;
@@ -16,15 +16,15 @@ public extension XGameCenter
     }
 }
 
-public extension XGameCenter.Message
+public extension GameCenter.Message
 {
     private init?(_ data: Data?, internal: Bool) {
-        guard let message = XGameCenter.toMessage(data: data) as? Self else { return nil }
+        guard let message = GameCenter.toMessage(data: data) as? Self else { return nil }
         self = message;
     }
 }
 
-public extension XGameCenter.Message
+public extension GameCenter.Message
 {
     public func serialize() -> Data? {
         do { return try JSONEncoder().encode(self); } catch { return nil; }
@@ -39,7 +39,7 @@ public extension XGameCenter.Message
     }
 }
 
-public extension XGameCenter
+public extension GameCenter
 {
     public static func toMessage(data: Data?) -> Message? {
         struct MessageEnvelope: Decodable { let type: MessageType; }
@@ -53,7 +53,7 @@ public extension XGameCenter
     }
 }
 
-public extension XGameCenter
+public extension GameCenter
 {
     public struct PingMessage: Message {
 
@@ -67,7 +67,7 @@ public extension XGameCenter
     }
 }
 
-public extension XGameCenter
+public extension GameCenter
 {
     public protocol MessageSender {
         func send(message: Message);
@@ -79,12 +79,12 @@ public extension XGameCenter
     }
 }
 
-public extension XGameCenter.MessageHandler
+public extension GameCenter.MessageHandler
 {
-    public var sender: XGameCenter.MessageSender? { get { nil } set {} }
+    public var sender: GameCenter.MessageSender? { get { nil } set {} }
 }
 
-public extension XGameCenter
+public extension GameCenter
 {
     public protocol Transport_New: MessageSender, MessageHandler {
         var  player: String { get };
@@ -107,7 +107,7 @@ public extension XGameCenter
     }
 }
 
-public extension XGameCenter
+public extension GameCenter
 {
     public class HttpTransport_New: Transport_New {
         public var  handler: MessageHandler?
@@ -123,14 +123,14 @@ public extension XGameCenter
     }
 }
 
-public class Table_New: XGameCenter.MessageHandler {
-    public var  sender: XGameCenter.MessageSender?
-    public func handle(message: XGameCenter.PingMessage) {}
+public class Table_New: GameCenter.MessageHandler {
+    public var  sender: GameCenter.MessageSender?
+    public func handle(message: GameCenter.PingMessage) {}
 }
 
 
 func main() {
-    let transport = XGameCenter.HttpTransport_New();
+    let transport = GameCenter.HttpTransport_New();
     let table = Table_New();
     transport.bind(to: table);
 }

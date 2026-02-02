@@ -1,6 +1,6 @@
 import Foundation
 
-public extension XGameCenter
+public extension GameCenter
 {
     public protocol MessageSender {
         func send(message: Message);
@@ -16,7 +16,7 @@ public extension XGameCenter
     }
 }
 
-public extension XGameCenter
+public extension GameCenter
 {
     public protocol Transport: MessageSender, MessageHandler {
         var  player: String { get };

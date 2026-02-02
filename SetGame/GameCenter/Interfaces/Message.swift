@@ -1,6 +1,6 @@
 import Foundation
 
-public extension XGameCenter
+public extension GameCenter
 {
     public enum MessageType: String, Codable {
         case ping;
@@ -20,10 +20,10 @@ public extension XGameCenter
     }
 }
 
-public extension XGameCenter.Message
+public extension GameCenter.Message
 {
     public init?(_ data: Data?) {
-         guard let message = XGameCenter.MessageConversion.toMessage(data: data) as? Self else { return nil }
+         guard let message = GameCenter.MessageConversion.toMessage(data: data) as? Self else { return nil }
          self = message;
     }
 

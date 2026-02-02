@@ -1,14 +1,14 @@
 import Foundation
 
-public extension XGameCenter.Message
+public extension GameCenter.Message
 {
     public init?(_ data: Data?, internal: Bool) {
-        guard let message = XGameCenter.MessageConversion.toMessage(data: data) as? Self else { return nil }
+        guard let message = GameCenter.MessageConversion.toMessage(data: data) as? Self else { return nil }
         self = message;
     }
 }
 
-public extension XGameCenter
+public extension GameCenter
 {
     public struct PingMessage: Message {
 
@@ -78,7 +78,7 @@ public extension XGameCenter
     }
 }
 
-public extension XGameCenter { public struct MessageConversion
+public extension GameCenter { public struct MessageConversion
 {
     public static func toMessages(data: Data?) -> [Message]? {
         if let data: Data = data,
@@ -121,12 +121,12 @@ public extension XGameCenter { public struct MessageConversion
     }
 }}
 
-public extension XGameCenter { public struct MessageConveyance
+public extension GameCenter { public struct MessageConveyance
 {
     public static func dispatch(messages: [Message]?, handler: MessageHandler) {
         if let messages: [Message] = messages {
             for message: Message in messages {
-                XGameCenter.MessageConveyance.dispatch(message: message,
+                GameCenter.MessageConveyance.dispatch(message: message,
                              ping: handler.handle,
                              playerReady: handler.handle,
                              newGame: handler.handle,

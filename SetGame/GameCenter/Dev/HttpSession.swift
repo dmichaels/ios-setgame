@@ -1,6 +1,6 @@
 import Foundation
 
-public extension XGameCenter
+public extension GameCenter
 {
     public class HttpSession: Session {
 
@@ -24,12 +24,12 @@ public extension XGameCenter
 
         // HttpSession implementation.
 
-        private var transportImp: XGameCenter.HttpTransport = XGameCenter.HttpTransport();
+        private var transportImp: GameCenter.HttpTransport = GameCenter.HttpTransport();
         private var hostImp: String = "";
         private var playersImp: [String] = [];
 
-        public init(transport: XGameCenter.HttpTransport? = nil) {
-            self.transportImp = transport ?? XGameCenter.HttpTransport();
+        public init(transport: GameCenter.HttpTransport? = nil) {
+            self.transportImp = transport ?? GameCenter.HttpTransport();
         }
 
         public func start(bind: MessageHandler) async -> Bool {

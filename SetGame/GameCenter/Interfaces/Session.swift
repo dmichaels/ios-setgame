@@ -1,6 +1,6 @@
 import Foundation
 
-public extension XGameCenter
+public extension GameCenter
 {
     public protocol Session {
         var player: String { get };

@@ -1,6 +1,6 @@
 import Foundation
 
-public extension XGameCenter
+public extension GameCenter
 {
     public class HttpTransport: Transport {
 
@@ -102,9 +102,9 @@ public extension XGameCenter
             }
         }
 
-        public func retrieveMessages(for player: String? = nil) async -> [XGameCenter.Message] {
+        public func retrieveMessages(for player: String? = nil) async -> [GameCenter.Message] {
             if let data: Data = await self.url.get("/receive", player ?? self.player) {
-                if let messages: [XGameCenter.Message] = XGameCenter.MessageConversion.toMessages(data: data) {
+                if let messages: [GameCenter.Message] = GameCenter.MessageConversion.toMessages(data: data) {
                     self.info.counts.retrieved += messages.count;
                     return messages;
                 }
@@ -168,7 +168,7 @@ public extension XGameCenter
             guard self.pollTask == nil else { return }
             self.pollTask = Task {
                 while (!Task.isCancelled) {
-                    let messages: [XGameCenter.Message] = await self.retrieveMessages(for: self.player);
+                    let messages: [GameCenter.Message] = await self.retrieveMessages(for: self.player);
                     self.dispatchMessages(messages: messages);
                     self.info.counts.queued = await self.retrieveMessagesQueuedCount();
                     self.info.counts.queuedTotal = await self.retrieveMessagesQueuedCount(all: true);
@@ -184,9 +184,9 @@ public extension XGameCenter
             self.pollTask = nil;
         }
 
-        private func dispatchMessages(messages: [XGameCenter.Message]) {
+        private func dispatchMessages(messages: [GameCenter.Message]) {
             DispatchQueue.main.async {
-                XGameCenter.MessageConveyance.dispatch(messages: messages, handler: self);
+                GameCenter.MessageConveyance.dispatch(messages: messages, handler: self);
             }
         }
     }

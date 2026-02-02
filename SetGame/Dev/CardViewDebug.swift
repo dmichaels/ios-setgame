@@ -113,12 +113,12 @@ public struct CardViewDebug: View {
         return cards;
     }
 
-    private func handleNewGameMessage(_ message: XGameCenter.NewGameMessage) {
+    private func handleNewGameMessage(_ message: GameCenter.NewGameMessage) {
         let cards: [TableCard] = message.cards;
         self.table.addCards(cards);
     }
 
-    private func handleFoundSetMessage(_ message: XGameCenter.FoundSetMessage) {
+    private func handleFoundSetMessage(_ message: GameCenter.FoundSetMessage) {
 
         let cards: [TableCard] = message.cards;
 
@@ -140,7 +140,7 @@ public struct CardViewDebug: View {
 
         // Create a test message.
 
-        let message: XGameCenter.NewGameMessage = XGameCenter.NewGameMessage(player: XGameCenter.HttpTransport.instance.player, cards: cards);
+        let message: GameCenter.NewGameMessage = GameCenter.NewGameMessage(player: GameCenter.HttpTransport.instance.player, cards: cards);
 
         // Serialize the test message to a Data object.
 
@@ -149,8 +149,8 @@ public struct CardViewDebug: View {
         // Use our GameCenter function to receive, decode, and dispatch the message.
 
         // GameCenter.handleMessage(data, newGame: handleNewGameMessage);
-        if let msg = XGameCenter.NewGameMessage(data) {
-            XGameCenter.MessageConveyance.dispatch(message: msg, newGame: handleNewGameMessage)
+        if let msg = GameCenter.NewGameMessage(data) {
+            GameCenter.MessageConveyance.dispatch(message: msg, newGame: handleNewGameMessage)
         }
     }
 
@@ -158,7 +158,7 @@ public struct CardViewDebug: View {
 
         // Create a test message.
 
-        let message: XGameCenter.FoundSetMessage = XGameCenter.FoundSetMessage(player: XGameCenter.HttpTransport.instance.player, cards: cards);
+        let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: GameCenter.HttpTransport.instance.player, cards: cards);
 
         // Serialize the test message to a Data object.
 
@@ -167,8 +167,8 @@ public struct CardViewDebug: View {
         // Use our GameCenter function to receive, decode, and dispatch the message.
 
         // GameCenter.handleMessage(data, foundSet: handleFoundSetMessage);
-        if let msg = XGameCenter.FoundSetMessage(data) {
-            XGameCenter.MessageConveyance.dispatch(message: msg, foundSet: handleFoundSetMessage)
+        if let msg = GameCenter.FoundSetMessage(data) {
+            GameCenter.MessageConveyance.dispatch(message: msg, foundSet: handleFoundSetMessage)
         }
     }
 
