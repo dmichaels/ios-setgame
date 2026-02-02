@@ -24,18 +24,4 @@ public extension XGameCenter
         func stop();
         func bind(to: MessageHandler);
     }
-
-    public protocol Session {
-        var player: String { get };
-        var host: String { get };
-        var hosting: Bool { get };
-        var players: [String] { get };
-    }
-
-    public protocol Manager {
-        var transport: Transport { get };
-        var session: Session { get };
-        func start() async;
-        func stop();
-    }
 }
