@@ -14,7 +14,7 @@ private struct HttpServerInfo {
     public var poll: Bool = true;
 }
 
-public struct MultiPlayerDevelopmentPanel: View {
+public struct MultiPlayerDevelopmentPanelView: View {
 
     @ObservedObject var table: Table
     @ObservedObject var settings: Settings;

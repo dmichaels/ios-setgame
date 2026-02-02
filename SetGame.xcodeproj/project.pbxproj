@@ -34,6 +34,12 @@
 		9867E14E2F21CF4300CB221F /* UIApplication+TopMostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E14A2F21CF4300CB221F /* UIApplication+TopMostViewController.swift */; };
 		9867E14F2F21CF4300CB221F /* TopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1492F21CF4300CB221F /* TopViewController.swift */; };
 		9867E1532F262CB500CB221F /* Comparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1522F262CB500CB221F /* Comparable.swift */; };
+		9874C83B2F305FEA002EEE86 /* XGameCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9874C8342F305FEA002EEE86 /* XGameCenter.swift */; };
+		9874C83D2F305FEA002EEE86 /* XMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9874C8362F305FEA002EEE86 /* XMessage.swift */; };
+		9874C8402F305FEA002EEE86 /* XTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9874C8392F305FEA002EEE86 /* XTransport.swift */; };
+		9874C8582F30EB5A002EEE86 /* XMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9874C8572F30EB5A002EEE86 /* XMessages.swift */; };
+		9874C85C2F3116BF002EEE86 /* XSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9874C85B2F3116BF002EEE86 /* XSession.swift */; };
+		9874C85E2F3116D1002EEE86 /* XManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9874C85D2F3116D1002EEE86 /* XManager.swift */; };
 		989D93692EE8B01D00BE461B /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D93682EE8B01D00BE461B /* Stats.swift */; };
 		989D936B2EEDABC600BE461B /* FoundSetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D936A2EEDABC600BE461B /* FoundSetsView.swift */; };
 		989D936F2EF21DEF00BE461B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D936E2EF21DEF00BE461B /* Settings.swift */; };
@@ -110,6 +116,12 @@
 		9867E1492F21CF4300CB221F /* TopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopViewController.swift; sourceTree = "<group>"; };
 		9867E14A2F21CF4300CB221F /* UIApplication+TopMostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+TopMostViewController.swift"; sourceTree = "<group>"; };
 		9867E1522F262CB500CB221F /* Comparable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparable.swift; sourceTree = "<group>"; };
+		9874C8342F305FEA002EEE86 /* XGameCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XGameCenter.swift; sourceTree = "<group>"; };
+		9874C8362F305FEA002EEE86 /* XMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMessage.swift; sourceTree = "<group>"; };
+		9874C8392F305FEA002EEE86 /* XTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XTransport.swift; sourceTree = "<group>"; };
+		9874C8572F30EB5A002EEE86 /* XMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMessages.swift; sourceTree = "<group>"; };
+		9874C85B2F3116BF002EEE86 /* XSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XSession.swift; sourceTree = "<group>"; };
+		9874C85D2F3116D1002EEE86 /* XManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XManager.swift; sourceTree = "<group>"; };
 		989D93682EE8B01D00BE461B /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		989D936A2EEDABC600BE461B /* FoundSetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundSetsView.swift; sourceTree = "<group>"; };
 		989D936E2EF21DEF00BE461B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -135,8 +147,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		98C9D1E72F2941160094E251 /* Debug */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Debug; sourceTree = "<group>"; };
-		98C9D2242F2F9D180094E251 /* New */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = New; sourceTree = "<group>"; };
+		98C9D1E72F2941160094E251 /* Dev */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Dev; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,7 +202,7 @@
 			children = (
 				981B00492F113ABF00875920 /* SetGame.entitlements */,
 				981190EF25ED59CC0083606B /* SetGameApp.swift */,
-				98EF7E192F1D070500A45F63 /* Debug */,
+				98EF7E192F1D070500A45F63 /* Dev */,
 				9867E13A2F1FCA8A00CB221F /* Demo */,
 				9867E13C2F21255600CB221F /* GameCenter */,
 				9811911D25ED5A0C0083606B /* Model */,
@@ -296,11 +307,17 @@
 		9867E13C2F21255600CB221F /* GameCenter */ = {
 			isa = PBXGroup;
 			children = (
-				98C9D1E72F2941160094E251 /* Debug */,
+				98C9D1E72F2941160094E251 /* Dev */,
+				9874C8342F305FEA002EEE86 /* XGameCenter.swift */,
 				9867E1462F21CF4300CB221F /* GameCenterAuthentication.swift */,
 				9867E1472F21CF4300CB221F /* GameCenterManager.swift */,
+				9874C85D2F3116D1002EEE86 /* XManager.swift */,
+				9874C8362F305FEA002EEE86 /* XMessage.swift */,
+				9874C8572F30EB5A002EEE86 /* XMessages.swift */,
 				9867E1482F21CF4300CB221F /* PlayButtonView.swift */,
+				9874C85B2F3116BF002EEE86 /* XSession.swift */,
 				9867E1492F21CF4300CB221F /* TopViewController.swift */,
+				9874C8392F305FEA002EEE86 /* XTransport.swift */,
 				9867E14A2F21CF4300CB221F /* UIApplication+TopMostViewController.swift */,
 			);
 			path = GameCenter;
@@ -314,14 +331,13 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		98EF7E192F1D070500A45F63 /* Debug */ = {
+		98EF7E192F1D070500A45F63 /* Dev */ = {
 			isa = PBXGroup;
 			children = (
-				98C9D2242F2F9D180094E251 /* New */,
 				9867E1442F2182AB00CB221F /* CardViewDebug.swift */,
 				9867E1422F21821800CB221F /* CardArrayDebug.swift */,
 			);
-			path = Debug;
+			path = Dev;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -341,8 +357,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				98C9D1E72F2941160094E251 /* Debug */,
-				98C9D2242F2F9D180094E251 /* New */,
+				98C9D1E72F2941160094E251 /* Dev */,
 			);
 			name = SetGame;
 			productName = SetGame;
@@ -483,6 +498,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				989FF8FB25EF3708002AE44A /* CardArray.swift in Sources */,
+				9874C83B2F305FEA002EEE86 /* XGameCenter.swift in Sources */,
+				9874C83D2F305FEA002EEE86 /* XMessage.swift in Sources */,
+				9874C8402F305FEA002EEE86 /* XTransport.swift in Sources */,
 				98A5C7422EFED67E009E708D /* VersionInfo.swift in Sources */,
 				9811914225ED5ACF0083606B /* Deck.swift in Sources */,
 				981190F225ED59CC0083606B /* ContentView.swift in Sources */,
@@ -495,6 +513,7 @@
 				9867E1452F2182AB00CB221F /* CardViewDebug.swift in Sources */,
 				9811914825ED5ACF0083606B /* CardNumber.swift in Sources */,
 				9867E1432F21821800CB221F /* CardArrayDebug.swift in Sources */,
+				9874C85C2F3116BF002EEE86 /* XSession.swift in Sources */,
 				98EF7E152F1AFE7A00A45F63 /* TableDeck.swift in Sources */,
 				989D936B2EEDABC600BE461B /* FoundSetsView.swift in Sources */,
 				9867E1392F1FC98E00CB221F /* TableDemo.swift in Sources */,
@@ -513,11 +532,13 @@
 				9867E14C2F21CF4300CB221F /* PlayButtonView.swift in Sources */,
 				9867E14D2F21CF4300CB221F /* GameCenterAuthentication.swift in Sources */,
 				9867E14E2F21CF4300CB221F /* UIApplication+TopMostViewController.swift in Sources */,
+				9874C85E2F3116D1002EEE86 /* XManager.swift in Sources */,
 				98C9D21B2F2D080C0094E251 /* URL.swift in Sources */,
 				9867E14F2F21CF4300CB221F /* TopViewController.swift in Sources */,
 				9811914725ED5ACF0083606B /* Table.swift in Sources */,
 				9811914B25ED5ACF0083606B /* CardShape.swift in Sources */,
 				989D936F2EF21DEF00BE461B /* Settings.swift in Sources */,
+				9874C8582F30EB5A002EEE86 /* XMessages.swift in Sources */,
 				9811914A25ED5ACF0083606B /* TableCard.swift in Sources */,
 				98A5C74B2F098D02009E708D /* HelpView.swift in Sources */,
 				989D93712EF43A8500BE461B /* DeckView.swift in Sources */,
