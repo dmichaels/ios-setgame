@@ -12,12 +12,14 @@ public extension XGameCenter
             //
             // TODO
             //
+            self.poll();
         }
 
         public func stop() {
             //
             // TODO
             //
+            self.nopoll();
         }
 
         public func bind(to handler: XGameCenter.MessageHandler) {
