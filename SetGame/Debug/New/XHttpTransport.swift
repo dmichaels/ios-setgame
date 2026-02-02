@@ -98,9 +98,9 @@ public extension XGameCenter
             }
         }
 
-        public func retrieveMessages(for player: String? = nil) async -> [GameCenter.Message] {
+        public func retrieveMessages(for player: String? = nil) async -> [XGameCenter.Message] {
             if let data: Data = await self.url.get("/receive", player ?? self.player) {
-                if let messages: [GameCenter.Message] = GameCenter.toMessages(data: data) {
+                if let messages: [XGameCenter.Message] = XGameCenter.MessageConversion.toMessages(data: data) {
                     self.info.counts.retrieved += messages.count;
                     return messages;
                 }
@@ -164,7 +164,7 @@ public extension XGameCenter
             guard self.pollTask == nil else { return }
             self.pollTask = Task {
                 while (!Task.isCancelled) {
-                    let messages: [GameCenter.Message] = await self.retrieveMessages(for: self.player);
+                    let messages: [XGameCenter.Message] = await self.retrieveMessages(for: self.player);
                     self.dispatchMessages(messages: messages);
                     self.info.counts.queued = await self.retrieveMessagesQueuedCount();
                     self.info.counts.players = await self.retrievePlayers().count;
@@ -179,9 +179,9 @@ public extension XGameCenter
             self.pollTask = nil;
         }
 
-        private func dispatchMessages(messages: [GameCenter.Message]) {
+        private func dispatchMessages(messages: [XGameCenter.Message]) {
             DispatchQueue.main.async {
-                // TODO XGameCenter.dispatch(messages: messages, handler: self);
+                XGameCenter.MessageConveyance.dispatch(messages: messages, handler: self);
             }
         }
     }

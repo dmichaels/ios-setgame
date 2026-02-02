@@ -3,7 +3,7 @@ import Foundation
 public extension XGameCenter.Message
 {
     public init?(_ data: Data?, internal: Bool) {
-        guard let message = XGameCenter.toMessage(data: data) as? Self else { return nil }
+        guard let message = XGameCenter.MessageConversion.toMessage(data: data) as? Self else { return nil }
         self = message;
     }
 }
@@ -80,19 +80,87 @@ public extension XGameCenter
     private static func toCards(_ codes: [String]) -> [TableCard] {
         return codes.compactMap { TableCard($0) };
     }
+}
 
-    private static func toMessage(data: Data?) -> Message? {
+public extension XGameCenter { public struct MessageConversion
+{
+    fileprivate static func toMessage(data: Data?) -> Message? {
         struct MessageEnvelope: Decodable { let type: MessageType; }
         if let data: Data = data,
-           let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
+        let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
             switch envelope.type {
-            case .ping:         return try? JSONDecoder().decode(PingMessage.self, from: data);
-            case .playerReady:  return try? JSONDecoder().decode(PlayerReadyMessage.self, from: data);
-            case .newGame:      return try? JSONDecoder().decode(NewGameMessage.self, from: data);
-            case .foundSet:     return try? JSONDecoder().decode(FoundSetMessage.self, from: data);
-            case .confirmedSet: return try? JSONDecoder().decode(ConfirmedSetMessage.self, from: data);
+                case .ping:         return try? JSONDecoder().decode(PingMessage.self, from: data);
+                case .playerReady:  return try? JSONDecoder().decode(PlayerReadyMessage.self, from: data);
+                case .newGame:      return try? JSONDecoder().decode(NewGameMessage.self, from: data);
+                case .foundSet:     return try? JSONDecoder().decode(FoundSetMessage.self, from: data);
+                case .confirmedSet: return try? JSONDecoder().decode(ConfirmedSetMessage.self, from: data);
             }
         }
         return nil;
     }
-}
+
+    public static func toMessages(data: Data?) -> [Message]? {
+        if let data: Data = data,
+           let array: [[String: Any]] = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
+            var messages: [Message] = []; messages.reserveCapacity(array.count);
+            let decoder: JSONDecoder = JSONDecoder();
+            for object: [String: Any] in array {
+                if JSONSerialization.isValidJSONObject(object),
+                   let item: Data = try? JSONSerialization.data(withJSONObject: object) {
+                    if let message: Message = XGameCenter.MessageConversion.toMessage(data: item) {
+                        messages.append(message);
+                    }
+                 }
+            }
+            return messages;
+        }
+        return nil;
+    }
+}}
+
+public extension XGameCenter { public struct MessageConveyance
+{
+    public static func dispatch(message: Message?,
+                                ping: ((PingMessage) -> Void)? = nil,
+                                playerReady: ((PlayerReadyMessage) -> Void)? = nil,
+                                newGame: ((NewGameMessage) -> Void)? = nil,
+                                foundSet: ((FoundSetMessage) -> Void)? = nil,
+                                confirmedSet: ((ConfirmedSetMessage) -> Void)? = nil) {
+        if let message: Message = message {
+            switch message {
+                case let message as PingMessage: ping?(message);
+                case let message as PlayerReadyMessage: playerReady?(message);
+                case let message as NewGameMessage: newGame?(message);
+                case let message as FoundSetMessage: foundSet?(message);
+                case let message as ConfirmedSetMessage: confirmedSet?(message);
+                default: break;
+            }
+        }
+    }
+
+    private static func dispatch(messages: [Message]?,
+                                 ping: ((PingMessage) -> Void)? = nil,
+                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
+                                 newGame: ((NewGameMessage) -> Void)? = nil,
+                                 foundSet: ((FoundSetMessage) -> Void)? = nil,
+                                 confirmedSet: ((ConfirmedSetMessage) -> Void)? = nil) {
+        if let messages: [Message] = messages {
+            for message: Message in messages {
+                XGameCenter.MessageConveyance.dispatch(message: message,
+                                    ping: ping,
+                                    playerReady: playerReady,
+                                    newGame: newGame,
+                                    confirmedSet: confirmedSet);
+            }
+        }
+    }
+
+    public static func dispatch(messages: [Message]?, handler: MessageHandler) {
+        XGameCenter.MessageConveyance.dispatch(messages: messages,
+                             ping: handler.handle,
+                             playerReady: handler.handle,
+                             newGame: handler.handle,
+                             foundSet: handler.handle,
+                             confirmedSet: handler.handle);
+    }
+}}
