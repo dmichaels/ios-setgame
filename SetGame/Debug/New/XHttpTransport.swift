@@ -2,7 +2,7 @@ import Foundation
 
 public extension XGameCenter
 {
-    public class HttpTransport: XGameCenter.Transport {
+    public class HttpTransport: Transport {
 
         // Transport protocol implementation.
 
@@ -22,7 +22,7 @@ public extension XGameCenter
             self.nopoll();
         }
 
-        public func bind(to handler: XGameCenter.MessageHandler) {
+        public func bind(to handler: MessageHandler) {
             self.handler = handler;
             handler.sender = self;
         }
@@ -85,7 +85,7 @@ public extension XGameCenter
         }
 
         private let url: URL;
-        private var handler: XGameCenter.MessageHandler? = nil;
+        private var handler: MessageHandler? = nil;
         private var pollTask: Task<Void, Never>? = nil;
         public  var info: Info = Info();
 
