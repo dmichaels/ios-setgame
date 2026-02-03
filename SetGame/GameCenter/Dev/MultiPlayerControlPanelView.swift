@@ -2,6 +2,8 @@ import SwiftUI
 
 private struct HttpServerInfo {
     public var isHost: Bool = false;
+    public var sessionHosting: Bool = false;
+    public var sessionHost: String = "";
     public var players: [String] = [];
     public var playerCount: Int = 0;
     public var playerRegistered: Bool = false;
@@ -32,14 +34,12 @@ public struct MultiPlayerDevelopmentPanelView: View {
         self.transportImp = session?.transport as? GameCenter.HttpTransport;
     }
 
-    // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
-
     public var body: some View {
         VStack {
             Space(size: 24)
             MultiPlayerControlPanel(table: table, settings: settings, info: $info, transport: self.transport)
             Space(size: 4)
-            MultiPlayerInfoPanel(table: table, settings: settings, info: $info, transport: self.transport)
+            MultiPlayerInfoPanel(table: table, settings: settings, info: $info, session: self.session, transport: self.transport)
             Space(size: 4)
             MultiPlayerInfoPanelMessages(table: table, settings: settings, info: $info, transport: self.transport)
         }
@@ -90,7 +90,6 @@ public struct MultiPlayerControlPanel: View {
     @Binding fileprivate var info: HttpServerInfo;
     let transport: GameCenter.HttpTransport;
     let background: Color = Color.gray;
-    // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
     public var body: some View {
         VStack(spacing: 80) {
             HStack(alignment: .firstTextBaseline, spacing: 0) {
@@ -155,9 +154,9 @@ public struct MultiPlayerInfoPanel: View {
     @ObservedObject var table: Table
     @ObservedObject var settings: Settings;
     @Binding fileprivate var info: HttpServerInfo;
+    let session: GameCenter.Session?;
     let transport: GameCenter.HttpTransport;
     let background: Color = Color.gray;
-    // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
     public var body: some View {
         VStack(spacing: 80) {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
@@ -187,6 +186,16 @@ public struct MultiPlayerInfoPanel: View {
                 Text("\(self.info.host != "" ? self.info.host : "∅")")
                     .font(.caption)
                     .padding(.trailing, 4)
+
+                // TODO TEMPORARY ...
+                Text("[\(session?.host ?? "")]")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                Text("[\((session?.hosting ?? false) ? "T" : "F")]")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                // ... TODO TEMPORARY
+
                 Text("players:")
                     .font(.caption)
                     .fontWeight(.bold)
@@ -209,7 +218,6 @@ public struct MultiPlayerInfoPanel: View {
 
     private struct PingButton: View {
         let transport: GameCenter.HttpTransport;
-        // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
@@ -228,7 +236,6 @@ public struct MultiPlayerInfoPanel: View {
 
     private struct RegisterPlayerButton: View {
         let transport: GameCenter.HttpTransport;
-        // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
@@ -246,7 +253,6 @@ public struct MultiPlayerInfoPanel: View {
 
     private struct ResetServerButton: View {
         let transport: GameCenter.HttpTransport
-        // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
@@ -319,7 +325,6 @@ public struct MultiPlayerInfoPanelMessages: View {
 
     private struct ResetMessagesButton: View {
         let transport: GameCenter.HttpTransport;
-        // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
@@ -337,7 +342,6 @@ public struct MultiPlayerInfoPanelMessages: View {
 
     private struct ResetMessagesAllButton: View {
         let transport: GameCenter.HttpTransport
-        // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
