@@ -40,6 +40,10 @@ public extension GameCenter
             get { self } set { }
         }
 
+        public var session: Session? {
+            get { nil } set { }
+        }
+
         public func handle(message: PingMessage) {
             self.handler?.handle(message: message);
             self.info.counts.handled += 1;

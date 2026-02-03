@@ -49,7 +49,10 @@ struct SetGameApp: App {
                     }
                     var transport: GameCenter.HttpTransport = GameCenter.HttpTransport();
                     var session: GameCenter.Session = GameCenter.HttpSession(transport: transport);
-                    await session.start(bind: self.table);
+                    if await session.start() {
+                        session.bind(to: self.table);
+                    }
+                    let x = 1 
                 }
         }
     }

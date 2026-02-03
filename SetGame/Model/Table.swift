@@ -11,6 +11,7 @@ public class Table: ObservableObject, GameCenter.MessageHandler {
     private var gameCenterSender: GameCenter.MessageSender?;
 
     public var sender: GameCenter.MessageSender?;
+    public var session: GameCenter.Session?;
 
     public struct State {
         public private(set) var startTime: Date                     = Date();
