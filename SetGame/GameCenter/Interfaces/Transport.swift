@@ -7,13 +7,17 @@ public extension GameCenter
     }
 
     public protocol MessageHandler: AnyObject {
-        var  sender: MessageSender? { get set }
-        var  session: Session? { get set }
+        // var  sender: MessageSender? { get set }
+        // var  session: Session? { get set }
         func handle(message: PingMessage);
         func handle(message: PlayerReadyMessage);
         func handle(message: NewGameMessage);
         func handle(message: FoundSetMessage);
         func handle(message: ConfirmedSetMessage);
+    }
+
+    protocol SessionMessageHandler: MessageHandler, AnyObject {
+        var  session: Session? { get set }
     }
 }
 

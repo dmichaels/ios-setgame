@@ -25,7 +25,7 @@ public extension GameCenter
 
         public func bind(to handler: MessageHandler) {
             self.handler = handler;
-            handler.sender = self;
+            // handler.sender = self;
         }
 
         // MessageSender protocol implementation.

@@ -8,6 +8,6 @@ public extension GameCenter
         var  hosting: Bool { get };
         var  players: [String] { get };
         func start() async -> Bool;
-        func bind(to: MessageHandler);
+        func bind(to: SessionMessageHandler);
     }
 }

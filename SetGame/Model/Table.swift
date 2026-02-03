@@ -5,12 +5,12 @@ import SwiftUI
 /// table cards which are on display; and sundry other data points.
 /// Is this class technically, effectively acting as a "model-view"?
 ///
-public class Table: ObservableObject, GameCenter.MessageHandler {
+public class Table: ObservableObject, GameCenter.SessionMessageHandler {
 
     private var settings: Settings;
     private var gameCenterSender: GameCenter.MessageSender?;
 
-    public var sender: GameCenter.MessageSender?;
+    // public var sender: GameCenter.MessageSender?;
     public var session: GameCenter.Session?;
 
     public struct State {

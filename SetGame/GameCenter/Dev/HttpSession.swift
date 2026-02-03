@@ -44,7 +44,7 @@ public extension GameCenter
             return true;
         }
 
-        public func bind(to handler: MessageHandler) {
+        public func bind(to handler: SessionMessageHandler) {
             self.transportImp.bind(to: handler);
             handler.session = self;
         }
