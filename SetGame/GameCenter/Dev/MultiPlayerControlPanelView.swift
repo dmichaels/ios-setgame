@@ -63,7 +63,7 @@ public struct MultiPlayerDevelopmentPanelView: View {
     }
 
     private func pollingTask() {
-        guard self.settings.multiPlayer.enabled else { return }
+        guard self.info.poll else { return }
         self.taskHandle = Task {
             while !Task.isCancelled {
                 self.info.messageSentCount = self.transport.info.counts.sent;
@@ -104,7 +104,7 @@ public struct MultiPlayerControlPanel: View {
                         self.transport.startMessagePolling();
                     }
                 }
-                ToggleItem("host", on: $info.isHost, disabled: !settings.multiPlayer.enabled) { value in
+                ToggleItem("host", on: $info.isHost /*, disabled: !settings.multiPlayer.enabled */ ) { value in
                     if (value) {
                         Task {
                             await self.transport.setHost();
@@ -118,7 +118,7 @@ public struct MultiPlayerControlPanel: View {
                         }
                     }
                 }
-                ToggleItem("poll", on: $settings.multiPlayer.poll, disabled: !settings.multiPlayer.enabled) { value in
+                ToggleItem("poll", on: $settings.multiPlayer.poll /* , disabled: !settings.multiPlayer.enabled */ ) { value in
                     if (value) {
                         self.transport.startMessagePolling();
                     }
@@ -126,7 +126,9 @@ public struct MultiPlayerControlPanel: View {
                         self.transport.stopMessagePolling();
                     }
                 }
-                ToggleItem("watch", on: $info.poll, disabled: !settings.multiPlayer.enabled)
+                // Hard to imagine why we would want to turn this off.
+                // It is just watching and displaying the state of things.
+                // ToggleItem("watch", on: $info.poll /*, disabled: !settings.multiPlayer.enabled */ )
                 Spacer()
             }
             .padding(.leading, 11)
@@ -209,7 +211,7 @@ public struct MultiPlayerInfoPanel: View {
                 Text("\(self.info.playerCount)")
                     .font(.caption)
                 Spacer()
-                PingButton(transport: self.transport)
+                PingButton(session: self.session, transport: self.transport)
                 RegisterPlayerButton(session: self.session, transport: self.transport)
                 ResetServerButton(session: self.session, transport: self.transport)
             }
@@ -224,12 +226,12 @@ public struct MultiPlayerInfoPanel: View {
     }
 
     private struct PingButton: View {
+        let session: GameCenter.Session?;
         let transport: GameCenter.HttpTransport;
         public var body: some View {
             Button {
                 Task {
-                    let message: GameCenter.PingMessage = GameCenter.PingMessage(/*player: self.transport.player*/);
-                    await self.transport.send(message: message, to: ""); // TODO
+                    await session?.send(message: GameCenter.PingMessage());
                 }
             } label: {
                 Image(systemName: "paperplane.fill")

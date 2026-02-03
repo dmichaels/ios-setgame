@@ -140,7 +140,7 @@ public struct CardViewDebug: View {
 
         // Create a test message.
 
-        let message: GameCenter.NewGameMessage = GameCenter.NewGameMessage(player: GameCenter.HttpTransport.instance.player, cards: cards);
+        let message: GameCenter.NewGameMessage = GameCenter.NewGameMessage(cards: cards);
 
         // Serialize the test message to a Data object.
 

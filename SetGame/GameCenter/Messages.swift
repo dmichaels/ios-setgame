@@ -11,21 +11,15 @@ public extension GameCenter.Message
 public extension GameCenter
 {
     public struct PingMessage: Message {
-
         public let type: MessageType;
-        // public let player: String;
-
-        public init(/*player: String*/) {
-            self.type   = .ping;
-            // self.player = player;
+        public init() {
+            self.type = .ping;
         }
     }
 
     public struct PlayerReadyMessage: Message {
-
         public let type: MessageType;
         public let player: String;
-
         public init(player: String) {
             self.type   = .playerReady;
             self.player = player;
@@ -33,26 +27,20 @@ public extension GameCenter
     }
 
     public struct NewGameMessage: Message {
-
         public  let type: MessageType;
-        public  let player: String;
         private let codes: [String];
-        public  var cards: [TableCard] { return MessageConversion.toCards(self.codes); }
-
-        public init(player: String, cards: [Card]) {
-            self.type      = .newGame;
-            self.player    = player;
+        public  var cards: [TableCard] { MessageConversion.toCards(self.codes) }
+        public init(cards: [Card]) {
+            self.type  = .newGame;
             self.codes = cards.map { $0.code };
         }
     }
 
     public struct FoundSetMessage: Message {
-
         public  let type: MessageType;
         public  let player: String;
         private let codes: [String];
-        public  var cards: [TableCard] { return MessageConversion.toCards(self.codes); }
-
+        public  var cards: [TableCard] { MessageConversion.toCards(self.codes) }
         public init(player: String, cards: [Card]) {
             self.type      = .foundSet;
             self.player    = player;
@@ -61,14 +49,12 @@ public extension GameCenter
     }
 
     public struct ConfirmedSetMessage: Message {
-
         public  let type: MessageType;
         public  let player: String;
         private let codes: [String];
         private let replacementCodes: [String];
-        public  var cards: [TableCard] { return MessageConversion.toCards(self.codes); }
-        public  var replacements: [TableCard] { return MessageConversion.toCards(self.replacementCodes); }
-
+        public  var cards: [TableCard] { MessageConversion.toCards(self.codes) }
+        public  var replacements: [TableCard] { MessageConversion.toCards(self.replacementCodes) }
         public init(player: String, cards: [Card], replacements: [Card]) {
             self.type      = .confirmedSet;
             self.player    = player;

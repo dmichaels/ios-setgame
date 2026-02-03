@@ -93,9 +93,10 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
         if (self.settings.multiPlayer.enabled) {
             if let cards: [TableCard] = cards {
                 //
-                // Must be multi-player mode where we are the client
-                // and are here responding to a NewGameMessage to deal
-                // the specific given cards from the deck.
+                // Must be multi-player mode where we are the client,
+                // or perhaps the host acting as a client, and are here
+                // responding to a NewGameMessage to deal the specific
+                // given cards from the deck.
                 //
                 if let cards: [TableCard] = self.deck.takeCards(cards, strict: true) {
                     self.cards = cards;
@@ -103,6 +104,76 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
                 }
             }
         }
+/*
+        if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
+            let magicSquareCards: [TableCard] = TableDeck.randomMagicSquare(simple: self.settings.simpleDeck)
+            if let cards: [TableCard] = self.deck.takeCards(magicSquareCards, strict: true) {
+                self.addCards(cards);
+            }
+            //
+            // Only bother making it look good if the cards-per-row is four (the default) or
+            // five; if cards-per-row is three it already falls out to look good automatically.
+            //
+            var displayCardCount: Int = self.settings.displayCardCount;
+            if ((self.settings.cardsPerRow == 4) && (displayCardCount < 11)) {
+                displayCardCount = 11;
+            }
+            else if ((self.settings.cardsPerRow == 5) && (displayCardCount < 13)) {
+                displayCardCount = 13;
+            }
+            self.fillTable(moveSetFront: false, displayCardCount: displayCardCount);
+            if (self.settings.cardsPerRow == 4) {
+                self.cards[3]  = self.cards[9];
+                self.cards[7]  = self.cards[10];
+                self.cards[4]  = magicSquareCards[3];
+                self.cards[5]  = magicSquareCards[4];
+                self.cards[6]  = magicSquareCards[5];
+                self.cards[8]  = magicSquareCards[6];
+                self.cards[9]  = magicSquareCards[7];
+                self.cards[10] = magicSquareCards[8];
+            }
+            else if (self.settings.cardsPerRow == 5) {
+                self.cards[3]  = self.cards[9];
+                self.cards[4]  = self.cards[10];
+                self.cards[8]  = self.cards[11];
+                self.cards[9]  = self.cards[12];
+                self.cards[5]  = magicSquareCards[3];
+                self.cards[6]  = magicSquareCards[4];
+                self.cards[7]  = magicSquareCards[5];
+                self.cards[10] = magicSquareCards[6];
+                self.cards[11] = magicSquareCards[7];
+                self.cards[12] = magicSquareCards[8];
+            }
+        }
+        else {
+            self.fillTable();
+        }
+*/
+
+        if self.settings.multiPlayer.enabled,
+           let session: GameCenter.Session = self.session, session.hosting {
+        }
+        if (self.settings.multiPlayer.enabled) {
+            //
+            // We are in multi-player mode where WE are the HOST and
+            // are here responding to a simple local request (from the
+            // menu-item) to start a new game; need to notify clients.
+            //
+            let cards: [TableCard] = self.newGameCards(nondestructive: true);
+            if let session: GameCenter.Session = self.session, session.hosting {
+                let message: GameCenter.NewGameMessage = GameCenter.NewGameMessage(cards: cards);
+                session.send(message: message);
+                return;
+            }
+        }
+
+        self.cards = self.newGameCards();
+    }
+
+    public func newGameCards(nondestructive: Bool = false) -> [TableCard] {
+
+        let saveCards: [TableCard]? = nondestructive ? self.cards : nil;
+        let saveDeck: TableDeck?    = nondestructive ? self.deck  : nil;
 
         if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [TableCard] = TableDeck.randomMagicSquare(simple: self.settings.simpleDeck)
@@ -147,34 +218,13 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
         else {
             self.fillTable();
         }
-
-        if (self.settings.multiPlayer.enabled) {
-            //
-            // Must be multi-player mode where we are the HOST and
-            // are here responding to a simple local request, from
-            // the menu-item, to start a new game; need to notify clients.
-            //
-            if let session: GameCenter.Session = self.session {
-                let message: GameCenter.NewGameMessage = GameCenter.NewGameMessage(
-                    player: session.player,
-                    cards: self.cards
-                );
-                if (session.hosting) {
-                    session.send(message: message);
-                }
-            }
-            /*
-            if let transport = self.gameCenterSender {
-                let message: GameCenter.NewGameMessage = GameCenter.NewGameMessage(
-                    player: GameCenter.HttpTransport.instance.player,
-                    cards: self.cards
-                );
-                if (GameCenter.HttpTransport.instance.hosting) {
-                    transport.send(message: message);
-                }
-            }
-            */
+        if (nondestructive) {
+            let cards: [TableCard] = self.cards;
+            self.cards = saveCards!;
+            self.deck  = saveDeck!;
+            return cards;
         }
+        return self.cards;
     }
 
     // Touch the given card; selects or unselects as appropriate.
