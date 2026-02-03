@@ -141,8 +141,8 @@ public extension GameCenter
             self.url.post("/resethost");
 		}
 
-		public func setHost(host: String? = nil) {
-            self.url.post("/host", host ?? self.player);
+		public func setHost(player: String? = nil) {
+            self.url.post("/host", player ?? self.player);
 		}
 
 		public func unsetHost(player: String? = nil) {
