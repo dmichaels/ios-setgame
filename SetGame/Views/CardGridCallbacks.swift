@@ -26,7 +26,7 @@ enum CardGridCallbacks
                 player: GameCenter.HttpTransport.instance.player,
                 cards: cards
             );
-            GameCenter.HttpTransport.instance.send(message: message);
+            GameCenter.HttpTransport.instance.send(message: message, to: ""); // TODO
             return;
         }
         cards.blink {

@@ -3,7 +3,7 @@ import Foundation
 public extension GameCenter
 {
     public protocol MessageSender {
-        func send(message: Message);
+        func send(message: Message, to: String);
     }
 
     public protocol MessageHandler: AnyObject {

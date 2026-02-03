@@ -24,8 +24,10 @@ public extension GameCenter
 
         // MessageSender (via Transport) protocol implementation.
 
-        public func send(message: Message) {
-            self.sendMessage(message);
+        public func send(message: Message, to player: String) {
+            if (!player.isEmpty) {
+                self.sendMessage(message, to: player);
+            }
         }
 
         // MessageHandler (via Transport) protocol implementation.
@@ -87,9 +89,9 @@ public extension GameCenter
             self.url = url ?? URL(string: Defaults.url)!
         }
 
-        public func sendMessage(_ message: Message, to player: String? = nil) {
+        public func sendMessage(_ message: Message, to player: String) {
             guard let data: [String: Any] = message.json else { return }
-            if self.url.post("send", data: ["to": player ?? message.player, "message": data]) {
+            if self.url.post("send", data: ["to": player, "message": data]) {
                 self.info.counts.sent += 1;
             }
         }

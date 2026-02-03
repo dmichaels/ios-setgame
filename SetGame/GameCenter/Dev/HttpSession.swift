@@ -7,16 +7,30 @@ public extension GameCenter
         // MessageSender (via Sender) protocol implementation.
 
         public func send(message: Message) {
-            return self.transportImp.send(message: message);
+            if (self.hosting) {
+                //
+                // If we are the host, then send the message to all clients;
+                // and also send it to ourself the host, so that we the host
+                // act as much as possible like the clients.
+                //
+                for player in self.players {
+                    self.transportImp.send(message: message, to: player);
+                }
+            }
+            else {
+                //
+                // If we are the client (i.e. we are not the host),
+                // then sen the message only to the host.
+                //
+                self.transportImp.send(message: message, to: self.host);
+            }
         }
 
         // Session protocol implementation.
 
         public let transport: Transport;
 
-        public var player: String {
-            return self.transportImp.player;
-        }
+        // public var player: String { return self.transportImp.player; }
 
         public var host: String {
             return self.hostImp;

@@ -156,7 +156,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
             //
             if let session: GameCenter.Session = self.session {
                 let message: GameCenter.NewGameMessage = GameCenter.NewGameMessage(
-                    player: GameCenter.HttpTransport.instance.player,
+                    player: session.player,
                     cards: self.cards
                 );
                 if (session.hosting) {

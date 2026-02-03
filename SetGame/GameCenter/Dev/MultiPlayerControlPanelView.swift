@@ -190,7 +190,7 @@ public struct MultiPlayerInfoPanel: View {
                 Text("host:")
                     .font(.caption)
                     .fontWeight(.bold)
-                Text("\(self.info.host != "" ? self.info.host : "∅")")
+                Text("\(!self.info.host.isEmpty ? self.info.host : "∅")")
                     .font(.caption)
                     .padding(.trailing, 4)
 
@@ -228,8 +228,8 @@ public struct MultiPlayerInfoPanel: View {
         public var body: some View {
             Button {
                 Task {
-                    let message: GameCenter.PingMessage = GameCenter.PingMessage(player: self.transport.player);
-                    await self.transport.send(message: message);
+                    let message: GameCenter.PingMessage = GameCenter.PingMessage(/*player: self.transport.player*/);
+                    await self.transport.send(message: message, to: ""); // TODO
                 }
             } label: {
                 Image(systemName: "paperplane.fill")
@@ -322,7 +322,7 @@ public struct MultiPlayerInfoPanelMessages: View {
                     .bold(self.info.messageRetrievedCount != self.info.messageHandledCount)
                 Spacer()
                 ResetMessagesButton(transport: self.transport)
-                // ResetMessagesAllButton(transport: self.transport)
+                ResetMessagesAllButton(transport: self.transport)
             }
             .padding(.leading, 10)
             .padding(.vertical, 10)

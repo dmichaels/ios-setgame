@@ -12,7 +12,7 @@ public extension GameCenter
 
     public protocol Message: Codable {
         var  type: MessageType { get };
-        var  player: String { get };
+        // var  player: String { get };
         var  json: [String: Any]? { get };
         // TEMPORARY WHILE MIGRATING TO THIS ...
         func serialize() -> Data?
