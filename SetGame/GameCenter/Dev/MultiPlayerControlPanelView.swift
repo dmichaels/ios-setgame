@@ -18,20 +18,30 @@ public struct MultiPlayerDevelopmentPanelView: View {
 
     @ObservedObject var table: Table
     @ObservedObject var settings: Settings;
+                    var session: GameCenter.Session?;
 
     @State fileprivate var info: HttpServerInfo = HttpServerInfo();
     @State private var taskHandle: Task<Void, Never>? = nil
 
-    let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+    var transport: GameCenter.HttpTransport { self.transportImp! }
+    let transportImp: GameCenter.HttpTransport?;
+    public init(table: Table, settings: Settings, session: GameCenter.Session? = nil) {
+        self.table = table;
+        self.settings = settings;
+        self.session = session;
+        self.transportImp = session?.transport as? GameCenter.HttpTransport;
+    }
+
+    // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
 
     public var body: some View {
         VStack {
             Space(size: 24)
-            MultiPlayerControlPanel(table: table, settings: settings, info: $info)
+            MultiPlayerControlPanel(table: table, settings: settings, info: $info, transport: self.transport)
             Space(size: 4)
-            MultiPlayerInfoPanel(table: table, settings: settings, info: $info)
+            MultiPlayerInfoPanel(table: table, settings: settings, info: $info, transport: self.transport)
             Space(size: 4)
-            MultiPlayerInfoPanelMessages(table: table, settings: settings, info: $info)
+            MultiPlayerInfoPanelMessages(table: table, settings: settings, info: $info, transport: self.transport)
         }
         .onAppear {
             if (self.info.poll) {
@@ -56,17 +66,17 @@ public struct MultiPlayerDevelopmentPanelView: View {
         guard self.settings.multiPlayer.enabled else { return }
         self.taskHandle = Task {
             while !Task.isCancelled {
-                self.info.messageSentCount = transport.info.counts.sent;
-                self.info.messageRetrievedCount = transport.info.counts.retrieved;
-                self.info.messageHandledCount = transport.info.counts.handled;
-                self.info.messageQueueLength = transport.info.counts.queued;
-                self.info.messageQueueLengthAll = transport.info.counts.queuedTotal;
-                let players = await transport.retrievePlayers();
+                self.info.messageSentCount = self.transport.info.counts.sent;
+                self.info.messageRetrievedCount = self.transport.info.counts.retrieved;
+                self.info.messageHandledCount = self.transport.info.counts.handled;
+                self.info.messageQueueLength = self.transport.info.counts.queued;
+                self.info.messageQueueLengthAll = self.transport.info.counts.queuedTotal;
+                let players = await self.transport.retrievePlayers();
                 self.info.playerCount = players.count;
-                self.info.playerRegistered = players.contains(transport.player);
-                let host = await transport.retrieveHost();
+                self.info.playerRegistered = players.contains(self.transport.player);
+                let host = await self.transport.retrieveHost();
                 self.info.host = host;
-                self.info.isHost = transport.player == host;
+                self.info.isHost = self.transport.player == host;
                 // print("WATCH> players: \(players) host: \(host)");
                 try? await Task.sleep(nanoseconds: 300_000_000);
             }
@@ -78,35 +88,36 @@ public struct MultiPlayerControlPanel: View {
     @ObservedObject var table: Table
     @ObservedObject var settings: Settings;
     @Binding fileprivate var info: HttpServerInfo;
+    let transport: GameCenter.HttpTransport;
     let background: Color = Color.gray;
-    let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+    // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
     public var body: some View {
         VStack(spacing: 80) {
             HStack(alignment: .firstTextBaseline, spacing: 0) {
                 ToggleItem("multi", on: $settings.multiPlayer.enabled, disabled: false) { value in
                     if (!value) {
-                        transport.stopMessagePolling();
+                        self.transport.stopMessagePolling();
                     }
                     else if (settings.multiPlayer.poll) {
-                        transport.startMessagePolling();
+                        self.transport.startMessagePolling();
                     }
                 }
                 ToggleItem("host", on: $info.isHost, disabled: !settings.multiPlayer.enabled) { value in
                     if (value) {
                         Task {
-                            await transport.setHost();
+                            await self.transport.setHost();
                         }
                     }
                     else {
-                        Task { await transport.unsetHost(); }
+                        Task { await self.transport.unsetHost(); }
                     }
                 }
                 ToggleItem("poll", on: $settings.multiPlayer.poll, disabled: !settings.multiPlayer.enabled) { value in
                     if (value) {
-                        transport.startMessagePolling();
+                        self.transport.startMessagePolling();
                     }
                     else {
-                        transport.stopMessagePolling();
+                        self.transport.stopMessagePolling();
                     }
                 }
                 ToggleItem("watch", on: $info.poll, disabled: !settings.multiPlayer.enabled)
@@ -144,8 +155,9 @@ public struct MultiPlayerInfoPanel: View {
     @ObservedObject var table: Table
     @ObservedObject var settings: Settings;
     @Binding fileprivate var info: HttpServerInfo;
+    let transport: GameCenter.HttpTransport;
     let background: Color = Color.gray;
-    let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+    // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
     public var body: some View {
         VStack(spacing: 80) {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
@@ -181,9 +193,9 @@ public struct MultiPlayerInfoPanel: View {
                 Text("\(self.info.playerCount)")
                     .font(.caption)
                 Spacer()
-                PingButton()
-                RegisterPlayerButton()
-                ResetServerButton()
+                PingButton(transport: self.transport)
+                RegisterPlayerButton(transport: self.transport)
+                ResetServerButton(transport: self.transport)
             }
             .padding(.leading, 10)
             .padding(.vertical, 2)
@@ -196,12 +208,13 @@ public struct MultiPlayerInfoPanel: View {
     }
 
     private struct PingButton: View {
-        let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+        let transport: GameCenter.HttpTransport;
+        // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
-                    let message: GameCenter.PingMessage = GameCenter.PingMessage(player: transport.player);
-                    await transport.send(message: message);
+                    let message: GameCenter.PingMessage = GameCenter.PingMessage(player: self.transport.player);
+                    await self.transport.send(message: message);
                 }
             } label: {
                 Image(systemName: "paperplane.fill")
@@ -214,11 +227,12 @@ public struct MultiPlayerInfoPanel: View {
     }
 
     private struct RegisterPlayerButton: View {
-        let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+        let transport: GameCenter.HttpTransport;
+        // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
-                    await transport.register();
+                    await self.transport.register();
                 }
             } label: {
                 Image(systemName: "person.fill.checkmark")
@@ -231,11 +245,12 @@ public struct MultiPlayerInfoPanel: View {
     }
 
     private struct ResetServerButton: View {
-        let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+        let transport: GameCenter.HttpTransport
+        // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
-                    await transport.reset();
+                    await self.transport.reset();
                     // await transport.register();
                 }
             } label: {
@@ -257,6 +272,7 @@ public struct MultiPlayerInfoPanelMessages: View {
     @ObservedObject var table: Table
     @ObservedObject var settings: Settings;
     @Binding fileprivate var info: HttpServerInfo;
+    let transport: GameCenter.HttpTransport;
     @State private var taskHandle: Task<Void, Never>? = nil
     let background: Color = Color.gray;
     public var body: some View {
@@ -288,8 +304,8 @@ public struct MultiPlayerInfoPanelMessages: View {
                     .foregroundColor(self.info.messageRetrievedCount != self.info.messageHandledCount ? .red : .primary)
                     .bold(self.info.messageRetrievedCount != self.info.messageHandledCount)
                 Spacer()
-                ResetMessagesButton()
-                // ResetMessagesAllButton()
+                ResetMessagesButton(transport: self.transport)
+                // ResetMessagesAllButton(transport: self.transport)
             }
             .padding(.leading, 10)
             .padding(.vertical, 10)
@@ -302,11 +318,12 @@ public struct MultiPlayerInfoPanelMessages: View {
     }
 
     private struct ResetMessagesButton: View {
-        let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+        let transport: GameCenter.HttpTransport;
+        // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
-                    await transport.resetMessages();
+                    await self.transport.resetMessages();
                 }
             } label: {
                 Image(systemName: "trash")
@@ -319,11 +336,12 @@ public struct MultiPlayerInfoPanelMessages: View {
     }
 
     private struct ResetMessagesAllButton: View {
-        let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
+        let transport: GameCenter.HttpTransport
+        // let transport: GameCenter.HttpTransport = GameCenter.HttpTransport.instance;
         public var body: some View {
             Button {
                 Task {
-                    await transport.resetMessages(all: true);
+                    await self.transport.resetMessages(all: true);
                 }
             } label: {
                 Image(systemName: "arrow.clockwise.circle")

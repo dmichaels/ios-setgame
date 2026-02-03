@@ -11,13 +11,18 @@ public struct ContentView: View {
     @State private var saveMoveSetFront: Bool = false;
     @State private var saveSimpleDeck: Bool = false;
 
+    private var session: GameCenter.Session? = nil;
+    init(session: GameCenter.Session? = nil) {
+        self.session = session;
+    }
+
     private let background: Color = Color(hex: 0xDCEEE4);
 
     public var body: some View {
         NavigationView {
             ZStack {
                 background.ignoresSafeArea()
-                SetTableView(table: self.table, settings: self.settings, feedback: self.feedback)
+                SetTableView(table: self.table, settings: self.settings, feedback: self.feedback, session: self.session)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .principal) {
@@ -105,9 +110,10 @@ public struct ContentView: View {
         @ObservedObject var table: Table;
         @ObservedObject var settings: Settings;
         @ObservedObject var feedback: Feedback;
+                        var session: GameCenter.Session?;
         @State private var startedNewGame: Bool = false;
         public var body: some View {
-            TableView(table: self.table, settings: self.settings, feedback: self.feedback)
+            TableView(table: self.table, settings: self.settings, feedback: self.feedback, session: session)
                 .onAppear {
                     if (!self.startedNewGame) {
                         self.table.startNewGame();

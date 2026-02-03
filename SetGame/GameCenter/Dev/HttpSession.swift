@@ -22,9 +22,9 @@ public extension GameCenter
             return self.hostImp;
         }
 
-        public var hosting: Bool {
-            return self.player == self.host;
-        }
+        // public var hosting: Bool {
+            // return self.player == self.host;
+        // }
 
         public var players: [String] {
             return self.playersImp;

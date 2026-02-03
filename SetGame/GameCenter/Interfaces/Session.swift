@@ -14,6 +14,9 @@ public extension GameCenter
 }
 
 extension GameCenter.Session {
+    public var hosting: Bool {
+        return self.player == self.host;
+    }
     public func bind(to handler: GameCenter.SessionMessageHandler) {
         self.transport.bind(to: handler);
         handler.session = self;

@@ -154,6 +154,16 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
             // are here responding to a simple local request, from
             // the menu-item, to start a new game; need to notify clients.
             //
+            if let session: GameCenter.Session = self.session {
+                let message: GameCenter.NewGameMessage = GameCenter.NewGameMessage(
+                    player: GameCenter.HttpTransport.instance.player,
+                    cards: self.cards
+                );
+                if (session.hosting) {
+                    session.send(message: message);
+                }
+            }
+            /*
             if let transport = self.gameCenterSender {
                 let message: GameCenter.NewGameMessage = GameCenter.NewGameMessage(
                     player: GameCenter.HttpTransport.instance.player,
@@ -163,6 +173,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
                     transport.send(message: message);
                 }
             }
+            */
         }
     }
 

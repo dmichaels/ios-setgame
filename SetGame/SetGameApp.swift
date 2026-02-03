@@ -9,6 +9,9 @@ struct SetGameApp: App {
     @StateObject private var feedback: Feedback;
     @StateObject private var table: Table;
 
+    var transport: GameCenter.HttpTransport;
+    var session: GameCenter.Session;
+
     init() {
         let settings: Settings = Settings();
         _settings = StateObject(wrappedValue: settings);
@@ -16,12 +19,13 @@ struct SetGameApp: App {
                                                        haptics: settings.haptics));
         _table = StateObject(wrappedValue: Table(settings: settings,
                                                  gameCenterSender: GameCenter.HttpTransport.instance));
-
+        self.transport = GameCenter.HttpTransport();
+        self.session = GameCenter.HttpSession(transport: transport);
     }
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(session: self.session)
                 .environmentObject(self.table)
                 .environmentObject(self.settings)
                 .environmentObject(self.feedback)
@@ -47,10 +51,10 @@ struct SetGameApp: App {
                     }
                     else {
                     }
-                    var transport: GameCenter.HttpTransport = GameCenter.HttpTransport();
-                    var session: GameCenter.Session = GameCenter.HttpSession(transport: transport);
-                    if await session.start() {
-                        session.bind(to: self.table);
+                    // var transport: GameCenter.HttpTransport = GameCenter.HttpTransport();
+                    // var session: GameCenter.Session = GameCenter.HttpSession(transport: transport);
+                    if await self.session.start() {
+                        self.session.bind(to: self.table);
                     }
                     let x = 1 
                 }
