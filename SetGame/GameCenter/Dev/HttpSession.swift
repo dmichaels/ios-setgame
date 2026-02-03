@@ -42,6 +42,7 @@ public extension GameCenter
         }
 
         public func start() async -> Bool {
+            self.transportImp.start();
             self.hostImp = await self.transportImp.retrieveHost();
             self.playersImp = await self.transportImp.retrievePlayers();
             return true;

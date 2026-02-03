@@ -7,8 +7,8 @@ public extension GameCenter
         // TEMPORARY WHILE MIGRATING TO THIS ...
         public static let instance: HttpTransport = HttpTransport(player: ID(veryshort: true).value); // TEMPORARY
         public var hosting: Bool { self.player == self.info.host }
-        public func startMessagePolling() { self.poll() }
-        public func stopMessagePolling() { self.nopoll() }
+        public func startMessagePolling() { self.pollMessages() }
+        public func stopMessagePolling() { self.nopollMessages() }
         // ... END TEMPORARY WHILE MIGRATING TO THIS
 
         // Transport protocol implementation.
@@ -78,6 +78,8 @@ public extension GameCenter
 
         private let url: URL;
         public var handler: MessageHandler? = nil;
+        private var pollMessagesTask: Task<Void, Never>? = nil;
+        private var pollInfoTask: Task<Void, Never>? = nil;
         private var pollTask: Task<Void, Never>? = nil;
         public  var info: Info = Info();
 
@@ -156,11 +158,25 @@ public extension GameCenter
 		}
 
         private func poll() {
-            guard self.pollTask == nil else { return }
-            self.pollTask = Task {
+            self.pollMessages();
+            self.pollInfo();
+        }
+
+        private func pollMessages() {
+            guard self.pollMessagesTask == nil else { return }
+            self.pollMessagesTask = Task {
                 while (!Task.isCancelled) {
                     let messages: [GameCenter.Message] = await self.retrieveMessages(for: self.player);
                     self.dispatchMessages(messages: messages);
+                    try? await Task.sleep(nanoseconds: Defaults.pollInterval);
+                }
+            }
+        }
+
+        private func pollInfo() {
+            guard self.pollInfoTask == nil else { return }
+            self.pollInfoTask = Task {
+                while (!Task.isCancelled) {
                     self.info.counts.queued = await self.retrieveMessagesQueuedCount();
                     self.info.counts.queuedTotal = await self.retrieveMessagesQueuedCount(all: true);
                     self.info.counts.players = await self.retrievePlayers().count;
@@ -171,8 +187,18 @@ public extension GameCenter
         }
 
         private func nopoll() {
-            self.pollTask?.cancel();
-            self.pollTask = nil;
+            self.nopollMessages();
+            self.nopollInfo();
+        }
+
+        private func nopollMessages() {
+            self.pollMessagesTask?.cancel();
+            self.pollMessagesTask = nil;
+        }
+
+        private func nopollInfo() {
+            self.pollInfoTask?.cancel();
+            self.pollInfoTask = nil;
         }
 
         private func dispatchMessages(messages: [GameCenter.Message]) {
