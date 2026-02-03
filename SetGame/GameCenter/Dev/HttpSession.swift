@@ -9,9 +9,9 @@ public extension GameCenter
         public func send(message: Message) {
             if (self.hosting) {
                 //
-                // If we are the host, then send the message to all clients;
-                // and also send it to ourself the host, so that we the host
-                // act as much as possible like the clients.
+                // If we are the HOST, then send the message to ALL clients;
+                // and INCLUDING to ourselves (the host), so that we (the
+                // host) act as much as possible like the clients.
                 //
                 for player in self.players {
                     self.transportImp.send(message: message, to: player);
@@ -19,8 +19,8 @@ public extension GameCenter
             }
             else {
                 //
-                // If we are the client (i.e. we are not the host),
-                // then sen the message only to the host.
+                // If we are the CLIENT (i.e. NOT the HOST),
+                // then send the message ONLY to the HOST.
                 //
                 self.transportImp.send(message: message, to: self.host);
             }
