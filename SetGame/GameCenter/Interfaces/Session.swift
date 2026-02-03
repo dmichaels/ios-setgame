@@ -10,6 +10,9 @@ public extension GameCenter
         var  players: [String] { get };
         func start() async -> Bool;
         func bind(to: SessionMessageHandler);
+
+        func register() async; // TODO to register host via dev panel
+        func reset(); // TODO to reset host via dev panel
     }
 }
 

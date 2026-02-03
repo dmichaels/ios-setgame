@@ -22,12 +22,20 @@ public extension GameCenter
             return self.hostImp;
         }
 
-        // public var hosting: Bool {
-            // return self.player == self.host;
-        // }
-
         public var players: [String] {
             return self.playersImp;
+        }
+
+        public func register() async {
+            await self.transportImp.register();
+            await self.reset();
+        }
+
+        public func reset() {
+            Task {
+                self.hostImp = await self.transportImp.retrieveHost();
+                self.playersImp = await self.transportImp.retrievePlayers();
+            }
         }
 
         // HttpSession implementation.

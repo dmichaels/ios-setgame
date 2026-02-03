@@ -6,7 +6,6 @@ public extension GameCenter
 
         // TEMPORARY WHILE MIGRATING TO THIS ...
         public static let instance: HttpTransport = HttpTransport(player: ID(veryshort: true).value); // TEMPORARY
-        public var hosting: Bool { self.player == self.info.host }
         public func startMessagePolling() { self.pollMessages() }
         public func stopMessagePolling() { self.nopollMessages() }
         // ... END TEMPORARY WHILE MIGRATING TO THIS

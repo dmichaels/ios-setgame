@@ -37,7 +37,7 @@ public struct MultiPlayerDevelopmentPanelView: View {
     public var body: some View {
         VStack {
             Space(size: 24)
-            MultiPlayerControlPanel(table: table, settings: settings, info: $info, transport: self.transport)
+            MultiPlayerControlPanel(table: table, settings: settings, info: $info, session: self.session, transport: self.transport)
             Space(size: 4)
             MultiPlayerInfoPanel(table: table, settings: settings, info: $info, session: self.session, transport: self.transport)
             Space(size: 4)
@@ -77,6 +77,8 @@ public struct MultiPlayerDevelopmentPanelView: View {
                 let host = await self.transport.retrieveHost();
                 self.info.host = host;
                 self.info.isHost = self.transport.player == host;
+                self.info.sessionHost = self.session?.host ?? "";
+                self.info.sessionHosting = self.session?.hosting ?? false;
                 // print("WATCH> players: \(players) host: \(host)");
                 try? await Task.sleep(nanoseconds: 300_000_000);
             }
@@ -88,6 +90,7 @@ public struct MultiPlayerControlPanel: View {
     @ObservedObject var table: Table
     @ObservedObject var settings: Settings;
     @Binding fileprivate var info: HttpServerInfo;
+    let session: GameCenter.Session?;
     let transport: GameCenter.HttpTransport;
     let background: Color = Color.gray;
     public var body: some View {
@@ -105,10 +108,14 @@ public struct MultiPlayerControlPanel: View {
                     if (value) {
                         Task {
                             await self.transport.setHost();
+                            session?.reset();
                         }
                     }
                     else {
-                        Task { await self.transport.unsetHost(); }
+                        Task {
+                            await self.transport.unsetHost();
+                            session?.reset();
+                        }
                     }
                 }
                 ToggleItem("poll", on: $settings.multiPlayer.poll, disabled: !settings.multiPlayer.enabled) { value in
@@ -188,10 +195,10 @@ public struct MultiPlayerInfoPanel: View {
                     .padding(.trailing, 4)
 
                 // TODO TEMPORARY ...
-                Text("[\(session?.host ?? "")]")
+                Text("[\(self.info.sessionHost)]")
                     .font(.caption)
                     .fontWeight(.bold)
-                Text("[\((session?.hosting ?? false) ? "T" : "F")]")
+                Text("[\(self.info.sessionHosting ? "T" : "F")]")
                     .font(.caption)
                     .fontWeight(.bold)
                 // ... TODO TEMPORARY
@@ -203,8 +210,8 @@ public struct MultiPlayerInfoPanel: View {
                     .font(.caption)
                 Spacer()
                 PingButton(transport: self.transport)
-                RegisterPlayerButton(transport: self.transport)
-                ResetServerButton(transport: self.transport)
+                RegisterPlayerButton(session: self.session, transport: self.transport)
+                ResetServerButton(session: self.session, transport: self.transport)
             }
             .padding(.leading, 10)
             .padding(.vertical, 2)
@@ -235,11 +242,13 @@ public struct MultiPlayerInfoPanel: View {
     }
 
     private struct RegisterPlayerButton: View {
+        let session: GameCenter.Session?;
         let transport: GameCenter.HttpTransport;
         public var body: some View {
             Button {
                 Task {
-                    await self.transport.register();
+                    // await self.transport.register();
+                    await self.session?.register();
                 }
             } label: {
                 Image(systemName: "person.fill.checkmark")
@@ -252,11 +261,13 @@ public struct MultiPlayerInfoPanel: View {
     }
 
     private struct ResetServerButton: View {
+        let session: GameCenter.Session?
         let transport: GameCenter.HttpTransport
         public var body: some View {
             Button {
                 Task {
                     await self.transport.reset();
+                    await self.session?.reset();
                     // await transport.register();
                 }
             } label: {
