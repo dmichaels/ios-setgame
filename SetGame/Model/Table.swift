@@ -11,28 +11,13 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
     private var gameCenterSender: GameCenter.MessageSender?;
 
     // public var sender: GameCenter.MessageSender?;
+
+    // SessionManagerHandler protocol implementation.
+
     public var session: GameCenter.Session?;
 
-    public struct State {
-        public private(set) var startTime: Date                     = Date();
-        public              var partialSetSelected: Bool            = false;
-        public              var setsFoundCount: Int                 = 0;
-        public              var setJustFound: Bool                  = false;
-        public              var setJustFoundNot: Bool               = false;
-        public              var setsLastFound: [[TableCard]]        = [];
-        fileprivate         var showingCardsWhichArePartOfSet: Bool = false;
-        fileprivate         var showingOneRandomSet: Bool           = false;
-        fileprivate         var showingOneRandomSetLast: Int?       = nil;
-        //
-        // This resolving flag is ONLY used to disable input while blinking the cards after
-        // a SET is found (see allowsHitTesting in TableView); there should be a better way.
-        //
-        fileprivate var resolving: Bool                             = false;
-    }
-
-    @Published public private(set) var cards: [TableCard];
-    @Published public private(set) var state: State;
-               private             var deck: TableDeck;
+    // MessageHandler (via SessionMessageHandler) implementation.
+    // TODO maybe: Put these in a Table extension to visually set them apart?
 
     public func handle(message: GameCenter.PingMessage) {
         print("Table.handle(Ping)> \(message)");
@@ -63,6 +48,29 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
     public func handle(message: GameCenter.ConfirmedSetMessage) {
         print("Table.handle(ConfirmedSet)> \(message)");
     }
+
+    // Table implementation.
+
+    public struct State {
+        public private(set) var startTime: Date                     = Date();
+        public              var partialSetSelected: Bool            = false;
+        public              var setsFoundCount: Int                 = 0;
+        public              var setJustFound: Bool                  = false;
+        public              var setJustFoundNot: Bool               = false;
+        public              var setsLastFound: [[TableCard]]        = [];
+        fileprivate         var showingCardsWhichArePartOfSet: Bool = false;
+        fileprivate         var showingOneRandomSet: Bool           = false;
+        fileprivate         var showingOneRandomSetLast: Int?       = nil;
+        //
+        // This resolving flag is ONLY used to disable input while blinking the cards after
+        // a SET is found (see allowsHitTesting in TableView); there should be a better way.
+        //
+        fileprivate var resolving: Bool                             = false;
+    }
+
+    @Published public private(set) var cards: [TableCard];
+    @Published public private(set) var state: State;
+               private             var deck: TableDeck;
 
     public init(settings: Settings, gameCenterSender: GameCenter.MessageSender? = nil) {
         self.settings = settings;

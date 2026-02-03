@@ -7,8 +7,6 @@ public extension GameCenter
     }
 
     public protocol MessageHandler: AnyObject {
-        // var  sender: MessageSender? { get set }
-        // var  session: Session? { get set }
         func handle(message: PingMessage);
         func handle(message: PlayerReadyMessage);
         func handle(message: NewGameMessage);
@@ -24,9 +22,16 @@ public extension GameCenter
 public extension GameCenter
 {
     public protocol Transport: MessageSender, MessageHandler {
+        var  handler: MessageHandler? { get set }
         var  player: String { get };
         func start();
         func stop();
         func bind(to: MessageHandler);
+    }
+}
+
+public extension GameCenter.Transport {
+    public func bind(to handler: GameCenter.MessageHandler) {
+        self.handler = handler;
     }
 }

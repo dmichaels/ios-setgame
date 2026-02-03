@@ -4,13 +4,15 @@ public extension GameCenter
 {
     public class HttpSession: Session {
 
-        // MessageSender protocol implementation.
+        // MessageSender (via Sender) protocol implementation.
 
         public func send(message: Message) {
             return self.transportImp.send(message: message);
         }
 
         // Session protocol implementation.
+
+        public let transport: Transport;
 
         public var player: String {
             return self.transportImp.player;
@@ -30,11 +32,12 @@ public extension GameCenter
 
         // HttpSession implementation.
 
-        private var transportImp: GameCenter.HttpTransport;
+        private let transportImp: GameCenter.HttpTransport;
         private var hostImp: String = "";
         private var playersImp: [String] = [];
 
         public init(transport: GameCenter.HttpTransport) {
+            self.transport = transport;
             self.transportImp = transport;
         }
 
@@ -42,11 +45,6 @@ public extension GameCenter
             self.hostImp = await self.transportImp.retrieveHost();
             self.playersImp = await self.transportImp.retrievePlayers();
             return true;
-        }
-
-        public func bind(to handler: SessionMessageHandler) {
-            self.transportImp.bind(to: handler);
-            handler.session = self;
         }
     }
 }

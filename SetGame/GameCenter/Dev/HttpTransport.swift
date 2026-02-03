@@ -23,26 +23,13 @@ public extension GameCenter
             self.nopoll();
         }
 
-        public func bind(to handler: MessageHandler) {
-            self.handler = handler;
-            // handler.sender = self;
-        }
-
-        // MessageSender protocol implementation.
+        // MessageSender (via Transport) protocol implementation.
 
         public func send(message: Message) {
             self.sendMessage(message);
         }
 
-        // MessageHandler protocol implementation.
-
-        public var sender: MessageSender? {
-            get { self } set { }
-        }
-
-        public var session: Session? {
-            get { nil } set { }
-        }
+        // MessageHandler (via Transport) protocol implementation.
 
         public func handle(message: PingMessage) {
             self.handler?.handle(message: message);
@@ -90,7 +77,7 @@ public extension GameCenter
         }
 
         private let url: URL;
-        private var handler: MessageHandler? = nil;
+        public var handler: MessageHandler? = nil;
         private var pollTask: Task<Void, Never>? = nil;
         public  var info: Info = Info();
 
