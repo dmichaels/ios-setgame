@@ -19,8 +19,9 @@ enum CardGridCallbacks
         )
     }
 
-    public static func onSet(cards: [TableCard], multiplayer: Bool = false, resolve: @escaping () -> Void) {
+    public static func onSet(cards: [TableCard], /*multiplayer: Bool = false,*/ resolve: @escaping () -> Void) {
         // if (Defaults.multiPlayer.enabled) {
+/*
         if (multiplayer) {
             let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(
                 player: GameCenter.HttpTransport.instance.player,
@@ -29,6 +30,7 @@ enum CardGridCallbacks
             GameCenter.HttpTransport.instance.send(message: message, to: ""); // TODO
             return;
         }
+*/
         cards.blink {
             Delay(by: Defaults.Effects.selectAfterDelay) {
                 resolve();

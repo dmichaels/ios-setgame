@@ -20,22 +20,31 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
     // TODO maybe: Put these in a Table extension to visually set them apart?
 
     public func handle(message: GameCenter.PingMessage) {
-        print("Table.handle(Ping)> \(message)");
+        print("DEBUG:Table.handle(Ping)> \(message)");
     }
 
     public func handle(message: GameCenter.PlayerReadyMessage) {
-        print("Table.handle(PlayerReady)> \(message)");
+        print("DEBUG:Table.handle(PlayerReady)> \(message)");
     }
 
     public func handle(message: GameCenter.NewGameMessage) {
-        print("Table.handle(NewGame)> \(message)");
+        print("DEBUG:Table.handle(NewGame)> \(message)");
         self.startNewGame(cards: message.cards);
     }
 
     public func handle(message: GameCenter.FoundSetMessage) {
-        print("Table.handle(FoundSet)> \(message)");
-        let cards: [TableCard] = self.cards.find(message.cards);
-        CardGridCallbacks.onSetMultiPlayer(cards: cards, resolve: { self.resolveSet() });
+        print("DEBUG:Table.handle(FoundSet)> \(message)");
+        if let session = self.multiPlayer {
+            if (session.hosting) {
+                print("DEBUG> handling found-set message as host");
+            }
+            else {
+                print("DEBUG> handling found-set message as client");
+            }
+        }
+        if let cards: [TableCard] = self.cards.findCards(message.cards, strict: true) {
+            CardGridCallbacks.onSetMultiPlayer(cards: cards, resolve: { self.resolveSet() });
+        }
         /*
         cards.blink {
             Delay(by: Defaults.Effects.selectAfterDelay) {
@@ -46,7 +55,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
     }
 
     public func handle(message: GameCenter.ConfirmedSetMessage) {
-        print("Table.handle(ConfirmedSet)> \(message)");
+        print("DEBUG:Table.handle(ConfirmedSet)> \(message)");
     }
 
     // Table implementation.
@@ -80,6 +89,14 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
         self.state = State();
     }
 
+    private var multiPlayer: GameCenter.Session? {
+        return self.settings.multiPlayer.enabled ? self.session : nil;
+    }
+
+    private var multiPlayerEnabled: Bool {
+        return self.settings.multiPlayer.enabled && self.session != nil;
+    }
+
     public var disabled: Bool {
         return self.state.resolving || self.settings.demoMode;
     }
@@ -90,87 +107,38 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
         self.deck  = TableDeck(simple: self.settings.simpleDeck);
         self.state = State();
 
-        if (self.settings.multiPlayer.enabled) {
-            if let cards: [TableCard] = cards {
+        if let session = self.multiPlayer {
+            if let cards: [TableCard] = cards,
+               let cards: [TableCard] = self.deck.takeCards(cards, strict: true) {
                 //
-                // Must be multi-player mode where we are the client,
-                // or perhaps the host acting as a client, and are here
+                // We are in multi-player mode where WE are the CLIENT,
+                // or perhaps the host acting as a client, and are now
                 // responding to a NewGameMessage to deal the specific
                 // given cards from the deck.
                 //
-                if let cards: [TableCard] = self.deck.takeCards(cards, strict: true) {
-                    self.cards = cards;
-                    return;
-                }
+                print("DEBUG> multi-player client handling new-game message")
+                self.cards = cards;
             }
-        }
-/*
-        if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
-            let magicSquareCards: [TableCard] = TableDeck.randomMagicSquare(simple: self.settings.simpleDeck)
-            if let cards: [TableCard] = self.deck.takeCards(magicSquareCards, strict: true) {
-                self.addCards(cards);
+            else if (session.hosting) {
+                //
+                // We are in multi-player mode where WE are the HOST,
+                // and we are now responding to a local request (from the
+                // menu-item) to start a new game; notify clients (and host).
+                //
+                let cards: [TableCard] = self.newGameCards(nondestructive: true);
+                print("DEBUG> multi-player host sending new-game message")
+                session.send(message: GameCenter.NewGameMessage(cards: cards));
             }
-            //
-            // Only bother making it look good if the cards-per-row is four (the default) or
-            // five; if cards-per-row is three it already falls out to look good automatically.
-            //
-            var displayCardCount: Int = self.settings.displayCardCount;
-            if ((self.settings.cardsPerRow == 4) && (displayCardCount < 11)) {
-                displayCardCount = 11;
-            }
-            else if ((self.settings.cardsPerRow == 5) && (displayCardCount < 13)) {
-                displayCardCount = 13;
-            }
-            self.fillTable(moveSetFront: false, displayCardCount: displayCardCount);
-            if (self.settings.cardsPerRow == 4) {
-                self.cards[3]  = self.cards[9];
-                self.cards[7]  = self.cards[10];
-                self.cards[4]  = magicSquareCards[3];
-                self.cards[5]  = magicSquareCards[4];
-                self.cards[6]  = magicSquareCards[5];
-                self.cards[8]  = magicSquareCards[6];
-                self.cards[9]  = magicSquareCards[7];
-                self.cards[10] = magicSquareCards[8];
-            }
-            else if (self.settings.cardsPerRow == 5) {
-                self.cards[3]  = self.cards[9];
-                self.cards[4]  = self.cards[10];
-                self.cards[8]  = self.cards[11];
-                self.cards[9]  = self.cards[12];
-                self.cards[5]  = magicSquareCards[3];
-                self.cards[6]  = magicSquareCards[4];
-                self.cards[7]  = magicSquareCards[5];
-                self.cards[10] = magicSquareCards[6];
-                self.cards[11] = magicSquareCards[7];
-                self.cards[12] = magicSquareCards[8];
-            }
+            return;
         }
         else {
-            self.fillTable();
-        }
-*/
-
-        if self.settings.multiPlayer.enabled,
-           let session: GameCenter.Session = self.session, session.hosting {
-        }
-        if (self.settings.multiPlayer.enabled) {
-            //
-            // We are in multi-player mode where WE are the HOST and
-            // are here responding to a simple local request (from the
-            // menu-item) to start a new game; need to notify clients.
-            //
-            let cards: [TableCard] = self.newGameCards(nondestructive: true);
-            if let session: GameCenter.Session = self.session, session.hosting {
-                let message: GameCenter.NewGameMessage = GameCenter.NewGameMessage(cards: cards);
-                session.send(message: message);
-                return;
-            }
+            print("DEBUG> non-multi-player new-game")
         }
 
         self.cards = self.newGameCards();
     }
 
-    public func newGameCards(nondestructive: Bool = false) -> [TableCard] {
+    private func newGameCards(nondestructive: Bool = false) -> [TableCard] {
 
         let saveCards: [TableCard]? = nondestructive ? self.cards : nil;
         let saveDeck: TableDeck?    = nondestructive ? self.deck  : nil;
@@ -284,7 +252,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
     public func cardTouched(_ card: TableCard,
                               select: Bool = true,
                               delay: Double? = nil,
-                              onSet: (([TableCard], Bool, @escaping () -> Void) -> Void)? = nil,
+                              onSet: (([TableCard], /*Bool,*/ @escaping () -> Void) -> Void)? = nil,
                               onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
                               onCardsMoved: (([TableCard]) -> Void)? = nil) {
 
@@ -315,7 +283,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
     }
 
     public func possibleSetSelected(delay: Double? = nil,
-                                    onSet: (([TableCard], Bool, @escaping () -> Void) -> Void)? = nil,
+                                    onSet: (([TableCard], /*Bool,*/ @escaping () -> Void) -> Void)? = nil,
                                     onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
                                     onCardsMoved: (([TableCard]) -> Void)? = nil) {
 
@@ -351,6 +319,16 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
         // Here is where (I think), for GameCenter multi-player
         // game mode, we will send a FoundSetMessage to the host.
 
+        if let session = self.multiPlayer {
+            if (selectedCards.isSet()) {
+                let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(
+                    player: session.player,
+                    cards: selectedCards
+                );
+                session.send(message: message);
+            }
+            return;
+        }
 /*
         if let multiplayer = self.multiplayer {
             if (selectedCards.isSet()) {
@@ -370,7 +348,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
                     // The given onSet function implementation is responsible for
                     // and MUST call the passed resolve function or else undefined!
                     //
-                    onSet(selectedCards, self.settings.multiPlayer.enabled, resolve);
+                    onSet(selectedCards, /*self.settings.multiPlayer.enabled,*/ resolve);
                 }
                 else {
                     resolve();

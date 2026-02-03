@@ -126,14 +126,10 @@ public struct CardViewDebug: View {
             return;
         }
 
-        let tablecards: [TableCard] = self.table.cards.find(cards);
-
-        guard tablecards.count == 3 else {
-            return;
+        if let tablecards: [TableCard] = self.table.cards.findCards(cards, strict: true) {
+            tablecards.select();
+            CardViewDebug.possibleSetSelected(table: self.table);
         }
-
-        tablecards.select();
-        CardViewDebug.possibleSetSelected(table: self.table);
     }
 
     private func simulateIncomingNewGameMessage(_ cards: [TableCard]) {

@@ -493,12 +493,18 @@ public extension Array where Element : Card {
         }
     }
 
-    func find(_ card: Element) -> Element? {
+    func findCard(_ card: Element) -> Element? {
         return self.first(where: { $0 == card });
     }
 
-    func find(_ cards: [Element]) -> [Element] {
-        return self.filter { card in cards.contains(where: { $0 == card }) };
+    func findCards(_ cards: [Element], strict: Bool = false) -> [Element]? {
+        let found: [Element] = self.filter { card in cards.contains(where: { $0 == card }) };
+        if (strict) {
+            return found.count == cards.count ? found : nil; 
+        }
+        else {
+            return found;
+        }
     }
 
     /// Parses and returns a card array representing given comma-separated list of

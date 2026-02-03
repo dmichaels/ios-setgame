@@ -91,8 +91,12 @@ public extension GameCenter
 
         public func sendMessage(_ message: Message, to player: String) {
             guard let data: [String: Any] = message.json else { return }
+            print("DEBUG> send message: \(message.type) to: \(player)")
             if self.url.post("send", data: ["to": player, "message": data]) {
                 self.info.counts.sent += 1;
+            }
+            else {
+            print("DEBUG> send message: \(message.type) to: \(player) failed")
             }
         }
 
