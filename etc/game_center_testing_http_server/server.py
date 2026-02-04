@@ -9,14 +9,18 @@ host_player = None
 @app.route('/register/<player_id>', methods=['POST'])
 def register_endpoint(player_id):
     global host_player
-    was_empty = len(players) == 0
-    players.add(player_id)
-    if was_empty:
-        host_player = player_id
+    if player_id not in players:
+        was_empty = len(players) == 0
+        players.add(player_id)
+        if was_empty:
+            host_player = player_id
+        status = 201
+    else:
+        status = 200
     return jsonify({
         "player": player_id,
         "host": host_player
-    }), 201
+    }), status
 
 @app.route('/send', methods=['POST'])
 def send_endpoint():

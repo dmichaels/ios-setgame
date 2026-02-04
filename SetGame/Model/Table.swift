@@ -79,9 +79,15 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
 
     @MainActor
     public func handle(message: GameCenter.ConfirmedSetMessage) {
-        deb("Table.handle(ConfirmedSet)> \(message)");
+        deb("Table.handle(ConfirmedSet) message: \(message)");
         if let session = self.multiPlayer {
+            deb("Table.handle(ConfirmedSet) multi-player");
             if let cards: [TableCard] = self.cards.findCards(message.cards, strict: true) {
+                deb("Table.handle(ConfirmedSet): multi-player cards: \(cards)");
+
+                self.unselectCards();
+                cards.select();
+
                 CardGridCallbacks.onSetMultiPlayer(cards: cards, resolve: { self.resolveSet() });
             }
         }
@@ -103,11 +109,17 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
         // This resolving flag is ONLY used to disable input while blinking the cards after
         // a SET is found (see allowsHitTesting in TableView); there should be a better way.
         //
-        fileprivate var resolving: Bool                             = false;
+        // TODO/TEMPORARY/XYZZY ...
+        // fileprivate var resolving: Bool                             = false;
+        public var resolving: Bool                             = false;
+        // ... END TODO/TEMPORARY/XYZZY
     }
 
     @Published public private(set) var cards: [TableCard];
-    @Published public private(set) var state: State;
+    // TODO/TEMPORARY/XYZZY ...
+    // @Published public private(set) var state: State;
+    @Published public var state: State;
+    // ... TODO/TEMPORARY/XYZZY
                private             var deck: TableDeck;
 
     public init(settings: Settings, gameCenterSender: GameCenter.MessageSender? = nil) {
@@ -408,6 +420,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
     private func resolveSet(_ movedCardsCallback: (([TableCard]) -> Void)? = nil) {
 
         let selectedCards: [TableCard] = self.selectedCards();
+        deb("Table.resolveSet: \(selectedCards)")
 
         guard selectedCards.count == 3 else {
             //
@@ -415,11 +428,13 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
             //
             return;
         }
+        deb("Table.resolveSet: \(selectedCards) OK")
 
         // We have three cards selected; now see if
         // we have a SET selected, or a wrong guess.
 
         if (selectedCards.isSet()) {
+            deb("Table.resolveSet: \(selectedCards) OK OK")
             //
             // We have a SET!
             // Unselect the SET cards, calling the given callback if any,
@@ -469,7 +484,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
             // Fill just in case we have fewer cards than
             // what is normally desired; and unselect all.
             //
-            self.unselectCards()
+            self.unselectCards();
             self.fillTable();
             self.addToSetsLastFound(selectedCards);
             if let movedCardsCallback = movedCardsCallback {
@@ -478,8 +493,10 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
                     movedCardsCallback(movedCards);
                 }
             }
+            deb("Table.resolveSet: \(selectedCards) DONE")
         }
         else {
+            deb("Table.resolveSet: \(selectedCards) NOSET")
             //
             // We do NOT have a SET :-(
             //

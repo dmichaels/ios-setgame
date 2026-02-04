@@ -20,6 +20,7 @@ public struct TableView: View {
     public var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             CardGridView(table: table, settings: settings, spacing: spacing, marginx: marginx)
+                .allowsHitTesting(!self.table.disabled)
             Space(size: 18)
             StatusBar(marginx: marginx)
             MultiPlayerDevelopmentPanelView(table: table, settings: settings, session: session)
@@ -27,7 +28,7 @@ public struct TableView: View {
             FoundSets(table: table, settings: settings, marginx: marginx)
             MultiPlayerGameButton()
         }
-        .allowsHitTesting(!self.table.disabled)
+        // .allowsHitTesting(!self.table.disabled)
     }
 
     private struct StatusBar: View {

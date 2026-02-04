@@ -222,7 +222,7 @@ public struct MultiPlayerInfoPanel: View {
                 PingButton(session: self.session, transport: self.transport)
                 PingAllButton(session: self.session, transport: self.transport)
                 RegisterPlayerButton(session: self.session, transport: self.transport)
-                ResetServerButton(session: self.session, transport: self.transport)
+                ResetServerButton(session: self.session, transport: self.transport, table: self.table)
             }
             .padding(.leading, 10)
             .padding(.vertical, 2)
@@ -296,11 +296,13 @@ public struct MultiPlayerInfoPanel: View {
     private struct ResetServerButton: View {
         let session: GameCenter.Session?
         let transport: GameCenter.HttpTransport
+        let table: Table
         public var body: some View {
             Button {
                 Task {
                     await self.transport.reset();
                     await self.session?.updatePlayers();
+                    self.table.state.resolving = false;
                     // await transport.register();
                 }
             } label: {
@@ -354,8 +356,8 @@ public struct MultiPlayerInfoPanelMessages: View {
                     .foregroundColor(self.info.messageRetrievedCount != self.info.messageHandledCount ? .red : .primary)
                     .bold(self.info.messageRetrievedCount != self.info.messageHandledCount)
                 Spacer()
-                ResetMessagesButton(transport: self.transport)
-                ResetMessagesAllButton(transport: self.transport)
+                ResetMessagesButton(transport: self.transport, table: self.table)
+                ResetMessagesAllButton(transport: self.transport, table: self.table)
             }
             .padding(.leading, 10)
             .padding(.vertical, 10)
@@ -369,10 +371,12 @@ public struct MultiPlayerInfoPanelMessages: View {
 
     private struct ResetMessagesButton: View {
         let transport: GameCenter.HttpTransport;
+        let table: Table;
         public var body: some View {
             Button {
                 Task {
                     await self.transport.resetMessages();
+                    self.table.state.resolving = false;
                 }
             } label: {
                 Image(systemName: "trash")
@@ -386,10 +390,12 @@ public struct MultiPlayerInfoPanelMessages: View {
 
     private struct ResetMessagesAllButton: View {
         let transport: GameCenter.HttpTransport
+        let table: Table
         public var body: some View {
             Button {
                 Task {
                     await self.transport.resetMessages(all: true);
+                    self.table.state.resolving = false;
                 }
             } label: {
                 Image(systemName: "arrow.clockwise.circle")

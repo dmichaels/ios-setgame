@@ -34,6 +34,7 @@ enum CardGridCallbacks
 */
         cards.blink {
             Delay(by: Defaults.Effects.selectAfterDelay) {
+                deb("onSet: cards: \(cards) calling resolve")
                 resolve();
             }
         }
