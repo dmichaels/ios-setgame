@@ -38,6 +38,9 @@ public extension GameCenter
 
     public struct FoundSetMessage: Message {
         public  let type: MessageType;
+        //
+        // For FoundSetMessage the player is the player who found the set.
+        //
         public  let player: String;
         private let codes: [String];
         public  var cards: [TableCard] { MessageConversion.toCards(self.codes) }
@@ -50,6 +53,9 @@ public extension GameCenter
 
     public struct ConfirmedSetMessage: Message {
         public  let type: MessageType;
+        //
+        // For ConfirmedSetMessage the player is the player who first found the set.
+        //
         public  let player: String;
         private let codes: [String];
         private let replacementCodes: [String];

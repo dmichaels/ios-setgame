@@ -2,6 +2,7 @@ import SwiftUI
 
 enum CardGridCallbacks
 {
+// @MainActor
     public static func cardTouched(_ card: TableCard, table: Table) {
         table.cardTouched(
             card,
@@ -19,7 +20,7 @@ enum CardGridCallbacks
         )
     }
 
-    public static func onSet(cards: [TableCard], /*multiplayer: Bool = false,*/ resolve: @escaping () -> Void) {
+    public static func onSet(cards: [TableCard], resolve: @escaping () -> Void) {
         // if (Defaults.multiPlayer.enabled) {
 /*
         if (multiplayer) {

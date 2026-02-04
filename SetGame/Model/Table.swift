@@ -5,6 +5,7 @@ import SwiftUI
 /// table cards which are on display; and sundry other data points.
 /// Is this class technically, effectively acting as a "model-view"?
 ///
+// @MainActor
 public class Table: ObservableObject, GameCenter.SessionMessageHandler {
 
     private var settings: Settings;
@@ -32,19 +33,40 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
         self.startNewGame(cards: message.cards);
     }
 
+    @MainActor
     public func handle(message: GameCenter.FoundSetMessage) {
         print("DEBUG:Table.handle(FoundSet)> \(message)");
         if let session = self.multiPlayer {
             if (session.hosting) {
                 print("DEBUG> handling found-set message as host");
+                //
+                // Hard part maybe: Could get another FoundSetMessage immediately or
+                // virtually concurrent to this one, with the same SET or with a SET
+                // that overlaps this SET. If so, then it must be rejected/ignored --
+                // maybe later will send a FoundSetTooLateMessage to the specific player
+                // who sent the subsequent FoundSetMessage for the same or overlaping SET.
+                // Also will need @MainActor (or equivalent) to prevent race conditions,
+                // between checking for SET and removing (and replacing) the cards.
+                //
+                if (message.cards.isSet() && self.cards.containsCards(message.cards)) {
+                    print("DEBUG> handling found-set message as host: confirmed set");
+                    session.send(message: GameCenter.ConfirmedSetMessage(
+                        player: session.player,
+                        cards: message.cards,
+                        replacements: []
+                    ));
+                }
             }
             else {
                 print("DEBUG> handling found-set message as client");
             }
         }
+/*
         if let cards: [TableCard] = self.cards.findCards(message.cards, strict: true) {
             CardGridCallbacks.onSetMultiPlayer(cards: cards, resolve: { self.resolveSet() });
         }
+*/
+
         /*
         cards.blink {
             Delay(by: Defaults.Effects.selectAfterDelay) {
@@ -52,10 +74,17 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
             }
         }
         */
+
     }
 
+    @MainActor
     public func handle(message: GameCenter.ConfirmedSetMessage) {
         print("DEBUG:Table.handle(ConfirmedSet)> \(message)");
+        if let session = self.multiPlayer {
+            if let cards: [TableCard] = self.cards.findCards(message.cards, strict: true) {
+                CardGridCallbacks.onSetMultiPlayer(cards: cards, resolve: { self.resolveSet() });
+            }
+        }
     }
 
     // Table implementation.
@@ -252,7 +281,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
     public func cardTouched(_ card: TableCard,
                               select: Bool = true,
                               delay: Double? = nil,
-                              onSet: (([TableCard], /*Bool,*/ @escaping () -> Void) -> Void)? = nil,
+                              onSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
                               onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
                               onCardsMoved: (([TableCard]) -> Void)? = nil) {
 
@@ -283,7 +312,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
     }
 
     public func possibleSetSelected(delay: Double? = nil,
-                                    onSet: (([TableCard], /*Bool,*/ @escaping () -> Void) -> Void)? = nil,
+                                    onSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
                                     onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
                                     onCardsMoved: (([TableCard]) -> Void)? = nil) {
 
@@ -321,11 +350,10 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
 
         if let session = self.multiPlayer {
             if (selectedCards.isSet()) {
-                let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(
+                session.send(message: GameCenter.FoundSetMessage(
                     player: session.player,
                     cards: selectedCards
-                );
-                session.send(message: message);
+                ));
             }
             return;
         }
@@ -348,7 +376,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
                     // The given onSet function implementation is responsible for
                     // and MUST call the passed resolve function or else undefined!
                     //
-                    onSet(selectedCards, /*self.settings.multiPlayer.enabled,*/ resolve);
+                    onSet(selectedCards, resolve);
                 }
                 else {
                     resolve();

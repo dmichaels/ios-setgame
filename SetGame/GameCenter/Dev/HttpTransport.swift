@@ -92,11 +92,18 @@ public extension GameCenter
         public func sendMessage(_ message: Message, to player: String) {
             guard let data: [String: Any] = message.json else { return }
             print("DEBUG> send message: \(message.type) to: \(player)")
+            //
+            // Note that this send (POST) is a fire-and-forget;
+            // we do not await for its completion and return.
+            //
+            // If we wanted to await just prepend the post call with await and Swift
+            // will automatically choose the async version of our URL.post function.
+            //
             if self.url.post("send", data: ["to": player, "message": data]) {
                 self.info.counts.sent += 1;
             }
             else {
-            print("DEBUG> send message: \(message.type) to: \(player) failed")
+                print("DEBUG> send message: \(message.type) to: \(player) failed")
             }
         }
 
