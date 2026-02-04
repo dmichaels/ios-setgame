@@ -26,7 +26,7 @@ public struct ContentView: View {
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .principal) {
-                            Text((self.settings.demoMode ? "\(Defaults.title) Demo →" : "\(Defaults.title)") + " [\(AID)]")
+                            Text((self.settings.demoMode ? "\(Defaults.title) Demo →" : "\(Defaults.title)") + " [\(aid)]")
                                 .font(.system(size: 28))
                                 .fontWeight(.bold)
                         }

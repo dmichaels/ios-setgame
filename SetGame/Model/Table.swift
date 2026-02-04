@@ -21,24 +21,24 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
     // TODO maybe: Put these in a Table extension to visually set them apart?
 
     public func handle(message: GameCenter.PingMessage) {
-        print("DEBUG:Table.handle(Ping)> \(message)");
+        deb("Table.handle(Ping)> \(message)");
     }
 
     public func handle(message: GameCenter.PlayerReadyMessage) {
-        print("DEBUG:Table.handle(PlayerReady)> \(message)");
+        deb("Table.handle(PlayerReady)> \(message)");
     }
 
     public func handle(message: GameCenter.NewGameMessage) {
-        print("DEBUG:Table.handle(NewGame)> \(message)");
+        deb("Table.handle(NewGame)> \(message)");
         self.startNewGame(cards: message.cards);
     }
 
     @MainActor
     public func handle(message: GameCenter.FoundSetMessage) {
-        print("DEBUG:Table.handle(FoundSet)> \(message)");
+        deb("Table.handle(FoundSet)> \(message)");
         if let session = self.multiPlayer {
             if (session.hosting) {
-                print("DEBUG> handling found-set message as host");
+                deb("handling found-set message as host");
                 //
                 // Hard part maybe: Could get another FoundSetMessage immediately or
                 // virtually concurrent to this one, with the same SET or with a SET
@@ -49,7 +49,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
                 // between checking for SET and removing (and replacing) the cards.
                 //
                 if (message.cards.isSet() && self.cards.containsCards(message.cards)) {
-                    print("DEBUG> handling found-set message as host: confirmed set");
+                    deb("handling found-set message as host: confirmed set");
                     session.send(message: GameCenter.ConfirmedSetMessage(
                         player: session.player,
                         cards: message.cards,
@@ -58,7 +58,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
                 }
             }
             else {
-                print("DEBUG> handling found-set message as client");
+                deb("handling found-set message as client");
             }
         }
 /*
@@ -79,7 +79,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
 
     @MainActor
     public func handle(message: GameCenter.ConfirmedSetMessage) {
-        print("DEBUG:Table.handle(ConfirmedSet)> \(message)");
+        deb("Table.handle(ConfirmedSet)> \(message)");
         if let session = self.multiPlayer {
             if let cards: [TableCard] = self.cards.findCards(message.cards, strict: true) {
                 CardGridCallbacks.onSetMultiPlayer(cards: cards, resolve: { self.resolveSet() });
@@ -111,6 +111,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
                private             var deck: TableDeck;
 
     public init(settings: Settings, gameCenterSender: GameCenter.MessageSender? = nil) {
+        NSLog("DEBUG> Table.init xyzzy")
         self.settings = settings;
         self.gameCenterSender = gameCenterSender;
         self.cards = [];
@@ -145,7 +146,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
                 // responding to a NewGameMessage to deal the specific
                 // given cards from the deck.
                 //
-                print("DEBUG> multi-player client handling new-game message")
+                deb("multi-player client handling new-game message")
                 self.cards = cards;
             }
             else if (session.hosting) {
@@ -155,13 +156,13 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
                 // menu-item) to start a new game; notify clients (and host).
                 //
                 let cards: [TableCard] = self.newGameCards(nondestructive: true);
-                print("DEBUG> multi-player host sending new-game message")
+                deb("multi-player host sending new-game message")
                 session.send(message: GameCenter.NewGameMessage(cards: cards));
             }
             return;
         }
         else {
-            print("DEBUG> non-multi-player new-game")
+            deb("non-multi-player new-game")
         }
 
         self.cards = self.newGameCards();

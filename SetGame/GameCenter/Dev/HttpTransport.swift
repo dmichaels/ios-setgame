@@ -91,7 +91,7 @@ public extension GameCenter
 
         public func sendMessage(_ message: Message, to player: String) {
             guard let data: [String: Any] = message.json else { return }
-            print("DEBUG> send message: \(message.type) to: \(player)")
+            deb("HttpTransport.sendMessage: \(message.type) to: \(player)")
             //
             // Note that this send (POST) is a fire-and-forget;
             // we do not await for its completion and return.
@@ -103,13 +103,16 @@ public extension GameCenter
                 self.info.counts.sent += 1;
             }
             else {
-                print("DEBUG> send message: \(message.type) to: \(player) failed")
+                deb("HttpTransport.sendMessage: \(message.type) to: \(player) failed")
             }
         }
 
         public func retrieveMessages(for player: String? = nil) async -> [GameCenter.Message] {
             if let data: Data = await self.url.get("/receive", player ?? self.player) {
                 if let messages: [GameCenter.Message] = GameCenter.MessageConversion.toMessages(data: data) {
+                    if (messages.count > 0) {
+                        deb("HttpTransport.retrieveMessages: \(messages.count) retrieved: \(self.info.counts.retrieved)")
+                    }
                     self.info.counts.retrieved += messages.count;
                     return messages;
                 }

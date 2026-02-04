@@ -4,6 +4,8 @@ private struct HttpServerInfo {
     public var isHost: Bool = false;
     public var sessionHosting: Bool = false;
     public var sessionHost: String = "";
+    public var sessionPlayers: [String] = [];
+    public var sessionPlayerCount: Int = 0;
     public var players: [String] = [];
     public var playerCount: Int = 0;
     public var playerRegistered: Bool = false;
@@ -74,12 +76,16 @@ public struct MultiPlayerDevelopmentPanelView: View {
                 let players = await self.transport.retrievePlayers();
                 self.info.playerCount = players.count;
                 self.info.playerRegistered = players.contains(self.transport.player);
+                if let session = self.session {
+                    session.updatePlayers();
+                    self.info.sessionPlayers = session.players;
+                    self.info.sessionPlayerCount = session.players.count;
+                }
                 let host = await self.transport.retrieveHost();
                 self.info.host = host;
                 self.info.isHost = self.transport.player == host;
                 self.info.sessionHost = self.session?.host ?? "";
                 self.info.sessionHosting = self.session?.hosting ?? false;
-                // print("WATCH> players: \(players) host: \(host)");
                 try? await Task.sleep(nanoseconds: 300_000_000);
             }
         }
@@ -108,13 +114,13 @@ public struct MultiPlayerControlPanel: View {
                     if (value) {
                         Task {
                             await self.transport.setHost();
-                            session?.reset();
+                            session?.updatePlayers();
                         }
                     }
                     else {
                         Task {
                             await self.transport.unsetHost();
-                            session?.reset();
+                            session?.updatePlayers();
                         }
                     }
                 }
@@ -195,23 +201,26 @@ public struct MultiPlayerInfoPanel: View {
                 Text("\(!self.info.host.isEmpty ? self.info.host : "∅")")
                     .font(.caption)
                     .padding(.trailing, 4)
+                    .foregroundColor((self.info.sessionHost != self.info.host) || (self.info.sessionHosting != self.info.isHost) ? .blue : .primary)
 
-                // TODO TEMPORARY ...
+                /* TODO TEMPORARY ...
                 Text("[\(self.info.sessionHost)]")
                     .font(.caption)
                     .fontWeight(.bold)
                 Text("[\(self.info.sessionHosting ? "T" : "F")]")
                     .font(.caption)
                     .fontWeight(.bold)
-                // ... TODO TEMPORARY
+                ... TODO TEMPORARY */
 
                 Text("players:")
                     .font(.caption)
                     .fontWeight(.bold)
                 Text("\(self.info.playerCount)")
                     .font(.caption)
+                    .foregroundColor(self.info.playerCount != self.info.sessionPlayerCount ? .red : .primary)
                 Spacer()
                 PingButton(session: self.session, transport: self.transport)
+                PingAllButton(session: self.session, transport: self.transport)
                 RegisterPlayerButton(session: self.session, transport: self.transport)
                 ResetServerButton(session: self.session, transport: self.transport)
             }
@@ -235,6 +244,28 @@ public struct MultiPlayerInfoPanel: View {
                 }
             } label: {
                 Image(systemName: "paperplane.fill")
+                    .foregroundColor(.red)
+                    .font(.system(size: 14))
+                    .fontWeight(.bold)
+            }
+            .padding(.trailing, 10)
+        }
+    }
+
+    private struct PingAllButton: View {
+        let session: GameCenter.Session?;
+        let transport: GameCenter.HttpTransport;
+        public var body: some View {
+            Button {
+                Task {
+                    if let session = self.session {
+                        for player in session.players {
+                            await session.send(message: GameCenter.PingMessage(), to: player);
+                        }
+                    }
+                }
+            } label: {
+                Image(systemName: "paperplane.circle")
                     .foregroundColor(.red)
                     .font(.system(size: 14))
                     .fontWeight(.bold)
@@ -269,7 +300,7 @@ public struct MultiPlayerInfoPanel: View {
             Button {
                 Task {
                     await self.transport.reset();
-                    await self.session?.reset();
+                    await self.session?.updatePlayers();
                     // await transport.register();
                 }
             } label: {

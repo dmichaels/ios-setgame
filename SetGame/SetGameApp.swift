@@ -1,6 +1,7 @@
 import SwiftUI
 
-public let AID: String = ID(veryshort: true).value;
+public let  aid: String = String(ID(size: 2).value);
+public func deb(_ message: String) { NSLog("DEBUG-\(aid)> " + message) }
 
 @main
 struct SetGameApp: App {

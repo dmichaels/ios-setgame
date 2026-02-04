@@ -26,6 +26,10 @@ public extension GameCenter
             }
         }
 
+        public func send(message: Message, to player: String) {
+            self.transportImp.send(message: message, to: player);
+        }
+
         // Session protocol implementation.
 
         public let transport: Transport;
@@ -42,10 +46,10 @@ public extension GameCenter
 
         public func register() async {
             await self.transportImp.register();
-            await self.reset();
+            await self.updatePlayers();
         }
 
-        public func reset() {
+        public func updatePlayers() {
             Task {
                 self.hostImp = await self.transportImp.retrieveHost();
                 self.playersImp = await self.transportImp.retrievePlayers();
