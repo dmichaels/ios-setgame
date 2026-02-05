@@ -86,7 +86,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
 
     public func handle(message: GameCenter.FoundSetTooLateMessage) {
         deb("Table.handle(FoundSetTooLate)> \(message)");
-        self.resolveSet();
+        self.state.resolving = false;
     }
 
     // @MainActor
@@ -371,12 +371,10 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
                 player: session.player,
                 cards: selectedCards
             ));
-            /*
             session.send(message: GameCenter.FoundSetMessage( // TODO: send dup for testing
                 player: session.player,
                 cards: selectedCards
             ));
-            */
             return;
         }
 
