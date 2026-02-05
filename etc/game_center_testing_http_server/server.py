@@ -1,5 +1,15 @@
-# relay_server.py
+# Very simple server for my iOS SET Game app, for development.
+
 from flask import Flask, request, jsonify
+import os
+
+# On AWS (LightSail) use:
+# sudo -E nohup bash -c 'RELAY_HOST=0.0.0.0 RELAY_PORT=80 python3 ios_set_game_server.py' > ios_set_game_server.log 2>&1 &
+#
+server_host = os.environ.get('RELAY_HOST', '127.0.0.1')
+server_port = os.environ.get('RELAY_PORT', '5000')
+
+# server_host = "0.0.0.0"
 
 app = Flask(__name__)
 inbox = {}  # messages per playerID
@@ -116,4 +126,4 @@ def ping_endpoint():
     return jsonify({'status': 'OK'}), 200
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000)
+    app.run(host=server_host, port=server_port, debug=False, use_reloader=False)
