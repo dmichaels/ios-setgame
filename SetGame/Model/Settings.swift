@@ -59,7 +59,6 @@ public class Defaults {
         public var http: Bool    = true;
         public var host: Bool    = true;
         public var poll: Bool    = true;
-        public let rngseed: Int  = Int.random(in: 1...1000000);
     }
 
     public static let multiPlayer: MultiPlayer = MultiPlayer();

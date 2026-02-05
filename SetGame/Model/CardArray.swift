@@ -93,7 +93,7 @@ public extension Array where Element : Card {
     public mutating func takeRandomCard(rng: RNG? = nil) -> Element? {
         guard self.count > 0 else { return nil }
         if let rng = rng {
-            return self.remove(at: rng.int(in: 0..<self.count));
+            return self.remove(at: rng.next(in: 0..<self.count));
         }
         else {
             return self.remove(at: Int.random(in: 0..<self.count));

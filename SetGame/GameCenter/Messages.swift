@@ -28,13 +28,13 @@ public extension GameCenter
 
     public struct NewGameMessage: Message {
         public  let type: MessageType;
-        public  let rngseed: Int;
+        public  let seed: Int;
         private let codes: [String];
         public  var cards: [TableCard] { MessageConversion.toCards(self.codes) }
-        public init(cards: [Card]) {
-            self.type    = .newGame;
-            self.rngseed = Int.random(in: 1...1000000);
-            self.codes   = cards.map { $0.code };
+        public init(cards: [Card], seed: Int? = nil) {
+            self.type  = .newGame;
+            self.seed  = seed ?? Int.random(in: 1...Int.max);
+            self.codes = cards.map { $0.code };
         }
     }
 

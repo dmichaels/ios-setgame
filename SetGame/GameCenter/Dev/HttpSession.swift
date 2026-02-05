@@ -32,7 +32,7 @@ public extension GameCenter
         public func send(message: Message) {
             if (self.hosting) {
                 //
-                // If we are the HOST, then send the message to ALL clients;
+                // We are the HOST; send the message to ALL of the clients;
                 // and INCLUDING to ourselves (the host), so that we (the
                 // host) act as much as possible like the clients.
                 //
@@ -42,8 +42,8 @@ public extension GameCenter
             }
             else {
                 //
-                // If we are the CLIENT (i.e. NOT the HOST),
-                // then send the message ONLY to the HOST.
+                // We are the CLIENT (NOT the HOST);
+                // send the message ONLY to the HOST.
                 //
                 self.transportImp.send(message: message, to: self.host);
             }
@@ -64,10 +64,12 @@ public extension GameCenter
         private var playersImp: [String] = [];
         private let rngImp: RNG;
 
-        public init(transport: GameCenter.HttpTransport, seed: Int? = nil) {
+        public init(transport: GameCenter.HttpTransport? = nil, seed: Int? = nil) {
+            let transport: HttpTransport = transport ?? GameCenter.HttpTransport();
             self.transport = transport;
             self.transportImp = transport;
-            self.rngImp = RNG(seed: seed ?? Defaults.multiPlayer.rngseed);
+            // self.rngImp = RNG(seed: seed);
+            self.rngImp = RNG();
         }
 
         public func register() async {

@@ -8,6 +8,8 @@ import SwiftUI
 // @MainActor
 public class Table: ObservableObject, GameCenter.SessionHandler {
 
+    public var fixedSeed: Bool = true;
+
     private var settings: Settings;
 
     // public var sender: GameCenter.MessageSender?;
@@ -32,7 +34,10 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
     }
 
     public func handle(message: GameCenter.NewGameMessage) {
-        deb("Table.handle(NewGame)> \(message) seed: \(message.rngseed)");
+        deb("Table.handle(NewGame)> \(message) seed: \(message.seed)");
+        // self.rng?.reset(seed: self.fixedSeed ? (nil as? Int?) : message.seed);
+        self.fixedSeed ? self.rng?.reset(seed: .initial) : self.rng?.reset(seed: message.seed);
+        // self.rng?.reset(seed: self.fixedSeed ? .initial : message.seed);
         self.startNewGame(cards: message.cards);
     }
 
@@ -154,7 +159,6 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         self.cards = [];
         self.deck  = TableDeck(simple: self.settings.simpleDeck /* , shuffle: false */ );
         self.state = State();
-        self.rng?.reset();
 
         if let session = self.multiPlayer {
             if let cards: [TableCard] = cards,
