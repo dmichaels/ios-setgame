@@ -32,7 +32,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
     }
 
     public func handle(message: GameCenter.NewGameMessage) {
-        deb("Table.handle(NewGame)> \(message)");
+        deb("Table.handle(NewGame)> \(message) seed: \(message.rngseed)");
         self.startNewGame(cards: message.cards);
     }
 
