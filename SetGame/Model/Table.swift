@@ -78,20 +78,6 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         else {
             deb("handling found-set message as non-host client (or no session)");
         }
-/*
-        if let cards: [TableCard] = self.cards.findCards(message.cards, strict: true) {
-            CardGridCallbacks.onSetMultiPlayer(cards: cards, resolve: { self.resolveSet() });
-        }
-*/
-
-        /*
-        cards.blink {
-            Delay(by: Defaults.Effects.selectAfterDelay) {
-                self.resolveSet();
-            }
-        }
-        */
-
     }
 
     public func handle(message: GameCenter.FoundSetTooLateMessage) {
@@ -167,7 +153,6 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
             }
         }
         return nil;
-        // return self.settings.multiPlayer.enabled && self.session != nil && self.session!.hosting ? self.session : nil;
     }
 
     private var multiPlayerEnabled: Bool {
@@ -199,9 +184,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         self.deck  = TableDeck(simple: self.settings.simpleDeck /* , shuffle: false */ );
         self.state = State();
 
-        if (!self.multiPlayerEnabled && self.fixedSeed) { // TODO: debug panel support only
-            self.rngImp?.reset();
-        }
+        if (!self.multiPlayerEnabled && self.fixedSeed) { self.rngImp?.reset(); } // TODO: debug panel support only
 
         self.cards = self.newGameCards();
     }
@@ -389,27 +372,6 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
             ));
             return;
         }
-/*
-        if let session = self.multiPlayer {
-            if (selectedCards.isSet()) {
-                session.send(message: GameCenter.FoundSetMessage(
-                    player: session.player,
-                    cards: selectedCards
-                ));
-            }
-            return;
-        }
-*/
-/*
-        if let multiplayer = self.multiplayer {
-            if (selectedCards.isSet()) {
-                multiplayer.sendMessageFoundSet(selectedCards);
-                // let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(player: "A", cards: selectedCards);
-                // print("GC> IA: \(gameCenter.isAuthenticated)");
-                // GameCenter.sendMessageToHost(message);
-            }
-        }
-*/
 
         Delay(by: delay) {
             if (selectedCards.isSet()) {
