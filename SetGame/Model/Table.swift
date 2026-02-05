@@ -33,11 +33,8 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
 
     public func handle(message: GameCenter.NewGameMessage) {
         deb("Table.handle(NewGame)> \(message) seed: \(message.seed)");
-        // self.rng?.reset(seed: self.fixedSeed ? (nil as? Int?) : message.seed);
         self.fixedSeed ? self.rng?.reset(seed: .initial) : self.rng?.reset(seed: message.seed);
-        // self.rng?.reset(seed: self.fixedSeed ? .initial : message.seed);
-        // self.startNewGame(cards: message.cards);
-        self.startNewGame(cards: []);
+        self.startNewGame(handler: true);
     }
 
     @MainActor
@@ -84,7 +81,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
 
     }
 
-    @MainActor
+    // @MainActor
     public func handle(message: GameCenter.ConfirmedSetMessage) {
         deb("Table.handle(ConfirmedSet) message: \(message)");
         if let session = self.multiPlayer {
@@ -156,7 +153,20 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         return self.state.resolving || self.settings.demoMode;
     }
 
-    public func startNewGame(cards: [TableCard]? = nil) {
+    public func startNewGame(handler: Bool = false) {
+
+        if !handler, let session = self.multiPlayer, session.hosting {
+            //
+            // We are in multi-player mode where WE are the HOST,
+            // and we are now responding to a local request (from the
+            // menu-item) to start a new game; notify clients (and host).
+            //
+            // let cards: [TableCard] = self.newGameCards(nondestructive: true);
+            deb("multi-player host sending new-game message")
+            // session.send(message: GameCenter.NewGameMessage(cards: cards));
+            session.send(message: GameCenter.NewGameMessage(cards: []));
+            return;
+        }
 
         self.cards = [];
         self.deck  = TableDeck(simple: self.settings.simpleDeck /* , shuffle: false */ );
@@ -168,47 +178,10 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
             }
         }
 
-        if let session = self.multiPlayer {
-            if let cards: [TableCard] = cards {
-                self.cards = self.newGameCards();
-            }
-            /*
-            if let cards: [TableCard] = cards,
-               let cards: [TableCard] = self.deck.takeCards(cards, strict: true) {
-                //
-                // We are in multi-player mode where WE are the CLIENT,
-                // or perhaps the host acting as a client, and are now
-                // responding to a NewGameMessage to deal the specific
-                // given cards from the deck.
-                //
-                deb("multi-player client handling new-game message")
-                self.cards = cards;
-            }
-            */
-            else if (session.hosting) {
-                //
-                // We are in multi-player mode where WE are the HOST,
-                // and we are now responding to a local request (from the
-                // menu-item) to start a new game; notify clients (and host).
-                //
-                // let cards: [TableCard] = self.newGameCards(nondestructive: true);
-                deb("multi-player host sending new-game message")
-                // session.send(message: GameCenter.NewGameMessage(cards: cards));
-                session.send(message: GameCenter.NewGameMessage(cards: []));
-            }
-            return;
-        }
-        else {
-            deb("non-multi-player new-game")
-        }
-
         self.cards = self.newGameCards();
     }
 
-    private func newGameCards(nondestructive: Bool = false) -> [TableCard] {
-
-        let saveCards: [TableCard]? = nondestructive ? self.cards : nil;
-        let saveDeck: TableDeck?    = nondestructive ? self.deck  : nil;
+    private func newGameCards() -> [TableCard] {
 
         if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [TableCard] = TableDeck.randomMagicSquare(simple: self.settings.simpleDeck)
@@ -252,12 +225,6 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         }
         else {
             self.fillTable();
-        }
-        if (nondestructive) {
-            let cards: [TableCard] = self.cards;
-            self.cards = saveCards!;
-            self.deck  = saveDeck!;
-            return cards;
         }
         return self.cards;
     }
@@ -349,10 +316,10 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
             delay: delay, onSet: onSet, onNoSet: onNoSet, onCardsMoved: onCardsMoved);
     }
 
-    public func possibleSetSelected(delay: Double? = nil,
-                                    onSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
-                                    onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
-                                    onCardsMoved: (([TableCard]) -> Void)? = nil) {
+    private func possibleSetSelected(delay: Double? = nil,
+                                     onSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
+                                     onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
+                                     onCardsMoved: (([TableCard]) -> Void)? = nil) {
 
         let selectedCards: [TableCard] = self.selectedCards();
 
@@ -386,6 +353,14 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         // Here is where (I think), for GameCenter multi-player
         // game mode, we will send a FoundSetMessage to the host.
 
+        if let session = self.multiPlayer, selectedCards.isSet() {
+            session.send(message: GameCenter.FoundSetMessage(
+                player: session.player,
+                cards: selectedCards
+            ));
+            return;
+        }
+/*
         if let session = self.multiPlayer {
             if (selectedCards.isSet()) {
                 session.send(message: GameCenter.FoundSetMessage(
@@ -395,6 +370,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
             }
             return;
         }
+*/
 /*
         if let multiplayer = self.multiplayer {
             if (selectedCards.isSet()) {
