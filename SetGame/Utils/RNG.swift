@@ -103,7 +103,10 @@ public class RNG {
 
     public func next(in range: Range<Int>) -> Int {
         if let rng = self.rng {
-            return range.lowerBound + rng.nextInt(upperBound: range.upperBound - range.lowerBound);
+            // return range.lowerBound + rng.nextInt(upperBound: range.upperBound - range.lowerBound);
+            let x = range.lowerBound + rng.nextInt(upperBound: range.upperBound - range.lowerBound);
+            deb("RNG-NEXT-A: \(range) -> \(x)")
+            return x
         }
         else {
             return Int.random(in: range);
@@ -115,7 +118,10 @@ public class RNG {
             let lower: Int = range.lowerBound;
             let upper: Int = range.upperBound;
             let span: Int = max(1, (upper == Int.max ? upper - 1 : upper) - lower + 1);
-            return range.lowerBound + rng.nextInt(upperBound: span);
+            // return range.lowerBound + rng.nextInt(upperBound: span);
+            let x = range.lowerBound + rng.nextInt(upperBound: span);
+            deb("RNG-NEXT-B: \(range) -> \(x)")
+            return x
         }
         else {
             return Int.random(in: range);

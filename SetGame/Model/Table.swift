@@ -8,8 +8,6 @@ import SwiftUI
 // @MainActor
 public class Table: ObservableObject, GameCenter.SessionHandler {
 
-    public var fixedSeed: Bool = true;
-
     private var settings: Settings;
 
     // public var sender: GameCenter.MessageSender?;
@@ -38,7 +36,8 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         // self.rng?.reset(seed: self.fixedSeed ? (nil as? Int?) : message.seed);
         self.fixedSeed ? self.rng?.reset(seed: .initial) : self.rng?.reset(seed: message.seed);
         // self.rng?.reset(seed: self.fixedSeed ? .initial : message.seed);
-        self.startNewGame(cards: message.cards);
+        // self.startNewGame(cards: message.cards);
+        self.startNewGame(cards: []);
     }
 
     @MainActor
@@ -130,6 +129,9 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
     // ... TODO/TEMPORARY/XYZZY
                private             var deck: TableDeck;
 
+    public var fixedSeed: Bool = true;
+    public var rngImp: RNG? = RNG(seed: .random);
+
     public init(settings: Settings) {
         NSLog("DEBUG> Table.init xyzzy")
         self.settings = settings;
@@ -147,7 +149,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
     }
 
     private var rng: RNG? {
-        return self.session?.rng;
+        return self.rngImp ?? self.session?.rng;
     }
 
     public var disabled: Bool {
@@ -160,7 +162,17 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         self.deck  = TableDeck(simple: self.settings.simpleDeck /* , shuffle: false */ );
         self.state = State();
 
+        if (!self.multiPlayerEnabled) {
+            if (self.fixedSeed) {
+                self.rngImp?.reset();
+            }
+        }
+
         if let session = self.multiPlayer {
+            if let cards: [TableCard] = cards {
+                self.cards = self.newGameCards();
+            }
+            /*
             if let cards: [TableCard] = cards,
                let cards: [TableCard] = self.deck.takeCards(cards, strict: true) {
                 //
@@ -172,15 +184,17 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
                 deb("multi-player client handling new-game message")
                 self.cards = cards;
             }
+            */
             else if (session.hosting) {
                 //
                 // We are in multi-player mode where WE are the HOST,
                 // and we are now responding to a local request (from the
                 // menu-item) to start a new game; notify clients (and host).
                 //
-                let cards: [TableCard] = self.newGameCards(nondestructive: true);
+                // let cards: [TableCard] = self.newGameCards(nondestructive: true);
                 deb("multi-player host sending new-game message")
-                session.send(message: GameCenter.NewGameMessage(cards: cards));
+                // session.send(message: GameCenter.NewGameMessage(cards: cards));
+                session.send(message: GameCenter.NewGameMessage(cards: []));
             }
             return;
         }
