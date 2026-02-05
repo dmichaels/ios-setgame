@@ -14,16 +14,17 @@ public extension GameCenter
         func handle(message: ConfirmedSetMessage);
     }
 
-    protocol SessionMessageHandler: MessageHandler, AnyObject {
+    protocol SessionHandler: MessageHandler, AnyObject {
         var  session: Session? { get set }
+        func play();
     }
 }
 
 public extension GameCenter
 {
     public protocol Transport: MessageSender, MessageHandler {
-        var  handler: MessageHandler? { get set }
         var  player: String { get };
+        var  handler: MessageHandler? { get set }
         func start();
         func stop();
         func bind(to: MessageHandler);

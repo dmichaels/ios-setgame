@@ -6,10 +6,9 @@ import SwiftUI
 /// Is this class technically, effectively acting as a "model-view"?
 ///
 // @MainActor
-public class Table: ObservableObject, GameCenter.SessionMessageHandler {
+public class Table: ObservableObject, GameCenter.SessionHandler {
 
     private var settings: Settings;
-    private var gameCenterSender: GameCenter.MessageSender?;
 
     // public var sender: GameCenter.MessageSender?;
 
@@ -17,7 +16,11 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
 
     public var session: GameCenter.Session?;
 
-    // MessageHandler (via SessionMessageHandler) implementation.
+    public func play() {
+        self.startNewGame();
+    }
+
+    // MessageHandler (via SessionHandler) implementation.
     // TODO maybe: Put these in a Table extension to visually set them apart?
 
     public func handle(message: GameCenter.PingMessage) {
@@ -122,12 +125,11 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
     // ... TODO/TEMPORARY/XYZZY
                private             var deck: TableDeck;
 
-    public init(settings: Settings, gameCenterSender: GameCenter.MessageSender? = nil) {
+    public init(settings: Settings) {
         NSLog("DEBUG> Table.init xyzzy")
         self.settings = settings;
-        self.gameCenterSender = gameCenterSender;
         self.cards = [];
-        self.deck  = TableDeck(simple: self.settings.simpleDeck);
+        self.deck  = TableDeck(simple: self.settings.simpleDeck /* , shuffle: false */ );
         self.state = State();
     }
 
@@ -139,6 +141,10 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
         return self.settings.multiPlayer.enabled && self.session != nil;
     }
 
+    private var rng: RNG? {
+        return self.session?.rng;
+    }
+
     public var disabled: Bool {
         return self.state.resolving || self.settings.demoMode;
     }
@@ -146,8 +152,9 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
     public func startNewGame(cards: [TableCard]? = nil) {
 
         self.cards = [];
-        self.deck  = TableDeck(simple: self.settings.simpleDeck);
+        self.deck  = TableDeck(simple: self.settings.simpleDeck /* , shuffle: false */ );
         self.state = State();
+        self.rng?.reset();
 
         if let session = self.multiPlayer {
             if let cards: [TableCard] = cards,
@@ -458,7 +465,8 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
                 self.deck.takeRandomCards(
                     newCardsCount,
                     plantSet: self.settings.plantSet,
-                    existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : []
+                    existingCards: self.settings.plantSet ? self.cards.filter { !$0.selected } : [],
+                    rng: self.rng
                 )
             );
             var replacementCards: [TableCard] = extraCards + newCards;
@@ -651,7 +659,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
                 // or more cards; just try to ensure the random three
                 // plus cards taken from the deck contain a SET.
                 //
-                self.addCards(self.deck.takeRandomCards(ncards, plantSet: true));
+                self.addCards(self.deck.takeRandomCards(ncards, plantSet: true, rng: self.rng));
             }
             else {
                 //
@@ -673,7 +681,7 @@ public class Table: ObservableObject, GameCenter.SessionMessageHandler {
             }
         }
         else {
-            let cards: [TableCard] = self.deck.takeRandomCards(ncards);
+            let cards: [TableCard] = self.deck.takeRandomCards(ncards, rng: self.rng);
             self.addCards(cards);
         }
     }

@@ -4,22 +4,18 @@ public extension GameCenter
 {
     public class HttpTransport: Transport {
 
-        // TEMPORARY WHILE MIGRATING TO THIS ...
-        public static let instance: HttpTransport = HttpTransport(player: ID(veryshort: true).value); // TEMPORARY
-        public func startMessagePolling() { self.pollMessages() }
-        public func stopMessagePolling() { self.nopollMessages() }
-        // ... END TEMPORARY WHILE MIGRATING TO THIS
-
         // Transport protocol implementation.
 
         public var player: String = ID(veryshort: true).value;
+        public var handler: MessageHandler? = nil;
 
         public func start() {
-            self.poll();
+            self.pollInfo();
+            self.pollMessages();
         }
 
         public func stop() {
-            self.nopoll();
+            self.nopollMessages();
         }
 
         // MessageSender (via Transport) protocol implementation.
@@ -78,7 +74,6 @@ public extension GameCenter
         }
 
         private let url: URL;
-        public var handler: MessageHandler? = nil;
         private var pollMessagesTask: Task<Void, Never>? = nil;
         private var pollInfoTask: Task<Void, Never>? = nil;
         private var pollTask: Task<Void, Never>? = nil;
@@ -171,11 +166,6 @@ public extension GameCenter
                 self.info.counts.handled = 0;
             }
 		}
-
-        private func poll() {
-            self.pollMessages();
-            self.pollInfo();
-        }
 
         private func pollMessages() {
             guard self.pollMessagesTask == nil else { return }

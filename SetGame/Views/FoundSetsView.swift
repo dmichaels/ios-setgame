@@ -92,13 +92,6 @@ public struct FoundSetsView: View {
     }
 
     private struct DummySetView: View {
-        private struct DummyCardView: View {
-            public var body: some View {
-                Image("DUMMY")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            }
-        }
         var visible: Bool = true;
         public var body: some View {
             if (visible) {

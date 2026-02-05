@@ -274,6 +274,14 @@ public struct CardView : View {
     }
 }
 
+public struct DummyCardView: View {
+    public var body: some View {
+        Image("DUMMY")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+    }
+}
+
 extension CardView.InitialEffect {
     static let materialize: CardView.InitialEffect = .materialize();
 }

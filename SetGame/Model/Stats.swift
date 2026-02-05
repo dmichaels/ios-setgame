@@ -67,7 +67,7 @@ public extension Deck {
         var totalSets = 0;
         for _ in 1...iterations {
             let deck: Deck = Deck(simple: simple);
-            let cards: [T] = deck.takeRandomCards(ncards);
+            let cards: [T] = deck.takeRandomCards(ncards, rng: nil);
             totalSets += cards.numberOfSets();
         }
         return Float(totalSets) / Float(iterations);

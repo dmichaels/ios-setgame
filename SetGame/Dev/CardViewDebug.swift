@@ -18,6 +18,7 @@ public struct CardViewDebug: View {
                 initialEffect: Defaults.Effects.initialEffect
             )
             CardControls(table: table)
+/*
             TextBoxWithButton(label: "DEAL") { value in
                 let cards: [TableCard] = CardViewDebug.toCards(value);
                 self.simulateIncomingNewGameMessage(cards);
@@ -26,6 +27,7 @@ public struct CardViewDebug: View {
                 let cards: [TableCard] = CardViewDebug.toCards(value);
                 self.simulateIncomingFoundSetMessage(cards);
             }
+*/
         }
         .onAppear {
             self.table.addCards([
@@ -113,6 +115,7 @@ public struct CardViewDebug: View {
         return cards;
     }
 
+/*
     private func handleNewGameMessage(_ message: GameCenter.NewGameMessage) {
         let cards: [TableCard] = message.cards;
         self.table.addCards(cards);
@@ -183,4 +186,5 @@ public struct CardViewDebug: View {
             onCardsMoved: CardGridCallbacks.onCardsMoved
         )
     }
+*/
 }

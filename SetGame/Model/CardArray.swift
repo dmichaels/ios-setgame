@@ -90,19 +90,26 @@ public extension Array where Element : Card {
     /// Removes and returns a random card from this array;
     /// returns nil if no more cards in the array.
     ///
-    public mutating func takeRandomCard() -> Element? {
-        return (self.count > 0) ? self.remove(at: Int.random(in: 0..<self.count)) : nil;
+    public mutating func takeRandomCard(rng: RNG? = nil) -> Element? {
+        guard self.count > 0 else { return nil }
+        if let rng = rng {
+            return self.remove(at: rng.int(in: 0..<self.count));
+        }
+        else {
+            return self.remove(at: Int.random(in: 0..<self.count));
+        }
+        // return (self.count > 0) ? self.remove(at: Int.random(in: 0..<self.count)) : nil;
     }
 
     /// Removes, at most, the specified number of random cards from this array, and returns these in
     /// a new array; if fewer cards are in this array than the number requested, then so be it, just
     /// that many will be returned (and then this array will end up being empty in this case).
     ///
-    public mutating func takeRandomCards(_ n : Int) -> [Element] {
+    public mutating func takeRandomCards(_ n : Int, rng: RNG? = nil) -> [Element] {
         guard (n > 0) && (self.count > 0) else { return [] }
         var randomCards: [Element] = [Element]();
         for _ in 0..<n {
-            if let randomCard: Element = self.takeRandomCard() {
+            if let randomCard: Element = self.takeRandomCard(rng: rng) {
                 randomCards.add(randomCard)
             }
             else {
@@ -126,7 +133,7 @@ public extension Array where Element : Card {
     /// N.B. Please keep in mind that (normally) when our comments say "this array" here,
     /// we are talking about the deck of cards, and not the cards that are on the table.
     ///
-    public mutating func takeRandomCards(_ n : Int, plantSet: Bool, existingCards: [Element] = []) -> [Element] {
+    public mutating func takeRandomCards(_ n : Int, plantSet: Bool, existingCards: [Element] = [], rng: RNG? = nil) -> [Element] {
         guard (n > 0) && (self.count > 0) else { return [] }
         var randomCards: [Element] = [Element]();
         if (plantSet) {
@@ -147,7 +154,7 @@ public extension Array where Element : Card {
                     // Here, there is already (at least) one SET in the given set of existing cards;
                     // so simply take and return a random set of cards from this array of cards.
                     //
-                    randomCards = self.takeRandomCards(n)
+                    randomCards = self.takeRandomCards(n, rng: rng)
                 }
                 else {
                     //
@@ -163,7 +170,7 @@ public extension Array where Element : Card {
                             break
                         }
                     }
-                    randomCards.add(self.takeRandomCards(n - randomCards.count))
+                    randomCards.add(self.takeRandomCards(n - randomCards.count, rng: rng))
                 }
             }
             else if ((n >= 3) && (self.count >= 3)) {
@@ -180,7 +187,7 @@ public extension Array where Element : Card {
                     randomCards = sets[0];
                     self.remove(randomCards);
                     if (n > 3) {
-                        randomCards.add(self.takeRandomCards(n - 3))
+                        randomCards.add(self.takeRandomCards(n - 3, rng: rng))
                     }
                     randomCards.shuffle()
                 }
@@ -188,11 +195,11 @@ public extension Array where Element : Card {
                     //
                     // Here, there are no SETs in this array of cards.
                     //
-                    randomCards = self.takeRandomCards(n)
+                    randomCards = self.takeRandomCards(n, rng: rng)
                 }
             }
             else {
-                randomCards = self.takeRandomCards(n)
+                randomCards = self.takeRandomCards(n, rng: rng)
             }
         }
         else {
@@ -200,7 +207,7 @@ public extension Array where Element : Card {
             // Here, the simplest case of not wanting to plant any SETs; simply return
             // the specified number (IF POSSIBLE) of random cards from this array of cards. 
             //
-            randomCards = self.takeRandomCards(n)
+            randomCards = self.takeRandomCards(n, rng: rng)
         }
         return randomCards;
     }

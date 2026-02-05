@@ -9,19 +9,15 @@ struct SetGameApp: App {
     @StateObject private var settings: Settings = Settings();
     @StateObject private var feedback: Feedback;
     @StateObject private var table: Table;
-
-    var transport: GameCenter.HttpTransport;
-    var session: GameCenter.Session;
+    var session: GameCenter.Session?;
 
     init() {
         let settings: Settings = Settings();
         _settings = StateObject(wrappedValue: settings);
         _feedback = StateObject(wrappedValue: Feedback(sounds: settings.sounds,
                                                        haptics: settings.haptics));
-        _table = StateObject(wrappedValue: Table(settings: settings,
-                                                 gameCenterSender: GameCenter.HttpTransport.instance));
-        self.transport = GameCenter.HttpTransport();
-        self.session = GameCenter.HttpSession(transport: transport);
+        _table = StateObject(wrappedValue: Table(settings: settings));
+        self.session = GameCenter.HttpSession(transport: GameCenter.HttpTransport());
     }
 
     var body: some Scene {
@@ -32,33 +28,19 @@ struct SetGameApp: App {
                 .environmentObject(self.feedback)
                 .task {
                     await GameCenterAuthentication.authenticate();
-                    //
-                    // This is key:
-                    // The Transport has a MessageHandler (transport.handler), which points at Table,
-                    // which isa (i.e. implements) MessageHandler; and Table has MessageSender (sender)
-                    // which points back to the Transport, which is also a (i.e. implements) MessageSender.
-                    //
-                    // GameCenter.HttpTransport.instance.handler = self.table;
-                    GameCenter.HttpTransport.instance.bind(to: self.table);
-                    //
-                    // TODO for New_ stuff ...
-                    //
-                    // var transport: GameCenter.HttpTransport_New = GameCenter.HttpTransport_New();
-                    // transport.handler = self.table;
-                    // self.table.sender = transport;
-                    // transport.bind(to: self.table);
-                    //
-                    if (self.settings.multiPlayer.http) {
+                    if let session = self.session {
+                        if await session.setup() {
+                            session.bind(to: self.table);
+                            session.start();
+                            // self.table.startNewGame();
+                        }
                     }
-                    else {
-                    }
-                    // var transport: GameCenter.HttpTransport = GameCenter.HttpTransport();
-                    // var session: GameCenter.Session = GameCenter.HttpSession(transport: transport);
-                    if await self.session.start() {
-                        self.session.bind(to: self.table);
-                    }
-                    let x = 1 
                 }
         }
+    }
+
+    func createMultiPlayerSession() -> GameCenter.Session {
+        let session: GameCenter.Session = GameCenter.HttpSession(transport: GameCenter.HttpTransport());
+        return session;
     }
 }

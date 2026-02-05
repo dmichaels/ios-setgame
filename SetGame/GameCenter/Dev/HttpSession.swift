@@ -4,7 +4,30 @@ public extension GameCenter
 {
     public class HttpSession: Session {
 
-        // MessageSender (via Sender) protocol implementation.
+        // Session protocol implementation.
+
+        public let transport: Transport;
+        public var handler: SessionHandler? = nil;
+
+        public var host: String {
+            return self.hostImp;
+        }
+
+        public var players: [String] {
+            return self.playersImp;
+        }
+
+        public func setup() async -> Bool {
+            self.transportImp.start();
+            self.hostImp = await self.transportImp.retrieveHost();
+            self.playersImp = await self.transportImp.retrievePlayers();
+            return true;
+        }
+
+        public func start() {
+            self.rng?.reset();
+            self.handler?.play();
+        }
 
         public func send(message: Message) {
             if (self.hosting) {
@@ -30,18 +53,21 @@ public extension GameCenter
             self.transportImp.send(message: message, to: player);
         }
 
-        // Session protocol implementation.
-
-        public let transport: Transport;
-
-        // public var player: String { return self.transportImp.player; }
-
-        public var host: String {
-            return self.hostImp;
+        public var rng: RNG? {
+            return self.rngImp;
         }
 
-        public var players: [String] {
-            return self.playersImp;
+        // HttpSession implementation.
+
+        private let transportImp: GameCenter.HttpTransport;
+        private var hostImp: String = "";
+        private var playersImp: [String] = [];
+        private let rngImp: RNG;
+
+        public init(transport: GameCenter.HttpTransport, seed: Int? = nil) {
+            self.transport = transport;
+            self.transportImp = transport;
+            self.rngImp = RNG(seed: seed ?? Defaults.multiPlayer.rngseed);
         }
 
         public func register() async {
@@ -54,24 +80,6 @@ public extension GameCenter
                 self.hostImp = await self.transportImp.retrieveHost();
                 self.playersImp = await self.transportImp.retrievePlayers();
             }
-        }
-
-        // HttpSession implementation.
-
-        private let transportImp: GameCenter.HttpTransport;
-        private var hostImp: String = "";
-        private var playersImp: [String] = [];
-
-        public init(transport: GameCenter.HttpTransport) {
-            self.transport = transport;
-            self.transportImp = transport;
-        }
-
-        public func start() async -> Bool {
-            self.transportImp.start();
-            self.hostImp = await self.transportImp.retrieveHost();
-            self.playersImp = await self.transportImp.retrievePlayers();
-            return true;
         }
     }
 }

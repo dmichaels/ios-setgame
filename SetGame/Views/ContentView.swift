@@ -116,7 +116,7 @@ public struct ContentView: View {
             TableView(table: self.table, settings: self.settings, feedback: self.feedback, session: session)
                 .onAppear {
                     if (!self.startedNewGame) {
-                        self.table.startNewGame();
+                        // self.table.startNewGame();
                         self.startedNewGame = true;
                     }
                 }

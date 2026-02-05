@@ -8,6 +8,7 @@ public struct CardGridView: View {
     var initialEffect: CardView.InitialEffect = Defaults.Effects.initialEffect;
     var spacing: CGFloat = 6;
     var marginx: CGFloat = 6;
+    var dummiesOnEmpty: Int = 12;
 
     public var body: some View {
         let spacingx: CGFloat = spacing;
@@ -46,14 +47,21 @@ public struct CardGridView: View {
                 // here so the cards come into being in a staggered, visually
                 // interesting, fashion.
                 //
-                ForEach(table.cards, id: \.uid) { card in
-                    CardView(
-                        card,
-                        initialEffect: materialize ? initialEffect : .none,
-                        askew: settings.cardsAskew,
-                        alternate: settings.alternateCards
-                    ) { card in
-                        CardGridCallbacks.cardTouched(card, table: self.table);
+                if (table.cards.isEmpty && (dummiesOnEmpty > 0)) {
+                    ForEach(0..<dummiesOnEmpty, id: \.self) { _ in
+                        DummyCardView()
+                    }
+                }
+                else {
+                    ForEach(table.cards, id: \.uid) { card in
+                        CardView(
+                            card,
+                            initialEffect: materialize ? initialEffect : .none,
+                            askew: settings.cardsAskew,
+                            alternate: settings.alternateCards
+                        ) { card in
+                            CardGridCallbacks.cardTouched(card, table: self.table);
+                        }
                     }
                 }
             }

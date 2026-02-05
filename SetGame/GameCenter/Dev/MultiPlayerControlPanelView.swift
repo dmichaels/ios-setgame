@@ -22,18 +22,18 @@ public struct MultiPlayerDevelopmentPanelView: View {
 
     @ObservedObject var table: Table
     @ObservedObject var settings: Settings;
-                    var session: GameCenter.Session?;
 
-    @State fileprivate var info: HttpServerInfo = HttpServerInfo();
+    @State private var info: HttpServerInfo = HttpServerInfo();
     @State private var taskHandle: Task<Void, Never>? = nil
 
-    var transport: GameCenter.HttpTransport { self.transportImp! }
-    let transportImp: GameCenter.HttpTransport?;
+    private var session: GameCenter.HttpSession?;
+    private let transport: GameCenter.HttpTransport;
+
     public init(table: Table, settings: Settings, session: GameCenter.Session? = nil) {
         self.table = table;
         self.settings = settings;
-        self.session = session;
-        self.transportImp = session?.transport as? GameCenter.HttpTransport;
+        self.transport = (session?.transport as? GameCenter.HttpTransport) ?? GameCenter.HttpTransport();
+        self.session = session as? GameCenter.HttpSession ?? GameCenter.HttpSession(transport: self.transport);
     }
 
     public var body: some View {
@@ -96,7 +96,7 @@ public struct MultiPlayerControlPanel: View {
     @ObservedObject var table: Table
     @ObservedObject var settings: Settings;
     @Binding fileprivate var info: HttpServerInfo;
-    let session: GameCenter.Session?;
+    let session: GameCenter.HttpSession?;
     let transport: GameCenter.HttpTransport;
     let background: Color = Color.gray;
     public var body: some View {
@@ -104,10 +104,10 @@ public struct MultiPlayerControlPanel: View {
             HStack(alignment: .firstTextBaseline, spacing: 0) {
                 ToggleItem("multi", on: $settings.multiPlayer.enabled, disabled: false) { value in
                     if (!value) {
-                        self.transport.stopMessagePolling();
+                        self.transport.stop();
                     }
                     else if (settings.multiPlayer.poll) {
-                        self.transport.startMessagePolling();
+                        self.transport.start();
                     }
                 }
                 ToggleItem("host", on: $info.isHost /*, disabled: !settings.multiPlayer.enabled */ ) { value in
@@ -126,10 +126,10 @@ public struct MultiPlayerControlPanel: View {
                 }
                 ToggleItem("poll", on: $settings.multiPlayer.poll /* , disabled: !settings.multiPlayer.enabled */ ) { value in
                     if (value) {
-                        self.transport.startMessagePolling();
+                        self.transport.start();
                     }
                     else {
-                        self.transport.stopMessagePolling();
+                        self.transport.stop();
                     }
                 }
                 // Hard to imagine why we would want to turn this off.
@@ -169,7 +169,7 @@ public struct MultiPlayerInfoPanel: View {
     @ObservedObject var table: Table
     @ObservedObject var settings: Settings;
     @Binding fileprivate var info: HttpServerInfo;
-    let session: GameCenter.Session?;
+    let session: GameCenter.HttpSession?;
     let transport: GameCenter.HttpTransport;
     let background: Color = Color.gray;
     public var body: some View {
@@ -235,7 +235,7 @@ public struct MultiPlayerInfoPanel: View {
     }
 
     private struct PingButton: View {
-        let session: GameCenter.Session?;
+        let session: GameCenter.HttpSession?;
         let transport: GameCenter.HttpTransport;
         public var body: some View {
             Button {
@@ -253,7 +253,7 @@ public struct MultiPlayerInfoPanel: View {
     }
 
     private struct PingAllButton: View {
-        let session: GameCenter.Session?;
+        let session: GameCenter.HttpSession?;
         let transport: GameCenter.HttpTransport;
         public var body: some View {
             Button {
@@ -275,12 +275,11 @@ public struct MultiPlayerInfoPanel: View {
     }
 
     private struct RegisterPlayerButton: View {
-        let session: GameCenter.Session?;
+        let session: GameCenter.HttpSession?;
         let transport: GameCenter.HttpTransport;
         public var body: some View {
             Button {
                 Task {
-                    // await self.transport.register();
                     await self.session?.register();
                 }
             } label: {
@@ -294,7 +293,7 @@ public struct MultiPlayerInfoPanel: View {
     }
 
     private struct ResetServerButton: View {
-        let session: GameCenter.Session?
+        let session: GameCenter.HttpSession?
         let transport: GameCenter.HttpTransport
         let table: Table
         public var body: some View {
@@ -303,7 +302,6 @@ public struct MultiPlayerInfoPanel: View {
                     await self.transport.reset();
                     await self.session?.updatePlayers();
                     self.table.state.resolving = false;
-                    // await transport.register();
                 }
             } label: {
                 // Text("reset")

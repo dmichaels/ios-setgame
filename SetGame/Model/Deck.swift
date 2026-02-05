@@ -9,15 +9,15 @@ public class Deck<T: Card> {
     /// - Can be a "simple" deck in which case the only filling is solid; this,
     ///   surprisingly, is actually the default for the official SET Game® app deck.
     ///
-    init(simple: Bool = false) {
-        self.cards = Deck.createCards(simple: simple);
+    public init(simple: Bool = false, shuffle: Bool = false) {
+        self.cards = Deck.createCards(simple: simple, shuffle: shuffle);
     }
 
-    var count: Int {
+    public var count: Int {
         return self.cards.count;
     }
 
-    func takeCard(_ card: T) -> T? {
+    public func takeCard(_ card: T) -> T? {
         if (self.cards.contains(card)) {
             self.cards.remove(card);
             return card;
@@ -25,15 +25,15 @@ public class Deck<T: Card> {
         return nil;
     }
 
-    func takeCards(_ cards: [T], strict: Bool = false) -> [T]? {
+    public func takeCards(_ cards: [T], strict: Bool = false) -> [T]? {
         return self.cards.takeCards(cards, strict: strict);
     }
 
-    func takeRandomCards(_ n: Int, plantSet: Bool = false, existingCards: [T] = []) -> [T] {
-        return self.cards.takeRandomCards(n, plantSet: plantSet, existingCards: existingCards);
+    public func takeRandomCards(_ n: Int, plantSet: Bool = false, existingCards: [T] = [], rng: RNG?) -> [T] {
+        return self.cards.takeRandomCards(n, plantSet: plantSet, existingCards: existingCards, rng: rng);
     }
 
-    public static func createCards(simple: Bool = false) -> [T] {
+    private static func createCards(simple: Bool = false, shuffle: Bool = true) -> [T] {
         var cards: [T] = [];
         let fillings: [CardFilling] = simple ? [CardFilling.Solid]: CardFilling.allCases;
         for color in CardColor.allCases {
@@ -45,7 +45,9 @@ public class Deck<T: Card> {
                 }
             }
         }
-        cards.shuffle();
+        if (shuffle) {
+            cards.shuffle();
+        }
         return cards;
     }
 }
