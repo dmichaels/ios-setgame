@@ -41,7 +41,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
     public func handle(message: GameCenter.FoundSetMessage) {
         deb("Table.handle(FoundSet)> \(message)");
         if let session = self.multiPlayerHost {
-            deb("handling found-set message as host");
+            deb("handling found-set message as host | cards: \(message.cards)");
             //
             // Hard part maybe: Could get another FoundSetMessage immediately or
             // virtually concurrent to this one, with the same SET or with a SET
@@ -54,10 +54,14 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
             func cardsPartOfFoundSet(_ cards: [TableCard]) -> Bool {
                 for card in cards { if (card.foundSet) { return true; } } ; return false;
             }
-            func noteCardsPartOfFoundSet(_ card: [TableCard]) {
-                for card in cards { card.foundSet = true; }
+            func noteCardsPartOfFoundSet(_ cards: [TableCard]) {
+                for card in cards {
+                    deb("SET FOUND-SET TRUE!!! \(card)")
+                    card.foundSet = true;
+                }
             }
             if message.cards.isSet(), let cards: [TableCard] = self.cards.findCards(message.cards) {
+                deb("handling found-set message as host | cards: \(cards)");
                 if (!cardsPartOfFoundSet(cards)) {
                     deb("handling found-set message as host: sending confirmed set message");
                     noteCardsPartOfFoundSet(cards);
@@ -82,6 +86,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
 
     public func handle(message: GameCenter.FoundSetTooLateMessage) {
         deb("Table.handle(FoundSetTooLate)> \(message)");
+        self.resolveSet();
     }
 
     // @MainActor
@@ -366,10 +371,12 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
                 player: session.player,
                 cards: selectedCards
             ));
+            /*
             session.send(message: GameCenter.FoundSetMessage( // TODO: send dup for testing
                 player: session.player,
                 cards: selectedCards
             ));
+            */
             return;
         }
 
