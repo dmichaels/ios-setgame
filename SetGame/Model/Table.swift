@@ -51,13 +51,28 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
             // Also will need @MainActor (or equivalent) to prevent race conditions,
             // between checking for SET and removing (and replacing) the cards.
             //
-            if (message.cards.isSet() && self.cards.containsCards(message.cards)) {
-                deb("handling found-set message as host: sending confirmed set message");
-                session.send(message: GameCenter.ConfirmedSetMessage(
-                    player: session.player,
-                    cards: message.cards,
-                    replacements: []
-                ));
+            func cardsPartOfFoundSet(_ cards: [TableCard]) -> Bool {
+                for card in cards { if (card.foundSet) { return true; } } ; return false;
+            }
+            func noteCardsPartOfFoundSet(_ card: [TableCard]) {
+                for card in cards { card.foundSet = true; }
+            }
+            if message.cards.isSet(), let cards: [TableCard] = self.cards.findCards(message.cards) {
+                if (!cardsPartOfFoundSet(cards)) {
+                    deb("handling found-set message as host: sending confirmed set message");
+                    noteCardsPartOfFoundSet(cards);
+                    session.send(message: GameCenter.ConfirmedSetMessage(
+                        player: session.player,
+                        cards: message.cards
+                    ));
+                }
+                else {
+                    deb("already found at least one of these cards as part of a set: \(cards)") 
+                    session.send(message: GameCenter.FoundSetTooLateMessage(
+                        player: message.player,
+                        cards: message.cards
+                    ));
+                }
             }
         }
         else {
@@ -77,6 +92,10 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         }
         */
 
+    }
+
+    public func handle(message: GameCenter.FoundSetTooLateMessage) {
+        deb("Table.handle(FoundSetTooLate)> \(message)");
     }
 
     // @MainActor

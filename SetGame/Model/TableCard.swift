@@ -21,7 +21,7 @@ public class TableCard : Card, ObservableObject {
     @Published var materializeTrigger: Int          = 0;
                var materializeResponsivity: Double  = Defaults.Effects.materializeResponsivity;
                var materializeElasticity: Double    = Defaults.Effects.materializeElasticity;
-               var set: Bool = false;
+               var foundSet: Bool = false; // TODO: using only for multi-player
 
     public required init() {
         super.init(color: .random, shape: .random, filling: .random, number: .random);

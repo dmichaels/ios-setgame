@@ -48,6 +48,11 @@ public extension GameCenter
             self.info.counts.handled += 1;
         }
 
+        public func handle(message: FoundSetTooLateMessage) {
+            self.handler?.handle(message: message);
+            self.info.counts.handled += 1;
+        }
+
         public func handle(message: ConfirmedSetMessage) {
             self.handler?.handle(message: message);
             self.info.counts.handled += 1;

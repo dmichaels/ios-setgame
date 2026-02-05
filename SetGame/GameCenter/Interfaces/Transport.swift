@@ -11,6 +11,7 @@ public extension GameCenter
         func handle(message: PlayerReadyMessage);
         func handle(message: NewGameMessage);
         func handle(message: FoundSetMessage);
+        func handle(message: FoundSetTooLateMessage);
         func handle(message: ConfirmedSetMessage);
     }
 

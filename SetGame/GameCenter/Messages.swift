@@ -50,6 +50,21 @@ public extension GameCenter
         }
     }
 
+    public struct FoundSetTooLateMessage: Message {
+        public  let type: MessageType;
+        //
+        // For FoundSetMessage the player is the player who found the set.
+        //
+        public  let player: String;
+        private let codes: [String];
+        public  var cards: [TableCard] { MessageConversion.toCards(self.codes) }
+        public init(player: String, cards: [Card]) {
+            self.type      = .foundSetTooLate;
+            self.player    = player;
+            self.codes = cards.map { $0.code };
+        }
+    }
+
     public struct ConfirmedSetMessage: Message {
         public  let type: MessageType;
         //
@@ -57,14 +72,11 @@ public extension GameCenter
         //
         public  let player: String;
         private let codes: [String];
-        private let replacementCodes: [String];
         public  var cards: [TableCard] { MessageConversion.toCards(self.codes) }
-        public  var replacements: [TableCard] { MessageConversion.toCards(self.replacementCodes) }
-        public init(player: String, cards: [Card], replacements: [Card]) {
+        public init(player: String, cards: [Card]) {
             self.type      = .confirmedSet;
             self.player    = player;
             self.codes = cards.map { $0.code };
-            self.replacementCodes = cards.map { $0.code };
         }
     }
 }
@@ -97,11 +109,12 @@ public extension GameCenter { public struct MessageConversion
         if let data: Data = data,
         let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
             switch envelope.type {
-                case .ping:         return try? JSONDecoder().decode(PingMessage.self, from: data);
-                case .playerReady:  return try? JSONDecoder().decode(PlayerReadyMessage.self, from: data);
-                case .newGame:      return try? JSONDecoder().decode(NewGameMessage.self, from: data);
-                case .foundSet:     return try? JSONDecoder().decode(FoundSetMessage.self, from: data);
-                case .confirmedSet: return try? JSONDecoder().decode(ConfirmedSetMessage.self, from: data);
+                case .ping:            return try? JSONDecoder().decode(PingMessage.self, from: data);
+                case .playerReady:     return try? JSONDecoder().decode(PlayerReadyMessage.self, from: data);
+                case .newGame:         return try? JSONDecoder().decode(NewGameMessage.self, from: data);
+                case .foundSet:        return try? JSONDecoder().decode(FoundSetMessage.self, from: data);
+                case .foundSetTooLate: return try? JSONDecoder().decode(FoundSetTooLateMessage.self, from: data);
+                case .confirmedSet:    return try? JSONDecoder().decode(ConfirmedSetMessage.self, from: data);
             }
         }
         return nil;
@@ -122,6 +135,7 @@ public extension GameCenter { public struct MessageConveyance
                              playerReady: handler.handle,
                              newGame: handler.handle,
                              foundSet: handler.handle,
+                             foundSetTooLate: handler.handle,
                              confirmedSet: handler.handle);
             }
         }
@@ -135,6 +149,7 @@ public extension GameCenter { public struct MessageConveyance
                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
                                 newGame: ((NewGameMessage) -> Void)? = nil,
                                 foundSet: ((FoundSetMessage) -> Void)? = nil,
+                                foundSetTooLate: ((FoundSetTooLateMessage) -> Void)? = nil,
                                 confirmedSet: ((ConfirmedSetMessage) -> Void)? = nil) {
         if let message: Message = message {
             switch message {
@@ -142,6 +157,7 @@ public extension GameCenter { public struct MessageConveyance
                 case let message as PlayerReadyMessage: playerReady?(message);
                 case let message as NewGameMessage: newGame?(message);
                 case let message as FoundSetMessage: foundSet?(message);
+                case let message as FoundSetTooLateMessage: foundSetTooLate?(message);
                 case let message as ConfirmedSetMessage: confirmedSet?(message);
                 default: break;
             }

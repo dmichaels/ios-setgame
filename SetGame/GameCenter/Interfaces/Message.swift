@@ -7,6 +7,7 @@ public extension GameCenter
         case playerReady;
         case newGame;
         case foundSet;
+        case foundSetTooLate;
         case confirmedSet;
     }
 
