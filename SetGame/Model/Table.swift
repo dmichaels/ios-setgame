@@ -40,30 +40,28 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
     @MainActor
     public func handle(message: GameCenter.FoundSetMessage) {
         deb("Table.handle(FoundSet)> \(message)");
-        if let session = self.multiPlayer {
-            if (session.hosting) {
-                deb("handling found-set message as host");
-                //
-                // Hard part maybe: Could get another FoundSetMessage immediately or
-                // virtually concurrent to this one, with the same SET or with a SET
-                // that overlaps this SET. If so, then it must be rejected/ignored --
-                // maybe later will send a FoundSetTooLateMessage to the specific player
-                // who sent the subsequent FoundSetMessage for the same or overlaping SET.
-                // Also will need @MainActor (or equivalent) to prevent race conditions,
-                // between checking for SET and removing (and replacing) the cards.
-                //
-                if (message.cards.isSet() && self.cards.containsCards(message.cards)) {
-                    deb("handling found-set message as host: confirmed set");
-                    session.send(message: GameCenter.ConfirmedSetMessage(
-                        player: session.player,
-                        cards: message.cards,
-                        replacements: []
-                    ));
-                }
+        if let session = self.multiPlayerHost {
+            deb("handling found-set message as host");
+            //
+            // Hard part maybe: Could get another FoundSetMessage immediately or
+            // virtually concurrent to this one, with the same SET or with a SET
+            // that overlaps this SET. If so, then it must be rejected/ignored --
+            // maybe later will send a FoundSetTooLateMessage to the specific player
+            // who sent the subsequent FoundSetMessage for the same or overlaping SET.
+            // Also will need @MainActor (or equivalent) to prevent race conditions,
+            // between checking for SET and removing (and replacing) the cards.
+            //
+            if (message.cards.isSet() && self.cards.containsCards(message.cards)) {
+                deb("handling found-set message as host: sending confirmed set message");
+                session.send(message: GameCenter.ConfirmedSetMessage(
+                    player: session.player,
+                    cards: message.cards,
+                    replacements: []
+                ));
             }
-            else {
-                deb("handling found-set message as client");
-            }
+        }
+        else {
+            deb("handling found-set message as non-host client (or no session)");
         }
 /*
         if let cards: [TableCard] = self.cards.findCards(message.cards, strict: true) {
@@ -141,6 +139,18 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         return self.settings.multiPlayer.enabled ? self.session : nil;
     }
 
+    private var multiPlayerHost: GameCenter.Session? {
+        if (self.settings.multiPlayer.enabled) {
+            if let session = self.session {
+                if (session.hosting) {
+                    return session;
+                }
+            }
+        }
+        return nil;
+        // return self.settings.multiPlayer.enabled && self.session != nil && self.session!.hosting ? self.session : nil;
+    }
+
     private var multiPlayerEnabled: Bool {
         return self.settings.multiPlayer.enabled && self.session != nil;
     }
@@ -155,16 +165,14 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
 
     public func startNewGame(handler: Bool = false) {
 
-        if !handler, let session = self.multiPlayer, session.hosting {
+        if !handler, let session = self.multiPlayerHost {
             //
             // We are in multi-player mode where WE are the HOST,
             // and we are now responding to a local request (from the
             // menu-item) to start a new game; notify clients (and host).
             //
-            // let cards: [TableCard] = self.newGameCards(nondestructive: true);
             deb("multi-player host sending new-game message")
-            // session.send(message: GameCenter.NewGameMessage(cards: cards));
-            session.send(message: GameCenter.NewGameMessage(cards: []));
+            session.send(message: GameCenter.NewGameMessage());
             return;
         }
 
@@ -172,10 +180,8 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         self.deck  = TableDeck(simple: self.settings.simpleDeck /* , shuffle: false */ );
         self.state = State();
 
-        if (!self.multiPlayerEnabled) {
-            if (self.fixedSeed) {
-                self.rngImp?.reset();
-            }
+        if (!self.multiPlayerEnabled && self.fixedSeed) { // TODO: debug panel support only
+            self.rngImp?.reset();
         }
 
         self.cards = self.newGameCards();
@@ -355,6 +361,10 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
 
         if let session = self.multiPlayer, selectedCards.isSet() {
             session.send(message: GameCenter.FoundSetMessage(
+                player: session.player,
+                cards: selectedCards
+            ));
+            session.send(message: GameCenter.FoundSetMessage( // TODO: send dup for testing
                 player: session.player,
                 cards: selectedCards
             ));
