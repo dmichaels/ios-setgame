@@ -161,9 +161,17 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
 
         if let session = self.multiPlayer {
             if let seed = seed {
+                //
+                // Here we responding to a multi-player NewGameMessage.
+                //
                 session.rng.reset(seed: seed);
             }
             else if (session.hosting) {
+                //
+                // Here we have hosting a multi-player game and have
+                // gotten an explicit request (e.g. from menu-item)
+                // to start a new game; just sound out a NewGameMessage.
+                //
                 session.send(message: GameCenter.NewGameMessage());
                 return;
             }
