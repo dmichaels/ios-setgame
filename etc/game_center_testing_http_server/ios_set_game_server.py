@@ -3,14 +3,28 @@
 from flask import Flask, request, jsonify
 import os
 import logging
+import argsparse
+
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)  # logging.CRITICAL to suppress almost everything
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--host", default="127.0.0.1", help="Host address to bind to")
+parser.add_argument("--port", type=int, default=5000, help="Port to bind to")
+parser.add_argument("--cert", help="Path to SSL certificate")
+parser.add_argument("--key", help="Path to SSL key")
+args = parser.parse_args()
 
 # On AWS (LightSail) use:
 # sudo -E nohup bash -c 'RELAY_HOST=0.0.0.0 RELAY_PORT=80 python3 ios_set_game_server.py' > ios_set_game_server.log 2>&1 &
 #
 server_host = os.environ.get('RELAY_HOST', '127.0.0.1')
 server_port = os.environ.get('RELAY_PORT', '5000')
+
+print(f"SERVER HOST: [{server_host}]")
+print(f"SERVER PORT: [{server_port}]")
+print(f"SERVER CERT: [{args.cert}]")
+print(f"SERVER KEY:  [{args.key}]")
 
 # server_host = "0.0.0.0"
 
@@ -129,4 +143,5 @@ def ping_endpoint():
     return jsonify({'status': 'OK'}), 200
 
 if __name__ == '__main__':
-    app.run(host=server_host, port=server_port, debug=False, use_reloader=False)
+    # app.run(host=server_host, port=server_port, debug=False, use_reloader=False)
+    app.run(host=args.host, port=args.port, ssl_context=(args.cert, args.key))
