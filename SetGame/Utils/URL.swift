@@ -8,7 +8,7 @@ public extension URL {
         return URL(string: url)!
     }
 
-    // Simple URL constrution/append methods.
+    // Simple URL construction/append methods.
 
     public func append(_ components: [String?]) -> URL {
         var result: URL = self;

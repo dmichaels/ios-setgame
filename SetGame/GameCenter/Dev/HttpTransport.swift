@@ -77,7 +77,7 @@ public extension GameCenter
         private var pollMessagesTask: Task<Void, Never>? = nil;
         private var pollInfoTask: Task<Void, Never>? = nil;
         private var pollTask: Task<Void, Never>? = nil;
-        private let pollInterval: UInt64 = 50_000_000; // 50ms
+        private let pollInterval: UInt64 = 250_000_000; // 250ms (4x per second)
         public  var info: Info = Info();
 
         public init(player: String? = nil,  url: URL? = nil) {
