@@ -128,7 +128,6 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
                private             var deck: TableDeck;
 
     public var fixedSeed: Bool = true;
-    public var rngImp: RNG? = RNG(seed: .random);
 
     public init(settings: Settings) {
         NSLog("DEBUG> Table.init xyzzy")
@@ -157,9 +156,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         return self.settings.multiPlayer.enabled && self.session != nil;
     }
 
-    private var rng: RNG? {
-        return self.rngImp ?? self.session?.rng;
-    }
+    private var rng: RNG? { self.session?.rng }
 
     public var disabled: Bool {
         return self.state.resolving || self.settings.demoMode;
@@ -181,9 +178,6 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         self.cards = [];
         self.deck  = TableDeck(simple: self.settings.simpleDeck /* , shuffle: false */ );
         self.state = State();
-
-        if (!self.multiPlayerEnabled && self.fixedSeed) { self.rngImp?.reset(); } // TODO: debug panel support only
-
         self.cards = self.newGameCards();
     }
 

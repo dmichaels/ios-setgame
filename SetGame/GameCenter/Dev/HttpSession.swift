@@ -53,22 +53,18 @@ public extension GameCenter
             self.transportImp.send(message: message, to: player);
         }
 
-        public var rng: RNG {
-            return self.rngImp;
-        }
+        public final lazy var rng: RNG = { return RNG() }()
 
         // HttpSession implementation.
 
         private let transportImp: GameCenter.HttpTransport;
         private var hostImp: String = "";
         private var playersImp: [String] = [];
-        private let rngImp: RNG;
 
         public init(transport: GameCenter.HttpTransport? = nil, seed: Int? = nil) {
             let transport: HttpTransport = transport ?? GameCenter.HttpTransport();
             self.transport = transport;
             self.transportImp = transport;
-            self.rngImp = RNG();
         }
 
         public func register() async {
