@@ -60,12 +60,6 @@ public extension GameCenter
 
         // HttpTransport class implementation.
 
-        private struct Defaults {
-         // public static let url: String          = "http://127.0.0.1:5000";
-            public static let url: String          = "http://34.232.248.47";
-            public static let pollInterval: UInt64 = 300_000_000; // 300ms
-        }
-
         public struct Info {
             public struct Counts {
                 public var sent: Int = 0;
@@ -83,11 +77,12 @@ public extension GameCenter
         private var pollMessagesTask: Task<Void, Never>? = nil;
         private var pollInfoTask: Task<Void, Never>? = nil;
         private var pollTask: Task<Void, Never>? = nil;
+        private let pollInterval: UInt64 = 300_000_000; // 300ms
         public  var info: Info = Info();
 
         public init(player: String? = nil,  url: URL? = nil) {
             self.player = player ?? ID(veryshort: true).value;
-            self.url = url ?? URL(string: Defaults.url)!
+            self.url = url ?? URL(string: Defaults.multiPlayer.server)!
         }
 
         public func sendMessage(_ message: Message, to player: String) {
@@ -179,7 +174,7 @@ public extension GameCenter
                 while (!Task.isCancelled) {
                     let messages: [GameCenter.Message] = await self.retrieveMessages(for: self.player);
                     self.dispatchMessages(messages: messages);
-                    try? await Task.sleep(nanoseconds: Defaults.pollInterval);
+                    try? await Task.sleep(nanoseconds: self.pollInterval);
                 }
             }
         }
@@ -192,7 +187,7 @@ public extension GameCenter
                     self.info.counts.queuedTotal = await self.retrieveMessagesQueuedCount(all: true);
                     self.info.counts.players = await self.retrievePlayers().count;
                     self.info.host = await self.retrieveHost();
-                    try? await Task.sleep(nanoseconds: Defaults.pollInterval);
+                    try? await Task.sleep(nanoseconds: self.pollInterval);
                 }
             }
         }

@@ -54,7 +54,7 @@
 <dict>
     <key>NSExceptionDomains</key>
     <dict>
-        <key>34.232.248.47</key>
+        <key>dmichaels.org</key>
         <dict>
             <key>NSIncludesSubdomains</key>
             <true/>
