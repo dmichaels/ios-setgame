@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Find the parent process for ios_set_game_server.py
-pids=$(ps aux | grep '[i]os_set_game_server.py' | awk '{print $2}')
+pids=$(ps aux | grep "[i]os_set_game_server*" | awk '{print $2}')
 
 if [ -z "$pids" ]; then
     echo "No ios_set_game_server.py processes found."
