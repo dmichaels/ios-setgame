@@ -7,6 +7,9 @@ import GameplayKit
 //
 public class RNG {
 
+    /// This fallback acts like normal non-deterministic random
+    /// number generator, i.e. using the simple Int.random function.
+    ///
     public static let fallback: RNG = RNG(seed: nil);
 
     private var seed: UInt64?;
