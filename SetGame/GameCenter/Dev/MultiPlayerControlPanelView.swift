@@ -26,9 +26,6 @@ public struct MultiPlayerDevelopmentPanelView: View {
     @State private var info: HttpServerInfo = HttpServerInfo();
     @State private var taskHandle: Task<Void, Never>? = nil
 
-    // private var session: GameCenter.HttpSession?;
-    // private let transport: GameCenter.HttpTransport;
-
     private var session: GameCenter.HttpSession? {
         return GameCenter.HttpSession.instance;
     }
@@ -37,11 +34,9 @@ public struct MultiPlayerDevelopmentPanelView: View {
         return self.session?.transport as? GameCenter.HttpTransport
     }
 
-    public init(table: Table, settings: Settings /*, session: GameCenter.Session? = nil */) {
+    public init(table: Table, settings: Settings) {
         self.table = table;
         self.settings = settings;
-        // self.transport = (session?.transport as? GameCenter.HttpTransport) ?? GameCenter.HttpTransport();
-        // self.session = session as? GameCenter.HttpSession ?? GameCenter.HttpSession(transport: self.transport);
     }
 
     public var body: some View {
@@ -142,19 +137,6 @@ public struct MultiPlayerControlPanel: View {
                         self.transport?.stop();
                     }
                 }
-/*
-                ToggleItem("kseed", on: $table.fixedSeed) { value in
-                    if (value) {
-                        self.table.fixedSeed = true;
-                    }
-                    else {
-                        self.table.fixedSeed = false;
-                    }
-                }
-*/
-                // Hard to imagine why we would want to turn this off.
-                // It is just watching and displaying the state of things.
-                // ToggleItem("watch", on: $info.poll /*, disabled: !settings.multiPlayer.enabled */ )
                 Spacer()
             }
             .padding(.leading, 11)
@@ -222,16 +204,6 @@ public struct MultiPlayerInfoPanel: View {
                     .font(.caption)
                     .padding(.trailing, 4)
                     .foregroundColor((self.info.sessionHost != self.info.host) || (self.info.sessionHosting != self.info.isHost) ? .blue : .primary)
-
-                /* TODO TEMPORARY ...
-                Text("[\(self.info.sessionHost)]")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                Text("[\(self.info.sessionHosting ? "T" : "F")]")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                ... TODO TEMPORARY */
-
                 Text("players:")
                     .font(.caption)
                     .fontWeight(.bold)
@@ -324,10 +296,6 @@ public struct MultiPlayerInfoPanel: View {
                     self.table.state.resolving = false;
                 }
             } label: {
-                // Text("reset")
-                //     .font(.caption)
-                //     .fontWeight(.bold)
-                //     .padding(.leading, 8)
                 Image(systemName: "arrow.clockwise.circle")
                     .foregroundColor(.red)
                     .font(.system(size: 14))

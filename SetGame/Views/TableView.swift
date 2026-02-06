@@ -9,7 +9,6 @@ public struct TableView: View {
     @ObservedObject var table: Table;
     @ObservedObject var settings: Settings;
     @ObservedObject var feedback: Feedback;
-                    var session: GameCenter.Session?;
 
     let marginx: CGFloat = 6;
     let spacing: CGFloat = 6;
@@ -23,7 +22,7 @@ public struct TableView: View {
                 .allowsHitTesting(!self.table.disabled)
             Space(size: 18)
             StatusBar(marginx: marginx)
-            MultiPlayerDevelopmentPanelView(table: table, settings: settings /*, session: session */)
+            MultiPlayerDevelopmentPanelView(table: table, settings: settings)
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)
             MultiPlayerGameButton()
