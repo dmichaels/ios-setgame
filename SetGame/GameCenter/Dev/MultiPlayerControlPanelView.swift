@@ -132,6 +132,7 @@ public struct MultiPlayerControlPanel: View {
                         self.transport.stop();
                     }
                 }
+/*
                 ToggleItem("kseed", on: $table.fixedSeed) { value in
                     if (value) {
                         self.table.fixedSeed = true;
@@ -140,6 +141,7 @@ public struct MultiPlayerControlPanel: View {
                         self.table.fixedSeed = false;
                     }
                 }
+*/
                 // Hard to imagine why we would want to turn this off.
                 // It is just watching and displaying the state of things.
                 // ToggleItem("watch", on: $info.poll /*, disabled: !settings.multiPlayer.enabled */ )

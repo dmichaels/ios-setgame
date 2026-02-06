@@ -7,6 +7,8 @@ import GameplayKit
 //
 public class RNG {
 
+    public static let fallback: RNG = RNG(seed: nil);
+
     private var seed: UInt64?;
     private var rng: GKMersenneTwisterRandomSource?;
 

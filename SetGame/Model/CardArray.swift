@@ -92,13 +92,7 @@ public extension Array where Element : Card {
     ///
     public mutating func takeRandomCard(rng: RNG? = nil) -> Element? {
         guard self.count > 0 else { return nil }
-        if let rng = rng {
-            return self.remove(at: rng.next(in: 0..<self.count));
-        }
-        else {
-            return self.remove(at: Int.random(in: 0..<self.count));
-        }
-        // return (self.count > 0) ? self.remove(at: Int.random(in: 0..<self.count)) : nil;
+        return self.remove(at: (rng ?? RNG.fallback).next(in: 0..<self.count));
     }
 
     /// Removes, at most, the specified number of random cards from this array, and returns these in

@@ -32,7 +32,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
 
     public func handle(message: GameCenter.NewGameMessage) {
         deb("Table.handle(NewGame)> \(message) seed: \(message.seed)");
-        self.fixedSeed ? self.rng?.reset(seed: .initial) : self.rng?.reset(seed: message.seed);
+        self.rng?.reset(seed: message.seed);
         self.startNewGame(handler: true);
     }
 
@@ -127,8 +127,6 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
     // ... TODO/TEMPORARY/XYZZY
                private             var deck: TableDeck;
 
-    public var fixedSeed: Bool = true;
-
     public init(settings: Settings) {
         NSLog("DEBUG> Table.init xyzzy")
         self.settings = settings;
@@ -180,10 +178,6 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         self.cards = [];
         self.deck  = TableDeck(simple: self.settings.simpleDeck);
         self.state = State();
-        self.cards = self.newGameCards();
-    }
-
-    private func newGameCards() -> [TableCard] {
 
         if (self.settings.plantMagicSquare && (self.settings.displayCardCount >= 9)) {
             let magicSquareCards: [TableCard] = TableDeck.randomMagicSquare(simple: self.settings.simpleDeck)
@@ -228,7 +222,6 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         else {
             self.fillTable();
         }
-        return self.cards;
     }
 
     // Touch the given card; selects or unselects as appropriate.
