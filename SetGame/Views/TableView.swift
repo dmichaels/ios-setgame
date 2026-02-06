@@ -23,7 +23,7 @@ public struct TableView: View {
                 .allowsHitTesting(!self.table.disabled)
             Space(size: 18)
             StatusBar(marginx: marginx)
-            MultiPlayerDevelopmentPanelView(table: table, settings: settings, session: session)
+            MultiPlayerDevelopmentPanelView(table: table, settings: settings /*, session: session */)
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)
             MultiPlayerGameButton()

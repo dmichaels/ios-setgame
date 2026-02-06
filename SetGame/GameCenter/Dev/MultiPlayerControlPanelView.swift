@@ -26,14 +26,22 @@ public struct MultiPlayerDevelopmentPanelView: View {
     @State private var info: HttpServerInfo = HttpServerInfo();
     @State private var taskHandle: Task<Void, Never>? = nil
 
-    private var session: GameCenter.HttpSession?;
-    private let transport: GameCenter.HttpTransport;
+    // private var session: GameCenter.HttpSession?;
+    // private let transport: GameCenter.HttpTransport;
 
-    public init(table: Table, settings: Settings, session: GameCenter.Session? = nil) {
+    private var session: GameCenter.HttpSession? {
+        return GameCenter.HttpSession.instance;
+    }
+
+    private var transport: GameCenter.HttpTransport? {
+        return self.session?.transport as? GameCenter.HttpTransport
+    }
+
+    public init(table: Table, settings: Settings /*, session: GameCenter.Session? = nil */) {
         self.table = table;
         self.settings = settings;
-        self.transport = (session?.transport as? GameCenter.HttpTransport) ?? GameCenter.HttpTransport();
-        self.session = session as? GameCenter.HttpSession ?? GameCenter.HttpSession(transport: self.transport);
+        // self.transport = (session?.transport as? GameCenter.HttpTransport) ?? GameCenter.HttpTransport();
+        // self.session = session as? GameCenter.HttpSession ?? GameCenter.HttpSession(transport: self.transport);
     }
 
     public var body: some View {
@@ -68,24 +76,26 @@ public struct MultiPlayerDevelopmentPanelView: View {
         guard self.info.poll else { return }
         self.taskHandle = Task {
             while !Task.isCancelled {
-                self.info.messageSentCount = self.transport.info.counts.sent;
-                self.info.messageRetrievedCount = self.transport.info.counts.retrieved;
-                self.info.messageHandledCount = self.transport.info.counts.handled;
-                self.info.messageQueueLength = self.transport.info.counts.queued;
-                self.info.messageQueueLengthAll = self.transport.info.counts.queuedTotal;
-                let players = await self.transport.retrievePlayers();
-                self.info.playerCount = players.count;
-                self.info.playerRegistered = players.contains(self.transport.player);
+                if let transport = self.transport {
+                    self.info.messageSentCount = transport.info.counts.sent;
+                    self.info.messageRetrievedCount = transport.info.counts.retrieved;
+                    self.info.messageHandledCount = transport.info.counts.handled;
+                    self.info.messageQueueLength = transport.info.counts.queued;
+                    self.info.messageQueueLengthAll = transport.info.counts.queuedTotal;
+                    let players = await transport.retrievePlayers();
+                    self.info.playerCount = players.count;
+                    self.info.playerRegistered = players.contains(transport.player);
+                    let host = await transport.retrieveHost();
+                    self.info.host = host;
+                    self.info.isHost = transport.player == host;
+                }
                 if let session = self.session {
                     session.updatePlayers();
                     self.info.sessionPlayers = session.players;
                     self.info.sessionPlayerCount = session.players.count;
+                    self.info.sessionHost = session.host ?? "";
+                    self.info.sessionHosting = session.hosting ?? false;
                 }
-                let host = await self.transport.retrieveHost();
-                self.info.host = host;
-                self.info.isHost = self.transport.player == host;
-                self.info.sessionHost = self.session?.host ?? "";
-                self.info.sessionHosting = self.session?.hosting ?? false;
                 try? await Task.sleep(nanoseconds: 300_000_000);
             }
         }
@@ -97,39 +107,39 @@ public struct MultiPlayerControlPanel: View {
     @ObservedObject var settings: Settings;
     @Binding fileprivate var info: HttpServerInfo;
     let session: GameCenter.HttpSession?;
-    let transport: GameCenter.HttpTransport;
+    let transport: GameCenter.HttpTransport?;
     let background: Color = Color.gray;
     public var body: some View {
         VStack(spacing: 80) {
             HStack(alignment: .firstTextBaseline, spacing: 0) {
                 ToggleItem("multi", on: $settings.multiPlayer.enabled, disabled: false) { value in
                     if (!value) {
-                        self.transport.stop();
+                        self.transport?.stop();
                     }
                     else if (settings.multiPlayer.poll) {
-                        self.transport.start();
+                        self.transport?.start();
                     }
                 }
                 ToggleItem("host", on: $info.isHost /*, disabled: !settings.multiPlayer.enabled */ ) { value in
                     if (value) {
                         Task {
-                            await self.transport.setHost();
+                            await self.transport?.setHost();
                             session?.updatePlayers();
                         }
                     }
                     else {
                         Task {
-                            await self.transport.unsetHost();
+                            await self.transport?.unsetHost();
                             session?.updatePlayers();
                         }
                     }
                 }
                 ToggleItem("poll", on: $settings.multiPlayer.poll /* , disabled: !settings.multiPlayer.enabled */ ) { value in
                     if (value) {
-                        self.transport.start();
+                        self.transport?.start();
                     }
                     else {
-                        self.transport.stop();
+                        self.transport?.stop();
                     }
                 }
 /*
@@ -180,7 +190,7 @@ public struct MultiPlayerInfoPanel: View {
     @ObservedObject var settings: Settings;
     @Binding fileprivate var info: HttpServerInfo;
     let session: GameCenter.HttpSession?;
-    let transport: GameCenter.HttpTransport;
+    let transport: GameCenter.HttpTransport?;
     let background: Color = Color.gray;
     public var body: some View {
         VStack(spacing: 80) {
@@ -191,7 +201,7 @@ public struct MultiPlayerInfoPanel: View {
                     .padding(.trailing, -8)
                     .foregroundColor(self.info.isHost ? .red : .primary)
                     .underline(self.info.isHost)
-                CopyableText(text: transport.player,
+                CopyableText(text: transport?.player ?? "",
                              foreground: self.info.isHost ? .red : .primary,
                              background: self.background,
                              bold: self.info.isHost,
@@ -246,7 +256,7 @@ public struct MultiPlayerInfoPanel: View {
 
     private struct PingButton: View {
         let session: GameCenter.HttpSession?;
-        let transport: GameCenter.HttpTransport;
+        let transport: GameCenter.HttpTransport?;
         public var body: some View {
             Button {
                 Task {
@@ -264,7 +274,7 @@ public struct MultiPlayerInfoPanel: View {
 
     private struct PingAllButton: View {
         let session: GameCenter.HttpSession?;
-        let transport: GameCenter.HttpTransport;
+        let transport: GameCenter.HttpTransport?;
         public var body: some View {
             Button {
                 Task {
@@ -286,7 +296,7 @@ public struct MultiPlayerInfoPanel: View {
 
     private struct RegisterPlayerButton: View {
         let session: GameCenter.HttpSession?;
-        let transport: GameCenter.HttpTransport;
+        let transport: GameCenter.HttpTransport?;
         public var body: some View {
             Button {
                 Task {
@@ -303,13 +313,13 @@ public struct MultiPlayerInfoPanel: View {
     }
 
     private struct ResetServerButton: View {
-        let session: GameCenter.HttpSession?
-        let transport: GameCenter.HttpTransport
+        let session: GameCenter.HttpSession?;
+        let transport: GameCenter.HttpTransport?;
         let table: Table
         public var body: some View {
             Button {
                 Task {
-                    await self.transport.reset();
+                    await self.transport?.reset();
                     await self.session?.updatePlayers();
                     self.table.state.resolving = false;
                 }
@@ -332,7 +342,7 @@ public struct MultiPlayerInfoPanelMessages: View {
     @ObservedObject var table: Table
     @ObservedObject var settings: Settings;
     @Binding fileprivate var info: HttpServerInfo;
-    let transport: GameCenter.HttpTransport;
+    let transport: GameCenter.HttpTransport?;
     @State private var taskHandle: Task<Void, Never>? = nil
     let background: Color = Color.gray;
     public var body: some View {
@@ -378,12 +388,12 @@ public struct MultiPlayerInfoPanelMessages: View {
     }
 
     private struct ResetMessagesButton: View {
-        let transport: GameCenter.HttpTransport;
+        let transport: GameCenter.HttpTransport?;
         let table: Table;
         public var body: some View {
             Button {
                 Task {
-                    await self.transport.resetMessages();
+                    await self.transport?.resetMessages();
                     self.table.state.resolving = false;
                 }
             } label: {
@@ -397,12 +407,12 @@ public struct MultiPlayerInfoPanelMessages: View {
     }
 
     private struct ResetMessagesAllButton: View {
-        let transport: GameCenter.HttpTransport
-        let table: Table
+        let transport: GameCenter.HttpTransport?;
+        let table: Table;
         public var body: some View {
             Button {
                 Task {
-                    await self.transport.resetMessages(all: true);
+                    await self.transport?.resetMessages(all: true);
                     self.table.state.resolving = false;
                 }
             } label: {
