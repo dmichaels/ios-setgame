@@ -61,7 +61,8 @@ public extension GameCenter
         // HttpTransport class implementation.
 
         private struct Defaults {
-            public static let url: String          = "http://127.0.0.1:5000";
+         // public static let url: String          = "http://127.0.0.1:5000";
+            public static let url: String          = "http://34.232.248.47";
             public static let pollInterval: UInt64 = 300_000_000; // 300ms
         }
 
