@@ -68,7 +68,6 @@ public extension GameCenter
             let transport: HttpTransport = transport ?? GameCenter.HttpTransport();
             self.transport = transport;
             self.transportImp = transport;
-            // self.rngImp = RNG(seed: seed);
             self.rngImp = RNG();
         }
 

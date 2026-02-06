@@ -1,13 +1,5 @@
 import Foundation
 
-public extension GameCenter.Message
-{
-    public init?(_ data: Data?, internal: Bool) {
-        guard let message = GameCenter.MessageConversion.toMessage(data: data) as? Self else { return nil }
-        self = message;
-    }
-}
-
 public extension GameCenter
 {
     public struct PingMessage: Message {
@@ -101,10 +93,7 @@ public extension GameCenter { public struct MessageConversion
         return nil;
     }
 
-    // TEMPORARY WHILE MIGRATING TO THIS ...
-    public static func toMessage(data: Data?) -> Message? {
-    // fileprivate static func toMessage(data: Data?) -> Message? {
-    // ... END TEMPORARY WHILE MIGRATING TO THIS
+    private static func toMessage(data: Data?) -> Message? {
         struct MessageEnvelope: Decodable { let type: MessageType; }
         if let data: Data = data,
         let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
