@@ -59,7 +59,7 @@ public class Defaults {
         public var http: Bool     = true;
         public var host: Bool     = true;
         public var poll: Bool     = true;
-        public let server: String = "http://dmichaels.org";
+        public let server: String = "https://dmichaels.org";
     }
 
     public static let multiPlayer: MultiPlayer = MultiPlayer();
