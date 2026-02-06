@@ -14,7 +14,7 @@ public extension GameCenter
         func start();
         func send(message: Message);
         func send(message: Message, to player: String);
-        var  rng: RNG? { get }
+        var  rng: RNG { get }
     }
 }
 

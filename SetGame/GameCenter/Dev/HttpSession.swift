@@ -25,7 +25,7 @@ public extension GameCenter
         }
 
         public func start() {
-            self.rng?.reset();
+            self.rng.reset();
             self.handler?.play();
         }
 
@@ -53,7 +53,7 @@ public extension GameCenter
             self.transportImp.send(message: message, to: player);
         }
 
-        public var rng: RNG? {
+        public var rng: RNG {
             return self.rngImp;
         }
 
