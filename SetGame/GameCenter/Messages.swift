@@ -141,10 +141,7 @@ public extension GameCenter { public struct MessageConveyance
         }
     }
 
-    // TEMPORARY WHILE MIGRATING TO THIS ...
-    // private static func dispatch(message: Message?,
-    public static func dispatch(message: Message?,
-    // ... END TEMPORARY WHILE MIGRATING TO THIS
+    private static func dispatch(message: Message?,
                                 ping: ((PingMessage) -> Void)? = nil,
                                 playerReady: ((PlayerReadyMessage) -> Void)? = nil,
                                 newGame: ((NewGameMessage) -> Void)? = nil,
