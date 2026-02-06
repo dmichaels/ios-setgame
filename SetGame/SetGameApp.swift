@@ -29,8 +29,9 @@ struct SetGameApp: App {
                 .task {
                     await GameCenterAuthentication.authenticate();
                     if let session = self.session {
-                        if await session.setup() {
+                        if await session.setup(instance: true) {
                             session.bind(to: self.table);
+                            deb("SetGameApp.task: call session.start")
                             session.start();
                             // self.table.startNewGame();
                         }

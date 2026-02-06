@@ -4,6 +4,8 @@ public extension GameCenter
 {
     public class HttpSession: Session {
 
+        public private(set) var instance: HttpSession? = nil;
+
         // Session protocol implementation.
 
         public let transport: Transport;
@@ -17,15 +19,21 @@ public extension GameCenter
             return self.playersImp;
         }
 
-        public func setup() async -> Bool {
+        public func setup(instance: Bool = false) async -> Bool {
             self.transportImp.start();
             self.hostImp = await self.transportImp.retrieveHost();
             self.playersImp = await self.transportImp.retrievePlayers();
+            if (instance) {
+                if let instance: HttpSession = self.instance {
+                    instance.transport.stop();
+                    self.instance = self;
+                }
+            }
             return true;
         }
 
         public func start() {
-            // self.rng.reset();
+            deb("HttpSession.start")
             self.handler?.play();
         }
 

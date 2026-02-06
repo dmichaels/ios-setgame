@@ -55,11 +55,11 @@ public class Defaults {
     // GameCenter/MultiPlayer related properties.
 
     public struct MultiPlayer {
-        public var enabled: Bool  = true;
+        public var enabled: Bool  = false;
         public var http: Bool     = true;
         public var host: Bool     = true;
         public var poll: Bool     = true;
-        public let server: String = "https://dmichaels.org";
+        public let server: String = "https://dmichaels.dev";
     }
 
     public static let multiPlayer: MultiPlayer = MultiPlayer();
