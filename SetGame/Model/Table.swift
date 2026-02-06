@@ -32,8 +32,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
 
     public func handle(message: GameCenter.NewGameMessage) {
         deb("Table.handle(NewGame)> \(message) seed: \(message.seed)");
-        self.rng?.reset(seed: message.seed);
-        self.startNewGame(handler: true);
+        self.startNewGame(seed: message.seed);
     }
 
     @MainActor
@@ -150,10 +149,6 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         return nil;
     }
 
-    private var multiPlayerEnabled: Bool {
-        return self.settings.multiPlayer.enabled && self.session != nil;
-    }
-
     private var rng: RNG? {
         return self.session?.rng
     }
@@ -162,17 +157,16 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         return self.state.resolving || self.settings.demoMode;
     }
 
-    public func startNewGame(handler: Bool = false) {
+    public func startNewGame(seed: Int? = nil) {
 
-        if !handler, let session = self.multiPlayerHost {
-            //
-            // We are in multi-player mode where WE are the HOST,
-            // and we are now responding to a local request (from the
-            // menu-item) to start a new game; notify clients (and host).
-            //
-            deb("multi-player host sending new-game message")
-            session.send(message: GameCenter.NewGameMessage());
-            return;
+        if let session = self.multiPlayer {
+            if let seed = seed {
+                session.rng.reset(seed: seed);
+            }
+            else if (session.hosting) {
+                session.send(message: GameCenter.NewGameMessage());
+                return;
+            }
         }
 
         self.cards = [];
