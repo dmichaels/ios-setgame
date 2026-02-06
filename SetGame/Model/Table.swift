@@ -5,7 +5,6 @@ import SwiftUI
 /// table cards which are on display; and sundry other data points.
 /// Is this class technically, effectively acting as a "model-view"?
 ///
-// @MainActor
 public class Table: ObservableObject, GameCenter.SessionHandler {
 
     private var settings: Settings;
@@ -55,10 +54,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
                 for card in cards { if (card.foundSet) { return true; } } ; return false;
             }
             func noteCardsPartOfFoundSet(_ cards: [TableCard]) {
-                for card in cards {
-                    deb("SET FOUND-SET TRUE!!! \(card)")
-                    card.foundSet = true;
-                }
+                for card in cards { card.foundSet = true; }
             }
             if message.cards.isSet(), let cards: [TableCard] = self.cards.findCards(message.cards) {
                 deb("handling found-set message as host | cards: \(cards)");
@@ -89,18 +85,15 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         self.state.resolving = false;
     }
 
-    // @MainActor
     public func handle(message: GameCenter.ConfirmedSetMessage) {
         deb("Table.handle(ConfirmedSet) message: \(message)");
         if let session = self.multiPlayer {
             deb("Table.handle(ConfirmedSet) multi-player");
             if let cards: [TableCard] = self.cards.findCards(message.cards, strict: true) {
                 deb("Table.handle(ConfirmedSet): multi-player cards: \(cards)");
-
                 self.unselectCards();
                 cards.select();
-
-                CardGridCallbacks.onSetMultiPlayer(cards: cards, resolve: { self.resolveSet() });
+                CardGridCallbacks.onSet(cards: cards, resolve: { self.resolveSet() });
             }
         }
     }

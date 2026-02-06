@@ -27,3 +27,32 @@ DEVELOPMENT NOTES
   - Merged game-center-20260109-with-possible-ios-18-animation-regression-fixes
     back into game-center-20260109
   - Main branch now: game-center-20260109
+
+2026-02-06 notes from chatgpt about timeout handling after sending message to host ...
+
+func sendFoundSet(_ set: Set<Card>) {
+    disableInput()
+    sendMessage(.FoundSetMessage(set))
+
+    Task {
+        // Wait up to 1.5 seconds for host response
+        try? await Task.sleep(nanoseconds: 1_500_000_000)
+
+        if !didReceiveResponse {
+            showToast("No response from host")
+            enableInput()
+        }
+    }
+}
+
+func handleConfirmedSet(_ msg: ConfirmedSetMessage) {
+    didReceiveResponse = true
+    updateGameState(...)
+    enableInput()
+}
+
+func handleFoundSetTooLate(_ msg: FoundSetTooLateMessage) {
+    didReceiveResponse = true
+    showToast("Too late!")
+    enableInput()
+}

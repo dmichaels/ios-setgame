@@ -2,7 +2,6 @@ import SwiftUI
 
 enum CardGridCallbacks
 {
-// @MainActor
     public static func cardTouched(_ card: TableCard, table: Table) {
         table.cardTouched(
             card,
@@ -21,26 +20,6 @@ enum CardGridCallbacks
     }
 
     public static func onSet(cards: [TableCard], resolve: @escaping () -> Void) {
-        // if (Defaults.multiPlayer.enabled) {
-/*
-        if (multiplayer) {
-            let message: GameCenter.FoundSetMessage = GameCenter.FoundSetMessage(
-                player: GameCenter.HttpTransport.instance.player,
-                cards: cards
-            );
-            GameCenter.HttpTransport.instance.send(message: message, to: ""); // TODO
-            return;
-        }
-*/
-        cards.blink {
-            Delay(by: Defaults.Effects.selectAfterDelay) {
-                deb("onSet: cards: \(cards) calling resolve")
-                resolve();
-            }
-        }
-    }
-
-    public static func onSetMultiPlayer(cards: [TableCard], resolve: @escaping () -> Void) {
         cards.blink {
             Delay(by: Defaults.Effects.selectAfterDelay) {
                 resolve();
