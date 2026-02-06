@@ -25,7 +25,7 @@ public extension GameCenter
         }
 
         public func start() {
-            self.rng.reset();
+            // self.rng.reset();
             self.handler?.play();
         }
 

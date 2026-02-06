@@ -175,6 +175,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
                 session.send(message: GameCenter.NewGameMessage());
                 return;
             }
+            deb("startNewGame: seed: \(seed) rng.seed: \(self.rng?.seed)")
         }
 
         self.cards = [];
@@ -355,10 +356,12 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
                 player: session.player,
                 cards: selectedCards
             ));
+            /*
             session.send(message: GameCenter.FoundSetMessage( // TODO: send dup for testing
                 player: session.player,
                 cards: selectedCards
             ));
+            */
             return;
         }
 
