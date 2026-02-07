@@ -19,38 +19,46 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
     // Table implementation.
 
     public struct State {
-        public private(set) var startTime: Date                     = Date();
-        public              var partialSetSelected: Bool            = false;
-        public              var setsFoundCount: Int                 = 0;
-        public              var setJustFound: Bool                  = false;
-        public              var setJustFoundNot: Bool               = false;
-        public              var setsLastFound: [[TableCard]]        = [];
-        fileprivate         var showingCardsWhichArePartOfSet: Bool = false;
-        fileprivate         var showingOneRandomSet: Bool           = false;
-        fileprivate         var showingOneRandomSetLast: Int?       = nil;
+        //
+        // Note that the resolving flag is ONLY used to disable input while displaying three
+        // selected cards for a short ("resolving") period before then visually indicating
+        // that the selected cards are a SET (and then blink and replace the cards) or are
+        // not a SET (and then shake the cards); disabled input via allowsHitTesting, but
+        // also for TableView but virtue of three cards being currently selected.
+        //
+        // Also note that this resolving flag (and it state container) is ONLY public
+        // to allow setting it false in the development/dev panel, during development
+        // to unlock UI in case of bugs.
+        //
+        public private(set) var startTime: Date                               = Date();
+        public              var partialSetSelected: Bool                      = false;
+        public              var setsFoundCount: Int                           = 0;
+        public              var setJustFound: Bool                            = false;
+        public              var setJustFoundNot: Bool                         = false;
+        public              var setsLastFound: [[TableCard]]                  = [];
+        fileprivate         var showingCardsWhichArePartOfSet: Bool           = false;
+        fileprivate         var showingOneRandomSet: Bool                     = false;
+        fileprivate         var showingOneRandomSetLast: Int?                 = nil;
         fileprivate         var receivedExpectedFoundSetResponseMessage: Bool = false;
-        //
-        // This resolving flag is ONLY used to disable input while blinking the cards after
-        // a SET is found (see allowsHitTesting in TableView); there should be a better way.
-        //
-        // TODO/TEMPORARY/XYZZY ...
-        // fileprivate var resolving: Bool                             = false;
-        public var resolving: Bool                             = false;
-        // ... END TODO/TEMPORARY/XYZZY
+        public              var resolving: Bool                               = false;
     }
 
     @Published public private(set) var cards: [TableCard];
-    // TODO/TEMPORARY/XYZZY ...
-    // @Published public private(set) var state: State;
     @Published public var state: State;
-    // ... TODO/TEMPORARY/XYZZY
-               private             var deck: TableDeck;
+    private var deck: TableDeck;
 
-    // TODO MAYBE XYZZY
-    private let onCardsMoved: ([TableCard]) -> Void = CardGridCallbacks.onCardsMoved;
+    private struct Behavior {
+        // 
+        // Techinical coding note/quirk: We must specify NO type (or Any type) for some
+        // of the below because they have @escaping function arguments and there is no
+        // way at all to represent a type specifier for these on a variable declaration.
+        // 
+        public let onCardsMoved: ([TableCard]) -> Void = CardGridCallbacks.onCardsMoved;
+        public let onSet: Any                          = CardGridCallbacks.onSet;
+        public let onNoSet: Any                        = CardGridCallbacks.onNoSet;
+    } ; private var behavior = Behavior();
 
     public init(settings: Settings) {
-        NSLog("DEBUG> Table.init xyzzy")
         self.settings = settings;
         self.cards = [];
         self.deck  = TableDeck(simple: self.settings.simpleDeck);
@@ -731,7 +739,7 @@ private extension Table {
                 deb("Table.handle(ConfirmedSet): multi-player cards: \(cards)");
                 self.unselectCards();
                 cards.select();
-                CardGridCallbacks.onSet(cards: cards, resolve: { self.resolveSet(self.onCardsMoved) });
+                CardGridCallbacks.onSet(cards: cards, resolve: { self.resolveSet(self.behavior.onCardsMoved) });
             }
         }
         self.state.receivedExpectedFoundSetResponseMessage = true;
