@@ -13,6 +13,7 @@ public class RNG {
     public static let fallback: RNG = RNG(seed: nil);
 
     public private(set) var seed: UInt64?;
+    public private(set) var sequence: Int;
     private var rng: GKMersenneTwisterRandomSource?;
 
     public enum SeedType {
@@ -25,6 +26,7 @@ public class RNG {
     ///
     public init(seed: UInt64) {
         self.seed = seed;
+        self.sequence = 0;
         self.rng = GKMersenneTwisterRandomSource(seed: seed);
     }
 
@@ -35,11 +37,13 @@ public class RNG {
     public init(seed: Int?) {
         if let seed: Int = seed {
             self.seed = RNG.convertIntToUInt64(seed);
+            self.sequence = 0;
             self.rng = GKMersenneTwisterRandomSource(seed: self.seed!);
         }
         else {
             self.seed = nil;
             self.rng = nil;
+            self.sequence = 0;
         }
     }
 
@@ -65,6 +69,7 @@ public class RNG {
     ///
     public func reset(seed: UInt64) {
         self.seed = seed;
+        self.sequence = 0;
         self.rng = GKMersenneTwisterRandomSource(seed: seed);
     }
 
@@ -98,6 +103,7 @@ public class RNG {
     ///
     public func reset() {
         if let seed: UInt64 = self.seed {
+            self.sequence = 0;
             self.rng = GKMersenneTwisterRandomSource(seed: seed);
         }
     }
@@ -108,6 +114,7 @@ public class RNG {
 
     public func next(in range: Range<Int>) -> Int {
         if let rng = self.rng {
+            self.sequence += self.sequence;
             return range.lowerBound + rng.nextInt(upperBound: range.upperBound - range.lowerBound);
         }
         else {
@@ -120,6 +127,7 @@ public class RNG {
             let lower: Int = range.lowerBound;
             let upper: Int = range.upperBound;
             let span: Int = max(1, (upper == Int.max ? upper - 1 : upper) - lower + 1);
+            self.sequence += self.sequence;
             return range.lowerBound + rng.nextInt(upperBound: span);
         }
         else {
