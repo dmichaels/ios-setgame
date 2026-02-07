@@ -9,12 +9,12 @@ public extension GameCenter
         public var player: String = ID(veryshort: true).value;
         public var handler: MessageHandler? = nil;
 
-        public func start() {
+        public func setup() {
             self.pollInfo();
             self.pollMessages();
         }
 
-        public func stop() {
+        public func release() {
             self.nopollMessages();
         }
 

@@ -22,12 +22,12 @@ public extension GameCenter
         }
 
         public func setup() async -> Bool {
-            self.transportImp.start();
+            self.transportImp.setup();
             self.hostImp = await self.transportImp.retrieveHost();
             self.playersImp = await self.transportImp.retrievePlayers();
             if let instance: HttpSession = HttpSession.instance {
                 if (instance !== HttpSession.instance) {
-                    instance.transport.stop();
+                    instance.transport.release();
                 }
             }
             HttpSession.instance = self;
@@ -36,7 +36,7 @@ public extension GameCenter
 
         public func release() {
             if let instance: HttpSession = HttpSession.instance {
-                instance.transport.stop();
+                instance.transport.release();
                 HttpSession.instance = nil;
             }
         }

@@ -109,10 +109,10 @@ public struct MultiPlayerControlPanel: View {
             HStack(alignment: .firstTextBaseline, spacing: 0) {
                 ToggleItem("multi", on: $settings.multiPlayer.enabled, disabled: false) { value in
                     if (!value) {
-                        self.transport?.stop();
+                        self.transport?.release();
                     }
                     else if (settings.multiPlayer.poll) {
-                        self.transport?.start();
+                        self.transport?.setup();
                     }
                 }
                 ToggleItem("host", on: $info.isHost /*, disabled: !settings.multiPlayer.enabled */ ) { value in
@@ -131,10 +131,10 @@ public struct MultiPlayerControlPanel: View {
                 }
                 ToggleItem("poll", on: $settings.multiPlayer.poll /* , disabled: !settings.multiPlayer.enabled */ ) { value in
                     if (value) {
-                        self.transport?.start();
+                        self.transport?.setup();
                     }
                     else {
-                        self.transport?.stop();
+                        self.transport?.release();
                     }
                 }
                 Spacer()
