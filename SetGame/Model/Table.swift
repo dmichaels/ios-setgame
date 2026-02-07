@@ -11,93 +11,10 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
 
     // public var sender: GameCenter.MessageSender?;
 
-    // SessionManagerHandler protocol implementation.
+    // SessionManagerHandler protocol implementation;
+    // and see Table extension at the end of this file.
 
     public var session: GameCenter.Session?;
-
-    public func play() {
-        self.startNewGame();
-    }
-
-    // MessageHandler (via SessionHandler) implementation.
-    // TODO maybe: Put these in a Table extension to visually set them apart?
-
-    public func handle(message: GameCenter.PingMessage) {
-        deb("Table.handle(Ping)> \(message)");
-    }
-
-    public func handle(message: GameCenter.PlayerReadyMessage) {
-        deb("Table.handle(PlayerReady)> \(message)");
-    }
-
-    public func handle(message: GameCenter.NewGameMessage) {
-        deb("Table.handle(NewGame)> \(message) seed: \(message.seed)");
-        self.startNewGame(seed: message.seed);
-    }
-
-    @MainActor
-    public func handle(message: GameCenter.FoundSetMessage) {
-        deb("Table.handle(FoundSet)> \(message)");
-        if let session = self.multiPlayerHost {
-            deb("handling found-set message as host | cards: \(message.cards)");
-            //
-            // Hard part maybe: Could get another FoundSetMessage immediately or
-            // virtually concurrent to this one, with the same SET or with a SET
-            // that overlaps this SET. If so, then it must be rejected/ignored --
-            // maybe later will send a FoundSetTooLateMessage to the specific player
-            // who sent the subsequent FoundSetMessage for the same or overlaping SET.
-            // Also will need @MainActor (or equivalent) to prevent race conditions,
-            // between checking for SET and removing (and replacing) the cards.
-            //
-            func cardsPartOfFoundSet(_ cards: [TableCard]) -> Bool {
-                for card in cards { if (card.foundSet) { return true; } } ; return false;
-            }
-            func noteCardsPartOfFoundSet(_ cards: [TableCard]) {
-                for card in cards { card.foundSet = true; }
-            }
-            if message.cards.isSet(), let cards: [TableCard] = self.cards.findCards(message.cards) {
-                deb("handling found-set message as host | cards: \(cards)");
-                if (!cardsPartOfFoundSet(cards)) {
-                    deb("handling found-set message as host: sending confirmed set message");
-                    noteCardsPartOfFoundSet(cards);
-                    session.send(message: GameCenter.ConfirmedSetMessage(
-                        player: session.player,
-                        cards: message.cards
-                    ));
-                }
-                else {
-                    deb("already found at least one of these cards as part of a set: \(cards)") 
-                    session.send(message: GameCenter.FoundSetTooLateMessage(
-                        player: message.player,
-                        cards: message.cards
-                    ));
-                }
-            }
-        }
-        else {
-            deb("handling found-set message as non-host client (or no session)");
-        }
-    }
-
-    public func handle(message: GameCenter.FoundSetTooLateMessage) {
-        deb("Table.handle(FoundSetTooLate)> \(message)");
-        self.state.resolving = false;
-        self.state.receivedExpectedFoundSetResponseMessage = true;
-    }
-
-    public func handle(message: GameCenter.ConfirmedSetMessage) {
-        deb("Table.handle(ConfirmedSet) message: \(message)");
-        if let session = self.multiPlayer {
-            deb("Table.handle(ConfirmedSet) multi-player");
-            if let cards: [TableCard] = self.cards.findCards(message.cards, strict: true) {
-                deb("Table.handle(ConfirmedSet): multi-player cards: \(cards)");
-                self.unselectCards();
-                cards.select();
-                CardGridCallbacks.onSet(cards: cards, resolve: { self.resolveSet() });
-            }
-        }
-        self.state.receivedExpectedFoundSetResponseMessage = true;
-    }
 
     // Table implementation.
 
@@ -128,6 +45,9 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
     @Published public var state: State;
     // ... TODO/TEMPORARY/XYZZY
                private             var deck: TableDeck;
+
+    // TODO MAYBE XYZZY
+    private let onCardsMoved: ([TableCard]) -> Void = CardGridCallbacks.onCardsMoved;
 
     public init(settings: Settings) {
         NSLog("DEBUG> Table.init xyzzy")
@@ -314,17 +234,6 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
             self.selectCard(card);
         }
 
-/*
-        self.possibleSetSelected(
-            delay: delay, onSet: onSet, onNoSet: onNoSet, onCardsMoved: onCardsMoved);
-    }
-
-    private func possibleSetSelected(delay: Double? = nil,
-                                     onSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
-                                     onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
-                                     onCardsMoved: (([TableCard]) -> Void)? = nil) {
-*/
-
         let selectedCards: [TableCard] = self.selectedCards();
 
         guard selectedCards.count == 3 else {
@@ -340,11 +249,6 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         // which disallows input (via allowsHitTesting in TestView).
 
         self.state.resolving = true;
-
-        func resolve() {
-            self.resolveSet(onCardsMoved);
-            // self.state.resolving = false;
-        }
 
         // Allowing a little delay gives us time to briefly see the cards
         // in a stable selected state, before moving on to deselect,
@@ -387,6 +291,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         }
 
         Delay(by: delay) {
+            func resolve() { self.resolveSet(onCardsMoved); }
             if (selectedCards.isSet()) {
                 if let onSet = onSet {
                     //
@@ -744,5 +649,91 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         if ((self.cards.count > i) && (self.cards.count > j)) {
             self.cards.swapAt(i, j);
         }
+    }
+}
+
+// Here are all of the SessionHandler implementation functionss for Table.
+//
+private extension Table {
+
+    public func play() {
+        self.startNewGame();
+    }
+
+    public func handle(message: GameCenter.PingMessage) {
+        deb("Table.handle(Ping)> \(message)");
+    }
+
+    public func handle(message: GameCenter.PlayerReadyMessage) {
+        deb("Table.handle(PlayerReady)> \(message)");
+    }
+
+    public func handle(message: GameCenter.NewGameMessage) {
+        deb("Table.handle(NewGame)> \(message) seed: \(message.seed)");
+        self.startNewGame(seed: message.seed);
+    }
+
+    @MainActor
+    public func handle(message: GameCenter.FoundSetMessage) {
+        deb("Table.handle(FoundSet)> \(message)");
+        if let session = self.multiPlayerHost {
+            deb("handling found-set message as host | cards: \(message.cards)");
+            //
+            // Hard part maybe: Could get another FoundSetMessage immediately or
+            // virtually concurrent to this one, with the same SET or with a SET
+            // that overlaps this SET. If so, then it must be rejected/ignored --
+            // maybe later will send a FoundSetTooLateMessage to the specific player
+            // who sent the subsequent FoundSetMessage for the same or overlaping SET.
+            // Also will need @MainActor (or equivalent) to prevent race conditions,
+            // between checking for SET and removing (and replacing) the cards.
+            //
+            func cardsPartOfFoundSet(_ cards: [TableCard]) -> Bool {
+                for card in cards { if (card.foundSet) { return true; } } ; return false;
+            }
+            func noteCardsPartOfFoundSet(_ cards: [TableCard]) {
+                for card in cards { card.foundSet = true; }
+            }
+            if message.cards.isSet(), let cards: [TableCard] = self.cards.findCards(message.cards) {
+                deb("handling found-set message as host | cards: \(cards)");
+                if (!cardsPartOfFoundSet(cards)) {
+                    deb("handling found-set message as host: sending confirmed set message");
+                    noteCardsPartOfFoundSet(cards);
+                    session.send(message: GameCenter.ConfirmedSetMessage(
+                        player: session.player,
+                        cards: message.cards
+                    ));
+                }
+                else {
+                    deb("already found at least one of these cards as part of a set: \(cards)") 
+                    session.send(message: GameCenter.FoundSetTooLateMessage(
+                        player: message.player,
+                        cards: message.cards
+                    ));
+                }
+            }
+        }
+        else {
+            deb("handling found-set message as non-host client (or no session)");
+        }
+    }
+
+    public func handle(message: GameCenter.FoundSetTooLateMessage) {
+        deb("Table.handle(FoundSetTooLate)> \(message)");
+        self.state.resolving = false;
+        self.state.receivedExpectedFoundSetResponseMessage = true;
+    }
+
+    public func handle(message: GameCenter.ConfirmedSetMessage) {
+        deb("Table.handle(ConfirmedSet) message: \(message)");
+        if let session = self.multiPlayer {
+            deb("Table.handle(ConfirmedSet) multi-player");
+            if let cards: [TableCard] = self.cards.findCards(message.cards, strict: true) {
+                deb("Table.handle(ConfirmedSet): multi-player cards: \(cards)");
+                self.unselectCards();
+                cards.select();
+                CardGridCallbacks.onSet(cards: cards, resolve: { self.resolveSet(self.onCardsMoved) });
+            }
+        }
+        self.state.receivedExpectedFoundSetResponseMessage = true;
     }
 }
