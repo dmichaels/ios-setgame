@@ -8,6 +8,18 @@ public extension GameCenter
         //
         public static private(set) var instance: HttpSession? = nil;
 
+        public static func create(handler: SessionHandler) async -> Session? {
+            let session: Session = HttpSession(transport: HttpTransport());
+            if (await session.setup()) {
+                session.bind(to: handler);
+                return session;
+            }
+            else {
+                session.release();
+                return nil;
+            }
+        }
+
         // Session protocol implementation.
 
         public let transport: Transport;

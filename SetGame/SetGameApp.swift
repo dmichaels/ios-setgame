@@ -26,22 +26,10 @@ struct SetGameApp: App {
                 .environmentObject(self.feedback)
                 .task {
                     await GameCenterAuthentication.authenticate();
-                    if let session: GameCenter.Session = await createSession(handler: self.table) {
+                    if let session: GameCenter.Session = await GameCenter.HttpSession.create(handler: self.table) {
                         session.start();
                     }
                 }
-        }
-    }
-
-    private func createSession(handler: GameCenter.SessionHandler) async -> GameCenter.Session? {
-        let session: GameCenter.Session = GameCenter.HttpSession(transport: GameCenter.HttpTransport());
-        if (await session.setup()) {
-            session.bind(to: handler);
-            return session;
-        }
-        else {
-            session.release();
-            return nil;
         }
     }
 }
