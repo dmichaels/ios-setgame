@@ -108,6 +108,18 @@ public class RNG {
         }
     }
 
+    public func sync(sequence: Int, seed: Int? = nil) {
+        if let rng = self.rng {
+            if let seed = seed {
+                self.seed = RNG.convertIntToUInt64(seed);
+            }
+            self.rng = GKMersenneTwisterRandomSource(seed: self.seed!);
+            for _ in 0..<max(sequence, 0) {
+                _ = self.next();
+            }
+        }
+    }
+
     public func next() -> Int {
         return self.next(in: 0...Int.max);
     }
