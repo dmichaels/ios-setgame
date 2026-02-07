@@ -47,22 +47,23 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
     @Published public var state: State;
     private var deck: TableDeck;
 
-    private struct Behavior {
+    public struct Behavior {
         // 
         // Techinical coding note/quirk: We must specify NO type (or Any type) for some
         // of the below because they have @escaping function arguments and there is no
         // way at all to represent a type specifier for these on a variable declaration.
         // 
-        public let onCardsMoved: ([TableCard]) -> Void = CardGridCallbacks.onCardsMoved;
-        public let onSet: Any                          = CardGridCallbacks.onSet;
-        public let onNoSet: Any                        = CardGridCallbacks.onNoSet;
-    } ; private var behavior = Behavior();
+        public var onSet: Any                          = CardGridCallbacks.onSet;
+        public var onNoSet: Any                        = CardGridCallbacks.onNoSet;
+        public var onCardsMoved: ([TableCard]) -> Void = CardGridCallbacks.onCardsMoved;
+    } ; private var behavior: Behavior;
 
-    public init(settings: Settings) {
+    public init(settings: Settings, behavior: Behavior? = nil) {
         self.settings = settings;
         self.cards = [];
         self.deck  = TableDeck(simple: self.settings.simpleDeck);
         self.state = State();
+        self.behavior = behavior ?? CardGridCallbacks.defaults;
     }
 
     private var multiPlayer: GameCenter.Session? {

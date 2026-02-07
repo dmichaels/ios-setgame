@@ -2,6 +2,12 @@ import SwiftUI
 
 enum CardGridCallbacks
 {
+    public static let defaults: Table.Behavior = Table.Behavior(
+        onSet: CardGridCallbacks.onSet,
+        onNoSet: CardGridCallbacks.onNoSet,
+        onCardsMoved: CardGridCallbacks.onCardsMoved
+    );
+
     public static func cardTouched(_ card: TableCard, table: Table) {
         table.cardTouched(
             card,
