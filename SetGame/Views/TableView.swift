@@ -27,7 +27,6 @@ public struct TableView: View {
             FoundSets(table: table, settings: settings, marginx: marginx)
             MultiPlayerGameButton()
         }
-        // .allowsHitTesting(!self.table.disabled)
     }
 
     private struct StatusBar: View {

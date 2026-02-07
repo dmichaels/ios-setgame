@@ -82,6 +82,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
     public func handle(message: GameCenter.FoundSetTooLateMessage) {
         deb("Table.handle(FoundSetTooLate)> \(message)");
         self.state.resolving = false;
+        self.state.receivedExpectedFoundSetResponseMessage = true;
     }
 
     public func handle(message: GameCenter.ConfirmedSetMessage) {
@@ -95,6 +96,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
                 CardGridCallbacks.onSet(cards: cards, resolve: { self.resolveSet() });
             }
         }
+        self.state.receivedExpectedFoundSetResponseMessage = true;
     }
 
     // Table implementation.
@@ -109,6 +111,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         fileprivate         var showingCardsWhichArePartOfSet: Bool = false;
         fileprivate         var showingOneRandomSet: Bool           = false;
         fileprivate         var showingOneRandomSetLast: Int?       = nil;
+        fileprivate         var receivedExpectedFoundSetResponseMessage: Bool = false;
         //
         // This resolving flag is ONLY used to disable input while blinking the cards after
         // a SET is found (see allowsHitTesting in TableView); there should be a better way.
@@ -288,6 +291,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
                               onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
                               onCardsMoved: (([TableCard]) -> Void)? = nil) {
 
+        deb("CARD-TOUCHED \(card) resolving: \(self.state.resolving) disabled: \(self.disabled)")
         guard !self.state.resolving else {
             //
             // We are already in the process of resolving a three-card selection;
@@ -310,6 +314,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
             self.selectCard(card);
         }
 
+/*
         self.possibleSetSelected(
             delay: delay, onSet: onSet, onNoSet: onNoSet, onCardsMoved: onCardsMoved);
     }
@@ -318,6 +323,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
                                      onSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
                                      onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
                                      onCardsMoved: (([TableCard]) -> Void)? = nil) {
+*/
 
         let selectedCards: [TableCard] = self.selectedCards();
 
@@ -352,16 +358,31 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
         // game mode, we will send a FoundSetMessage to the host.
 
         if let session = self.multiPlayer, selectedCards.isSet() {
+            self.state.receivedExpectedFoundSetResponseMessage = false;
             session.send(message: GameCenter.FoundSetMessage(
                 player: session.player,
                 cards: selectedCards
             ));
-            /*
-            session.send(message: GameCenter.FoundSetMessage( // TODO: send dup for testing
-                player: session.player,
-                cards: selectedCards
-            ));
-            */
+            //
+            // After sending out a FoundSetMessage to the host we expect to receive
+            // either a ConfirmedSetMessage or FoundSetTooLateMessage, very soon.
+            // So we spawn a task below to wait a short time and if not received
+            // for some reason we set state.resolving back to false, so that the
+            // UI input is re-enabled (i.e recall that UI input is effectively
+            // disabled by virtue of state.resolving being set to true, above,
+            // while we are figuring out if we have a SET, and to allow some
+            // time for the selected card to be displayed before we visually
+            // signal that we either have a SET (blinking) or not (shaking).
+            //
+            Task {
+                try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+                if (!self.state.receivedExpectedFoundSetResponseMessage) {
+                    deb("NO RESPONSE FROM FOUND-SET (receivedExpectedFoundSetResponseMessage == FALSE | \(self.state.resolving) \(self.disabled)")
+                    self.state.resolving = false;
+                    self.unselectCards();
+                    deb("NO RESPONSE FROM FOUND-SET (receivedExpectedFoundSetResponseMessage == FALSE X | \(self.state.resolving) \(self.disabled)")
+                }
+            }
             return;
         }
 
