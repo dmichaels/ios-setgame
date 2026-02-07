@@ -46,24 +46,14 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
     @Published public private(set) var cards: [TableCard];
     @Published public var state: State;
     private var deck: TableDeck;
+    private var effects: TableCardEffects;
 
-    public struct Behavior {
-        // 
-        // Techinical coding note/quirk: We must specify NO type (or Any type) for some
-        // of the below because they have @escaping function arguments and there is no
-        // way at all to represent a type specifier for these on a variable declaration.
-        // 
-        public var onSet: Any                          = CardGridCallbacks.onSet;
-        public var onNoSet: Any                        = CardGridCallbacks.onNoSet;
-        public var onCardsMoved: ([TableCard]) -> Void = CardGridCallbacks.onCardsMoved;
-    } ; private var behavior: Behavior;
-
-    public init(settings: Settings, behavior: Behavior? = nil) {
+    public init(settings: Settings, effects: TableCardEffects? = nil) {
         self.settings = settings;
         self.cards = [];
         self.deck  = TableDeck(simple: self.settings.simpleDeck);
         self.state = State();
-        self.behavior = behavior ?? CardGridCallbacks.defaults;
+        self.effects = effects ?? TableCardEffects.defaults;
     }
 
     private var multiPlayer: GameCenter.Session? {
@@ -740,7 +730,7 @@ private extension Table {
                 deb("Table.handle(ConfirmedSet): multi-player cards: \(cards)");
                 self.unselectCards();
                 cards.select();
-                CardGridCallbacks.onSet(cards: cards, resolve: { self.resolveSet(self.behavior.onCardsMoved) });
+                CardGridCallbacks.onSet(cards: cards, resolve: { self.resolveSet(self.effects.onCardsMoved) });
             }
         }
         self.state.receivedExpectedFoundSetResponseMessage = true;

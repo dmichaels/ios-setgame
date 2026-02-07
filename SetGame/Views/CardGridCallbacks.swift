@@ -2,12 +2,6 @@ import SwiftUI
 
 enum CardGridCallbacks
 {
-    public static let defaults: Table.Behavior = Table.Behavior(
-        onSet: CardGridCallbacks.onSet,
-        onNoSet: CardGridCallbacks.onNoSet,
-        onCardsMoved: CardGridCallbacks.onCardsMoved
-    );
-
     public static func cardTouched(_ card: TableCard, table: Table) {
         table.cardTouched(
             card,
@@ -42,3 +36,15 @@ enum CardGridCallbacks
         cards.flip(duration: 0.8);
     }
 }
+
+public struct TableCardEffects {
+    // 
+    // Techinical coding note/quirk: We must specify NO type (or Any type) for some
+    // of the below because they have @escaping function arguments and there is no
+    // way at all to represent a type specifier for these on a variable declaration.
+    // 
+    public var onSet                               = CardGridCallbacks.onSet;
+    public var onNoSet                             = CardGridCallbacks.onNoSet;
+    public var onCardsMoved: ([TableCard]) -> Void = CardGridCallbacks.onCardsMoved;
+    public static let defaults: TableCardEffects = TableCardEffects();
+};
