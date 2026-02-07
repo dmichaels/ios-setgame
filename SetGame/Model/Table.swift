@@ -228,7 +228,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler {
             // given card in a selected state; we don't do this the
             // demo-mode case, in which case we don't visually select
             // the SET first, rather we just do the blinking thing.
-            // And actually (2026-01-19) not really needed for demo-mode. 
+            // And actually (2026-01-19) not really needed for demo-mode.
             //
             self.selectCard(card);
         }
@@ -703,7 +703,7 @@ private extension Table {
                     ));
                 }
                 else {
-                    deb("already found at least one of these cards as part of a set: \(cards)") 
+                    deb("already found at least one of these cards as part of a set: \(cards)")
                     session.send(message: GameCenter.FoundSetTooLateMessage(
                         player: message.player,
                         cards: message.cards

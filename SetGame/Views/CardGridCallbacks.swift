@@ -38,11 +38,11 @@ enum CardGridCallbacks
 }
 
 public struct TableCardEffects {
-    // 
+    //
     // Techinical coding note/quirk: We must specify NO type (or Any type) for some
     // of the below because they have @escaping function arguments and there is no
     // way at all to represent a type specifier for these on a variable declaration.
-    // 
+    //
     public var onSet                               = CardGridCallbacks.onSet;
     public var onNoSet                             = CardGridCallbacks.onNoSet;
     public var onCardsMoved: ([TableCard]) -> Void = CardGridCallbacks.onCardsMoved;
