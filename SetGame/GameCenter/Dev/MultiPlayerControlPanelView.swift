@@ -272,7 +272,10 @@ public struct MultiPlayerInfoPanel: View {
         public var body: some View {
             Button {
                 Task {
-                    await self.session?.register();
+                    if let session = self.session {
+                        await session.register();
+                        await session.send(message: GameCenter.PlayerReadyMessage(player: session.player));
+                    }
                 }
             } label: {
                 Image(systemName: "person.fill.checkmark")
