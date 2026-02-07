@@ -273,7 +273,7 @@ public struct MultiPlayerInfoPanel: View {
             Button {
                 Task {
                     if let session = self.session {
-                        await session.register();
+                        await session.register(); /// xyzzy/todo/want-to-get-rid-of-this
                         await session.send(message: GameCenter.PlayerReadyMessage(player: session.player));
                     }
                 }

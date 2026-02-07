@@ -34,16 +34,34 @@ public extension GameCenter
         }
 
         public func setup() async -> Bool {
+            if let instance: HttpSession = HttpSession.instance {
+                if (instance !== self) {
+                    instance.transport.release();
+                    HttpSession.instance = nil;
+                }
+            }
             self.transportImp.setup();
             self.hostImp = await self.transportImp.retrieveHost();
             self.playersImp = await self.transportImp.retrievePlayers();
-            if let instance: HttpSession = HttpSession.instance {
-                if (instance !== HttpSession.instance) {
-                    instance.transport.release();
-                }
+            if (self.hostImp.isEmpty) {
+                await self.transportImp.register(player: self.player);
+                self.hostImp = await self.transportImp.retrieveHost();
+                self.playersImp = await self.transportImp.retrievePlayers();
+            }
+            else if (!self.hosting) {
+                await self.send(message: GameCenter.PlayerReadyMessage(player: self.player));
             }
             HttpSession.instance = self;
             return true;
+        }
+
+        public func handle(message: GameCenter.PlayerReadyMessage) {
+            deb("HttpSession.handle(PlayerReadyMessage): \(message.player)")
+            Task {
+                await self.transportImp.register(player: message.player);
+                self.playersImp = await self.transportImp.retrievePlayers();
+                self.hostImp = await self.transportImp.retrieveHost();
+            }
         }
 
         public func release() {
@@ -58,6 +76,7 @@ public extension GameCenter
             self.handler?.play();
         }
 
+/*
         public func send(message: Message) {
             if (self.hosting) {
                 //
@@ -81,6 +100,7 @@ public extension GameCenter
         public func send(message: Message, to player: String) {
             self.transportImp.send(message: message, to: player);
         }
+*/
 
         public final lazy var rng: RNG = { return RNG() }()
 

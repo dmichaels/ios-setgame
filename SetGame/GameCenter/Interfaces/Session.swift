@@ -15,6 +15,7 @@ public extension GameCenter
         func start();
         func send(message: Message);
         func send(message: Message, to player: String);
+        func handle(message: GameCenter.PlayerReadyMessage);
         var  rng: RNG { get }
     }
 }
@@ -33,5 +34,29 @@ extension GameCenter.Session {
         self.transport.bind(to: handler);
         handler.session = self;
         self.handler = handler;
+    }
+
+    public func send(message: GameCenter.Message) {
+        if (self.hosting) {
+            //
+            // We are the HOST; send the message to ALL of the clients;
+            // and INCLUDING to ourselves (the host), so that we (the
+            // host) act as much as possible like the clients.
+            //
+            for player in self.players {
+                self.transport.send(message: message, to: player);
+            }
+        }
+        else {
+            //
+            // We are the CLIENT (NOT the HOST);
+            // send the message ONLY to the HOST.
+            //
+            self.transport.send(message: message, to: self.host);
+        }
+    }
+
+    public func send(message: GameCenter.Message, to player: String) {
+        self.transport.send(message: message, to: player);
     }
 }

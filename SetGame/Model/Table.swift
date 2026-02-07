@@ -663,9 +663,14 @@ private extension Table {
         deb("Table.handle(Ping)> \(message)");
     }
 
+    /*
     public func handle(message: GameCenter.PlayerReadyMessage) {
         deb("Table.handle(PlayerReady)> \(message)");
+        if let session = self.multiPlayer {
+            session.handle(message: message);
+        }
     }
+    */
 
     public func handle(message: GameCenter.NewGameMessage) {
         deb("Table.handle(NewGame)> \(message) seed: \(message.seed)");
