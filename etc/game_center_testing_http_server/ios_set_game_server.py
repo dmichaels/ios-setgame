@@ -188,48 +188,60 @@ def message_count_endpoint(session):
         'count': sum(len(messages) for messages in session['inbox'].values())
     }), 200
 
-# Resets ALL data for the given session ID. Returns a simple statue.
+# Resets the host for the given session. Returns a simple status.
+# Example Request:  POST /DC68C365A79640C2/resethost
+# Example Response: {"status": "OK"}
+#
+@app.route('/<session>/resethost', methods=['POST'])
+def reset_session_host_endpoint(session):
+    session['host'] = None
+    return jsonify({'status': 'OK'}), 200
+
+# Resets the message data for the given player for the given session.
+# Returns a simple status.
+# Example Request:  POST /DC68C365A79640C2/resetmessages/ada
+# Example Response: {"status": "OK"}
+#
+@app.route('/<session>/resetmessages/<player>', methods=['POST'])
+@with_session
+def reset_session_player_messages_endpoint(session, player):
+    if player in session['inbox']:
+        del session['inbox'][player]
+    return jsonify({'status': 'OK'}), 200
+
+# Resets the message data for the given session ID. Returns a simple status.
+# Example Request:  POST /DC68C365A79640C2/resetmessages
+# Example Response: {"status": "OK"}
+#
+@app.route('/<session>/resetmessages', methods=['POST'])
+@with_session
+def reset_session_messages_endpoint(session):
+    session['inbox'].clear()
+    return jsonify({'status': 'OK'}), 200
+
+# Resets ALL data for the given session ID. Returns a simple status.
 # Example Request:  POST /DC68C365A79640C2/reset
 # Example Response: {"status": "OK"}
 #
 @app.route('/<session>/reset', methods=['POST'])
 @with_session
 def reset_session_endpoint(session):
-    session['players'] = set()
+    session['players'].clear()
     session['host'] = None
-    session['inbox'] = {}
+    session['inbox'].clear()
     return jsonify({'status': 'OK'}), 200
 
-# Resets ALL data for ALL session. Returns a simple statue.
+# Resets ALL data for ALL session. Returns a simple status.
 # Example Request:  POST /reset
 # Example Response: {"status": "OK"}
 #
 @app.route('/reset', methods=['POST'])
 def reset_endpoint():
     global sessions
-    sessions = {}
+    sessions.clear()
     return jsonify({'status': 'OK'}), 200
 
 # TODO
-@app.route('/resetmessages/<player>', methods=['POST'])
-def reset_messages_endpoint(player):
-    global players, host_player, inbox
-    if player in inbox:
-        del inbox[player]
-    return jsonify({'status': 'OK', 'player': player}), 200
-
-@app.route('/resetmessages', methods=['POST'])
-def reset_messages_all_endpoint():
-    global players, host_player, inbox
-    inbox.clear()
-    return jsonify({'status': 'OK'}), 200
-
-@app.route('/resethost', methods=['POST'])
-def reset_host_endpoint():
-    global players, host_player, inbox
-    host_player = None
-    return jsonify({'status': 'OK'}), 200
-
 @app.route('/nohost/<host>', methods=['POST'])
 def nohost_endpoint(host):
     global players, host_player, inbox
