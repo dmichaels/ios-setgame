@@ -26,7 +26,7 @@ public extension GameCenter
     public protocol Transport: MessageSender, MessageHandler {
         var  player: String { get };
         var  handler: MessageHandler? { get set }
-        func setup();
+        func setup(session: String);
         func release();
         func bind(to: MessageHandler);
     }

@@ -112,7 +112,7 @@ public struct MultiPlayerControlPanel: View {
                         self.transport?.release();
                     }
                     else if (settings.multiPlayer.poll) {
-                        self.transport?.setup();
+                        self.transport?.setup(session: "DUMMY"); // TODO
                     }
                 }
                 ToggleItem("host", on: $info.isHost /*, disabled: !settings.multiPlayer.enabled */ ) { value in
@@ -131,7 +131,7 @@ public struct MultiPlayerControlPanel: View {
                 }
                 ToggleItem("poll", on: $settings.multiPlayer.poll /* , disabled: !settings.multiPlayer.enabled */ ) { value in
                     if (value) {
-                        self.transport?.setup();
+                        self.transport?.setup(session: "DUMMY"); // TODO
                     }
                     else {
                         self.transport?.release();

@@ -48,7 +48,7 @@ public extension GameCenter
 
             // Setup the Transport; starts the polling if not yet started.
 
-            self.transport.setup();
+            self.transport.setup(session: self.id);
 
             // Register this player with the server.
             // This also discovers the host player (if already set)

@@ -9,7 +9,8 @@ public extension GameCenter
         public var player: String = ID(veryshort: true).value;
         public var handler: MessageHandler? = nil;
 
-        public func setup() {
+        public func setup(session: String) {
+            self.session = session;
             self.pollInfo();
             self.pollMessages();
         }
@@ -73,6 +74,7 @@ public extension GameCenter
             public var host: String = "";
         }
 
+        private var session: String;
         private let url: URL;
         private var pollMessagesTask: Task<Void, Never>? = nil;
         private var pollInfoTask: Task<Void, Never>? = nil;
@@ -81,6 +83,7 @@ public extension GameCenter
 
         public init( /* player: String? = nil, */ url: URL? = nil) {
             // self.player = player ?? ID(veryshort: true).value;
+            self.session = "DUMMY";
             self.url = url ?? URL(string: Defaults.multiPlayer.server)!
         }
 
