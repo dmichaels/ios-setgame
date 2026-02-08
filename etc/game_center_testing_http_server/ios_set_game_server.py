@@ -1,4 +1,18 @@
-# Very simple server for my iOS SET Game app, for development.
+# Simple server for my iOS SET Game (Logicard) app, for development (circa February 2026).
+#
+# On AWS (LightSail) we use (in ios_set_game_server_https_dmichaels_dev.sh) to start:
+#
+# sudo -E \
+#   python3 ios_set_game_server.py \
+#     --cert /etc/letsencrypt/live/dmichaels.dev/fullchain.pem \
+#     --key /etc/letsencrypt/live/dmichaels.dev/privkey.pem \
+#     --host 0.0.0.0 \
+#     --port 443 \
+#       > ios_set_game_server_https_dmichaels_dev.log 2>&1 &
+#
+# The dmichaels.dev domain registered via Squarespace.
+# The static (AWS LightSail) IP is: 34.232.248.47
+# Note that redirect from HTTP to HTTPS not needed because the .dev TLD requires HTTPS.
 
 import argparse
 from   flask import Flask, request, jsonify
@@ -7,40 +21,28 @@ import logging
 import os
 import uuid
 
+# Logging and arguments.
+#
 log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)  # logging.CRITICAL to suppress almost everything
+log.setLevel(logging.ERROR)
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--host", default="127.0.0.1", help="Host address to bind to")
-parser.add_argument("--port", type=int, default=5000, help="Port to bind to")
-parser.add_argument("--cert", help="Path to SSL certificate")
-parser.add_argument("--key", help="Path to SSL key")
+parser.add_argument("--host", default="127.0.0.1", help="Host address to bind to.")
+parser.add_argument("--port", type=int, default=5000, help="Port to bind to.")
+parser.add_argument("--cert", help="Path to SSL certificate.")
+parser.add_argument("--key", help="Path to SSL key.")
 args = parser.parse_args()
 
-app = Flask(__name__)
-
-# On AWS (LightSail) use:
-# sudo -E nohup bash -c 'RELAY_HOST=0.0.0.0 RELAY_PORT=80 python3 ios_set_game_server.py' > ios_set_game_server.log 2>&1 &
+# Global state/data.
 #
-server_host = os.environ.get('RELAY_HOST', '127.0.0.1')
-server_port = os.environ.get('RELAY_PORT', '5000')
-
-print(f"SERVER HOST: [{server_host}]")
-print(f"SERVER PORT: [{server_port}]")
-print(f"SERVER CERT: [{args.cert}]")
-print(f"SERVER KEY:  [{args.key}]")
-
+app      = Flask(__name__)
 sessions = {}
-players = set()
-host_player = None
-inbox = {}
 
-def _uuid():
-    return str(uuid.uuid4()).replace('-', '').upper()
-
+# Utility functions/decorators.
+#
 def _create_session(session = None):
     global sessions
-    session = session if session else _uuid() 
+    session = session if session else str(uuid.uuid4()).replace('-', '').upper()
     sessions[session] = {
         'session': session,
         'players': set(),
@@ -57,6 +59,8 @@ def with_session(func):
             return jsonify({'error': 'Session error.'}), 404
         return func(found_session, *args, **kwargs)
     return wrapper
+
+# The endpoints.
 
 # Creates a new session and returns its ID.
 # Example Request:  POST /session
@@ -281,9 +285,20 @@ def reset_endpoint():
     sessions.clear()
     return jsonify({'status': 'OK'}), 200
 
+# Simple ping endpoint.
+# Example Request:  POST /ping
+# Example Response: {"status": "OK"}
+#
 @app.route('/ping', methods=['GET'])
 def ping_endpoint():
     return jsonify({'status': 'OK'}), 200
 
+# Start the server!
+#
 if __name__ == '__main__':
+    print(f"Starting iOS SET Game Backend.")
+    print(f"Host: {args.host}")
+    print(f"Port: {args.port}")
+    print(f"Certificate: {args.cert}")
+    print(f"Private Key: {args.key}")
     app.run(host=args.host, port=args.port, ssl_context=(args.cert, args.key) if args.cert else None)

@@ -1,4 +1,4 @@
-sudo -E RELAY_HOST=0.0.0.0 RELAY_PORT=443 \
+sudo -E \
   python3 ios_set_game_server.py \
     --cert /etc/letsencrypt/live/dmichaels.dev/fullchain.pem \
     --key /etc/letsencrypt/live/dmichaels.dev/privkey.pem \

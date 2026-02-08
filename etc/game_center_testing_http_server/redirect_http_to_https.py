@@ -1,4 +1,5 @@
-# redirect_http_to_https.py
+# No longer used with dmichaels.dev which defaults to and must be https.
+
 from flask import Flask, redirect, request
 
 app = Flask(__name__)
