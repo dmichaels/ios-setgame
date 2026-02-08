@@ -33,7 +33,7 @@ print(f"SERVER KEY:  [{args.key}]")
 sessions = {}
 players = set()
 host_player = None
-inbox = {}  # messages per playerID
+inbox = {}
 
 def _uuid():
     return str(uuid.uuid4()).replace('-', '').upper()
@@ -44,8 +44,8 @@ def _create_session(session = None):
     sessions[session] = {
         'session': session,
         'players': set(),
-        'host': None,
-        'inbox': {}  # dictionary of player ID and list of message (dictionary)
+        'host':    None,
+        'inbox':   {}
     }
     return session
 
@@ -58,22 +58,31 @@ def with_session(func):
         return func(found_session, *args, **kwargs)
     return wrapper
 
-# Creates a new session. Returns the new session ID.
+# Creates a new session and returns its ID.
 # Example Request:  POST /session
 # Example Response: {"session" "DC68C365A79640C2"}
 #
 @app.route('/session', methods=['POST'])
-def session_post_endpoint():
+def create_session_endpoint():
     return jsonify({'session': _create_session() }), 201
 
-# Create a new session using the given session ID, if it does not yet exist;
-# if it does already exist then do nothing. Returns the session ID.
-# Example Request:  POST /session/SOMEID
-# Example Response: {"session" "SOMEID"}
+# Create a new session using the given session ID, if it does not yet exist,
+# or if it does already exist then does nothing, and returns the given session ID.
+# Example Request:  POST /session/some-id
+# Example Response: {"session" "some-id"}
 #
 @app.route('/session/<session>', methods=['POST'])
-def given_session_post_endpoint(session):
+def create_given_session_endpoint(session):
     return jsonify({'session': _create_session(session) }), 201
+
+# Returns the list of defined session IDs.
+# Example Request:  GET /sessions
+# Example Response: ["DC68C365A79640C2","3CEB398810784E4D"]
+#
+@app.route('/sessions', methods=['GET'])
+def get_sessions_endpoint():
+    global sessions
+    return jsonify(list(sessions.keys())), 200
 
 # Returns all of the session data for the given session ID.
 # Example Request:  GET /session/DC68C365A79640C2
@@ -82,32 +91,22 @@ def given_session_post_endpoint(session):
 #
 @app.route('/session/<session>', methods=['GET'])
 @with_session
-def session_get_endpoint(session):
-    return jsonify({
-        'session': session['session'],
-        'players': list(session['players']),
-        'host':    session['host'] if session['host'] else '',
-        'inbox':   session['inbox'],
+def get_session_endpoint(session):
+    return jsonify({'session': session['session'],
+                    'players': list(session['players']),
+                    'host':    session['host'] if session['host'] else '',
+                    'inbox':   session['inbox'],
     }), 200
 
-# Returns the list of defined session IDs.
-# Example Request:  GET /sessions
-# Example Response: ["DC68C365A79640C2","3CEB398810784E4D"]
-#
-@app.route('/sessions', methods=['GET'])
-def sessions_get_endpoint():
-    global sessions
-    return jsonify(list(sessions.keys())), 200
-
-# Registers the given player ID for the given session, if not yet registered;
-# if already registered then do nothing. Additionally, if no host is yet defined,
-# then sets the host to the given player. Returns the session, player, and host IDs.
+# Registers the given player for the given session, if not yet registered, or if
+# it is already registered then do nothing; additionally, if no host is yet defined,
+# then sets the host to the given player; returns the session, player, and host IDs.
 # Example Request:  POST /DC68C365A79640C2/register/ada
 # Example Response: {"session": "DC68C365A79640C2", "player": "ada", "host": "ada"}
 #
 @app.route('/<session>/register/<player>', methods=['POST'])
 @with_session
-def register_post_endpoint(session, player):
+def register_player_endpoint(session, player):
     was_no_players = len(session['players']) == 0
     if player not in session['players']:
         session['players'].add(player)
@@ -117,20 +116,79 @@ def register_post_endpoint(session, player):
                     'player':  player,
                     'host':    session['host']}), 201
 
-# Sends the given message (a dictionary in the POST data) specified by
-# the "message" field of the message, to the player specified by the "to"
-# field of the message, for the given session. Returns a simple status.
-# Example Request:  POST /DC68C365A79640C2/register/ada
+# Returns the list of registered player IDs for the given session.
+# Example Request:  GET /DC68C365A79640C2/players
+# Example Response: {"session": "DC68C365A79640C2", "players": ["ada", "bob"], "host": "ada"}
+#
+@app.route('/<session>/players', methods=['GET'])
+@with_session
+def get_players_endpoint(session):
+    return jsonify({'session': session['session'],
+                    'players': list(session['players']),
+                    'host':    session['host']
+    }), 200
+
+# Returns the host for the given session.
+# Example Request:  GET /DC68C365A79640C2/host
+# Example Response: {"session": "DC68C365A79640C2", "host": "ada"}
+#
+@app.route('/<session>/host', methods=['GET'])
+@with_session
+def get_host_endpoint(session):
+    return jsonify({'session': session['session'],
+                    'host':    session['host']}), 200
+
+# Sets the host to the given player, for the given session; if
+# the given player is not already registered then also registers it.
+# Example Request:  POST /DC68C365A79640C2/host/ada
+# Example Response: {"session": "DC68C365A79640C2", "player": "ada", "host": "ada"}
+#
+@app.route('/<session>/host/<player>', methods=['POST'])
+def set_host_endpoint(player):
+    if player not in session['players']:
+        session['players'].add(player)
+    session['host'] = player
+    return jsonify({'session': session['session'],
+                    'player':  player,
+                    'host':    session['host']
+    }), 200
+
+# If the given player for the given session is the host then unsets the host.
+# Example Request:  POST /DC68C365A79640C2/unhost/ada
+# Example Response: {"session": "DC68C365A79640C2", "player": "ada", "host": "bob"}
+#
+@app.route('/<session>/unhost/<player>', methods=['POST'])
+@with_session
+def unset_host_player_endpoint(session, player):
+    if player == session['host']:
+        session['host'] = None
+    return jsonify({'session': session['session'],
+                    'player':  player,
+                    'host':    session['host']
+    }), 200
+
+# Unsets the host for the given session.
+# Example Request:  POST /DC68C365A79640C2/unhost
 # Example Response: {"status": "OK"}
 #
-@app.route('/<session>/send', methods=['POST'])
+@app.route('/<session>/unhost', methods=['POST'])
+def unset_host_endpoint(session):
+    session['host'] = None
+    return jsonify({'status': 'OK'}), 200
+
+# Sends the given message (in the POST data) to the given
+# player, for the given session; if the given player is
+# not already registered then also registers it.
+# Example Request:  POST /DC68C365A79640C2/send/ada
+# Example Response: {"status": "OK"}
+#
+@app.route('/<session>/send/<player>', methods=['POST'])
 @with_session
-def send_post_endpoint(session):
-    data = request.get_json()
-    to = data['to']
-    message = data['message']
-    session['inbox'].setdefault(to, []).append(message)
-    session['players'].add(to)
+def send_player_endpoint(session, player):
+    message = request.get_json()
+    session['inbox'].setdefault(player, []).append(message)
+    if player not in session['players']:
+        session['players'].add(player)
     return {'status': 'OK'}, 202
 
 # Removes and returns any/all of the messages available for the given player,
@@ -140,7 +198,7 @@ def send_post_endpoint(session):
 #
 @app.route('/<session>/receive/<player>', methods=['GET'])
 @with_session
-def receive_get_endpoint(session, player):
+def receive_player_endpoint(session, player):
     messages = session['inbox'].pop(player, [])
     return jsonify(messages), 200
 
@@ -155,21 +213,12 @@ def peek_get_endpoint(session, player):
     messages = session['inbox'].get(player, [])
     return jsonify(messages), 200
 
-# Returns the list of defined player IDs for the given session ID.
-# Example Request:  GET /DC68C365A79640C2/players
-# Example Response: ["ada", "bob"]
-#
-@app.route('/<session>/players', methods=['GET'])
-@with_session
-def players_endpoint(session):
-    return jsonify(sorted(session['players'])), 200
-
 # Returns the number of messages available for the given player,
 # for the given session. Returns a dictionary with the message count.
-# Example Request:  GET /DC68C365A79640C2/messagecount/ada
+# Example Request:  GET /DC68C365A79640C2/count/ada
 # Example Response: {"count": 2}
 #
-@app.route('/<session>/messagecount/<player>', methods=['GET'])
+@app.route('/<session>/count/<player>', methods=['GET'])
 @with_session
 def player_message_count_endpoint(session, player):
     return jsonify({
@@ -178,48 +227,39 @@ def player_message_count_endpoint(session, player):
 
 # Returns the number of messages available for alls player,
 # for the given session. Returns a dictionary with the message count.
-# Example Request:  GET /DC68C365A79640C2/messagecount
+# Example Request:  GET /DC68C365A79640C2/count
 # Example Response: {"count": 3}
 #
-@app.route('/<session>/messagecount', methods=['GET'])
+@app.route('/<session>/count', methods=['GET'])
 @with_session
 def message_count_endpoint(session):
     return jsonify({
         'count': sum(len(messages) for messages in session['inbox'].values())
     }), 200
 
-# Resets the host for the given session. Returns a simple status.
-# Example Request:  POST /DC68C365A79640C2/resethost
-# Example Response: {"status": "OK"}
-#
-@app.route('/<session>/resethost', methods=['POST'])
-def reset_session_host_endpoint(session):
-    session['host'] = None
-    return jsonify({'status': 'OK'}), 200
-
-# Resets the message data for the given player for the given session.
+# Clears out all message data for the given player, for the given session.
 # Returns a simple status.
-# Example Request:  POST /DC68C365A79640C2/resetmessages/ada
+# Example Request:  POST /DC68C365A79640C2/clear/ada
 # Example Response: {"status": "OK"}
 #
-@app.route('/<session>/resetmessages/<player>', methods=['POST'])
+@app.route('/<session>/clear/<player>', methods=['POST'])
 @with_session
-def reset_session_player_messages_endpoint(session, player):
+def clear_player_messages_endpoint(session, player):
     if player in session['inbox']:
         del session['inbox'][player]
     return jsonify({'status': 'OK'}), 200
 
-# Resets the message data for the given session ID. Returns a simple status.
-# Example Request:  POST /DC68C365A79640C2/resetmessages
+# Clears out all message data for ALL of the players, for the given session.
+# Example Request:  POST /DC68C365A79640C2/clear
 # Example Response: {"status": "OK"}
 #
-@app.route('/<session>/resetmessages', methods=['POST'])
+@app.route('/<session>/clear', methods=['POST'])
 @with_session
-def reset_session_messages_endpoint(session):
+def clear_session_messages_endpoint(session):
     session['inbox'].clear()
     return jsonify({'status': 'OK'}), 200
 
-# Resets ALL data for the given session ID. Returns a simple status.
+# Resets ALL data for the given session.
 # Example Request:  POST /DC68C365A79640C2/reset
 # Example Response: {"status": "OK"}
 #
@@ -231,7 +271,7 @@ def reset_session_endpoint(session):
     session['inbox'].clear()
     return jsonify({'status': 'OK'}), 200
 
-# Resets ALL data for ALL session. Returns a simple status.
+# Resets ALL data for ALL sessions.
 # Example Request:  POST /reset
 # Example Response: {"status": "OK"}
 #
@@ -241,39 +281,9 @@ def reset_endpoint():
     sessions.clear()
     return jsonify({'status': 'OK'}), 200
 
-# TODO
-@app.route('/nohost/<host>', methods=['POST'])
-def nohost_endpoint(host):
-    global players, host_player, inbox
-    if host == host_player:
-        host_player = None
-    return jsonify({'status': 'OK'}), 200
-
-@app.route('/host', methods=['GET'])
-def host_endpoint():
-    global players, host_player, inbox
-    if host_player:
-        return jsonify({"host": host_player}), 200
-    else:
-        return jsonify({}), 200
-
-@app.route('/host/<host>', methods=['POST'])
-def set_host_endpoint(host):
-    global players, host_player, inbox
-    if host not in players:
-        players.add(host)
-    host_player = host
-    return jsonify({'status': 'OK'}), 200
-
-@app.route('/peek', methods=['GET'])
-def peek_all_endpoint():
-    global players, host_player, inbox
-    return jsonify(inbox), 200
-
 @app.route('/ping', methods=['GET'])
 def ping_endpoint():
     return jsonify({'status': 'OK'}), 200
 
 if __name__ == '__main__':
-    # app.run(host=server_host, port=server_port, debug=False, use_reloader=False)
     app.run(host=args.host, port=args.port, ssl_context=(args.cert, args.key) if args.cert else None)
