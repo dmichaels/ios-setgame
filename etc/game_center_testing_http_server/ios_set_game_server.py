@@ -220,9 +220,7 @@ def peek_messages_endpoint(session, player):
 @app.route('/<session>/count/<player>', methods=['GET'])
 @with_session
 def get_message_count_endpoint(session, player):
-    return jsonify({
-        'count': len(session['inbox'].get(player, []))
-    }), 200
+    return jsonify({'count': len(session['inbox'].get(player, []))}), 200
 
 # Returns the number of messages available for all players,
 # for the given session. Returns a dictionary with the message count.
@@ -232,9 +230,7 @@ def get_message_count_endpoint(session, player):
 @app.route('/<session>/count', methods=['GET'])
 @with_session
 def get_session_message_count_endpoint(session):
-    return jsonify({
-        'count': sum(len(messages) for messages in session['inbox'].values())
-    }), 200
+    return jsonify({'count': sum(len(messages) for messages in session['inbox'].values())}), 200
 
 # Clears out all message data for the given player, for the given session.
 # Returns a simple status.
