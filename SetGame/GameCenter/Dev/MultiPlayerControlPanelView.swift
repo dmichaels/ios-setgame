@@ -4,9 +4,9 @@ private struct HttpServerInfo {
     public var isHost: Bool = false;
     public var sessionHosting: Bool = false;
     public var sessionHost: String = "";
-    public var sessionPlayers: [String] = [];
+    public var sessionPlayers: Set<String> = [];
     public var sessionPlayerCount: Int = 0;
-    public var players: [String] = [];
+    public var players: Set<String> = [];
     public var playerCount: Int = 0;
     public var playerRegistered: Bool = false;
     public var host: String = "";
@@ -85,7 +85,7 @@ public struct MultiPlayerDevelopmentPanelView: View {
                     self.info.isHost = transport.player == host;
                 }
                 if let session = self.session {
-                    session.updatePlayers();
+                    session.updatePlayerInfo();
                     self.info.sessionPlayers = session.players;
                     self.info.sessionPlayerCount = session.players.count;
                     self.info.sessionHost = session.host ?? "";
@@ -119,13 +119,13 @@ public struct MultiPlayerControlPanel: View {
                     if (value) {
                         Task {
                             await self.transport?.setHost();
-                            session?.updatePlayers();
+                            session?.updatePlayerInfo();
                         }
                     }
                     else {
                         Task {
                             await self.transport?.unsetHost();
-                            session?.updatePlayers();
+                            session?.updatePlayerInfo();
                         }
                     }
                 }
@@ -273,8 +273,8 @@ public struct MultiPlayerInfoPanel: View {
             Button {
                 Task {
                     if let session = self.session {
-                        await session.register(); /// xyzzy/todo/want-to-get-rid-of-this
-                        await session.send(message: GameCenter.PlayerReadyMessage(player: session.player));
+                        await session.register(); /// xyzzy/todo/want-to-get-rid-of-this-i-think
+                        // await session.send(message: GameCenter.PlayerReadyMessage(player: session.player));
                     }
                 }
             } label: {
@@ -295,7 +295,7 @@ public struct MultiPlayerInfoPanel: View {
             Button {
                 Task {
                     await self.transport?.reset();
-                    await self.session?.updatePlayers();
+                    await self.session?.updatePlayerInfo();
                     self.table.state.resolving = false;
                 }
             } label: {

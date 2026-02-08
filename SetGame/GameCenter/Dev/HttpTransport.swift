@@ -80,8 +80,8 @@ public extension GameCenter
         private let pollInterval: UInt64 = 250_000_000; // 250ms (4x per second)
         public  var info: Info = Info();
 
-        public init(player: String? = nil,  url: URL? = nil) {
-            self.player = player ?? ID(veryshort: true).value;
+        public init( /* player: String? = nil, */ url: URL? = nil) {
+            // self.player = player ?? ID(veryshort: true).value;
             self.url = url ?? URL(string: Defaults.multiPlayer.server)!
         }
 
@@ -132,8 +132,8 @@ public extension GameCenter
             return "";
         }
 
-        public func retrievePlayers() async -> [String] {
-            return await self.url.get("/players", as: [String].self) ?? [];
+        public func retrievePlayers() async -> Set<String> {
+            return await self.url.get("/players", as: Set<String>.self) ?? [];
         }
 
         public func retrieveMessagesQueuedCount(for player: String? = nil, all: Bool = false) async -> Int {

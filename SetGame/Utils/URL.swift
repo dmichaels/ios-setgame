@@ -114,7 +114,7 @@ public extension URL {
         return await self.exec(path, method: "POST", data: data, as: type, status: status);
     }
 
-    // POST fire-and-forget (synchronous) methods.
+    // POST fire-and-forget (synchronous) methods (the ones without an "as" type argument).
 
     public func post(_ path: [String?], data: Data? = nil) -> Bool {
         return self.execfaf(path, method: "POST", data: data);

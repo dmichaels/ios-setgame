@@ -4,7 +4,7 @@ public extension GameCenter
 {
     public class HttpSession: Session {
 
-        // This is really just for the debug/dev panel.
+        // This is really just for the debug/dev control panel.
         //
         public static private(set) var instance: HttpSession? = nil;
 
@@ -29,20 +29,54 @@ public extension GameCenter
             return self.hostImp;
         }
 
-        public var players: [String] {
+        public var players: Set<String> {
             return self.playersImp;
         }
 
         public func setup() async -> Bool {
+
+            // Maintain our singleton HttpSession instance;
+            // this is really just for our debug/dev control panel.
+
             if let instance: HttpSession = HttpSession.instance {
                 if (instance !== self) {
                     instance.transport.release();
                     HttpSession.instance = nil;
                 }
             }
-            self.transportImp.setup();
+
+            // Setup the Transport; starts the polling if not yet started.
+
+            self.transport.setup();
+
+            // Register this player with the server.
+            // This also discovers the host player (if already set)
+            // or sets this player as the host player (if not already set).
+
+            await self.register();
+
+            if (self.hosting) {
+                //
+                // Note that this authoritative list of players is known and maintained
+                // ONLY by the HOST; we notify the (non-host) clients of players only in the
+                // context of letting them know what the current score is among all of the players;
+                // but other than that the (non-host) clients don't "know" about the other players.
+                //
+                self.playersImp = await self.transportImp.retrievePlayers();
+            }
+            else {
+                //
+                // For the non-host clients we send the host a PlayerReady message;
+                // the host will use this to add to its set of known players; the
+                // in host could also just use that message as a signal to update
+                // its player list from the server since it has a definitie list;
+                // just as a sort of extra sanity check.
+                //
+                await self.send(message: GameCenter.PlayerReadyMessage(player: self.player));
+            }
+
+/*
             self.hostImp = await self.transportImp.retrieveHost();
-            self.playersImp = await self.transportImp.retrievePlayers();
             if (self.hostImp.isEmpty) {
                 await self.transportImp.register(player: self.player);
                 self.hostImp = await self.transportImp.retrieveHost();
@@ -51,6 +85,8 @@ public extension GameCenter
             else if (!self.hosting) {
                 await self.send(message: GameCenter.PlayerReadyMessage(player: self.player));
             }
+*/
+
             HttpSession.instance = self;
             return true;
         }
@@ -58,9 +94,12 @@ public extension GameCenter
         public func handle(message: GameCenter.PlayerReadyMessage) {
             deb("HttpSession.handle(PlayerReadyMessage): \(message.player)")
             Task {
-                await self.transportImp.register(player: message.player);
-                self.playersImp = await self.transportImp.retrievePlayers();
-                self.hostImp = await self.transportImp.retrieveHost();
+                await self.register(player: message.player);
+                if (self.hosting) {
+                    deb("HttpSession.handle(PlayerReadyMessage): \(message.player) - hosting and updating players")
+                    self.playersImp = await self.transportImp.retrievePlayers();
+                    deb("HttpSession.handle(PlayerReadyMessage): \(message.player) - hosting and updated players: \(self.playersImp)")
+                }
             }
         }
 
@@ -76,39 +115,13 @@ public extension GameCenter
             self.handler?.play();
         }
 
-/*
-        public func send(message: Message) {
-            if (self.hosting) {
-                //
-                // We are the HOST; send the message to ALL of the clients;
-                // and INCLUDING to ourselves (the host), so that we (the
-                // host) act as much as possible like the clients.
-                //
-                for player in self.players {
-                    self.transportImp.send(message: message, to: player);
-                }
-            }
-            else {
-                //
-                // We are the CLIENT (NOT the HOST);
-                // send the message ONLY to the HOST.
-                //
-                self.transportImp.send(message: message, to: self.host);
-            }
-        }
-
-        public func send(message: Message, to player: String) {
-            self.transportImp.send(message: message, to: player);
-        }
-*/
-
         public final lazy var rng: RNG = { return RNG() }()
 
         // HttpSession implementation.
 
         private let transportImp: GameCenter.HttpTransport;
         private var hostImp: String = "";
-        private var playersImp: [String] = [];
+        private var playersImp: Set<String> = [];
 
         public init(transport: GameCenter.HttpTransport? = nil, seed: Int? = nil) {
             let transport: HttpTransport = transport ?? GameCenter.HttpTransport();
@@ -116,12 +129,13 @@ public extension GameCenter
             self.transportImp = transport;
         }
 
-        public func register() async {
-            await self.transportImp.register();
-            await self.updatePlayers();
+        public func register(player: String? = nil) async {
+            if let (_, host) = await self.transportImp.register(player: player ?? self.player) {
+                self.hostImp = host;
+            }
         }
 
-        public func updatePlayers() {
+        public func updatePlayerInfo() {
             Task {
                 self.hostImp = await self.transportImp.retrieveHost();
                 self.playersImp = await self.transportImp.retrievePlayers();

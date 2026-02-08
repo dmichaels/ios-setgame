@@ -40,6 +40,9 @@ public extension GameCenter.Transport {
 
 public extension GameCenter.SessionHandler {
     public func handle(message: GameCenter.PlayerReadyMessage) {
+        //
+        // Special handling for the PlayerReadyMessage.
+        //
         deb("SessionHandler(protocol).handle(PlayerReady)> \(message)");
         if let session = self.session {
             session.handle(message: message);

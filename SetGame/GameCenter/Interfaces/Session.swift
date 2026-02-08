@@ -8,7 +8,7 @@ public extension GameCenter
         var  player: String { get };
         var  host: String { get };
         var  hosting: Bool { get };
-        var  players: [String] { get };
+        var  players: Set<String> { get };
         func setup() async -> Bool;
         func release();
         func bind(to: SessionHandler);
