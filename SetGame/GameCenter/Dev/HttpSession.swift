@@ -22,6 +22,7 @@ public extension GameCenter
 
         // Session protocol implementation.
 
+        public private(set) var id: String;
         public let transport: Transport;
         public var handler: SessionHandler? = nil;
 
@@ -125,6 +126,7 @@ public extension GameCenter
 
         public init(transport: GameCenter.HttpTransport? = nil, seed: Int? = nil) {
             let transport: HttpTransport = transport ?? GameCenter.HttpTransport();
+            self.id = ID(veryshort: true).value;
             self.transport = transport;
             self.transportImp = transport;
         }

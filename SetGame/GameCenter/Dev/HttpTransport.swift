@@ -76,7 +76,6 @@ public extension GameCenter
         private let url: URL;
         private var pollMessagesTask: Task<Void, Never>? = nil;
         private var pollInfoTask: Task<Void, Never>? = nil;
-        private var pollTask: Task<Void, Never>? = nil;
         private let pollInterval: UInt64 = 250_000_000; // 250ms (4x per second)
         public  var info: Info = Info();
 
@@ -207,7 +206,7 @@ public extension GameCenter
             self.pollInfoTask = nil;
         }
 
-        private func dispatchMessages(messages: [GameCenter.Message]) {
+        private func dispatchMessages(messages: [GameCenter.Message]) { // TODO: PUT IN pollMessages
             DispatchQueue.main.async {
                 GameCenter.MessageConveyance.dispatch(messages: messages, handler: self);
             }

@@ -3,6 +3,7 @@ import Foundation
 public extension GameCenter
 {
     public protocol Session: AnyObject {
+        var  id: String { get }
         var  transport: Transport { get }
         var  handler: SessionHandler? { get set }
         var  player: String { get };
