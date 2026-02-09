@@ -42,12 +42,13 @@ sessions = {}
 def _create_session(session = None):
     global sessions
     session = session if session else str(uuid.uuid4()).replace('-', '').upper()
-    sessions[session] = {
-        'session': session,
-        'players': set(),
-        'host':    None,
-        'inbox':   {}
-    }
+    if session not in sessions:
+        sessions[session] = {
+            'session': session,
+            'players': set(),
+            'host':    None,
+            'inbox':   {}
+        }
     return session
 
 def with_session(func):
