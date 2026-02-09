@@ -21,24 +21,23 @@ import logging
 import os
 import uuid
 
-# Logging and arguments.
+# Parse arguments, setup logging, and the Flask app itself.
 #
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
-
 parser = argparse.ArgumentParser()
 parser.add_argument("--host", type=str, default="127.0.0.1", help="Host address to bind to.")
 parser.add_argument("--port", type=int, default=5000,        help="Port to bind to.")
 parser.add_argument("--cert", type=str, default=None,        help="Path to SSL certificate.")
 parser.add_argument("--key",  type=str, default=None,        help="Path to SSL key.")
 args = parser.parse_args()
+log = logging.getLogger('werkzeug') ; log.setLevel(logging.ERROR)
+app = Flask(__name__)
 
-# Global state/data.
+# Global in-memory state/data.
+# Lame but maybe some day external database.
 #
-app      = Flask(__name__)
 sessions = {}
 
-# Utility functions/decorators.
+# Internal utility functions/decorators.
 #
 def _create_session(session = None):
     global sessions
