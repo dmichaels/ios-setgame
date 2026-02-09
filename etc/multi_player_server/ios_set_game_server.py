@@ -33,7 +33,7 @@ log = logging.getLogger('werkzeug') ; log.setLevel(logging.ERROR)
 app = Flask(__name__)
 
 # Global in-memory state/data.
-# Lame but maybe some day external database.
+# Lame but maybe someday we will use some kind of external database.
 #
 sessions = {}
 
@@ -100,6 +100,18 @@ def get_session_endpoint(session):
                     'host':    session['host'] if session['host'] else '',
                     'inbox':   session['inbox']}), 200
 
+# Resets ALL data for the given session.
+# Example Request:  POST /DEADBEEF/reset
+# Example Response: {"status": "OK"}
+#
+@app.route('/session/<session>/reset', methods=['POST'])
+@with_session
+def reset_session_endpoint(session):
+    session['players'].clear()
+    session['host'] = None
+    session['inbox'].clear()
+    return jsonify({'status': 'OK'}), 200
+
 @app.route('/session/<session>/destroy', methods=['POST'])
 @with_session
 def destroy_session_endpoint(session):
@@ -125,6 +137,19 @@ def register_player_endpoint(session, player):
     return jsonify({'session': session['session'],
                     'player':  player,
                     'host':    session['host']}), 201
+
+# Unregisters the given player for the given session.
+# Example Request:  POST /DEADBEEF/unregister/ada
+# Example Response: {"status": "OK"}
+#
+@app.route('/<session>/unregister/<player>', methods=['POST'])
+@with_session
+def unregister_player_endpoint(session, player):
+    session['players'].discard(player)
+    session['inbox'].pop(player, None)
+    if session['host'] == player:
+        session['host'] = None
+    return jsonify({'status': 'OK'}), 200
 
 # Returns the list of registered player IDs for the given session.
 # Example Request:  GET /DEADBEEF/players
@@ -259,18 +284,6 @@ def clear_player_messages_endpoint(session, player):
 @app.route('/<session>/clear', methods=['POST'])
 @with_session
 def clear_session_messages_endpoint(session):
-    session['inbox'].clear()
-    return jsonify({'status': 'OK'}), 200
-
-# Resets ALL data for the given session.
-# Example Request:  POST /DEADBEEF/reset
-# Example Response: {"status": "OK"}
-#
-@app.route('/<session>/reset', methods=['POST'])
-@with_session
-def reset_session_endpoint(session):
-    session['players'].clear()
-    session['host'] = None
     session['inbox'].clear()
     return jsonify({'status': 'OK'}), 200
 
