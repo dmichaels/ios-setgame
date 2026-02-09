@@ -183,7 +183,8 @@ def get_host_endpoint(session):
 # Example Response: {"session": "DEADBEEF", "player": "ada", "host": "ada"}
 #
 @app.route('/<session>/host/<player>', methods=['POST'])
-def set_host_endpoint(player):
+@with_session
+def set_host_endpoint(session, player):
     if player not in session['players']:
         session['players'].add(player)
     session['host'] = player
@@ -209,6 +210,7 @@ def unset_host_player_endpoint(session, player):
 # Example Response: {"status": "OK"}
 #
 @app.route('/<session>/unhost', methods=['POST'])
+@with_session
 def unset_host_endpoint(session):
     session['host'] = None
     return jsonify({'status': 'OK'}), 201
