@@ -5,10 +5,10 @@
 # sudo -E \
 #   python3 ios_set_game_server.py \
 #     --cert /etc/letsencrypt/live/dmichaels.dev/fullchain.pem \
-#     --key /etc/letsencrypt/live/dmichaels.dev/privkey.pem \
+#     --key  /etc/letsencrypt/live/dmichaels.dev/privkey.pem \
 #     --host 0.0.0.0 \
 #     --port 443 \
-#       > ios_set_game_server_https_dmichaels_dev.log 2>&1 &
+#       > ios_set_game_server.log 2>&1 &
 #
 # The dmichaels.dev domain registered via Squarespace.
 # The static (AWS LightSail) IP is: 34.232.248.47
@@ -27,10 +27,10 @@ log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--host", default="127.0.0.1", help="Host address to bind to.")
-parser.add_argument("--port", type=int, default=5000, help="Port to bind to.")
-parser.add_argument("--cert", help="Path to SSL certificate.")
-parser.add_argument("--key", help="Path to SSL key.")
+parser.add_argument("--host", type=str, default="127.0.0.1", help="Host address to bind to.")
+parser.add_argument("--port", type=int, default=5000,        help="Port to bind to.")
+parser.add_argument("--cert", type=str, default=None,        help="Path to SSL certificate.")
+parser.add_argument("--key",  type=str, default=None,        help="Path to SSL key.")
 args = parser.parse_args()
 
 # Global state/data.

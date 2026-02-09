@@ -50,6 +50,12 @@ public extension GameCenter
 
             self.transport.setup(session: self.id);
 
+            // Create a session with the server.
+
+            if let session: String = await self.transportImp.createSession() {
+                self.id = session;
+            }
+
             // Register this player with the server.
             // This also discovers the host player (if already set)
             // or sets this player as the host player (if not already set).

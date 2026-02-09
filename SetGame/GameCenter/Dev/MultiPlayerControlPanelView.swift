@@ -232,6 +232,7 @@ public struct MultiPlayerInfoPanel: View {
         public var body: some View {
             Button {
                 Task {
+                    await transport?.createSession();
                     await session?.send(message: GameCenter.PingMessage());
                 }
             } label: {

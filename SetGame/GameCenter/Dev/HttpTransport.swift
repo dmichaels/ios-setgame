@@ -2,7 +2,17 @@ import Foundation
 
 public extension GameCenter
 {
-    public class HttpTransport: Transport {
+     public class HttpTransport: Transport {
+
+        public func createSession() async -> String? {
+            if let response: Json = await self.url.post("/session", as: Json.self) {
+                if let session: String = response["session"] as? String {
+                    self.session = session;
+                    return session;
+                }
+            }
+            return nil;
+        }
 
         // Transport protocol implementation.
 
@@ -74,7 +84,7 @@ public extension GameCenter
             public var host: String = "";
         }
 
-        private var session: String;
+        private var session: String?;
         private let url: URL;
         private var pollMessagesTask: Task<Void, Never>? = nil;
         private var pollInfoTask: Task<Void, Never>? = nil;
@@ -83,7 +93,6 @@ public extension GameCenter
 
         public init( /* player: String? = nil, */ url: URL? = nil) {
             // self.player = player ?? ID(veryshort: true).value;
-            self.session = "DUMMY";
             self.url = url ?? URL(string: Defaults.multiPlayer.server)!
         }
 

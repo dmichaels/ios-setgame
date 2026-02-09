@@ -1,12 +1,14 @@
 import Foundation
 
-public extension URL {
+public typealias Json = [String: Any];
 
-    public typealias JSON = [String: Any];
+public extension URL {
 
     public static func create(_ url: String) -> URL {
         return URL(string: url)!
     }
+
+    public var value: String { self.absoluteString }
 
     // Simple URL construction/append methods.
 
@@ -67,14 +69,14 @@ public extension URL {
     }
 
     public func get(_ path: [String?],
-                      as type: JSON.Type,
-                      status: Int? = 200) async -> JSON? {
+                      as type: Json.Type,
+                      status: Int? = 200) async -> Json? {
         return await self.exec(path, method: nil, data: nil, as: type, status: status);
     }
 
     public func get(_ path: String?...,
-                      as type: JSON.Type,
-                      status: Int? = 200) async -> JSON? {
+                      as type: Json.Type,
+                      status: Int? = 200) async -> Json? {
         await self.get(path, as: type, status: status);
     }
 
@@ -103,14 +105,14 @@ public extension URL {
     }
 
     public func post(_ path: [String?], data: Data? = nil,
-                       as type: JSON.Type,
-                       status: Int? = nil) async -> JSON? {
+                       as type: Json.Type,
+                       status: Int? = nil) async -> Json? {
         return await self.exec(path, method: "POST", data: data, as: type, status: status);
     }
 
     public func post(_ path: String?..., data: Data? = nil,
-                       as type: JSON.Type,
-                       status: Int? = nil) async -> JSON? {
+                       as type: Json.Type,
+                       status: Int? = nil) async -> Json? {
         return await self.exec(path, method: "POST", data: data, as: type, status: status);
     }
 
@@ -128,11 +130,11 @@ public extension URL {
     // JSON (i.e. [String: Any]) for the data body/payload type;
     // doing the other POST methods would double the number.
 
-    public func post(_ path: [String?], data: JSON) -> Bool {
+    public func post(_ path: [String?], data: Json) -> Bool {
         return self.execfaf(path, method: "POST", data: data);
     }
 
-    public func post(_ path: String?..., data: JSON) -> Bool {
+    public func post(_ path: String?..., data: Json) -> Bool {
         return self.execfaf(path, data: data);
     }
 
@@ -168,10 +170,10 @@ public extension URL {
 
     private func exec(_ path: [String?], method: String? = nil,
                         data: Data? = nil,
-                        as type: JSON.Type,
-                        status: Int? = nil) async -> JSON? {
+                        as type: Json.Type,
+                        status: Int? = nil) async -> Json? {
         if let response = await self.exec(path, method: method, data: data, status: status) {
-            return try? JSONSerialization.jsonObject(with: response) as? JSON;
+            return try? JSONSerialization.jsonObject(with: response) as? Json;
         }
         return nil;
     }
@@ -183,7 +185,7 @@ public extension URL {
         return true;
     }
 
-    private func execfaf(_ path: [String?], method: String? = nil, data: JSON) -> Bool {
+    private func execfaf(_ path: [String?], method: String? = nil, data: Json) -> Bool {
         if let data: Data = try? JSONSerialization.data(withJSONObject: data) {
             return self.execfaf(path, method: "POST", data: data);
         }

@@ -4,4 +4,4 @@ sudo -E \
     --key /etc/letsencrypt/live/dmichaels.dev/privkey.pem \
     --host 0.0.0.0 \
     --port 443 \
-      > ios_set_game_server_https_dmichaels_dev.log 2>&1 &
+      > ios_set_game_server.log 2>&1 &
