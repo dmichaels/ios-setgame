@@ -287,8 +287,8 @@ def ping_endpoint():
 #
 if __name__ == '__main__':
     print(f"Starting iOS SET Game Backend.")
-    print(f"Host: {args.host}")
-    print(f"Port: {args.port}")
+    print(f"Host:        {args.host}")
+    print(f"Port:        {args.port}")
     print(f"Certificate: {args.cert}")
     print(f"Private Key: {args.key}")
     app.run(host=args.host, port=args.port, ssl_context=(args.cert, args.key) if args.cert else None)

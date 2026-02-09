@@ -4,9 +4,9 @@ private struct HttpServerInfo {
     public var isHost: Bool = false;
     public var sessionHosting: Bool = false;
     public var sessionHost: String = "";
-    public var sessionPlayers: Set<String> = [];
+    public var sessionPlayers: [String] = [];
     public var sessionPlayerCount: Int = 0;
-    public var players: Set<String> = [];
+    public var players: [String] = [];
     public var playerCount: Int = 0;
     public var playerRegistered: Bool = false;
     public var host: String = "";
@@ -112,7 +112,7 @@ public struct MultiPlayerControlPanel: View {
                         self.transport?.release();
                     }
                     else if (settings.multiPlayer.poll) {
-                        self.transport?.setup(session: "DUMMY"); // TODO
+                        self.transport?.setup(); // TODO
                     }
                 }
                 ToggleItem("host", on: $info.isHost /*, disabled: !settings.multiPlayer.enabled */ ) { value in
@@ -131,7 +131,7 @@ public struct MultiPlayerControlPanel: View {
                 }
                 ToggleItem("poll", on: $settings.multiPlayer.poll /* , disabled: !settings.multiPlayer.enabled */ ) { value in
                     if (value) {
-                        self.transport?.setup(session: "DUMMY"); // TODO
+                        self.transport?.setup(); // TODO
                     }
                     else {
                         self.transport?.release();
@@ -232,7 +232,8 @@ public struct MultiPlayerInfoPanel: View {
         public var body: some View {
             Button {
                 Task {
-                    await transport?.createSession();
+                    await transport?.sendMessage(GameCenter.PingMessage(), to: transport?.player ?? "FOO"); // TODO/xyzzy/testing
+                    await transport?.createSession(); // TODO/xyzzy/testing
                     await session?.send(message: GameCenter.PingMessage());
                 }
             } label: {

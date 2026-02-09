@@ -22,7 +22,7 @@ public extension GameCenter
 
         // Session protocol implementation.
 
-        public private(set) var id: String;
+        public private(set) var id: String?;
         public let transport: Transport;
         public var handler: SessionHandler? = nil;
 
@@ -30,7 +30,7 @@ public extension GameCenter
             return self.hostImp;
         }
 
-        public var players: Set<String> {
+        public var players: [String] {
             return self.playersImp;
         }
 
@@ -48,12 +48,16 @@ public extension GameCenter
 
             // Setup the Transport; starts the polling if not yet started.
 
-            self.transport.setup(session: self.id);
+            self.transport.setup();
 
             // Create a session with the server.
 
             if let session: String = await self.transportImp.createSession() {
                 self.id = session;
+                // todo/xyzzy/testing
+                let xa = await self.transportImp.register();
+                let xb = await self.transportImp.sendMessage(GameCenter.PingMessage(), to: self.player);
+                let x = 1
             }
 
             // Register this player with the server.
@@ -128,11 +132,10 @@ public extension GameCenter
 
         private let transportImp: GameCenter.HttpTransport;
         private var hostImp: String = "";
-        private var playersImp: Set<String> = [];
+        private var playersImp: [String] = [];
 
         public init(transport: GameCenter.HttpTransport? = nil, seed: Int? = nil) {
             let transport: HttpTransport = transport ?? GameCenter.HttpTransport();
-            self.id = ID(veryshort: true).value;
             self.transport = transport;
             self.transportImp = transport;
         }

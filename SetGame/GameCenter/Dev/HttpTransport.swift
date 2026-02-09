@@ -4,23 +4,12 @@ public extension GameCenter
 {
      public class HttpTransport: Transport {
 
-        public func createSession() async -> String? {
-            if let response: Json = await self.url.post("/session", as: Json.self) {
-                if let session: String = response["session"] as? String {
-                    self.session = session;
-                    return session;
-                }
-            }
-            return nil;
-        }
-
         // Transport protocol implementation.
 
         public var player: String = ID(veryshort: true).value;
         public var handler: MessageHandler? = nil;
 
-        public func setup(session: String) {
-            self.session = session;
+        public func setup() {
             self.pollInfo();
             self.pollMessages();
         }
@@ -96,7 +85,79 @@ public extension GameCenter
             self.url = url ?? URL(string: Defaults.multiPlayer.server)!
         }
 
+        public func createSession() async -> String? {
+            if let response: Json = await self.url.post("/session", as: Json.self) {
+                if let session: String = response["session"] as? String {
+                    self.session = session;
+                    return session;
+                }
+            }
+            return nil;
+        }
+
+	    public func register(player: String? = nil) async -> (player: String, host: String)? {
+            if let response: Json = await self.url.post(self.session, "register", player ?? self.player, as: Json.self),
+               let player: String = response["player"] as? String,
+               let host: String = response["host"] as? String {
+                return (player: player, host: host);
+            }
+            return nil;
+	    }
+
+        public func retrieveHost() async -> String {
+            if let response: Json = await self.url.get(self.session, "host", as: Json.self),
+               let host = response["host"] as? String {
+                return host;
+            }
+            return "";
+        }
+
+        public func retrievePlayers() async -> [String] {
+            if let response: Json = await self.url.get(self.session, "players", as: Json.self),
+               let players: [String] = response["players"] as? [String] {
+                return players;
+            }
+            return [];
+        }
+
+        public func retrieveMessagesQueuedCount(for player: String? = nil, all: Bool = false) async -> Int {
+            let player: String? = all ? nil : (player ?? self.player);
+            if let response: Json = await self.url.get (self.session, "count", player, as: Json.self),
+               let count: Int = response["count"] as? Int {
+                return count;
+            }
+            return 0;
+        }
+
         public func sendMessage(_ message: Message, to player: String) {
+            if let data: [String: Any] = message.json {
+                //
+                // Note that this send (POST) is a fire-and-forget;
+                // we do not await for its completion and return.
+                //
+                // If we wanted to await just prepend the post call with await and Swift
+                // will automatically choose the async version of our URL.post function.
+                //
+                if self.url.post(self.session, "send", player, data: data) {
+                    self.info.counts.sent += 1;
+                }
+            }
+        }
+
+        public func retrieveMessages(for player: String? = nil) async -> [GameCenter.Message] {
+            if let data: Data = await self.url.get(self.session, "receive", player ?? self.player) {
+                if let messages: [GameCenter.Message] = GameCenter.MessageConversion.toMessages(data: data) {
+                    if (messages.count > 0) {
+                        let x = 1
+                    }
+                    self.info.counts.retrieved += messages.count;
+                    return messages;
+                }
+            }
+            return [];
+        }
+
+        public func old_sendMessage(_ message: Message, to player: String) {
             guard let data: [String: Any] = message.json else { return }
             deb("HttpTransport.sendMessage: \(message.type) to: \(player)")
             //
@@ -114,7 +175,7 @@ public extension GameCenter
             }
         }
 
-        public func retrieveMessages(for player: String? = nil) async -> [GameCenter.Message] {
+        public func old_retrieveMessages(for player: String? = nil) async -> [GameCenter.Message] {
             if let data: Data = await self.url.get("/receive", player ?? self.player) {
                 if let messages: [GameCenter.Message] = GameCenter.MessageConversion.toMessages(data: data) {
                     if (messages.count > 0) {
@@ -127,7 +188,7 @@ public extension GameCenter
             return [];
         }
 
-	    public func register(player: String? = nil) async -> (player: String, host: String)? {
+	    public func old_register(player: String? = nil) async -> (player: String, host: String)? {
 		    struct Response: Decodable { let player: String ; let host: String };
             if let response = await self.url.post("register", player ?? self.player, as: Response.self) {
                 return (player: response.player, host: response.host);
@@ -135,7 +196,7 @@ public extension GameCenter
             return nil;
 	    }
 
-        public func retrieveHost() async -> String {
+        public func old_retrieveHost() async -> String {
             if let response: [String: Any] = await self.url.get("/host", as: [String: Any].self),
                let host = response["host"] as? String {
                 return host;
@@ -143,11 +204,11 @@ public extension GameCenter
             return "";
         }
 
-        public func retrievePlayers() async -> Set<String> {
+        public func old_retrievePlayers() async -> Set<String> {
             return await self.url.get("/players", as: Set<String>.self) ?? [];
         }
 
-        public func retrieveMessagesQueuedCount(for player: String? = nil, all: Bool = false) async -> Int {
+        public func old_retrieveMessagesQueuedCount(for player: String? = nil, all: Bool = false) async -> Int {
             struct Response: Decodable { let count: Int };
             if let response: Response = await self.url.get ("/messagecount", all ? nil : (player ?? self.player), as: Response.self) {
                 return response.count;

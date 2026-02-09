@@ -3,13 +3,13 @@ import Foundation
 public extension GameCenter
 {
     public protocol Session: AnyObject {
-        var  id: String { get }
+        var  id: String? { get }
         var  transport: Transport { get }
         var  handler: SessionHandler? { get set }
         var  player: String { get };
         var  host: String { get };
         var  hosting: Bool { get };
-        var  players: Set<String> { get };
+        var  players: [String] { get };
         func setup() async -> Bool;
         func release();
         func bind(to: SessionHandler);
