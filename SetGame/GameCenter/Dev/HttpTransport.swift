@@ -80,6 +80,11 @@ public extension GameCenter
         private let pollInterval: UInt64 = 250_000_000; // 250ms (4x per second)
         public  var info: Info = Info();
 
+        public func debug() async {
+            let x = await self.url.get("sessions", as: [String].self, key: ".0turangalilax");
+            print(x)
+            let y = 1;
+        }
         public init( /* player: String? = nil, */ url: URL? = nil) {
             // self.player = player ?? ID(veryshort: true).value;
             self.url = url ?? URL(string: Defaults.multiPlayer.server)!

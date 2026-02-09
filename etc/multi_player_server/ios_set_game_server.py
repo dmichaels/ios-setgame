@@ -24,6 +24,8 @@ from   functools import wraps
 import logging
 import os
 import uuid
+from flask import abort
+
 
 # Parse arguments, setup logging, and the Flask app itself.
 #
@@ -63,6 +65,15 @@ def with_session(func):
             return jsonify({'error': 'Session error.'}), 404
         return func(found_session, *args, **kwargs)
     return wrapper
+
+API_KEY = ".0turangalila"
+
+@app.before_request
+def check_api_key():
+    if request.path.startswith("/"):
+        key = request.headers.get("X-API-Key")
+        if key != API_KEY:
+            abort(403)  # Forbidden
 
 # The endpoints.
 
@@ -229,6 +240,22 @@ def send_message_endpoint(session, player):
     if player not in session['players']:
         session['players'].add(player)
     return {'status': 'OK'}, 200
+
+# Sends the given message (in the POST data) to the host player,
+# for the given session; if there is no host the do nothing.
+# Example Request:  POST /DEADBEEF/send
+# Example Response: {"status": "OK"}
+#
+@app.route('/<session>/send', methods=['POST'])
+@with_session
+def send_host_message_endpoint(session):
+    player = session['host']
+    if player:
+        message = request.get_json()
+        session['inbox'].setdefault(player, []).append(message)
+        if player not in session['players']:
+            session['players'].add(player)
+        return {'status': 'OK'}, 200
 
 # Removes and returns any/all of the messages available
 # for the given player, for the given session.
