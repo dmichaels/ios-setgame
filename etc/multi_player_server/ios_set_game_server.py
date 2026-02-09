@@ -1,5 +1,9 @@
 # Simple server for my iOS SET Game (Logicard) app, for development (circa February 2026).
 #
+# These instructions are OBSOLETE.
+# Now using nginx for multiple sites and HTTPS handling; see nginx.conf.
+# Now simply run as simple python script; see ios_set_game_server.sh.
+#
 # On AWS (LightSail) we use (in ios_set_game_server_https_dmichaels_dev.sh) to start:
 #
 # sudo -E \
