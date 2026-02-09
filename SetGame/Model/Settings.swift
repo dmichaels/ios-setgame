@@ -62,7 +62,7 @@ public class Defaults {
         // public let server: String = "https://dmichaels.dev";
         // public let server: String = "https://dmichaels.dev/apis/logicard";
         public let server: String = "http://127.0.0.1:8001";
-        public let key: String = ".0turangalila";
+        public let apikey: String = ".0turangalila";
     }
 
     public static let multiPlayer: MultiPlayer = MultiPlayer();

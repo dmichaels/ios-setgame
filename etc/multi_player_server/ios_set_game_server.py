@@ -27,6 +27,10 @@ import uuid
 from flask import abort
 
 
+# API Key (hardcoded!).
+#
+APIKEY = ".0turangalila"
+
 # Parse arguments, setup logging, and the Flask app itself.
 #
 parser = argparse.ArgumentParser()
@@ -66,14 +70,10 @@ def with_session(func):
         return func(found_session, *args, **kwargs)
     return wrapper
 
-API_KEY = ".0turangalila"
-
 @app.before_request
 def check_api_key():
-    if request.path.startswith("/"):
-        key = request.headers.get("X-API-Key")
-        if key != API_KEY:
-            abort(403)  # Forbidden
+    if request.headers.get("X-API-Key") != APIKEY:
+        abort(403)
 
 # The endpoints.
 

@@ -151,11 +151,6 @@ public extension GameCenter
                 HttpSession.instance = nil;
             }
             HttpSession.instance = HttpSession(handler: handler, transport: transport);
-            // xyzzy
-            Task {
-                let x = await HttpSession.instance?.transportImp.debug();
-            }
-
         }
 
         private init(handler: SessionHandler, transport: GameCenter.HttpTransport? = nil) {
