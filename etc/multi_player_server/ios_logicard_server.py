@@ -2,19 +2,19 @@
 #
 # These instructions are OBSOLETE.
 # Now using nginx for multiple sites and HTTPS handling; see nginx.conf.
-# Now simply run as simple Python script (no sudo needed); see ios_set_game_server.sh.
+# Now simply run as simple Python script (no sudo needed); see ios_logicard_server.sh.
 # Note that our dmichaels.dev domain is registered via Squarespace.
 # Note that our static AWS LightSail IP address is: 34.232.248.47
 #
-# On AWS (LightSail) we use (in ios_set_game_server_https_dmichaels_dev.sh) to start:
+# On AWS (LightSail) we use (in ios_logicard_server_start.sh) to start:
 #
 # sudo -E \
-#   python3 ios_set_game_server.py \
+#   python3 ios_logicard_server.py \
 #     --cert /etc/letsencrypt/live/dmichaels.dev/fullchain.pem \
 #     --key  /etc/letsencrypt/live/dmichaels.dev/privkey.pem \
 #     --host 0.0.0.0 \
 #     --port 443 \
-#       > ios_set_game_server.log 2>&1 &
+#       > ios_logicard_server.log 2>&1 &
 #
 # Note that redirect from HTTP to HTTPS not needed because the .dev TLD requires HTTPS.
 
