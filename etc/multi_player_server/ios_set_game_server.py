@@ -100,6 +100,15 @@ def get_session_endpoint(session):
                     'host':    session['host'] if session['host'] else '',
                     'inbox':   session['inbox']}), 200
 
+@app.route('/session/<session>/destroy', methods=['POST'])
+@with_session
+def destroy_session_endpoint(session):
+    global sessions
+    session = session['session']
+    if session in sessions:
+        del sessions[session]
+    return {'status': 'OK'}, 200
+
 # Registers the given player for the given session, if not yet registered, or if
 # it is already registered then do nothing; additionally, if no host is yet defined,
 # then sets the host to the given player; returns the session, player, and host IDs.

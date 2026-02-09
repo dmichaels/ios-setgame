@@ -26,9 +26,12 @@ struct SetGameApp: App {
                 .environmentObject(self.feedback)
                 .task {
                     await GameCenterAuthentication.authenticate();
+                    GameCenter.HttpSession.create(handler: self.table);
+/*
                     if let session: GameCenter.Session = await GameCenter.HttpSession.create(handler: self.table) {
                         session.start();
                     }
+*/
                 }
         }
     }
