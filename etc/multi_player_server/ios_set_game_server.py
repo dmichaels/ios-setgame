@@ -25,7 +25,7 @@ import uuid
 #
 parser = argparse.ArgumentParser()
 parser.add_argument("--host", type=str, default="127.0.0.1", help="Host address to bind to.")
-parser.add_argument("--port", type=int, default=5000,        help="Port to bind to.")
+parser.add_argument("--port", type=int, default=8001,        help="Port to bind to.")
 parser.add_argument("--cert", type=str, default=None,        help="Path to SSL certificate.")
 parser.add_argument("--key",  type=str, default=None,        help="Path to SSL key.")
 args = parser.parse_args()
@@ -311,6 +311,9 @@ if __name__ == '__main__':
     print(f"Starting iOS SET Game Backend.")
     print(f"Host:        {args.host}")
     print(f"Port:        {args.port}")
-    print(f"Certificate: {args.cert}")
-    print(f"Private Key: {args.key}")
-    app.run(host=args.host, port=args.port, ssl_context=(args.cert, args.key) if args.cert else None)
+    if args.cert and args.key:
+        print(f"Certificate: {args.cert}")
+        print(f"Private Key: {args.key}")
+        app.run(host=args.host, port=args.port, ssl_context=(args.cert, args.key) if args.cert else None)
+    else:
+        app.run(host=args.host, port=args.port)
