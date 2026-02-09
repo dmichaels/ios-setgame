@@ -319,6 +319,6 @@ if __name__ == '__main__':
     if args.cert and args.key:
         print(f"Certificate: {args.cert}")
         print(f"Private Key: {args.key}")
-        app.run(host=args.host, port=args.port, ssl_context=(args.cert, args.key) if args.cert else None)
+        app.run(host=args.host, port=args.port, ssl_context=(args.cert, args.key))
     else:
         app.run(host=args.host, port=args.port)
