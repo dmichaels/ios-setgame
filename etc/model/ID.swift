@@ -25,4 +25,16 @@ public struct ID: ExpressibleByStringLiteral, CustomStringConvertible, Equatable
         return String(SHA256.hash(data: Data(uuid.utf8))
                    .compactMap { String(format: "%02X", $0) }.joined().prefix(size));
     }
+
+    public static func of(_ object: AnyObject, short: Bool = false, veryshort: Bool = false) -> String {
+        if (veryshort) {
+            return String(format: "%4X", ObjectIdentifier(object).hashValue);
+        }
+        else if (short) {
+            return String(format: "%6X", ObjectIdentifier(object).hashValue & 0xFFFFFF);
+        }
+        else {
+            return String(format: "%X", ObjectIdentifier(object).hashValue);
+        }
+    }
 }

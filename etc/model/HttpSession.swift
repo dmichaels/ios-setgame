@@ -8,7 +8,7 @@ class HttpSession: Session {
         return HttpSession.singleton;
     }
 
-    public static func instance(handler: SessionHandler, transport: HttpTransport? = nil) -> Session {
+    public static func instance(handler: SessionHandler, transport: HttpTransport? = nil) -> HttpSession {
         if let instance = HttpSession.singleton {
             //
             // Should not normally happen; just call this once to initialize the singleton
@@ -26,15 +26,28 @@ class HttpSession: Session {
 
     // Session protocol implementation.
 
+    public private(set) var id: String;
     public var transport: Transport { self.transportImp };
-    public var session: String?;
 
-    public func setup() async {
-        if let session: String = await self.transportImp.createSession() {
-            self.session = session;
-            print("CREATED SESSION: \(self.session)");
+    public func create() async -> Bool {
+        if let id: String = await self.transportImp.createSession(bind: true) {
+            self.id = id;
+            print("CREATED SESSION> \(self.id)");
+            if await self.transportImp.registerPlayer(self.player) {
+                print("REGISTERED PLAYER> \(self.player)");
+                self.transport.setup();
+                return true;
+            }
         }
-        self.transport.setup();
+        return false;
+    }
+
+    public func join(session id: String) async -> Bool {
+        if await self.transportImp.registerPlayer(player, session: id) {
+            print("JOINED SESSION> player: \(player) session: \(id)")
+            return true;
+        }
+        return false;
     }
 
     public func send(message: Message, to player: String) {
@@ -46,6 +59,7 @@ class HttpSession: Session {
     private var handler: SessionHandler;
 
     private init(handler: SessionHandler, transport: HttpTransport? = nil) {
+        self.id = "";
         self.handler = handler;
         self.transportImp = transport ?? HttpTransport(handler: handler);
         //
@@ -60,7 +74,7 @@ class HttpSession: Session {
         // sure we (the Session) needs to really do anything with this SessionHandler.
         //
         self.bind(to: handler);
-        print("SESSION.INIT>                   \(ObjectIdentifier(self))")
+        print("SESSION.INIT>                   \(ID.of(self))")
     }
 
     private func bind(to handler: SessionHandler) {
@@ -68,6 +82,6 @@ class HttpSession: Session {
     }
 
     public func report() {
-        print("self: \(ObjectIdentifier(self).hashValue) transport: \(ObjectIdentifier(self.transport).hashValue)")
+        print("self: \(ID.of(self).hashValue) transport: \(ID.of(self.transport).hashValue)")
     }
 }

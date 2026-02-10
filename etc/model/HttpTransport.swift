@@ -25,6 +25,7 @@ public class HttpTransport: Transport {
         print("HTTP-TRANSPORT.INIT")
         self.handler = handler;
         self.url = URL.create("https://dmichaels.dev/apis/logicard");
+        // self.url = URL.create("http://127.0.0.1:8001");
         self.key = ".0turangalila";
         Task {
             if let x: [String] = await self.url.get("/sessions", as: [String].self, key: ".0turangalila") {
@@ -36,14 +37,24 @@ public class HttpTransport: Transport {
         }
     }
 
-    public func createSession() async -> String? {
-        if let session: Json = await self.url.post("/session", as: Json.self, key: ".0turangalila") {
+    public func createSession(bind: Bool = false) async -> String? {
+        if let session: Json = await self.url.post("/session", as: Json.self, key: self.key) {
             if let session: String = session["session"] as? String {
-                self.session = session;
+                if (bind) {
+                    self.session = session;
+                }
                 return session;
             }
         }
         return nil;
+    }
+
+    public func registerPlayer(_ player: String, session: String? = nil) async -> Bool {
+        if let session: String = session ?? self.session {
+            if let response: Json = await self.url.post(session, "/register", player, as: Json.self, key: self.key) {
+            }
+        }
+        return true;
     }
 
     private func poll() {
