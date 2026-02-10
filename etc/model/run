@@ -1,0 +1,16 @@
+rm -f main
+swiftc -suppress-warnings -o main \
+    HttpSession.swift \
+    HttpTransport.swift \
+    ID.swift \
+    Message.swift \
+    MessageHandler.swift \
+    MessageSender.swift \
+    PingMessage.swift \
+    Session.swift \
+    SessionHandler.swift \
+    Table.swift \
+    Transport.swift \
+    URL.swift \
+    main.swift
+./main
