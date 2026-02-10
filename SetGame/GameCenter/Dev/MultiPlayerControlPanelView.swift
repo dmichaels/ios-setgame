@@ -91,7 +91,8 @@ public struct MultiPlayerDevelopmentPanelView: View {
                     self.info.sessionHost = session.host ?? "";
                     self.info.sessionHosting = session.hosting ?? false;
                 }
-                try? await Task.sleep(nanoseconds: 300_000_000);
+                // try? await Task.sleep(nanoseconds: 300_000_000);
+                try? await Task.sleep(nanoseconds:  2_000_000_000);
             }
         }
     }

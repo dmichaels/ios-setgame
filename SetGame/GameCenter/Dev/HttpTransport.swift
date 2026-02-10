@@ -78,7 +78,8 @@ public extension GameCenter
         private let key: String;
         private var pollMessagesTask: Task<Void, Never>? = nil;
         private var pollInfoTask: Task<Void, Never>? = nil;
-        private let pollInterval: UInt64 = 250_000_000; // 250ms (4x per second)
+     // private let pollInterval: UInt64 = 250_000_000;   //  250ms (4x per second)
+        private let pollInterval: UInt64 = 1_000_000_000; // 1000ms (1x per second)
         public  var info: Info = Info();
 
         public init( /* player: String? = nil, */ url: URL? = nil) {
@@ -95,6 +96,14 @@ public extension GameCenter
                 }
             }
             return nil;
+        }
+
+        public func destroySession() async {
+            if let session: String = self.session {
+                if let response = await self.url.post("/session", session, "destroy", as: Json.self, key: self.key) {
+                    let x = 1
+                }
+            }
         }
 
 	    public func register(player: String? = nil) async -> (player: String, host: String)? {

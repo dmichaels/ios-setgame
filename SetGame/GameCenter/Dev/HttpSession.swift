@@ -34,6 +34,8 @@ public extension GameCenter
                     let xa = await self.transportImp.register();
                     let xb = await self.transportImp.sendMessage(GameCenter.PingMessage(), to: self.player);
                     let x = 1
+                    let y = await self.transportImp.destroySession()
+                    let z = 1
                 }
 
                 // Register this player with the server.
@@ -48,7 +50,7 @@ public extension GameCenter
                     // ONLY by the HOST; we notify the (non-host) clients of players only in the
                     // context of letting them know what the current score is among all of the players;
                     // but other than that the (non-host) clients don't "know" about the other players.
-                //
+                    //
                     self.playersImp = await self.transportImp.retrievePlayers();
                 }
                 else {
@@ -151,6 +153,9 @@ public extension GameCenter
                 HttpSession.instance = nil;
             }
             HttpSession.instance = HttpSession(handler: handler, transport: transport);
+            //
+            // xyzzy
+            HttpSession.instance?.setup();
         }
 
         private init(handler: SessionHandler, transport: GameCenter.HttpTransport? = nil) {

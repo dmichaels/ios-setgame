@@ -239,15 +239,14 @@ def send_message_endpoint(session, player):
     return _okay_response()
 
 # Sends the given message (in the POST data) to the host player,
-# for the given session; if there is no host the does nothing.
+# for the given session; if there is no host then does nothing.
 # Example Request:  POST /DEADBEEF/send
 # Example Response: {"status": "OK"}
 #
 @app.route('/<session>/send', methods=['POST'])
 @with_session
 def send_host_message_endpoint(session):
-    player = session['host']
-    if player:
+    if (player := session['host']):
         message = request.get_json()
         session['inbox'].setdefault(player, []).append(message)
     return _okay_response()
