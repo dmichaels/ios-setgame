@@ -84,6 +84,8 @@ def with_session(func):
 
 @app.before_request
 def check_api_key():
+    if request.path == '/ping':
+        return
     if request.headers.get("X-API-Key") != APIKEY:
         abort(403)
 
