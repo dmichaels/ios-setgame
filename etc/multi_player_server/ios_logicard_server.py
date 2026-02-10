@@ -226,23 +226,22 @@ def unset_host_endpoint(session):
     session['host'] = None
     return jsonify({'status': 'OK'}), 201
 
-# Sends the given message (in the POST data) to the given
-# player, for the given session; if the given player is
-# not already registered then also registers it.
+# Sends the given message (in the POST data) to the given player,
+# for the given session; if the given player is not already
+# registered then does nothing.
 # Example Request:  POST /DEADBEEF/send/ada
 # Example Response: {"status": "OK"}
 #
 @app.route('/<session>/send/<player>', methods=['POST'])
 @with_session
 def send_message_endpoint(session, player):
-    message = request.get_json()
-    session['inbox'].setdefault(player, []).append(message)
-    if player not in session['players']:
-        session['players'].add(player)
+    if player in session['players']:
+        message = request.get_json()
+        session['inbox'].setdefault(player, []).append(message)
     return {'status': 'OK'}, 200
 
 # Sends the given message (in the POST data) to the host player,
-# for the given session; if there is no host the do nothing.
+# for the given session; if there is no host the does nothing.
 # Example Request:  POST /DEADBEEF/send
 # Example Response: {"status": "OK"}
 #
@@ -253,8 +252,6 @@ def send_host_message_endpoint(session):
     if player:
         message = request.get_json()
         session['inbox'].setdefault(player, []).append(message)
-        if player not in session['players']:
-            session['players'].add(player)
         return {'status': 'OK'}, 200
 
 # Removes and returns any/all of the messages available
