@@ -1,4 +1,4 @@
-# Simple server for my iOS SET Game (Logicard) app, for development (circa February 2026).
+# Simple server for my iOS Logicard (SET Game) app, for development (circa February 2026).
 #
 # These instructions are OBSOLETE.
 # Now using nginx for multiple sites and HTTPS handling; see nginx.conf.
@@ -356,7 +356,7 @@ def ping_endpoint():
 # Start the server!
 #
 if __name__ == '__main__':
-    print(f"Starting iOS SET Game Backend.")
+    print(f"Starting iOS Logicard Backend.")
     print(f"Host:        {args.host}")
     print(f"Port:        {args.port}")
     if args.cert and args.key:

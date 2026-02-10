@@ -5,7 +5,8 @@ public extension GameCenter
     public protocol Session: AnyObject {
         var  id: String? { get }
         var  transport: Transport { get }
-        var  handler: SessionHandler? { get set }
+        // var  handler: SessionHandler? { get set }
+        var  handler: SessionHandler? { get }
         var  player: String { get };
         var  host: String { get };
         var  hosting: Bool { get };
@@ -30,11 +31,13 @@ extension GameCenter.Session {
         return self.player == self.host;
     }
 
+    /*
     public func bind(to handler: GameCenter.SessionHandler) {
         self.transport.bind(to: handler);
         handler.session = self;
         self.handler = handler;
     }
+    */
 
     public func send(message: GameCenter.Message) {
         if (self.hosting) {

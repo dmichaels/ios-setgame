@@ -4,6 +4,8 @@ public extension GameCenter
 {
     public class HttpSession: Session {
 
+        public static private(set) var singleton: HttpSession? = nil;
+
         // This is really just for the debug/dev control panel.
         //
         public static private(set) var instance: HttpSession? = nil;
@@ -12,7 +14,13 @@ public extension GameCenter
 
         public private(set) var id: String?;
         public let transport: Transport;
-        public var handler: SessionHandler? = nil;
+        public private(set) var handler: SessionHandler? = nil;
+        // public var handler: SessionHandler? = nil;
+    public func bind(to handler: GameCenter.SessionHandler) {
+        self.transport.bind(to: handler);
+        handler.session = self;
+        self.handler = handler;
+    }
 
         public var host: String {
             return self.hostImp;
