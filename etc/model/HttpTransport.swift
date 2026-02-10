@@ -24,7 +24,8 @@ public class HttpTransport: Transport {
     public init(handler: MessageHandler) {
         print("HTTP-TRANSPORT.INIT")
         self.handler = handler;
-        self.url = URL.create("https://dmichaels.dev/apis/logicard");
+        // self.url = URL.create("https://dmichaels.dev/apis/logicard");
+        self.url = URL.create("https://api.logicard.dmichaels.dev");
         // self.url = URL.create("http://127.0.0.1:8001");
         self.key = ".0turangalila";
         Task {
