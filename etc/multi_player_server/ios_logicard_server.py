@@ -61,6 +61,9 @@ def _create_session(session = None):
         }
     return session
 
+def _okay_response(status = 200):
+    return jsonify({'status': 'OK'}), status
+
 def with_session(func):
     @wraps(func)
     def wrapper(session, *args, **kwargs):
@@ -126,7 +129,7 @@ def reset_session_endpoint(session):
     session['players'].clear()
     session['host'] = None
     session['inbox'].clear()
-    return jsonify({'status': 'OK'}), 200
+    return _okay_response(201)
 
 @app.route('/session/<session>/destroy', methods=['POST'])
 @with_session
@@ -135,11 +138,11 @@ def destroy_session_endpoint(session):
     session = session['session']
     if session in sessions:
         del sessions[session]
-    return {'status': 'OK'}, 200
+    return _okay_response(201)
 
-# Registers the given player for the given session, if not yet registered, or if
-# it is already registered then do nothing; additionally, if no host is yet defined,
-# then sets the host to the given player; returns the session, player, and host IDs.
+# Registers the given player for the given session, if not yet registered,
+# or if it is already registered then do nothing; additionally in either
+# case, if no host is yet defined, then sets the host to the given player.
 # Example Request:  POST /DEADBEEF/register/ada
 # Example Response: {"session": "DEADBEEF", "player": "ada", "host": "ada"}
 #
@@ -165,7 +168,7 @@ def unregister_player_endpoint(session, player):
     session['inbox'].pop(player, None)
     if session['host'] == player:
         session['host'] = None
-    return jsonify({'status': 'OK'}), 200
+    return _okay_response(201)
 
 # Returns the list of registered player IDs for the given session.
 # Example Request:  GET /DEADBEEF/players
@@ -188,20 +191,17 @@ def get_host_endpoint(session):
     return jsonify({'session': session['session'],
                     'host':    session['host']}), 200
 
-# Sets the host to the given player, for the given session; if
-# the given player is not already registered then also registers it.
+# Sets the host to the given player, for the given session;
+# if the given player is not already registered then does nothing.
 # Example Request:  POST /DEADBEEF/host/ada
 # Example Response: {"session": "DEADBEEF", "player": "ada", "host": "ada"}
 #
 @app.route('/<session>/host/<player>', methods=['POST'])
 @with_session
 def set_host_endpoint(session, player):
-    if player not in session['players']:
-        session['players'].add(player)
-    session['host'] = player
-    return jsonify({'session': session['session'],
-                    'player':  player,
-                    'host':    session['host']}), 201
+    if player in session['players']:
+        session['host'] = player
+    return _okay_response()
 
 # If the given player for the given session is the host then unsets the host.
 # Example Request:  POST /DEADBEEF/unhost/ada
@@ -212,9 +212,7 @@ def set_host_endpoint(session, player):
 def unset_host_player_endpoint(session, player):
     if player == session['host']:
         session['host'] = None
-    return jsonify({'session': session['session'],
-                    'player':  player,
-                    'host':    session['host']}), 201
+    return _okay_response()
 
 # Unsets the host for the given session.
 # Example Request:  POST /DEADBEEF/unhost
@@ -224,7 +222,7 @@ def unset_host_player_endpoint(session, player):
 @with_session
 def unset_host_endpoint(session):
     session['host'] = None
-    return jsonify({'status': 'OK'}), 201
+    return _okay_response()
 
 # Sends the given message (in the POST data) to the given player,
 # for the given session; if the given player is not already
@@ -238,7 +236,7 @@ def send_message_endpoint(session, player):
     if player in session['players']:
         message = request.get_json()
         session['inbox'].setdefault(player, []).append(message)
-    return {'status': 'OK'}, 200
+    return _okay_response()
 
 # Sends the given message (in the POST data) to the host player,
 # for the given session; if there is no host the does nothing.
@@ -252,7 +250,7 @@ def send_host_message_endpoint(session):
     if player:
         message = request.get_json()
         session['inbox'].setdefault(player, []).append(message)
-        return {'status': 'OK'}, 200
+    return _okay_response()
 
 # Removes and returns any/all of the messages available
 # for the given player, for the given session.
@@ -306,7 +304,7 @@ def get_session_message_count_endpoint(session):
 def clear_player_messages_endpoint(session, player):
     if player in session['inbox']:
         del session['inbox'][player]
-    return jsonify({'status': 'OK'}), 200
+    return _okay_response()
 
 # Clears out all message data for ALL of the players, for the given session.
 # Example Request:  POST /DEADBEEF/clear
@@ -316,7 +314,7 @@ def clear_player_messages_endpoint(session, player):
 @with_session
 def clear_session_messages_endpoint(session):
     session['inbox'].clear()
-    return jsonify({'status': 'OK'}), 200
+    return _okay_response()
 
 # Resets ALL data for ALL sessions.
 # Example Request:  POST /reset
@@ -326,7 +324,7 @@ def clear_session_messages_endpoint(session):
 def reset_endpoint():
     global sessions
     sessions.clear()
-    return jsonify({'status': 'OK'}), 200
+    return _okay_response()
 
 # Simple ping endpoint.
 # Example Request:  POST /ping
@@ -334,7 +332,7 @@ def reset_endpoint():
 #
 @app.route('/ping', methods=['GET'])
 def ping_endpoint():
-    return jsonify({'status': 'OK'}), 200
+    return _okay_response()
 
 # Start the server!
 #
