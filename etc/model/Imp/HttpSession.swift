@@ -74,22 +74,33 @@ public extension GameCenter {
 
             class MessageHandler: GameCenter.MessageHandler {
                 var session: HttpSession?;
-                func handle(message: PingMessage) { session?.handler.handle(message: message) }
+                func handle(message: PingMessage) { session?.handle(message: message) }
                 func handle(message: JoinSessionMessage) { session?.handle(message: message) }
                 func handle(message: JoinedSessionMessage) { session?.handle(message: message) }
             }
 
             self.id = "";
+
+            // Bind ourselves to the given SessionHandler (which in our case is Table);
+            // this is so we can pass on incoming messages to that SessionHandler.
+            //
             self.handler = handler;
 
+            // Bind the HttpTransport (ours or the given one via HttpTransport.Factory)
+            // to a MessageHandler wrapper around our given SessionHandler; this is so
+            // HttpTransport can pass incoming messages to us and we can then then pass
+            // them on to the given SessionHandler, or in the case of session joining
+            // related messages we handle those here (that specifically in fact is the
+            // cause of this slightly confusing and complicated situation here).
+            //
             let wrapper: MessageHandler = MessageHandler();
             self.transportImp = transport?(wrapper) ?? HttpTransport(handler: wrapper);
             wrapper.session = self;
 
-            // Bind the handler (SessionHandler, e.g. Table) to self (Session);
-            // this is so it (the Table implementing SessionHandler in our case)
-            // can call into us (Session) to send messages (via Session.send).
-
+            // Bind the given SessionHandler (which in our case is Table) to ourselves;
+            // this is so this handler (Table in out case) can call into us (as an
+            // implementor of Session) to send messages (via Session.send).
+            //
             handler.session = self;
         }
 
