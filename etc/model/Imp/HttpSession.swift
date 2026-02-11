@@ -10,8 +10,7 @@ public extension GameCenter {
             return HttpSession.singleton;
         }
 
-        // public static func instance(handler: SessionHandler, transport: HttpTransport? = nil) -> HttpSession {
-        public static func instance(handler: SessionHandler, transport: HttpTransportFactory? = nil) -> HttpSession {
+        public static func instance(handler: SessionHandler, transport: HttpTransport.Factory? = nil) -> HttpSession {
             if let instance = HttpSession.singleton {
                 //
                 // Should not normally happen; just call this once to initialize the singleton
@@ -71,7 +70,7 @@ public extension GameCenter {
         private var hostImp: String = "";
 
 
-        private init(handler: SessionHandler, transport: HttpTransportFactory? = nil) {
+        private init(handler: SessionHandler, transport: HttpTransport.Factory? = nil) {
 
             class MessageHandler: GameCenter.MessageHandler {
                 var session: HttpSession?;
@@ -83,19 +82,14 @@ public extension GameCenter {
             self.id = "";
             self.handler = handler;
 
-            let handlerWrapper: MessageHandler = MessageHandler();
-            self.transportImp = transport?(handlerWrapper) ?? HttpTransport(handler: handlerWrapper);
-            handlerWrapper.session = self;
-
-            // self.transportImp = HttpTransport(handler: handlerWrapper);
-
-            // self.transportImp = transport ?? HttpTransport(handler: handler); // hmm
-            // self.transportImp = transport ?? HttpTransport(handler: handler); // hmm
-            // self.transportImp = transport ?? HttpTransport(handler: self); // hmm
+            let wrapper: MessageHandler = MessageHandler();
+            self.transportImp = transport?(wrapper) ?? HttpTransport(handler: wrapper);
+            wrapper.session = self;
 
             // Bind the handler (SessionHandler, e.g. Table) to self (Session);
             // this is so it (the Table implementing SessionHandler in our case)
             // can call into us (Session) to send messages (via Session.send).
+
             handler.session = self;
         }
 

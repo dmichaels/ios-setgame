@@ -2,9 +2,9 @@ import Foundation
 
 public extension GameCenter {
 
-    public typealias HttpTransportFactory = (GameCenter.MessageHandler) -> HttpTransport;
-
     public class HttpTransport: Transport {
+
+        public typealias Factory = (GameCenter.MessageHandler) -> HttpTransport;
 
         // Transport protocol implementation.
 
@@ -27,10 +27,10 @@ public extension GameCenter {
         private var pollTask: Task<Void, Never>? = nil;
         private let pollInterval: UInt64 = 1_000_000_000;
 
-        public init(handler: MessageHandler) {
+        public init(handler: MessageHandler, url: URL? = nil) {
             print("HTTP-TRANSPORT.INIT")
             self.handler = handler;
-            self.url = URL.create("https://api.logicard.dmichaels.dev");
+            self.url = url ?? URL.create("https://api.logicard.dmichaels.dev");
          // self.url = URL.create("http://127.0.0.1:8001");
             self.key = ".0turangalila";
             /*
