@@ -29,15 +29,15 @@ from flask import abort
 
 # API Key (hardcoded!).
 #
-APIKEY = ".0turangalila"
+APIKEY = '.0turangalila'
 
 # Parse arguments, setup logging, and the Flask app itself.
 #
 parser = argparse.ArgumentParser()
-parser.add_argument("--host", type=str, default="127.0.0.1", help="Host address to bind to.")
-parser.add_argument("--port", type=int, default=8001,        help="Port to bind to.")
-parser.add_argument("--cert", type=str, default=None,        help="Path to SSL certificate.")
-parser.add_argument("--key",  type=str, default=None,        help="Path to SSL key.")
+parser.add_argument('--host', type=str, default='127.0.0.1', help='Host address to bind to.')
+parser.add_argument('--port', type=int, default=8001,        help='Port to bind to.')
+parser.add_argument('--cert', type=str, default=None,        help='Path to SSL certificate.')
+parser.add_argument('--key',  type=str, default=None,        help='Path to SSL key.')
 args = parser.parse_args()
 log = logging.getLogger('werkzeug') ; log.setLevel(logging.ERROR)
 app = Flask(__name__)
@@ -55,8 +55,8 @@ def _create_session(session = None):
     if session not in sessions:
         sessions[session] = {
             'session': session,
-            'players': set(),
             'host':    None,
+            'players': [],
             'inbox':   {}
         }
     return session
@@ -86,7 +86,7 @@ def with_session(func):
 def check_api_key():
     if request.path == '/ping':
         return
-    if request.headers.get("X-API-Key") != APIKEY:
+    if request.headers.get('X-API-Key') != APIKEY:
         abort(403)
 
 # The endpoints.
@@ -108,7 +108,7 @@ def create_session_endpoint():
 def create_and_host_session_endpoint(player):
     global sessions
     session = _create_session()
-    sessions[session]['players'].add(player)
+    sessions[session]['players'].append(player)
     sessions[session]['host'] = player
     return jsonify({'session': session}), 201
 
@@ -130,8 +130,8 @@ def get_sessions_endpoint():
 @with_session
 def get_session_endpoint(session):
     return jsonify({'session': session['session'],
-                    'players': list(session['players']),
-                    'host':    session['host'] if session['host'] else '',
+                    'host':    session['host'],
+                    'players': session['players'],
                     'inbox':   session['inbox']}), 200
 
 # Resets ALL data for the given session.
@@ -141,12 +141,12 @@ def get_session_endpoint(session):
 @app.route('/sessions/<session>/reset', methods=['POST'])
 @with_session
 def reset_session_endpoint(session):
-    session['players'].clear()
     session['host'] = None
+    session['players'].clear()
     session['inbox'].clear()
     return _okay_response(201)
 
-@app.route('/sessions/<session>/destroy', methods=['POST']) # TODO: Make DELETE /sessions/<session>
+@app.route('/sessions/<session>/destroy', methods=['POST'])
 @with_session
 def destroy_session_endpoint(session):
     global sessions
@@ -158,34 +158,41 @@ def destroy_session_endpoint(session):
 # or if it is already registered then do nothing; additionally in either
 # case, if no host is yet defined, then sets the host to the given player.
 # Example Request:  POST /DEADBEEF/register/ada
-# Example Response: {"player": "ada", "host": "ada"}
+# Example Response: {"host": "ada", "player": "ada", players: ["ada", "bob"]}
 #
 @app.route('/<session>/register/<player>', methods=['POST'])
 @with_session
 def register_player_endpoint(session, player):
     if player not in session['players']:
-        session['players'].add(player)
+        session['players'].append(player)
     if not session['host']:
         session['host'] = player
-    return jsonify({'player': player,
-                    'host':   session['host']}), 201
+    return jsonify({'host':    session['host'],
+                    'player':  player,
+                    'players': session['players']}), 201
 
-# Exactly the same as POST /<session>/register/<player>
-# immediately follwed by a POST /<session>/send/<player>.
+# Exactly the same as POST /<session>/register/<player>,
+# immediately follwed by a POST /<session>/send/<player>; except
+# if the player was already registered then does not do the send.
 # Example Request:  POST /DEADBEEF/register_and_send/ada
-# Example Response: {"player": "ada", "host": "ada"}
+# Example Response: {"host": "ada", "player": "ada", "players": ["ada", "bob"]}
 #
 @app.route('/<session>/register_and_send/<player>', methods=['POST'])
 @with_session
 def register_player_and_send_endpoint(session, player):
     if player not in session['players']:
-        session['players'].add(player)
+        session['players'].append(player)
+        send = True
+    else:
+        send = False
     if not session['host']:
         session['host'] = player
-    message = request.get_json()
-    session['inbox'].setdefault(player, []).append(message)
-    return jsonify({'player': player,
-                    'host':   session['host']}), 201
+    if send:
+        message = request.get_json()
+        session['inbox'].setdefault(player, []).append(message)
+    return jsonify({'player':  player,
+                    'host':    session['host'],
+                    'players': session['players']}), 201
 
 # Unregisters the given player for the given session.
 # Example Request:  POST /DEADBEEF/unregister/ada
@@ -196,7 +203,7 @@ def register_player_and_send_endpoint(session, player):
 def unregister_player_endpoint(session, player):
     if player not in session['players']:
         return _noplayer_response()
-    session['players'].discard(player)
+    session['players'].remove(player)
     session['inbox'].pop(player, None)
     if session['host'] == player:
         session['host'] = None
@@ -204,13 +211,13 @@ def unregister_player_endpoint(session, player):
 
 # Returns the list of registered player IDs for the given session.
 # Example Request:  GET /DEADBEEF/players
-# Example Response: {"players": ["ada", "bob"], "host": "ada"}
+# Example Response: {"host": "ada", "players": ["ada", "bob"]}
 #
 @app.route('/<session>/players', methods=['GET'])
 @with_session
 def get_players_endpoint(session):
-    return jsonify({'players': list(session['players']),
-                    'host':    session['host']}), 200
+    return jsonify({'host':    session['host'],
+                    'players': session['players']}), 200
 
 # Returns the host for the given session.
 # Example Request:  GET /DEADBEEF/host
@@ -224,7 +231,7 @@ def get_host_endpoint(session):
 # Sets the host to the given player, for the given session;
 # if the given player is not already registered then does nothing.
 # Example Request:  POST /DEADBEEF/host/ada
-# Example Response: {"player": "ada", "host": "ada"}
+# Example Response: {"status": "OK"}
 #
 @app.route('/<session>/host/<player>', methods=['POST'])
 @with_session
@@ -232,29 +239,6 @@ def set_host_endpoint(session, player):
     if player not in session['players']:
         return _noplayer_response()
     session['host'] = player
-    return _okay_response()
-
-# If the given player for the given session is the host then unsets the host.
-# Example Request:  POST /DEADBEEF/unhost/ada
-# Example Response: {"session": "DEADBEEF", "player": "ada", "host": "bob"}
-#
-@app.route('/<session>/unhost/<player>', methods=['POST'])
-@with_session
-def unset_host_player_endpoint(session, player):
-    if player not in session['players']:
-        return _noplayer_response()
-    if player == session['host']:
-        session['host'] = None
-    return _okay_response()
-
-# Unsets the host for the given session.
-# Example Request:  POST /DEADBEEF/unhost
-# Example Response: {"status": "OK"}
-#
-@app.route('/<session>/unhost', methods=['POST'])
-@with_session
-def unset_host_endpoint(session):
-    session['host'] = None
     return _okay_response()
 
 # Sends the given message (in the POST data) to the given player,
@@ -379,12 +363,12 @@ def ping_endpoint():
 # Start the server!
 #
 if __name__ == '__main__':
-    print(f"Starting iOS Logicard Backend.")
-    print(f"Host:        {args.host}")
-    print(f"Port:        {args.port}")
+    print(f'Starting iOS Logicard Backend.')
+    print(f'Host:        {args.host}')
+    print(f'Port:        {args.port}')
     if args.cert and args.key:
-        print(f"Certificate: {args.cert}")
-        print(f"Private Key: {args.key}")
+        print(f'Certificate: {args.cert}')
+        print(f'Private Key: {args.key}')
         app.run(host=args.host, port=args.port, ssl_context=(args.cert, args.key))
     else:
         app.run(host=args.host, port=args.port)
