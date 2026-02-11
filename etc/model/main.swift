@@ -12,10 +12,12 @@ if await session.create() {
 var transport2: HttpTransport = HttpTransport(handler: table);
 var session2: HttpSession = HttpSession.instance(handler: table, transport: transport2);
 
+/*
 if await session2.join(session: session.id) {
     print("JOINED SESSION> session: \(session.id) player: \(session2.player)");
 }
-
+*/
+session2.requestJoin(session: session.id);
 
 
 

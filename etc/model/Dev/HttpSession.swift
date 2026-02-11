@@ -50,6 +50,14 @@ class HttpSession: Session {
         return false;
     }
 
+    public func requestJoin(session id: String) {
+        self.transportImp.sendMessage(JoinSessionMessage(player: self.player), session: id);
+    }
+
+    public func send(message: Message) {
+        self.transportImp.sendMessage(message, session: self.id);
+    }
+
     public func send(message: Message, to player: String) {
     }
 

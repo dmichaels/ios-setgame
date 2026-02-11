@@ -24,9 +24,7 @@ public class HttpTransport: Transport {
     public init(handler: MessageHandler) {
         print("HTTP-TRANSPORT.INIT")
         self.handler = handler;
-        // self.url = URL.create("https://dmichaels.dev/apis/logicard");
         self.url = URL.create("https://api.logicard.dmichaels.dev");
-        // self.url = URL.create("http://127.0.0.1:8001");
         self.key = ".0turangalila";
         Task {
             if let x: [String] = await self.url.get("/sessions", as: [String].self, key: ".0turangalila") {
@@ -56,6 +54,22 @@ public class HttpTransport: Transport {
             }
         }
         return true;
+    }
+
+    public func sendMessage(_ message: Message, session: String? = nil) -> Bool {
+        if let message: [String: Any] = message.json {
+            if let session: String = session ?? self.session {
+                print("SEND-MESSAGE> session: \(session) message: \(message) -> \(self.url.append(session, "/send"))")
+                if self.url.post(session, "/send", data: message, key: self.key) {
+                    print("SEND-MESSAGE: session: \(session) message: \(message) --> OK")
+                    return true;
+                }
+                else {
+                    print("SEND-MESSAGE: session: \(session) message: \(message) --> NOT OK")
+                }
+            }
+        }
+        return false;
     }
 
     private func poll() {

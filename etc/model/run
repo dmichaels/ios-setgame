@@ -1,18 +1,22 @@
-rm -f main
-swiftc -suppress-warnings -o main \
-    Dev/HttpSession.swift \
-    Dev/HttpTransport.swift \
-    Utils/ID.swift \
-    Interfaces/Message.swift \
-    Interfaces/MessageHandler.swift \
-    Interfaces/MessageSender.swift \
-    Messages/MessageType.swift \
-    Messages/PingMessage.swift \
-    Messages/PlayerReadyMessage.swift \
-    Interfaces/Session.swift \
-    Interfaces/SessionHandler.swift \
-    Table.swift \
-    Interfaces/Transport.swift \
-    Utils/URL.swift \
-    main.swift
-/Users/dmichaels/repos/ios-setgame/etc/model/main
+DIR=/Users/dmichaels/repos/ios-setgame/etc/model
+rm -f ${DIR}/main
+swiftc -suppress-warnings -o \
+    ${DIR}/main \
+    ${DIR}/Dev/HttpSession.swift \
+    ${DIR}/Dev/HttpTransport.swift \
+    ${DIR}/Utils/ID.swift \
+    ${DIR}/Interfaces/Message.swift \
+    ${DIR}/Interfaces/MessageHandler.swift \
+    ${DIR}/Interfaces/MessageSender.swift \
+    ${DIR}/Messages/MessageType.swift \
+    ${DIR}/Messages/JoinSessionMessage.swift \
+    ${DIR}/Messages/JoinSessionAcceptedMessage.swift \
+    ${DIR}/Messages/PingMessage.swift \
+    ${DIR}/Messages/PlayerReadyMessage.swift \
+    ${DIR}/Interfaces/Session.swift \
+    ${DIR}/Interfaces/SessionHandler.swift \
+    ${DIR}/Table.swift \
+    ${DIR}/Interfaces/Transport.swift \
+    ${DIR}/Utils/URL.swift \
+    ${DIR}/main.swift
+${DIR}/main
