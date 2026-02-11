@@ -7,7 +7,6 @@ swiftc -suppress-warnings -o \
     ${DIR}/Utils/ID.swift \
     ${DIR}/Interfaces/Message.swift \
     ${DIR}/Interfaces/MessageHandler.swift \
-    ${DIR}/Interfaces/MessageSender.swift \
     ${DIR}/Messages/MessageConversion.swift \
     ${DIR}/Messages/MessageConveyance.swift \
     ${DIR}/Messages/MessageType.swift \

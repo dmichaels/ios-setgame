@@ -1,4 +1,4 @@
-public protocol Transport: AnyObject /*MessageHandler*/ {
+public protocol Transport: AnyObject {
     var  player: String { get }
     func setup();
     func release();

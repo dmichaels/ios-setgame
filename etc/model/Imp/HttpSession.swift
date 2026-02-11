@@ -27,13 +27,15 @@ class HttpSession: Session, MessageHandler {
     // MessageHandler protocol implementation.
 
     public func handle(message: PingMessage) {
-        self.handler
+        self.handler.handle(message: message);
     }
 
     public func handle(message: JoinSessionMessage) {
+        self.handler.handle(message: message);
     }
 
     public func handle(message: JoinedSessionMessage) {
+        self.handler.handle(message: message);
     }
 
     // Session protocol implementation.
