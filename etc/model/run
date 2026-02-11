@@ -6,6 +6,7 @@ swiftc -suppress-warnings -o main \
     Interfaces/Message.swift \
     Interfaces/MessageHandler.swift \
     Interfaces/MessageSender.swift \
+    Messages/MessageType.swift \
     Messages/PingMessage.swift \
     Messages/PlayerReadyMessage.swift \
     Interfaces/Session.swift \
@@ -14,4 +15,4 @@ swiftc -suppress-warnings -o main \
     Interfaces/Transport.swift \
     Utils/URL.swift \
     main.swift
-./main
+/Users/dmichaels/repos/ios-setgame/etc/model/main
