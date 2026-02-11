@@ -38,12 +38,16 @@ public extension GameCenter {
             if let session: Json = await self.url.post("/sessions", player, as: Json.self, key: self.key) {
                 if let session: String = session["session"] as? String {
                     if (bind) {
-                        self.session = session;
+                        self.bind(to: session);
                     }
                     return session;
                 }
             }
             return nil;
+        }
+
+        public func bind(to session: String) {
+            self.session = session;
         }
 
         public func registerPlayer(_ player: String, session: String? = nil) async -> (player: String, host: String)? {

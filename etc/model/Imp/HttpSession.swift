@@ -58,12 +58,14 @@ public extension GameCenter {
                 }
             }
             else {
-                print("JOINING SESSION INDIRECTLY> player: \(player) host: \(host) session: \(id)")
+                print("JOINING SESSION INDIRECTLY> player: \(player) host: \(host) session: \(id) self.id: \(self.id)")
                 if await self.transportImp.sendHostMessage(JoinSessionMessage(player: self.player), session: id) {
-                    print("JOINED SESSION INDIRECTLY> player: \(player) host: \(host) session: \(id)")
+                    self.id = id;
+                    self.transportImp.bind(to: id);
+                    print("JOINED SESSION INDIRECTLY> player: \(player) host: \(host) session: \(id) self.id: \(self.id)")
                 }
                 else {
-                    print("FAILED TO JOIN SESSION INDIRECTLY> player: \(player) host: \(host) session: \(id)")
+                    print("FAILED TO JOIN SESSION INDIRECTLY> player: \(player) host: \(host) session: \(id) self.id: \(self.id)")
                     return false;
                 }
             }
@@ -149,7 +151,8 @@ public extension GameCenter {
         private func handle(message: JoinSessionMessage) {
             print("HANDLE JOIN MESSAGE> player: \(self.player) message: \(message) session: \(self.id)")
             Task {
-            await self.transportImp.registerPlayerAndSend(message.player, message: GameCenter.JoinedSessionMessage(session: self.id))
+                if let (player, host) = await self.transportImp.registerPlayerAndSend(message.player, message: GameCenter.JoinedSessionMessage(session: self.id)) {
+                }
             }
             self.handler.handle(message: message);
         }
