@@ -1,3 +1,8 @@
+public class TableCard {
+    public init(_: String) {
+    }
+}
+
 public class Table: SessionHandler {
 
     // SessionHandler protocol implementation.

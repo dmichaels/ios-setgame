@@ -16,9 +16,14 @@ public class HttpTransport: Transport {
 
     // MessageHandler (via Transport) protocol implementation.
 
-    public func handle(message: PingMessage) {}
-    public func handle(message: JoinSessionMessage) {}
-    public func handle(message: JoinedSessionMessage) {}
+    public func handle(message: PingMessage) {
+    }
+
+    public func handle(message: JoinSessionMessage) {
+    }
+
+    public func handle(message: JoinedSessionMessage) {
+    }
 
     // HttpTransport class implementation.
 
@@ -59,9 +64,21 @@ public class HttpTransport: Transport {
     public func registerPlayer(_ player: String, session: String? = nil) async -> Bool {
         if let session: String = session ?? self.session {
             if let response: Json = await self.url.post(session, "/register", player, as: Json.self, key: self.key) {
+                return true;
             }
         }
-        return true;
+        return false;
+    }
+
+    public func registerPlayerAndSend(_ player: String, message: Message, session: String? = nil) async -> Bool {
+        if let session: String = session ?? self.session {
+            if let message: [String: Any] = message.json {
+                if let response: Json = await self.url.post(session, "/register_and_send", player, as: Json.self, key: self.key) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public func sendMessage(_ message: Message, session: String? = nil) -> Bool {
@@ -103,8 +120,9 @@ public class HttpTransport: Transport {
     }
 
     private func nopoll() {
-        self.pollTask?.cancel();
-        self.pollTask = nil;
+        print("TRANSPORT.NOPOLL")
+        // self.pollTask?.cancel();
+        // self.pollTask = nil;
     }
 
     private func dispatchMessages(messages: [Message]) {

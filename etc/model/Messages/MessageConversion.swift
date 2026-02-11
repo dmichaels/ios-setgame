@@ -33,7 +33,7 @@ public struct MessageConversion {
         return nil;
     }
 
-    // fileprivate static func toCards(_ codes: [String]) -> [TableCard] {
-    //     return codes.compactMap { TableCard($0) };
-    // }
+    fileprivate static func toCards(_ codes: [String]) -> [TableCard] {
+        return codes.compactMap { TableCard($0) };
+    }
 }

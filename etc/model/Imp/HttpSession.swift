@@ -28,6 +28,7 @@ class HttpSession: Session {
 
     public private(set) var id: String;
     public var transport: Transport { self.transportImp };
+    public var host: String { "" }; // TODO
 
     public func create() async -> Bool {
         if let id: String = await self.transportImp.createSession(bind: true) {
@@ -65,6 +66,7 @@ class HttpSession: Session {
 
     private var transportImp: HttpTransport;
     private var handler: SessionHandler;
+    private var hostImp: String = "";
 
     private init(handler: SessionHandler, transport: HttpTransport? = nil) {
         self.id = "";
