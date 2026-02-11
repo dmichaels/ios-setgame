@@ -12,7 +12,7 @@ if await session.create() {
     print("CREATED SESSION> \(session.id) player: \(session.player)");
 }
 
-var session2: GameCenter.HttpSession = GameCenter.HttpSession.instance(
+var session2: GameCenter.Session = GameCenter.HttpSession.instance(
     handler: table,
     transport: { handler in GameCenter.HttpTransport(handler: handler, url: url) }
 );
@@ -21,7 +21,7 @@ var session2: GameCenter.HttpSession = GameCenter.HttpSession.instance(
 //     print("JOINED SESSION> session: \(session.id) player: \(session2.player)");
 // }
 //
-session2.requestJoin(session: session.id);
+await session2.join(session: session.id);
 
 
 

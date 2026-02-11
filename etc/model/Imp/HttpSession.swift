@@ -44,12 +44,43 @@ public extension GameCenter {
         }
 
         public func join(session id: String) async -> Bool {
+            return await self.join(session: id, direct: false);
+        }
+
+        private func join(session id: String, direct: Bool = false) async -> Bool {
+            if (direct) {
+                if let (player, host) = await self.transportImp.registerPlayer(self.player, session: id) {
+                    print("JOINED SESSION DIRECTLY> player: \(player) host: \(host) session: \(id)")
+                }
+                else {
+                    return false;
+                }
+            }
+            else if (self.transportImp.sendMessage(JoinSessionMessage(player: self.player), session: id)) {
+                print("JOINED SESSION INDIRECTLY> player: \(player) host: \(host) session: \(id)")
+            }
+            else {
+                return false;
+            }
+            self.transport.setup();
+            return true;
+        }
+
+        /*
+        public func join(session id: String) async -> Bool {
             if let (player, host) = await self.transportImp.registerPlayer(self.player, session: id) {
                 print("JOINED SESSION> player: \(player) host: \(host) session: \(id)")
                 return true;
             }
             return false;
         }
+
+        public func requestJoin(session id: String) {
+            if (self.transportImp.sendMessage(JoinSessionMessage(player: self.player), session: id)) {
+                self.transport.setup();
+            }
+        }
+        */
 
         public func send(message: Message) {
             //
@@ -68,7 +99,6 @@ public extension GameCenter {
         private let transportImp: HttpTransport;
         private var handler: SessionHandler;
         private var hostImp: String = "";
-
 
         private init(handler: SessionHandler, transport: HttpTransport.Factory? = nil) {
 
@@ -102,12 +132,6 @@ public extension GameCenter {
             // implementor of Session) to send messages (via Session.send).
             //
             handler.session = self;
-        }
-
-        public func requestJoin(session id: String) {
-            if (self.transportImp.sendMessage(JoinSessionMessage(player: self.player), session: id)) {
-                self.transport.setup();
-            }
         }
 
         private func handle(message: PingMessage) {
