@@ -10,7 +10,8 @@ public extension GameCenter {
             return HttpSession.singleton;
         }
 
-        public static func instance(handler: SessionHandler, transport: HttpTransport? = nil) -> HttpSession {
+        // public static func instance(handler: SessionHandler, transport: HttpTransport? = nil) -> HttpSession {
+        public static func instance(handler: SessionHandler, transport: HttpTransportFactory? = nil) -> HttpSession {
             if let instance = HttpSession.singleton {
                 //
                 // Should not normally happen; just call this once to initialize the singleton
@@ -69,44 +70,24 @@ public extension GameCenter {
         private var handler: SessionHandler;
         private var hostImp: String = "";
 
-        private class MessageHandlerWrapper: MessageHandler {
-            fileprivate var session: HttpSession?;
-            fileprivate func handle(message: PingMessage) {
-                self.session?.handler.handle(message: message);
-            }
-            fileprivate func handle(message: JoinSessionMessage) {
-                //
-                // TODO
-                //
-            }
-            fileprivate func handle(message: JoinedSessionMessage) {
-                //
-                // TODO
-                //
-            }
-            fileprivate func bind(to session: HttpSession) {
-                self.session = session;
-            }
-        }
 
-        private init(handler: SessionHandler, transport: HttpTransport? = nil) {
+        private init(handler: SessionHandler, transport: HttpTransportFactory? = nil) {
+
+            class MessageHandler: GameCenter.MessageHandler {
+                var session: HttpSession?;
+                func handle(message: PingMessage) { session?.handler.handle(message: message) }
+                func handle(message: JoinSessionMessage) { session?.handle(message: message) }
+                func handle(message: JoinedSessionMessage) { session?.handle(message: message) }
+            }
+
             self.id = "";
             self.handler = handler;
 
-            /*
-            let handlerWrapper = MessageHandlerWrapper();
-            self.transportImp = transport ?? HttpTransport(handler: handlerWrapper); // hmm
-            handlerWrapper.bind(to: self);
-            */
+            let handlerWrapper: MessageHandler = MessageHandler();
+            self.transportImp = transport?(handlerWrapper) ?? HttpTransport(handler: handlerWrapper);
+            handlerWrapper.session = self;
 
-            if let transport = transport {
-                self.transportImp = transport;
-            }
-            else {
-                let handlerWrapper: MessageHandlerWrapper = MessageHandlerWrapper();
-                self.transportImp = HttpTransport(handler: handlerWrapper);
-                handlerWrapper.bind(to: self);
-            }
+            // self.transportImp = HttpTransport(handler: handlerWrapper);
 
             // self.transportImp = transport ?? HttpTransport(handler: handler); // hmm
             // self.transportImp = transport ?? HttpTransport(handler: handler); // hmm
@@ -115,18 +96,6 @@ public extension GameCenter {
             // Bind the handler (SessionHandler, e.g. Table) to self (Session);
             // this is so it (the Table implementing SessionHandler in our case)
             // can call into us (Session) to send messages (via Session.send).
-            //
-            // Question: Do we need to hold on to the instance of this SessionHandler?
-            // We know that Transport needs it (asa MessageHandler which SessionHandler
-            // implements) to call the MessageHandler.handle function(s) that Table in
-            // our implements, for the messages that the transport receives; but not
-            // sure we (the Session) needs to really do anything with this SessionHandler.
-            //
-            self.bind(to: handler);
-            print("SESSION.INIT>                   \(ID.of(self))")
-        }
-
-        private func bind(to handler: SessionHandler) {
             handler.session = self;
         }
 
@@ -134,6 +103,18 @@ public extension GameCenter {
             if (self.transportImp.sendMessage(JoinSessionMessage(player: self.player), session: id)) {
                 self.transport.setup();
             }
+        }
+
+        private func handle(message: PingMessage) {
+            self.handler.handle(message: message);
+        }
+
+        private func handle(message: JoinSessionMessage) {
+            self.handler.handle(message: message);
+        }
+
+        private func handle(message: JoinedSessionMessage) {
+            self.handler.handle(message: message);
         }
 
         public func report() {

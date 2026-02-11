@@ -2,6 +2,8 @@ import Foundation
 
 public extension GameCenter {
 
+    public typealias HttpTransportFactory = (GameCenter.MessageHandler) -> HttpTransport;
+
     public class HttpTransport: Transport {
 
         // Transport protocol implementation.
