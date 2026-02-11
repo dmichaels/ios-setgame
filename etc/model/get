@@ -1,0 +1,11 @@
+#!/bin/bash
+HOST=https://api.logicard.dmichaels.dev
+METHOD=GET
+APIKEY=$(cat .key)
+URL="$HOST/$*"
+echo $METHOD $URL
+curl -s \
+  -H "X-API-Key: $APIKEY" \
+  -H "Content-Type: application/json" \
+  -X $METHOD "$URL" \
+   | python -m json.tool
