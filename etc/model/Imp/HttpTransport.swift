@@ -50,18 +50,6 @@ public class HttpTransport: Transport {
         }
     }
 
-    public func createSession(bind: Bool = false) async -> String? {
-        if let session: Json = await self.url.post("/sessions", as: Json.self, key: self.key) {
-            if let session: String = session["session"] as? String {
-                if (bind) {
-                    self.session = session;
-                }
-                return session;
-            }
-        }
-        return nil;
-    }
-
     public func createAndHostSession(host player: String, bind: Bool = false) async -> String? {
         if let session: Json = await self.url.post("/sessions", player, as: Json.self, key: self.key) {
             if let session: String = session["session"] as? String {
@@ -86,7 +74,7 @@ public class HttpTransport: Transport {
         return nil;
     }
 
-    public func registerPlayerAndSendNew(_ player: String, message: Message, session: String? = nil) async -> (player: String, host: String)? {
+    public func registerPlayerAndSend(_ player: String, message: Message, session: String? = nil) async -> (player: String, host: String)? {
         if let session: String = session ?? self.session {
             if let message: [String: Any] = message.json {
                 if let response: Json = await self.url.post(session, "/register_and_send", player, as: Json.self, key: self.key) {
