@@ -35,6 +35,9 @@ class HttpSession: Session {
             self.id = id;
             print("CREATED SESSION> \(self.id)");
             if await self.transportImp.registerPlayer(self.player) {
+                //
+                // TODO: SET self.hostImp!
+                //
                 print("REGISTERED PLAYER> \(self.player)");
                 self.transport.setup();
                 return true;
