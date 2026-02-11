@@ -1,7 +1,7 @@
 rm -f main
 swiftc -suppress-warnings -o main \
-    HttpSession.swift \
-    HttpTransport.swift \
+    Dev/HttpSession.swift \
+    Dev/HttpTransport.swift \
     Utils/ID.swift \
     Interfaces/Message.swift \
     Interfaces/MessageHandler.swift \
