@@ -6,14 +6,9 @@ public extension GameCenter {
 
         // Singleton instance.
 
-        private static var singleton: HttpSession? = nil;
-
-        public static var instance: HttpSession? {
-            return HttpSession.singleton;
-        }
-
+        public private(set) static var instance: HttpSession? = nil;
         public static func instance(handler: SessionHandler, transport: HttpTransport.Factory? = nil) -> HttpSession {
-            if let instance = HttpSession.singleton {
+            if let instance = HttpSession.instance {
                 //
                 // Should not normally happen; just call this once to initialize the singleton
                 // with the required SessionHandler and (optional) HttpTransport arguments; but
@@ -23,10 +18,10 @@ public extension GameCenter {
                 //
                 print("NOT NORMAL> RECREATING HttpSession INSTANCE")
                 instance.transport.release();
-                HttpSession.singleton = nil;
+                HttpSession.instance = nil;
             }
-            HttpSession.singleton = HttpSession(handler: handler, transport: transport);
-            return HttpSession.singleton!;
+            HttpSession.instance = HttpSession(handler: handler, transport: transport);
+            return HttpSession.instance!;
         }
 
         // Session protocol implementation.
