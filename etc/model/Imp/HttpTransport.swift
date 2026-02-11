@@ -59,9 +59,13 @@ public extension GameCenter {
         }
 
         public func registerPlayerAndSend(_ player: String, message: Message, session: String? = nil) async -> (player: String, host: String)? {
+            print("HttpTransport.registerPlayerAndSend> player: \(player) message: \(message)")
             if let session: String = session ?? self.session {
+                print("HttpTransport.registerPlayerAndSend> player: \(player) message: \(message) session: \(session)")
                 if let message: Json = message.json {
-                    if let response: Json = await self.url.post(session, "/register_and_send", player, as: Json.self, key: self.key) {
+                    print("HttpTransport.registerPlayerAndSend> player: \(player) message: \(message) session: \(session) message OK")
+                    if let response: Json = await self.url.post([session, "/register_and_send", player], data: message, as: Json.self, key: self.key) {
+                        print("HttpTransport.registerPlayerAndSend> player: \(player) message: \(message) session: \(session) response: \(response)")
                         if let player: String = response["player"] as? String,
                             let host: String = response["host"] as? String {
                             return (player: player, host: host);

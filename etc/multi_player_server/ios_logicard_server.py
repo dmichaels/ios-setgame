@@ -173,7 +173,8 @@ def register_player_endpoint(session, player):
 
 # Exactly the same as POST /<session>/register/<player>,
 # immediately follwed by a POST /<session>/send/<player>; except
-# if the player was already registered then does not do the send.
+# if the player was already registered then does not do the send;
+# and also if no POST data/payload is present then no send is done.
 # Example Request:  POST /DEADBEEF/register_and_send/ada
 # Example Response: {"host": "ada", "player": "ada", "players": ["ada", "bob"]}
 #
@@ -188,8 +189,8 @@ def register_player_and_send_endpoint(session, player):
     if not session['host']:
         session['host'] = player
     if send:
-        message = request.get_json()
-        session['inbox'].setdefault(player, []).append(message)
+        if (message := request.get_json(silent=True)) is not None:
+            session['inbox'].setdefault(player, []).append(message)
     return jsonify({'player':  player,
                     'host':    session['host'],
                     'players': session['players']}), 201

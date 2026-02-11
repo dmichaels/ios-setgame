@@ -2,8 +2,8 @@ import Foundation
 
 print("Main module")
 
-let url: URL = URL.create("https://api.logicard.dmichaels.dev")
-// let url: URL = URL.create("http://127.0.0.1:8001")
+// let url: URL = URL.create("https://api.logicard.dmichaels.dev")
+let url: URL = URL.create("http://127.0.0.1:8001")
 var table: Table = Table()
 var sessionA: GameCenter.HttpSession = GameCenter.HttpSession(handler: table, url: url)
 

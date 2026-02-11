@@ -153,6 +153,9 @@ public extension GameCenter {
 
         private func handle(message: JoinSessionMessage) {
             print("HANDLE JOIN MESSAGE> player: \(self.player) message: \(message) session: \(self.id)")
+            Task {
+            await self.transportImp.registerPlayerAndSend(message.player, message: GameCenter.JoinedSessionMessage(session: self.id))
+            }
             self.handler.handle(message: message);
         }
 

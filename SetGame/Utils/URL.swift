@@ -119,6 +119,12 @@ public extension URL {
         return await self.exec(path, method: "POST", data: data, as: type, status: status, key: key);
     }
 
+    public func post(_ path: [String?], data: Json,
+                       as type: Json.Type,
+                       status: Int? = nil, key: String? = nil) async -> Json? {
+        return await self.exec(path, method: "POST", data: data, as: type, status: status, key: key);
+    }
+
     public func post(_ path: String?..., data: Json,
                        as type: Json.Type,
                        status: Int? = nil, key: String? = nil) async -> Json? {
