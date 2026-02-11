@@ -37,8 +37,8 @@ public class HttpTransport: Transport {
     public init(handler: MessageHandler) {
         print("HTTP-TRANSPORT.INIT")
         self.handler = handler;
-     // self.url = URL.create("https://api.logicard.dmichaels.dev");
-        self.url = URL.create("http://127.0.0.1:8001");
+        self.url = URL.create("https://api.logicard.dmichaels.dev");
+     // self.url = URL.create("http://127.0.0.1:8001");
         self.key = ".0turangalila";
         Task {
             if let x: [String] = await self.url.get("/sessions", as: [String].self, key: ".0turangalila") {
