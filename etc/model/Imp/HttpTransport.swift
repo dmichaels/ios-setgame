@@ -37,7 +37,8 @@ public class HttpTransport: Transport {
     public init(handler: MessageHandler) {
         print("HTTP-TRANSPORT.INIT")
         self.handler = handler;
-        self.url = URL.create("https://api.logicard.dmichaels.dev");
+     // self.url = URL.create("https://api.logicard.dmichaels.dev");
+        self.url = URL.create("http://127.0.0.1:8001");
         self.key = ".0turangalila";
         Task {
             if let x: [String] = await self.url.get("/sessions", as: [String].self, key: ".0turangalila") {
@@ -50,7 +51,19 @@ public class HttpTransport: Transport {
     }
 
     public func createSession(bind: Bool = false) async -> String? {
-        if let session: Json = await self.url.post("/session", as: Json.self, key: self.key) {
+        if let session: Json = await self.url.post("/sessions", as: Json.self, key: self.key) {
+            if let session: String = session["session"] as? String {
+                if (bind) {
+                    self.session = session;
+                }
+                return session;
+            }
+        }
+        return nil;
+    }
+
+    public func createAndHostSession(host player: String, bind: Bool = false) async -> String? {
+        if let session: Json = await self.url.post("/sessions", player, as: Json.self, key: self.key) {
             if let session: String = session["session"] as? String {
                 if (bind) {
                     self.session = session;

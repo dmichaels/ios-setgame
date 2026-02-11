@@ -31,20 +31,18 @@ class HttpSession: Session {
     public var host: String { self.hostImp }; // TODO
 
     public func create() async -> Bool {
-        if let id: String = await self.transportImp.createSession(bind: true) {
+            print("CREATING HOSTED SESSION> session: \(self.id) host: \(self.player)");
+        if let id: String = await self.transportImp.createAndHostSession(host: self.player, bind: true) {
             self.id = id;
-            print("CREATED SESSION> \(self.id)");
-            if let (player, host) = await self.transportImp.registerPlayer(self.player) {
-                print("REGISTERED PLAYER> player: \(self.player) host: \(host) session: \(self.id)");
-                self.hostImp = host;
-                self.transport.setup();
-            }
+            print("CREATED HOSTED SESSION> session: \(self.id) host: \(self.player)");
+            self.hostImp = host;
+            self.transport.setup();
         }
         return false;
     }
 
     public func join(session id: String) async -> Bool {
-        if let (player, host) = await self.transportImp.registerPlayer(player, session: id) {
+        if let (player, host) = await self.transportImp.registerPlayer(self.player, session: id) {
             print("JOINED SESSION> player: \(player) host: \(host) session: \(id)")
             return true;
         }
@@ -52,7 +50,9 @@ class HttpSession: Session {
     }
 
     public func requestJoin(session id: String) {
-        self.transportImp.sendMessage(JoinSessionMessage(player: self.player), session: id);
+        if (self.transportImp.sendMessage(JoinSessionMessage(player: self.player), session: id)) {
+            self.transport.setup();
+        }
     }
 
     public func send(message: Message) {

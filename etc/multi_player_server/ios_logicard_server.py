@@ -92,21 +92,25 @@ def check_api_key():
 # The endpoints.
 
 # Creates a new session and returns its ID.
-# Example Request:  POST /session
+# Example Request:  POST /sessions
 # Example Response: {"session" "DEADBEEF"}
 #
-@app.route('/session', methods=['POST'])
+@app.route('/sessions', methods=['POST'])
 def create_session_endpoint():
     return jsonify({'session': _create_session()}), 201
 
-# Create a new session using the given session ID, if it does not yet exist,
-# or if it does already exist then does nothing, and returns the given session ID.
-# Example Request:  POST /session/SOMEID
-# Example Response: {"session" "SOMEID"}
+# Creates a new session, and registers the given player, and sets that
+# player to the host within that new session; returns the session ID.
+# Example Request:  POST /sessions/host
+# Example Response: {"session" "DEADBEEF"}
 #
-@app.route('/session/<session>', methods=['POST'])
-def create_given_session_endpoint(session):
-    return jsonify({'session': _create_session(session) }), 201
+@app.route('/sessions/<player>', methods=['POST'])
+def create_and_host_session_endpoint(player):
+    global sessions
+    session = _create_session()
+    sessions[session]['players'].add(player)
+    sessions[session]['host'] = player
+    return jsonify({'session': session}), 201
 
 # Returns the list of defined session IDs; mostly for debugging.
 # Example Request:  GET /sessions
@@ -118,11 +122,11 @@ def get_sessions_endpoint():
     return jsonify(list(sessions.keys())), 200
 
 # Returns ALL of the session data for the given session ID; mostly for debugging. 
-# Example Request:  GET /session/DEADBEEF
+# Example Request:  GET /sessions/DEADBEEF
 # Example Response: {"session" "DEADBEEF", "players": ["ada", "bob"],
 #                    "host": "ada", "inbox": {"ada": [{"type": "ping"}]}}
 #
-@app.route('/session/<session>', methods=['GET'])
+@app.route('/sessions/<session>', methods=['GET'])
 @with_session
 def get_session_endpoint(session):
     return jsonify({'session': session['session'],
@@ -134,7 +138,7 @@ def get_session_endpoint(session):
 # Example Request:  POST /DEADBEEF/reset
 # Example Response: {"status": "OK"}
 #
-@app.route('/session/<session>/reset', methods=['POST'])
+@app.route('/sessions/<session>/reset', methods=['POST'])
 @with_session
 def reset_session_endpoint(session):
     session['players'].clear()
@@ -142,7 +146,7 @@ def reset_session_endpoint(session):
     session['inbox'].clear()
     return _okay_response(201)
 
-@app.route('/session/<session>/destroy', methods=['POST'])
+@app.route('/sessions/<session>/destroy', methods=['POST']) # TODO: Make DELETE /sessions/<session>
 @with_session
 def destroy_session_endpoint(session):
     global sessions
@@ -166,7 +170,8 @@ def register_player_endpoint(session, player):
     return jsonify({'player': player,
                     'host':   session['host']}), 201
 
-# Exactly the same as POST /<session>/register/<player> follwed by a POST /<session>/send/<player>.
+# Exactly the same as POST /<session>/register/<player>
+# immediately follwed by a POST /<session>/send/<player>.
 # Example Request:  POST /DEADBEEF/register_and_send/ada
 # Example Response: {"player": "ada", "host": "ada"}
 #
