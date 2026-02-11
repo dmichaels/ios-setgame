@@ -5,9 +5,12 @@ public protocol MessageHandler: AnyObject {
 }
 
 public extension MessageHandler {
-    public func handle(message: JoinSessionMessage) {
-        print("HANDLE-JOIN-SESSSION-MESSAGE!!! \(message)")
-        HttpSession.instance?.send(message: JoinedSessionMessage(session: "TODO"));
-        message.player
-    }
+    //
+    // These playing joining related message handlers are defaulted so
+    // that the main MessageHandler, i.e. Table in our case, does not have
+    // to bother implementing these, since this should be of no concern there;
+    // these are instead handled directly by the Session implementation.
+    //
+    func handle(message: JoinSessionMessage) {}
+    func handle(message: JoinedSessionMessage) {}
 }

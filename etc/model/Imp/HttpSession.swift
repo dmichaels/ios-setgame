@@ -1,4 +1,4 @@
-class HttpSession: Session, MessageHandler {
+class HttpSession: Session /*, MessageHandler*/ {
 
     // Singleton instance.
 
@@ -22,20 +22,6 @@ class HttpSession: Session, MessageHandler {
         }
         HttpSession.singleton = HttpSession(handler: handler, transport: transport);
         return HttpSession.singleton!;
-    }
-
-    // MessageHandler protocol implementation.
-
-    public func handle(message: PingMessage) {
-        self.handler.handle(message: message);
-    }
-
-    public func handle(message: JoinSessionMessage) {
-        self.handler.handle(message: message);
-    }
-
-    public func handle(message: JoinedSessionMessage) {
-        self.handler.handle(message: message);
     }
 
     // Session protocol implementation.
@@ -77,15 +63,53 @@ class HttpSession: Session, MessageHandler {
 
     // HttpSession class implementation.
 
-    private var transportImp: HttpTransport;
+    private let transportImp: HttpTransport;
     private var handler: SessionHandler;
     private var hostImp: String = "";
+
+    private class MessageHandlerWrapper: MessageHandler {
+        fileprivate var session: HttpSession?;
+        fileprivate func handle(message: PingMessage) {
+            self.session?.handler.handle(message: message);
+        }
+        fileprivate func handle(message: JoinSessionMessage) {
+            //
+            // TODO
+            //
+        }
+        fileprivate func handle(message: JoinedSessionMessage) {
+            //
+            // TODO
+            //
+        }
+        fileprivate func bind(to session: HttpSession) {
+            self.session = session;
+        }
+    }
 
     private init(handler: SessionHandler, transport: HttpTransport? = nil) {
         self.id = "";
         self.handler = handler;
-        self.transportImp = transport ?? HttpTransport(handler: handler);
-        //
+
+        /*
+        let handlerWrapper = MessageHandlerWrapper();
+        self.transportImp = transport ?? HttpTransport(handler: handlerWrapper); // hmm
+        handlerWrapper.bind(to: self);
+        */
+
+        if let transport = transport {
+            self.transportImp = transport;
+        }
+        else {
+            let handlerWrapper: MessageHandlerWrapper = MessageHandlerWrapper();
+            self.transportImp = HttpTransport(handler: handlerWrapper);
+            handlerWrapper.bind(to: self);
+        }
+
+        // self.transportImp = transport ?? HttpTransport(handler: handler); // hmm
+        // self.transportImp = transport ?? HttpTransport(handler: handler); // hmm
+        // self.transportImp = transport ?? HttpTransport(handler: self); // hmm
+
         // Bind the handler (SessionHandler, e.g. Table) to self (Session);
         // this is so it (the Table implementing SessionHandler in our case)
         // can call into us (Session) to send messages (via Session.send).
@@ -109,6 +133,18 @@ class HttpSession: Session, MessageHandler {
             self.transport.setup();
         }
     }
+
+    /*
+    private func handle(message: PingMessage) {
+        self.handler.handle(message: message);
+    }
+
+    private func handle(message: JoinSessionMessage) {
+    }
+
+    private func handle(message: JoinedSessionMessage) {
+    }
+    */
 
     public func report() {
         print("self: \(ID.of(self).hashValue) transport: \(ID.of(self.transport).hashValue)")

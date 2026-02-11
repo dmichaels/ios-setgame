@@ -14,22 +14,9 @@ public class HttpTransport: Transport {
         self.nopoll();
     }
 
-    // MessageHandler (via Transport) protocol implementation.
-
-    /*
-    public func handle(message: PingMessage) {
-    }
-
-    public func handle(message: JoinSessionMessage) {
-    }
-
-    public func handle(message: JoinedSessionMessage) {
-    }
-    */
-
     // HttpTransport class implementation.
 
-    private var handler: MessageHandler;
+    private let handler: MessageHandler;
     private let url: URL;
     private let key: String;
     private var session: String?;
@@ -42,6 +29,7 @@ public class HttpTransport: Transport {
         self.url = URL.create("https://api.logicard.dmichaels.dev");
      // self.url = URL.create("http://127.0.0.1:8001");
         self.key = ".0turangalila";
+        /*
         Task {
             if let x: [String] = await self.url.get("/sessions", as: [String].self, key: ".0turangalila") {
                 print("SESSIONS FROM SERVER: \(x)")
@@ -50,6 +38,7 @@ public class HttpTransport: Transport {
                 print("SESSIONS FROM SERVER ERROR!")
             }
         }
+        */
     }
 
     public func createAndHostSession(host player: String, bind: Bool = false) async -> String? {

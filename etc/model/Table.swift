@@ -12,8 +12,8 @@ public class Table: SessionHandler {
     // MessageHandler (via SessionHandler) protocol implementation.
 
     public func handle(message: PingMessage) {}
-    public func handle(message: JoinSessionMessage) {}
-    public func handle(message: JoinedSessionMessage) {}
+    // public func handle(message: JoinSessionMessage) {}
+    // public func handle(message: JoinedSessionMessage) {}
 
     // Table class implementation.
 
