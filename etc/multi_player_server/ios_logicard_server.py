@@ -166,6 +166,22 @@ def register_player_endpoint(session, player):
     return jsonify({'player': player,
                     'host':   session['host']}), 201
 
+# Exactly the same as POST /<session>/register/<player> follwed by a POST /<session>/send/<player>.
+# Example Request:  POST /DEADBEEF/register_and_send/ada
+# Example Response: {"player": "ada", "host": "ada"}
+#
+@app.route('/<session>/register_and_send/<player>', methods=['POST'])
+@with_session
+def register_player_and_send_endpoint(session, player):
+    if player not in session['players']:
+        session['players'].add(player)
+    if not session['host']:
+        session['host'] = player
+    message = request.get_json()
+    session['inbox'].setdefault(player, []).append(message)
+    return jsonify({'player': player,
+                    'host':   session['host']}), 201
+
 # Unregisters the given player for the given session.
 # Example Request:  POST /DEADBEEF/unregister/ada
 # Example Response: {"status": "OK"}
