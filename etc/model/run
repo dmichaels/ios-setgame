@@ -2,15 +2,16 @@ rm -f main
 swiftc -suppress-warnings -o main \
     HttpSession.swift \
     HttpTransport.swift \
-    ID.swift \
-    Message.swift \
-    MessageHandler.swift \
-    MessageSender.swift \
-    PingMessage.swift \
-    Session.swift \
-    SessionHandler.swift \
+    Utils/ID.swift \
+    Interfaces/Message.swift \
+    Interfaces/MessageHandler.swift \
+    Interfaces/MessageSender.swift \
+    Messages/PingMessage.swift \
+    Messages/PlayerReadyMessage.swift \
+    Interfaces/Session.swift \
+    Interfaces/SessionHandler.swift \
     Table.swift \
-    Transport.swift \
-    URL.swift \
+    Interfaces/Transport.swift \
+    Utils/URL.swift \
     main.swift
 ./main
