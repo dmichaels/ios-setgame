@@ -119,7 +119,13 @@ public extension URL {
         return await self.exec(path, method: "POST", data: data, as: type, status: status, key: key);
     }
 
-    // POST fire-and-forget (synchronous) methods (the ones without an "as" type argument).
+    public func post(_ path: String?..., data: Json,
+                       as type: Json.Type,
+                       status: Int? = nil, key: String? = nil) async -> Json? {
+        return await self.exec(path, method: "POST", data: data, as: type, status: status, key: key);
+    }
+
+    // POST fire-and-forget (not async) methods (the ones without an "as" type argument).
 
     public func post(_ path: [String?], data: Data? = nil, key: String? = nil) -> Bool {
         return self.execfaf(path, method: "POST", data: data, key: key);
@@ -176,6 +182,18 @@ public extension URL {
                         status: Int? = nil, key: String? = nil) async -> Json? {
         if let response = await self.exec(path, method: method, data: data, status: status, key: key) {
             return try? JSONSerialization.jsonObject(with: response) as? Json;
+        }
+        return nil;
+    }
+
+    private func exec(_ path: [String?], method: String? = nil,
+                        data: Json,
+                        as type: Json.Type,
+                        status: Int? = nil, key: String? = nil) async -> Json? {
+        if let data: Data = try? JSONSerialization.data(withJSONObject: data) {
+            if let response = await self.exec(path, method: method, data: data, status: status, key: key) {
+                return try? JSONSerialization.jsonObject(with: response) as? Json;
+            }
         }
         return nil;
     }

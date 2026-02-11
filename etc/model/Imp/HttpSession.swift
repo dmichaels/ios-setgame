@@ -48,50 +48,59 @@ public extension GameCenter {
         }
 
         private func join(session id: String, direct: Bool = false) async -> Bool {
+            guard !self.hosting else { print("BAD ATTEMPT OF HOST \(self.player) TO JOIN SESSION!!!") ; return false }
             if (direct) {
+                print("JOINING SESSION DIRECTLY> player: \(self.player) host: \(self.host) session: \(id)")
                 if let (player, host) = await self.transportImp.registerPlayer(self.player, session: id) {
                     print("JOINED SESSION DIRECTLY> player: \(player) host: \(host) session: \(id)")
                 }
                 else {
+                    print("FAILED TO JOIN SESSION DIRECTLY> player: \(player) host: \(host) session: \(id)")
                     return false;
                 }
             }
-            else if await self.transportImp.sendMessage(JoinSessionMessage(player: self.player), session: id) {
-                print("JOINED SESSION INDIRECTLY> player: \(player) host: \(host) session: \(id)")
-            }
             else {
-                return false;
+                print("JOINING SESSION INDIRECTLY> player: \(player) host: \(host) session: \(id)")
+                if await self.transportImp.sendHostMessage(JoinSessionMessage(player: self.player), session: id) {
+                    print("JOINED SESSION INDIRECTLY> player: \(player) host: \(host) session: \(id)")
+                }
+                else {
+                    print("FAILED TO JOIN SESSION INDIRECTLY> player: \(player) host: \(host) session: \(id)")
+                    return false;
+                }
             }
             self.transport.setup();
             return true;
         }
 
-        /*
-        public func join(session id: String) async -> Bool {
-            if let (player, host) = await self.transportImp.registerPlayer(self.player, session: id) {
-                print("JOINED SESSION> player: \(player) host: \(host) session: \(id)")
-                return true;
-            }
-            return false;
+        // Sends the given message to the given player for the session.
+        //
+        public func send(message: Message, to player: String) async -> Bool {
+            return await self.transportImp.sendMessage(message, player: player, session: self.id);
         }
 
-        public func requestJoin(session id: String) {
-            if (self.transportImp.sendMessage(JoinSessionMessage(player: self.player), session: id)) {
-                self.transport.setup();
-            }
-        }
-        */
-
-        public func send(message: Message) async {
-            //
-            // Sends to the host of the session via POST /<session>/send,
-            // in contrast to sending to any player via POST /<session>/send/player.
-            //
-            await self.transportImp.sendMessage(message, session: self.id);
+        // Sends the given message to the HOST for the session via POST /<session>/send;
+        // in contrast to sending a message to ANY player via POST /<session>/send/player.
+        //
+        public func sendHost(message: Message) async -> Bool {
+            return await self.transportImp.sendHostMessage(message, session: self.id);
         }
 
-        public func send(message: Message, to player: String) async {
-            await self.transportImp.sendMessage(message, player: player, session: self.id);
+        // Sends the given message to the given player for the session.
+        // This is a NON-async version of the above for possible convenience;
+        // since it is just a send and we do not really need to get/check the result.
+        //
+        public func send(message: Message, to player: String) -> Bool {
+            return self.transportImp.sendMessage(message, player: player, session: self.id);
+        }
+
+        // Sends the given message to the HOST for the session via POST /<session>/send;
+        // in contrast to sending a message to ANY player via POST /<session>/send/player.
+        // This is a NON-async version of the above for possible convenience;
+        // since it is just a send and we do not really need to get/check the result.
+        //
+        public func sendHost(message: Message) -> Bool {
+            return self.transportImp.sendHostMessage(message, session: self.id);
         }
 
         // HttpSession class implementation.

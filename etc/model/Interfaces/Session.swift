@@ -8,8 +8,10 @@ public extension GameCenter {
         var  transport: Transport { get }
         func create() async -> Bool;
         func join(session: String) async -> Bool;
-        func send(message: Message) async;
-        func send(message: Message, to: String) async;
+        func send(message: Message, to: String) async -> Bool;
+        func sendHost(message: Message) async -> Bool;
+        func send(message: Message, to: String) -> Bool;
+        func sendHost(message: Message) -> Bool;
     }
 }
 

@@ -71,7 +71,7 @@ public extension GameCenter {
 
         public func registerPlayerAndSend(_ player: String, message: Message, session: String? = nil) async -> (player: String, host: String)? {
             if let session: String = session ?? self.session {
-                if let message: [String: Any] = message.json {
+                if let message: Json = message.json {
                     if let response: Json = await self.url.post(session, "/register_and_send", player, as: Json.self, key: self.key) {
                         if let player: String = response["player"] as? String,
                             let host: String = response["host"] as? String {
@@ -83,25 +83,53 @@ public extension GameCenter {
             return nil;
         }
 
+        // Sends the given message to the given player for the session.
+        //
         public func sendMessage(_ message: Message, player: String, session: String? = nil) async -> Bool {
-            if let message: [String: Any] = message.json,
-               let session: String = session ?? self.session {
-                /* TODO URL UPDATE
-                if let response = await self.url.post(session, "/send", player, data: message, as: Json.self, key: self.key) {
-                    return true;
+            if let message: Json = message.json, let session: String = session ?? self.session {
+                if let response: Json = await self.url.post(session, "/send", player, data: message, as: Json.self, key: self.key) {
+                    if let status: String = response["status"] as? String, status == "OK" {
+                        return true;
+                    }
                 }
-                */
             }
             return false;
         }
 
-        public func sendMessage(_ message: Message, session: String? = nil) -> Bool {
-            //
-            // Sends to the host of the session via POST /<session>/send,
-            // in contrast to sending to any player via POST /<session>/send/player.
-            //
-            if let message: [String: Any] = message.json,
-               let session: String = session ?? self.session {
+        // Sends the given message to the HOST for the session via POST /<session>/send;
+        // in contrast to sending a message to ANY player via POST /<session>/send/player.
+        //
+        public func sendHostMessage(_ message: Message, session: String? = nil) async -> Bool {
+            if let message: [String: Any] = message.json, let session: String = session ?? self.session {
+                if let response: Json = await self.url.post(session, "/send", data: message, as: Json.self, key: self.key) {
+                    if let status: String = response["status"] as? String, status == "OK" {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        // Sends the given message to the given player for the session.
+        // This is a NON-async version of the above for possible convenience;
+        // since it is just a send and we do not really need to get/check the result.
+        //
+        public func sendMessage(_ message: Message, player: String, session: String? = nil) -> Bool{
+            if let message: Json = message.json, let session: String = session ?? self.session {
+                if (self.url.post([session, "/send", player], data: message, key: self.key)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Sends the given message to the HOST for the session via POST /<session>/send;
+        // in contrast to sending a message to ANY player via POST /<session>/send/player.
+        // This is a NON-async version of the above for possible convenience;
+        // since it is just a send and we do not really need to get/check the result.
+        //
+        public func sendHostMessage(_ message: Message, session: String? = nil) -> Bool {
+            if let message: [String: Any] = message.json, let session: String = session ?? self.session {
                 if (self.url.post(session, "/send", data: message, key: self.key)) {
                     return true;
                 }
@@ -110,14 +138,16 @@ public extension GameCenter {
         }
 
         public func retrieveMessages(for player: String? = nil, session: String? = nil) async -> [Message] {
-            print("RETRIEVE-MESSAGES> player: \(player) session: \(session)");
+            // print("RETRIEVE-MESSAGES> player: \(player) session: \(session)");
             if let session: String = session ?? self.session {
-                print("RETRIEVE-MESSAGES-2> player: \(player) session: \(session)");
+                // print("RETRIEVE-MESSAGES-2> player: \(player) session: \(session)");
                 let player: String = player ?? self.player;
                 if let data: Data = await self.url.get(session, "receive", player, key: self.key) {
-                    print("RETRIEVE-MESSAGES-3> player: \(player) session: \(session)");
+                    // print("RETRIEVE-MESSAGES-3> player: \(player) session: \(session)");
                     if let messages: [Message] = MessageConversion.toMessages(data: data) {
-                        print("RETRIEVE-MESSAGES-4> player: \(player) session: \(session) messages: \(messages)");
+                        if messages.count > 0 {
+                            print("POLING RETRIEVED MESSAGES> player: \(player) session: \(session) count: \(messages.count) messages: \(messages)");
+                        }
                         return messages; 
                     }
                 }
@@ -126,7 +156,7 @@ public extension GameCenter {
         }
 
         private func poll() {
-            print("TRANSPORT.POLL")
+            print("START TRANSPORT POLLING> player: \(self.player)")
             guard self.pollTask == nil else { return }
             self.pollTask = Task {
                 while (!Task.isCancelled) {
@@ -138,7 +168,7 @@ public extension GameCenter {
         }
 
         private func nopoll() {
-            print("TRANSPORT.NOPOLL")
+            print("STOP TRANSPORT POLLING> player: \(self.player)")
             // self.pollTask?.cancel();
             // self.pollTask = nil;
         }
