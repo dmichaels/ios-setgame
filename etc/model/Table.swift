@@ -17,7 +17,7 @@ public class Table: GameCenter.SessionHandler {
 
     public func startNewGame() {
         if let session: GameCenter.Session = self.session {
-            session.send(message: GameCenter.PingMessage(), to: session.player);
+            // session.send(message: GameCenter.PingMessage(), to: session.player);
         }
     }
 }

@@ -140,6 +140,12 @@ public extension GameCenter
             return 0;
         }
 
+        public func f(_ message: Message, to player: String) async {
+            if let data: [String: Any] = message.json {
+                await self.url.post(self.session, "send", player, data: data, as: Json.self, key: self.key);
+            }
+        }
+
         public func sendMessage(_ message: Message, to player: String) {
             if let data: [String: Any] = message.json {
                 //

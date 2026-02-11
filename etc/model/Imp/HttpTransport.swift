@@ -83,12 +83,14 @@ public extension GameCenter {
             return nil;
         }
 
-        public func sendMessage(_ message: Message, player: String, session: String? = nil) -> Bool {
+        public func sendMessage(_ message: Message, player: String, session: String? = nil) async -> Bool {
             if let message: [String: Any] = message.json,
                let session: String = session ?? self.session {
-                if (self.url.post(session, "/send", player, data: message, key: self.key)) {
+                /* TODO URL UPDATE
+                if let response = await self.url.post(session, "/send", player, data: message, as: Json.self, key: self.key) {
                     return true;
                 }
+                */
             }
             return false;
         }

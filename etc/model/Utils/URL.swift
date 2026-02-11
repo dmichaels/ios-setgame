@@ -183,15 +183,11 @@ public extension URL {
     // Implementation methods for first-and-forget.
 
     private func execfaf(_ path: [String?], method: String? = nil, data: Data? = nil, key: String? = nil) -> Bool {
-        print("XXX: \(path)")
-        let x = URLSession.shared.dataTask(with: self.request(path, method: method, data: data, key: key)).resume();
-        print(x)
-        print("XXX DONE: \(path)")
+        URLSession.shared.dataTask(with: self.request(path, method: method, data: data, key: key)).resume();
         return true;
     }
 
     private func execfaf(_ path: [String?], method: String? = nil, data: Json, key: String? = nil) -> Bool {
-        print("YYY: \(path)")
         if let data: Data = try? JSONSerialization.data(withJSONObject: data) {
             return self.execfaf(path, method: "POST", data: data, key: key);
         }

@@ -56,7 +56,7 @@ public extension GameCenter {
                     return false;
                 }
             }
-            else if (self.transportImp.sendMessage(JoinSessionMessage(player: self.player), session: id)) {
+            else if await self.transportImp.sendMessage(JoinSessionMessage(player: self.player), session: id) {
                 print("JOINED SESSION INDIRECTLY> player: \(player) host: \(host) session: \(id)")
             }
             else {
@@ -82,16 +82,16 @@ public extension GameCenter {
         }
         */
 
-        public func send(message: Message) {
+        public func send(message: Message) async {
             //
             // Sends to the host of the session via POST /<session>/send,
             // in contrast to sending to any player via POST /<session>/send/player.
             //
-            self.transportImp.sendMessage(message, session: self.id);
+            await self.transportImp.sendMessage(message, session: self.id);
         }
 
-        public func send(message: Message, to player: String) {
-            self.transportImp.sendMessage(message, player: player, session: self.id);
+        public func send(message: Message, to player: String) async {
+            await self.transportImp.sendMessage(message, player: player, session: self.id);
         }
 
         // HttpSession class implementation.
