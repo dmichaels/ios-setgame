@@ -16,14 +16,14 @@ public class HttpTransport: Transport {
 
     // HttpTransport class implementation.
 
-    private let handler: MessageHandler;
+    private let handler: GameCenter.MessageHandler;
     private let url: URL;
     private let key: String;
     private var session: String?;
     private var pollTask: Task<Void, Never>? = nil;
     private let pollInterval: UInt64 = 1_000_000_000;
 
-    public init(handler: MessageHandler) {
+    public init(handler: GameCenter.MessageHandler) {
         print("HTTP-TRANSPORT.INIT")
         self.handler = handler;
         self.url = URL.create("https://api.logicard.dmichaels.dev");

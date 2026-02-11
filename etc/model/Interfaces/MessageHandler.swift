@@ -1,10 +1,13 @@
-public protocol MessageHandler: AnyObject {
-    func handle(message: PingMessage);
-    func handle(message: JoinSessionMessage);
-    func handle(message: JoinedSessionMessage);
+public extension GameCenter {
+
+    public protocol MessageHandler: AnyObject {
+        func handle(message: PingMessage);
+        func handle(message: JoinSessionMessage);
+        func handle(message: JoinedSessionMessage);
+    }
 }
 
-public extension MessageHandler {
+public extension GameCenter.MessageHandler {
     //
     // These playing joining related message handlers are defaulted so
     // that the main MessageHandler, i.e. Table in our case, does not have

@@ -2,6 +2,7 @@ DIR=/Users/dmichaels/repos/ios-setgame/etc/model
 rm -f ${DIR}/main
 swiftc -suppress-warnings -o \
     ${DIR}/main \
+    ${DIR}/GameCenter.swift \
     ${DIR}/Imp/HttpSession.swift \
     ${DIR}/Imp/HttpTransport.swift \
     ${DIR}/Utils/ID.swift \

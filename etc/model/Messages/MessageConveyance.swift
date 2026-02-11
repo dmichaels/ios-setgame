@@ -2,7 +2,7 @@ import Foundation
 
 public struct MessageConveyance {
 
-    public static func dispatch(messages: [Message]?, handler: MessageHandler) {
+    public static func dispatch(messages: [Message]?, handler: GameCenter.MessageHandler) {
         if let messages: [Message] = messages {
             for message: Message in messages {
                 MessageConveyance.dispatch(message: message,

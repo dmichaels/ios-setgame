@@ -1,4 +1,4 @@
-class HttpSession: Session /*, MessageHandler*/ {
+class HttpSession: Session {
 
     // Singleton instance.
 
@@ -67,7 +67,7 @@ class HttpSession: Session /*, MessageHandler*/ {
     private var handler: SessionHandler;
     private var hostImp: String = "";
 
-    private class MessageHandlerWrapper: MessageHandler {
+    private class MessageHandlerWrapper: GameCenter.MessageHandler {
         fileprivate var session: HttpSession?;
         fileprivate func handle(message: PingMessage) {
             self.session?.handler.handle(message: message);
@@ -133,18 +133,6 @@ class HttpSession: Session /*, MessageHandler*/ {
             self.transport.setup();
         }
     }
-
-    /*
-    private func handle(message: PingMessage) {
-        self.handler.handle(message: message);
-    }
-
-    private func handle(message: JoinSessionMessage) {
-    }
-
-    private func handle(message: JoinedSessionMessage) {
-    }
-    */
 
     public func report() {
         print("self: \(ID.of(self).hashValue) transport: \(ID.of(self.transport).hashValue)")
