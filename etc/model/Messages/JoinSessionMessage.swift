@@ -1,3 +1,5 @@
+public extension GameCenter {
+
     public struct JoinSessionMessage: Message {
         public let type: MessageType;
         public let player: String;
@@ -6,3 +8,4 @@
             self.player = player;
         }
     }
+}

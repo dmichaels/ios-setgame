@@ -1,3 +1,6 @@
-public protocol SessionHandler: GameCenter.MessageHandler {
-    var  session: Session? { get set }
+public extension GameCenter {
+
+    public protocol SessionHandler: MessageHandler {
+        var  session: Session? { get set }
+    }
 }
