@@ -61,24 +61,30 @@ public class HttpTransport: Transport {
         return nil;
     }
 
-    public func registerPlayer(_ player: String, session: String? = nil) async -> Bool {
+    public func registerPlayer(_ player: String, session: String? = nil) async -> (player: String, host: String)? {
         if let session: String = session ?? self.session {
             if let response: Json = await self.url.post(session, "/register", player, as: Json.self, key: self.key) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public func registerPlayerAndSend(_ player: String, message: Message, session: String? = nil) async -> Bool {
-        if let session: String = session ?? self.session {
-            if let message: [String: Any] = message.json {
-                if let response: Json = await self.url.post(session, "/register_and_send", player, as: Json.self, key: self.key) {
-                    return true;
+                if let player: String = response["player"] as? String,
+                    let host: String = response["host"] as? String {
+                    return (player: player, host: host);
                 }
             }
         }
-        return false;
+        return nil;
+    }
+
+    public func registerPlayerAndSendNew(_ player: String, message: Message, session: String? = nil) async -> (player: String, host: String)? {
+        if let session: String = session ?? self.session {
+            if let message: [String: Any] = message.json {
+                if let response: Json = await self.url.post(session, "/register_and_send", player, as: Json.self, key: self.key) {
+                    if let player: String = response["player"] as? String,
+                        let host: String = response["host"] as? String {
+                        return (player: player, host: host);
+                    }
+                }
+            }
+        }
+        return nil;
     }
 
     public func sendMessage(_ message: Message, session: String? = nil) -> Bool {

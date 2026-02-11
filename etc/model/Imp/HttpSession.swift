@@ -28,27 +28,24 @@ class HttpSession: Session {
 
     public private(set) var id: String;
     public var transport: Transport { self.transportImp };
-    public var host: String { "" }; // TODO
+    public var host: String { self.hostImp }; // TODO
 
     public func create() async -> Bool {
         if let id: String = await self.transportImp.createSession(bind: true) {
             self.id = id;
             print("CREATED SESSION> \(self.id)");
-            if await self.transportImp.registerPlayer(self.player) {
-                //
-                // TODO: SET self.hostImp!
-                //
-                print("REGISTERED PLAYER> \(self.player)");
+            if let (player, host) = await self.transportImp.registerPlayer(self.player) {
+                print("REGISTERED PLAYER> player: \(self.player) host: \(host) session: \(self.id)");
+                self.hostImp = host;
                 self.transport.setup();
-                return true;
             }
         }
         return false;
     }
 
     public func join(session id: String) async -> Bool {
-        if await self.transportImp.registerPlayer(player, session: id) {
-            print("JOINED SESSION> player: \(player) session: \(id)")
+        if let (player, host) = await self.transportImp.registerPlayer(player, session: id) {
+            print("JOINED SESSION> player: \(player) host: \(host) session: \(id)")
             return true;
         }
         return false;
