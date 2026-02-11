@@ -70,8 +70,8 @@ def _nosession_response():
 def _noplayer_response():
     return jsonify({'status': 'noplayer'}), 404
 
-def _nohost_response():
-    return jsonify({'status': 'nohost'}), 404
+def _nohost_response(status = 404):
+    return jsonify({'status': 'nohost'}), status
 
 def with_session(func):
     @wraps(func)
@@ -195,6 +195,9 @@ def register_player_and_send_endpoint(session, player):
                     'players': session['players']}), 201
 
 # Unregisters the given player for the given session.
+# However if the given player is also the host then does nothing;
+# i.e. cannot unregister the host; though the host can be changed
+# via POST /<session>/host/<player>.
 # Example Request:  POST /DEADBEEF/unregister/ada
 # Example Response: {"status": "OK"}
 #
@@ -203,6 +206,8 @@ def register_player_and_send_endpoint(session, player):
 def unregister_player_endpoint(session, player):
     if player not in session['players']:
         return _noplayer_response()
+    if player == session['host']:
+        return _nohost_response(409) # not allowed to unregister host
     session['players'].remove(player)
     session['inbox'].pop(player, None)
     if session['host'] == player:
