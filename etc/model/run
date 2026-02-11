@@ -10,9 +10,8 @@ swiftc -suppress-warnings -o \
     ${DIR}/Interfaces/MessageSender.swift \
     ${DIR}/Messages/MessageType.swift \
     ${DIR}/Messages/JoinSessionMessage.swift \
-    ${DIR}/Messages/JoinSessionAcceptedMessage.swift \
+    ${DIR}/Messages/JoinedSessionMessage.swift \
     ${DIR}/Messages/PingMessage.swift \
-    ${DIR}/Messages/PlayerReadyMessage.swift \
     ${DIR}/Interfaces/Session.swift \
     ${DIR}/Interfaces/SessionHandler.swift \
     ${DIR}/Table.swift \

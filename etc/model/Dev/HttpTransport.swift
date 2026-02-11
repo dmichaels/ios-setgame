@@ -14,12 +14,20 @@ public class HttpTransport: Transport {
         self.nopoll();
     }
 
+    // MessageHandler (via Transport) protocol implementation.
+
+    public func handle(message: PingMessage) {}
+    public func handle(message: JoinSessionMessage) {}
+    public func handle(message: JoinedSessionMessage) {}
+
     // HttpTransport class implementation.
 
     private var handler: MessageHandler;
     private let url: URL;
     private let key: String;
     private var session: String?;
+    private var pollTask: Task<Void, Never>? = nil;
+    private let pollInterval: UInt64 = 1_000_000_000;
 
     public init(handler: MessageHandler) {
         print("HTTP-TRANSPORT.INIT")
@@ -66,11 +74,41 @@ public class HttpTransport: Transport {
         return false;
     }
 
+    public func retrieveMessages(for player: String? = nil, session: String? = nil) async -> [Message] {
+        print("RETRIEVE-MESSAGES> player: \(player) session: \(session)");
+        if let session: String = session ?? self.session {
+            print("RETRIEVE-MESSAGES-2> player: \(player) session: \(session)");
+            let player: String = player ?? self.player;
+            if let data: Data = await self.url.get(session, "receive", player, key: self.key) {
+                print("RETRIEVE-MESSAGES-3> player: \(player) session: \(session)");
+                if let messages: [Message] = MessageConversion.toMessages(data: data) {
+                    print("RETRIEVE-MESSAGES-4> player: \(player) session: \(session) messages: \(messages)");
+                    return messages; 
+                }
+            }
+        }
+        return [];
+    }
+
     private func poll() {
         print("TRANSPORT.POLL")
+        guard self.pollTask == nil else { return }
+        self.pollTask = Task {
+            while (!Task.isCancelled) {
+                let messages: [Message] = await self.retrieveMessages(for: self.player);
+                self.dispatchMessages(messages: messages);
+                try? await Task.sleep(nanoseconds: self.pollInterval);
+            }
+        }
     }
 
     private func nopoll() {
         print("TRANSPORT.NOPOLL")
+    }
+
+    private func dispatchMessages(messages: [Message]) {
+        DispatchQueue.main.async {
+            MessageConveyance.dispatch(messages: messages, handler: self);
+        }
     }
 }
