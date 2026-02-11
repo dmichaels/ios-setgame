@@ -31,18 +31,7 @@ public extension GameCenter {
             self.handler = handler;
             self.url = url ?? URL.create("https://api.logicard.dmichaels.dev");
             print("HTTP-TRANSPORT CREATED> url: \(self.url.value)")
-         // self.url = URL.create("http://127.0.0.1:8001");
             self.key = ".0turangalila";
-            /*
-            Task {
-                if let x: [String] = await self.url.get("/sessions", as: [String].self, key: ".0turangalila") {
-                    print("SESSIONS FROM SERVER: \(x)")
-                }
-                else {
-                    print("SESSIONS FROM SERVER ERROR!")
-                }
-            }
-            */
         }
 
         public func createAndHostSession(host player: String, bind: Bool = false) async -> String? {
@@ -179,7 +168,6 @@ public extension GameCenter {
 
         private func dispatchMessages(messages: [Message]) {
             DispatchQueue.main.async {
-             // MessageConveyance.dispatch(messages: messages, handler: self);
                 MessageConveyance.dispatch(messages: messages, handler: self.handler);
             }
         }
