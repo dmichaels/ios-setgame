@@ -57,16 +57,10 @@ public class HttpTransport: Transport {
     }
 
     public func sendMessage(_ message: Message, session: String? = nil) -> Bool {
-        if let message: [String: Any] = message.json {
-            if let session: String = session ?? self.session {
-                print("SEND-MESSAGE> session: \(session) message: \(message) -> \(self.url.append(session, "/send"))")
-                if self.url.post(session, "/send", data: message, key: self.key) {
-                    print("SEND-MESSAGE: session: \(session) message: \(message) --> OK")
-                    return true;
-                }
-                else {
-                    print("SEND-MESSAGE: session: \(session) message: \(message) --> NOT OK")
-                }
+        if let message: [String: Any] = message.json,
+           let session: String = session ?? self.session {
+            if (self.url.post(session, "/send", data: message, key: self.key)) {
+                return true;
             }
         }
         return false;
