@@ -144,14 +144,17 @@ public extension GameCenter {
         }
 
         private func handle(message: PingMessage) {
+            print("HANDLE PING MESSAGE> player: \(self.player) message: \(message) session: \(self.id)")
             self.handler.handle(message: message);
         }
 
         private func handle(message: JoinSessionMessage) {
+            print("HANDLE JOIN MESSAGE> player: \(self.player) message: \(message) session: \(self.id)")
             self.handler.handle(message: message);
         }
 
         private func handle(message: JoinedSessionMessage) {
+            print("HANDLE JOINED MESSAGE> player: \(self.player) message: \(message) session: \(self.id)")
             self.handler.handle(message: message);
         }
 
