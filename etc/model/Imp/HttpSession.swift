@@ -1,3 +1,5 @@
+import Foundation
+
 public extension GameCenter {
 
     public class HttpSession: Session {
@@ -19,6 +21,7 @@ public extension GameCenter {
                 // a new instance; we take care in this case to cleanup the existing singleton;
                 // e.g. to stop HttpTransport polling via the Transport.release function.
                 //
+                print("NOT NORMAL> RECREATING HttpSession INSTANCE")
                 instance.transport.release();
                 HttpSession.singleton = nil;
             }
@@ -109,7 +112,7 @@ public extension GameCenter {
         private var handler: SessionHandler;
         private var hostImp: String = "";
 
-        private init(handler: SessionHandler, transport: HttpTransport.Factory? = nil) {
+        public init(handler: SessionHandler, url: URL? = nil, transport: HttpTransport.Factory? = nil) {
 
             class MessageHandler: GameCenter.MessageHandler {
                 var session: HttpSession?;
@@ -133,7 +136,7 @@ public extension GameCenter {
             // cause of this slightly confusing and complicated situation here).
             //
             let wrapper: MessageHandler = MessageHandler();
-            self.transportImp = transport?(wrapper) ?? HttpTransport(handler: wrapper);
+            self.transportImp = transport?(wrapper) ?? HttpTransport(handler: wrapper, url: url);
             wrapper.session = self;
 
             // Bind the given SessionHandler (which in our case is Table) to ourselves;

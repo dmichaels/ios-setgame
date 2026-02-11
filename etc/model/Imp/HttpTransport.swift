@@ -28,9 +28,9 @@ public extension GameCenter {
         private let pollInterval: UInt64 = 1_000_000_000;
 
         public init(handler: MessageHandler, url: URL? = nil) {
-            print("HTTP-TRANSPORT.INIT")
             self.handler = handler;
             self.url = url ?? URL.create("https://api.logicard.dmichaels.dev");
+            print("HTTP-TRANSPORT CREATED> url: \(self.url.value)")
          // self.url = URL.create("http://127.0.0.1:8001");
             self.key = ".0turangalila";
             /*
@@ -140,23 +140,27 @@ public extension GameCenter {
         public func retrieveMessages(for player: String? = nil, session: String? = nil) async -> [Message] {
             // print("RETRIEVE-MESSAGES> player: \(player) session: \(session)");
             if let session: String = session ?? self.session {
+                print("POLLING MESSAGES> player: \(player) session: \(session) self.session: \(self.session)");
                 // print("RETRIEVE-MESSAGES-2> player: \(player) session: \(session)");
                 let player: String = player ?? self.player;
                 if let data: Data = await self.url.get(session, "receive", player, key: self.key) {
                     // print("RETRIEVE-MESSAGES-3> player: \(player) session: \(session)");
                     if let messages: [Message] = MessageConversion.toMessages(data: data) {
                         if messages.count > 0 {
-                            print("POLING RETRIEVED MESSAGES> player: \(player) session: \(session) count: \(messages.count) messages: \(messages)");
+                            print("POLLED MESSAGES> player: \(player) session: \(session) count: \(messages.count) messages: \(messages)");
                         }
                         return messages; 
                     }
                 }
             }
+            else {
+                print("NOT POLLING MESSAGES> player: \(player) session: \(session) self.session: \(self.session)");
+            }
             return [];
         }
 
         private func poll() {
-            print("START TRANSPORT POLLING> player: \(self.player)")
+            print("START MESSAGE POLLING> player: \(self.player) session: \(self.session)")
             guard self.pollTask == nil else { return }
             self.pollTask = Task {
                 while (!Task.isCancelled) {
@@ -168,9 +172,9 @@ public extension GameCenter {
         }
 
         private func nopoll() {
-            print("STOP TRANSPORT POLLING> player: \(self.player)")
-            // self.pollTask?.cancel();
-            // self.pollTask = nil;
+            print("STOP MESSAGE POLLING> player: \(self.player) session: \(self.session)")
+            self.pollTask?.cancel();
+            self.pollTask = nil;
         }
 
         private func dispatchMessages(messages: [Message]) {
