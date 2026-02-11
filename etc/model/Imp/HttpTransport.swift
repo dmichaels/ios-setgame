@@ -16,6 +16,7 @@ public class HttpTransport: Transport {
 
     // MessageHandler (via Transport) protocol implementation.
 
+    /*
     public func handle(message: PingMessage) {
     }
 
@@ -24,6 +25,7 @@ public class HttpTransport: Transport {
 
     public func handle(message: JoinedSessionMessage) {
     }
+    */
 
     // HttpTransport class implementation.
 
@@ -88,7 +90,21 @@ public class HttpTransport: Transport {
         return nil;
     }
 
+    public func sendMessage(_ message: Message, player: String, session: String? = nil) -> Bool {
+        if let message: [String: Any] = message.json,
+           let session: String = session ?? self.session {
+            if (self.url.post(session, "/send", player, data: message, key: self.key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public func sendMessage(_ message: Message, session: String? = nil) -> Bool {
+        //
+        // Sends to the host of the session via POST /<session>/send,
+        // in contrast to sending to any player via POST /<session>/send/player.
+        //
         if let message: [String: Any] = message.json,
            let session: String = session ?? self.session {
             if (self.url.post(session, "/send", data: message, key: self.key)) {
@@ -134,7 +150,8 @@ public class HttpTransport: Transport {
 
     private func dispatchMessages(messages: [Message]) {
         DispatchQueue.main.async {
-            MessageConveyance.dispatch(messages: messages, handler: self);
+         // MessageConveyance.dispatch(messages: messages, handler: self);
+            MessageConveyance.dispatch(messages: messages, handler: self.handler);
         }
     }
 }

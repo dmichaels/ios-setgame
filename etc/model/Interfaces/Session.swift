@@ -4,10 +4,10 @@ public protocol Session: AnyObject {
     var  host: String { get }
     var  hosting: Bool { get }
     var  transport: Transport { get }
-    func send(message: Message);
-    func send(message: Message, to: String);
     func create() async -> Bool;
     func join(session: String) async -> Bool;
+    func send(message: Message);
+    func send(message: Message, to: String);
 }
 
 public extension Session {

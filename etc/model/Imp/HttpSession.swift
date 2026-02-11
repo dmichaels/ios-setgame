@@ -1,4 +1,4 @@
-class HttpSession: Session {
+class HttpSession: Session, MessageHandler {
 
     // Singleton instance.
 
@@ -24,14 +24,26 @@ class HttpSession: Session {
         return HttpSession.singleton!;
     }
 
+    // MessageHandler protocol implementation.
+
+    public func handle(message: PingMessage) {
+        self.handler
+    }
+
+    public func handle(message: JoinSessionMessage) {
+    }
+
+    public func handle(message: JoinedSessionMessage) {
+    }
+
     // Session protocol implementation.
 
     public private(set) var id: String;
+    public var host: String { self.hostImp };
     public var transport: Transport { self.transportImp };
-    public var host: String { self.hostImp }; // TODO
 
     public func create() async -> Bool {
-            print("CREATING HOSTED SESSION> session: \(self.id) host: \(self.player)");
+        print("CREATING HOSTED SESSION> session: \(self.id) host: \(self.player)");
         if let id: String = await self.transportImp.createAndHostSession(host: self.player, bind: true) {
             self.id = id;
             print("CREATED HOSTED SESSION> session: \(self.id) host: \(self.player)");
@@ -49,17 +61,16 @@ class HttpSession: Session {
         return false;
     }
 
-    public func requestJoin(session id: String) {
-        if (self.transportImp.sendMessage(JoinSessionMessage(player: self.player), session: id)) {
-            self.transport.setup();
-        }
-    }
-
     public func send(message: Message) {
+        //
+        // Sends to the host of the session via POST /<session>/send,
+        // in contrast to sending to any player via POST /<session>/send/player.
+        //
         self.transportImp.sendMessage(message, session: self.id);
     }
 
     public func send(message: Message, to player: String) {
+        self.transportImp.sendMessage(message, player: player, session: self.id);
     }
 
     // HttpSession class implementation.
@@ -89,6 +100,12 @@ class HttpSession: Session {
 
     private func bind(to handler: SessionHandler) {
         handler.session = self;
+    }
+
+    public func requestJoin(session id: String) {
+        if (self.transportImp.sendMessage(JoinSessionMessage(player: self.player), session: id)) {
+            self.transport.setup();
+        }
     }
 
     public func report() {
