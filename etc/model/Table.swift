@@ -4,7 +4,7 @@ public class Table: SessionHandler {
 
     public var session: Session?
 
-    // MessageHandler protocol implementation.
+    // MessageHandler (via SessionHandler) protocol implementation.
 
     public func handle(message: PingMessage) {}
     public func handle(message: JoinSessionMessage) {}

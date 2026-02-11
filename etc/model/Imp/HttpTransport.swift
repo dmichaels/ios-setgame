@@ -103,7 +103,8 @@ public class HttpTransport: Transport {
     }
 
     private func nopoll() {
-        print("TRANSPORT.NOPOLL")
+        self.pollTask?.cancel();
+        self.pollTask = nil;
     }
 
     private func dispatchMessages(messages: [Message]) {
