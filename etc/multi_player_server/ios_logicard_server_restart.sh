@@ -1,0 +1,3 @@
+ios_logicard_server_kill.sh
+sleep 1
+ios_logicard_server_start.sh
