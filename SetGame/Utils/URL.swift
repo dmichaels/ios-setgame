@@ -83,6 +83,18 @@ public extension URL {
         await self.get(path, as: type, status: status, key: key);
     }
 
+    public func get(_ path: [String?],
+                      as type: [Json].Type,
+                      status: Int? = 200, key: String? = nil) async -> [Json]? {
+        return await self.exec(path, method: nil, data: nil, as: type, status: status, key: key);
+    }
+
+    public func get(_ path: String?...,
+                      as type: [Json].Type,
+                      status: Int? = 200, key: String? = nil) async -> [Json]? {
+        await self.get(path, as: type, status: status, key: key);
+    }
+
     // POST methods.
 
     public func post(_ path: [String?], data: Data? = nil,
@@ -171,8 +183,7 @@ public extension URL {
     }
 
     private func exec<T: Decodable>(_ path: [String?], method: String? = nil,
-                                      data: Data? = nil,
-                                      as type: T.Type,
+                                      data: Data? = nil, as type: T.Type,
                                       status: Int? = nil, key: String? = nil) async -> T? {
         if let response = await self.exec(path, method: method, data: data, status: status, key: key) {
             if let response = try? JSONDecoder().decode(type, from: response) {
@@ -183,8 +194,7 @@ public extension URL {
     }
 
     private func exec(_ path: [String?], method: String? = nil,
-                        data: Data? = nil,
-                        as type: Json.Type,
+                        data: Data? = nil, as type: Json.Type,
                         status: Int? = nil, key: String? = nil) async -> Json? {
         if let response = await self.exec(path, method: method, data: data, status: status, key: key) {
             return try? JSONSerialization.jsonObject(with: response) as? Json;
@@ -193,8 +203,16 @@ public extension URL {
     }
 
     private func exec(_ path: [String?], method: String? = nil,
-                        data: Json,
-                        as type: Json.Type,
+                        data: Data? = nil, as type: [Json].Type,
+                        status: Int? = nil, key: String? = nil) async -> [Json]? {
+        if let response = await self.exec(path, method: method, data: data, status: status, key: key) {
+            return try? JSONSerialization.jsonObject(with: response, options: []) as? [Json];
+        }
+        return nil;
+    }
+
+    private func exec(_ path: [String?], method: String? = nil,
+                        data: Json, as type: Json.Type,
                         status: Int? = nil, key: String? = nil) async -> Json? {
         if let data: Data = try? JSONSerialization.data(withJSONObject: data) {
             if let response = await self.exec(path, method: method, data: data, status: status, key: key) {

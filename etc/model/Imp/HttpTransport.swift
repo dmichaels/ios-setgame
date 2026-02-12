@@ -154,8 +154,8 @@ public extension GameCenter {
                 print("RECEIEVED MESSAGES B> session: \(session) player: \(player)")
                 let player: String = player ?? self.player;
                 print("RECEIEVED MESSAGES C> session: \(session) player: \(player)")
-                if let data: Data = await self.url.get(session, "receive", player, key: self.key) {
-                    print("RECEIEVED MESSAGES D> session: \(session) player: \(player)")
+                if let data: Data = await self.url.get(session, "receive", player, as: Data.self, key: self.key) {
+                    print("RECEIEVED MESSAGES D> session: \(session) player: \(player) data: \(data)")
                     if let messages: [Message] = MessageConversion.toMessages(data: data) {
                         if messages.count > 0 { print("RECEIEVED MESSAGES> session: \(session) player: \(player) messages: \(messages.count) -> \(messages)") }
                         return messages; 

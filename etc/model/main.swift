@@ -6,7 +6,7 @@ print("Main module")
 let url: URL = URL.create("http://127.0.0.1:8001")
 var table: Table = Table()
 
-let joinWait: Bool? = nil;
+let joinWait: Bool? = true;
 
 Task {
 
@@ -44,6 +44,17 @@ Task {
     }
     try? await Task.sleep(nanoseconds: 5_000_000_000);
     print("SESSION-B CHECKUP> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
+
+/*
+    print("A")
+    if let data: [Json] = await url.get("ECAB7022E77F4D0582A9704EF0826348", "receive", "591E", as: [Json].self, key: ".0turangalila") {
+    // if let data: Json = await url.get("sessions", as: Json.self, key: ".0turangalila") {
+        print("BiBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+        print(data)
+    }
+    print("C")
+*/
+
 }
 
 dispatchMain() // 🔒 This keeps the app alive forever.
