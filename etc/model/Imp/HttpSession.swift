@@ -52,7 +52,7 @@ public extension GameCenter {
                     // If the wait argument is true then send a
                     // join message to the host and wait for its return.
                     //
-                    return await self.joinAsyncWithWait(session: session);
+                    return await self.joinAsyncAndWait(session: session);
                 }
                 else {
                     //
@@ -171,7 +171,7 @@ public extension GameCenter {
             }
         }
 
-        private func joinAsyncWithWait(session: String?) async -> Bool {
+        private func joinAsyncAndWait(session: String?) async -> Bool {
             guard let session: String = session, !self.hosting else { return false }
             do {
                 let success: Bool = try await withTimeout(seconds: 5) {
@@ -219,24 +219,3 @@ public extension GameCenter {
         }
     }
 }
-
-func withTimeout<T>(
-    seconds: TimeInterval,
-    operation: @escaping () async throws -> T
-) async throws -> T {
-    try await withThrowingTaskGroup(of: T.self) { group in
-        group.addTask {
-            try await operation()
-        }
-        group.addTask {
-            try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
-            throw TimeoutError()
-        }
-
-        let result = try await group.next()!
-        group.cancelAll()
-        return result
-    }
-}
-
-struct TimeoutError: Error {}
