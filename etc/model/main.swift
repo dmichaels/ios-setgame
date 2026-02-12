@@ -70,7 +70,6 @@ private func poll(session: GameCenter.Session) {
     guard pollTask == nil else { return }
     pollTask = Task {
         while (!Task.isCancelled) {
-            // TODO
             print("POLL SESSION> \(session.session) player: \(session.player) host: \(session.host) hosting: \(session.hosting) players: \(session.players)")
             try? await Task.sleep(nanoseconds: pollInterval);
         }
