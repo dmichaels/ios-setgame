@@ -64,17 +64,6 @@ public extension GameCenter {
                 //
                 return await self.joinDirect(session: session);
             }
-            /*
-            if (wait == nil) {
-                return await self.joinDirect(session: session);
-            }
-            else if (wait == true) {
-                return await self.joinAsyncWithWait(session: session);
-            }
-            else if (wait == false) {
-                return await self.joinAsync(session: session);
-            }
-            */
         }
 
         // Sends the given message to the given player for the session.
