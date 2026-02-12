@@ -177,9 +177,5 @@ public extension GameCenter {
             print("HANDLE JOINED MESSAGE DONE> player: \(self.player) session: \(self.session) host: \(self.host) hosting: \(self.hosting) message.session: \(message.session) message.host: \(message.host)")
             // self.handler.handle(message: message);
         }
-
-        public func report() {
-            print("self: \(ID.of(self).hashValue) transport: \(ID.of(self.transport).hashValue)")
-        }
     }
 }
