@@ -177,9 +177,7 @@ public extension GameCenter {
                 let success: Bool = try await withTimeout(seconds: 5) {
                     try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
                         self.joinSessionContinuation = continuation
-                        Task {
-                            await self.joinAsync(session: session);
-                        }
+                        Task { await self.joinAsync(session: session) }
                     }
                     return true;
                 }
