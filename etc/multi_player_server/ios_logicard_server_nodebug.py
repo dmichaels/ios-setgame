@@ -5,17 +5,6 @@
 # Now simply run as simple Python script (no sudo needed); see ios_logicard_server.sh.
 # Note that our dmichaels.dev domain is registered via Squarespace.
 # Note that our static AWS LightSail IP address is: 34.232.248.47
-#
-# On AWS (LightSail) we use (in ios_logicard_server_start.sh) to start:
-#
-# sudo -E \
-#   python3 ios_logicard_server.py \
-#     --cert /etc/letsencrypt/live/dmichaels.dev/fullchain.pem \
-#     --key  /etc/letsencrypt/live/dmichaels.dev/privkey.pem \
-#     --host 0.0.0.0 \
-#     --port 443 \
-#       > ios_logicard_server.log 2>&1 &
-#
 # Note that redirect from HTTP to HTTPS not needed because the .dev TLD requires HTTPS.
 
 import argparse
@@ -36,9 +25,8 @@ APIKEY = '.0turangalila'
 parser = argparse.ArgumentParser()
 parser.add_argument('--host', type=str, default='127.0.0.1', help='Host address to bind to.')
 parser.add_argument('--port', type=int, default=8001,        help='Port to bind to.')
-parser.add_argument('--cert', type=str, default=None,        help='Path to SSL certificate.')
-parser.add_argument('--key',  type=str, default=None,        help='Path to SSL key.')
 args = parser.parse_args()
+
 log = logging.getLogger('werkzeug') ; log.setLevel(logging.ERROR)
 app = Flask(__name__)
 
@@ -361,12 +349,5 @@ def ping_endpoint():
 # Start the server!
 #
 if __name__ == '__main__':
-    print(f'Starting iOS Logicard Backend.')
-    print(f'Host:        {args.host}')
-    print(f'Port:        {args.port}')
-    if args.cert and args.key:
-        print(f'Certificate: {args.cert}')
-        print(f'Private Key: {args.key}')
-        app.run(host=args.host, port=args.port, ssl_context=(args.cert, args.key))
-    else:
-        app.run(host=args.host, port=args.port)
+    print(f'Starting iOS Logicard API Server.')
+    app.run(host=args.host, port=args.port)
