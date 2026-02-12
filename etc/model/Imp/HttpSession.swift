@@ -26,7 +26,7 @@ public extension GameCenter {
 
         // Session protocol implementation.
 
-        public private(set) var session: String;
+        public private(set) var session: String?;
         public var host: String { self.hostImp };
         public var transport: Transport { self.transportImp };
 
@@ -34,14 +34,15 @@ public extension GameCenter {
             print("CREATING HOSTED SESSION> session: \(self.session) host: \(self.player)");
             if let session: String = await self.transportImp.createAndHostSession(host: self.player, bind: true) {
                 self.session = session;
+                self.hostImp = self.player;
                 print("CREATED HOSTED SESSION> session: \(self.session) host: \(self.player)");
-                self.hostImp = host;
                 self.transport.setup();
             }
             return false;
         }
 
-        public func join(session: String) async -> Bool {
+        public func join(session: String?) async -> Bool {
+            guard let session: String = session else { return false }
             return await self.join(session: session, direct: false);
         }
 
@@ -155,9 +156,14 @@ public extension GameCenter {
         }
 
         private func handle(message: JoinSessionMessage) {
-            print("HANDLE JOIN MESSAGE> player: \(self.player) message: \(message) session: \(self.session)")
+            print("HANDLE JOIN MESSAGE> player: \(self.player) message: \(message) session: \(self.session) host: \(self.host) hosting: \(self.hosting)")
             Task {
-                if let (player, host) = await self.transportImp.registerPlayerAndSend(message.player, message: GameCenter.JoinedSessionMessage(session: self.session)) {
+                if let session: String = self.session {
+                    let player: String = message.player
+                    let message: GameCenter.Message = GameCenter.JoinedSessionMessage(session: session, host: self.player);
+                    if let (player, host) = await self.transportImp.registerPlayerAndSend(player, message: message, session: session) {
+                        print("HANDLE JOIN MESSAGE> REGISTERED-AND-SENT player: \(self.player) message: \(message) session: \(session)")
+                    }
                 }
             }
             self.handler.handle(message: message);
@@ -165,6 +171,7 @@ public extension GameCenter {
 
         private func handle(message: JoinedSessionMessage) {
             print("HANDLE JOINED MESSAGE> player: \(self.player) message: \(message) session: \(self.session)")
+            print("FOO: \(self.handler)")
             self.handler.handle(message: message);
         }
 
