@@ -135,6 +135,7 @@ def get_session_endpoint(session):
                         'host':     session['host'],
                         'players':  session['players'],
                         'inbox':    session['inbox'],
+                        'debug':    True,
                         'received': session.get('received')}), 200
     else:
         return jsonify({'session': session['session'],
