@@ -376,8 +376,9 @@ def clear_session_messages_endpoint(session):
 #
 @app.route('/reset', methods=['POST'])
 def reset_endpoint():
-    global sessions
+    global sessions, debug
     sessions.clear()
+    debug = False
     return _okay_response()
 
 @app.route('/debug', methods=['POST'])
