@@ -80,7 +80,7 @@ public extension URL {
     public func get(_ path: String?...,
                       as type: Json.Type,
                       status: Int? = 200, key: String? = nil) async -> Json? {
-        await self.get(path, as: type, status: status, key: key);
+        return await self.get(path, as: type, status: status, key: key);
     }
 
     public func get(_ path: [String?],
@@ -92,7 +92,7 @@ public extension URL {
     public func get(_ path: String?...,
                       as type: [Json].Type,
                       status: Int? = 200, key: String? = nil) async -> [Json]? {
-        await self.get(path, as: type, status: status, key: key);
+        return await self.get(path, as: type, status: status, key: key);
     }
 
     // POST methods.
@@ -172,8 +172,7 @@ public extension URL {
                         status: Int? = nil, key: String? = nil) async -> Data? {
         if let response = try? await URLSession.shared.data(for: self.request(path, method: method, data: data, key: key)) {
             if let status: Int = status {
-        		guard let response = response.1 as? HTTPURLResponse,
-                          response.statusCode == status else {
+                guard let response = response.1 as? HTTPURLResponse, response.statusCode == status else {
                     return nil;
                 }
             }
@@ -185,8 +184,11 @@ public extension URL {
     private func exec<T: Decodable>(_ path: [String?], method: String? = nil,
                                       data: Data? = nil, as type: T.Type,
                                       status: Int? = nil, key: String? = nil) async -> T? {
-        if let response = await self.exec(path, method: method, data: data, status: status, key: key) {
-            if let response = try? JSONDecoder().decode(type, from: response) {
+        if let response: Data = await self.exec(path, method: method, data: data, status: status, key: key) {
+            if (type == Data.self) {
+                return response as! T;
+            }
+            if let response: T = try? JSONDecoder().decode(type, from: response) {
                 return response;
             }
         }
@@ -196,7 +198,7 @@ public extension URL {
     private func exec(_ path: [String?], method: String? = nil,
                         data: Data? = nil, as type: Json.Type,
                         status: Int? = nil, key: String? = nil) async -> Json? {
-        if let response = await self.exec(path, method: method, data: data, status: status, key: key) {
+        if let response: Data = await self.exec(path, method: method, data: data, status: status, key: key) {
             return try? JSONSerialization.jsonObject(with: response) as? Json;
         }
         return nil;
@@ -205,7 +207,7 @@ public extension URL {
     private func exec(_ path: [String?], method: String? = nil,
                         data: Data? = nil, as type: [Json].Type,
                         status: Int? = nil, key: String? = nil) async -> [Json]? {
-        if let response = await self.exec(path, method: method, data: data, status: status, key: key) {
+        if let response: Data = await self.exec(path, method: method, data: data, status: status, key: key) {
             return try? JSONSerialization.jsonObject(with: response, options: []) as? [Json];
         }
         return nil;
@@ -215,7 +217,7 @@ public extension URL {
                         data: Json, as type: Json.Type,
                         status: Int? = nil, key: String? = nil) async -> Json? {
         if let data: Data = try? JSONSerialization.data(withJSONObject: data) {
-            if let response = await self.exec(path, method: method, data: data, status: status, key: key) {
+            if let response: Data = await self.exec(path, method: method, data: data, status: status, key: key) {
                 return try? JSONSerialization.jsonObject(with: response) as? Json;
             }
         }

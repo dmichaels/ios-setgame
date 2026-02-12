@@ -94,6 +94,17 @@ public extension GameCenter {
             return nil;
         }
 
+        public func postMessage(path: String?..., message: Message, session: String? = nil) async -> Bool {
+            if let message: Json = message.json, let session: String = session ?? self.session {
+                if let response: Json = await self.url.post(path, data: message, as: Json.self, key: self.key) {
+                    if let status: String = response["status"] as? String, status == "OK" {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         // Sends the given message to the given player for the session.
         //
         public func sendMessage(_ message: Message, player: String, session: String? = nil) async -> Bool {
@@ -111,7 +122,7 @@ public extension GameCenter {
         // in contrast to sending a message to ANY player via POST /<session>/send/player.
         //
         public func sendHostMessage(_ message: Message, session: String? = nil) async -> Bool {
-            if let message: [String: Any] = message.json, let session: String = session ?? self.session {
+            if let message: Json = message.json, let session: String = session ?? self.session {
                 if let response: Json = await self.url.post(session, "/send", data: message, as: Json.self, key: self.key) {
                     if let status: String = response["status"] as? String, status == "OK" {
                         return true;
@@ -125,7 +136,7 @@ public extension GameCenter {
         // This is a NON-async version of the above for possible convenience;
         // since it is just a send and we do not really need to get/check the result.
         //
-        public func sendMessage(_ message: Message, player: String, session: String? = nil) -> Bool{
+        public func sendMessage(_ message: Message, player: String, session: String? = nil) -> Bool {
             if let message: Json = message.json, let session: String = session ?? self.session {
                 if (self.url.post([session, "/send", player], data: message, key: self.key)) {
                     return true;
@@ -140,7 +151,7 @@ public extension GameCenter {
         // since it is just a send and we do not really need to get/check the result.
         //
         public func sendHostMessage(_ message: Message, session: String? = nil) -> Bool {
-            if let message: [String: Any] = message.json, let session: String = session ?? self.session {
+            if let message: Json = message.json, let session: String = session ?? self.session {
                 if (self.url.post(session, "/send", data: message, key: self.key)) {
                     return true;
                 }
@@ -151,7 +162,7 @@ public extension GameCenter {
         public func retrieveMessages(for player: String? = nil, session: String? = nil) async -> [Message] {
             if let session: String = session ?? self.session {
                 let player: String = player ?? self.player;
-                if let data: Data = await self.url.get(session, "receive", player, as: Data.self, key: self.key) {
+                if let data: Data = await self.url.get(session, "receive", player, key: self.key) {
                     if let messages: [Message] = MessageConversion.toMessages(data: data) {
                         if messages.count > 0 { print("RECEIEVED MESSAGES> session: \(session) player: \(player) messages: \(messages.count) -> \(messages)") }
                         return messages; 
