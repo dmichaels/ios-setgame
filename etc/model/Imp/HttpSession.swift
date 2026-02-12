@@ -44,6 +44,11 @@ public extension GameCenter {
             return await self.join(session: session, wait: true);
         }
 
+        // Joins to this (assumed) non-host player to the given session ID,
+        // by sending a JoinSessionMessage to the host; the host will presumably
+        // honor this request, add the player to the session (via backend server API),
+        // and then will send a JoinedSessionMessage back to this player for confirmation.
+        //
         public func join(session: String?, wait: Bool) async -> Bool {
             guard let session: String = session, !self.hosting else { return false }
             guard !self.hosting else { return false }
