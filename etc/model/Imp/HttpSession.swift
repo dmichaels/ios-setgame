@@ -73,44 +73,6 @@ public extension GameCenter {
             return true;
         }
 
-        /*
-        public func joinSessionWithWait(session: String) async throws -> Bool {
-            let timeout: Duration = .seconds(5);
-            do {
-                let success: Bool = try await withTimeout(seconds: 5) {
-                }
-                try await withCheckedThrowingContinuation { continuation in
-                    self.joinContinuation = continuation;
-                    Task {
-                        let message: Message = JoinSessionMessage(player: self.player);
-                        await self.transportImp.sendHostMessage(message, session: session);
-                    }
-                }
-                return true;
-            }
-            catch {
-                return false;
-            }
-        }
-        func joinSession(sessionID: String) async -> Bool {
-            do {
-                let success: Bool = try await withTimeout(seconds: 5) { () async throws -> Bool in
-                    try await withCheckedThrowingContinuation { continuation in
-                        self.joinSessionContinuation = continuation
-                        Task {
-                            let message: Message = JoinSessionMessage(player: self.player);
-                            await self.transportImp.sendHostMessage(message, session: sessionID);
-                        }
-                    }
-                    return true;
-                }
-                return success;
-            }
-            catch {
-                return false;
-            }
-        }
-        */
         public func joinSession(sessionID: String) async -> Bool {
             do {
                 let success: Bool = try await withTimeout(seconds: 5) {
