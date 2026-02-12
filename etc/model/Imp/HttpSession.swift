@@ -27,6 +27,7 @@ public extension GameCenter {
 
         public private(set) var session: String?;
         public private(set) var host: String?
+        public private(set) var players: [String] = [];
         public var transport: Transport { self.transportImp };
 
         public func create() async -> Bool {
@@ -136,6 +137,10 @@ public extension GameCenter {
             // implementor of Session) to send messages (via Session.send).
             //
             handler.session = self;
+
+            // Initialize the players list with ourselves.
+            //
+            self.players.append(self.player);
         }
 
         private func joinDirect(session: String?) async -> Bool {
@@ -193,20 +198,52 @@ public extension GameCenter {
         }
 
         private func handle(message: JoinSessionMessage) {
+            guard self.hosting else { return; }
+            //
+            // We are presumed to be the host player.
+            // This is a request message from a non-host player to join this session.
+            //
+            print("HANDLE(JoinSessionMessage)> \(message.player)")
             Task {
                 if let session: String = self.session {
                     let player: String = message.player
                     let message: GameCenter.Message = GameCenter.JoinedSessionMessage(session: session, host: self.player);
+                    //
+                    // Currently just blindly accept this join request;
+                    // register the player (identified in the message)
+                    // for our session; and send a notification message
+                    // to this player that their request has been accepted.
+                    // 
                     if let (player, host) = await self.transportImp.registerPlayerAndSend(player, message: message, session: session) {
+                        //
+                        // Add this player to our list of known players (which includes ourself FYI).
+                        //
+                        self.players.append(player);
                     }
                 }
             }
         }
 
         private func handle(message: JoinedSessionMessage) {
+            guard !self.hosting else { return; }
+            //
+            // We are presumed to be a non-host player.
+            // This is a notification message from the host player
+            // that our request to join their session as been accepted.
+            //
+            if let continuation = self.joinSessionContinuation {
+                self.joinSessionContinuation = nil;
+                continuation.resume(returning: ());
+            }
+            self.session = message.session;
+            self.host = message.host;
+            self.players.append(message.host);
+            self.transportImp.bindSession(to: message.session);
+/*
             if let continuation = self.joinSessionContinuation {
                 self.session = message.session;
                 self.host = message.host;
+                self.players.append(message.host);
                 self.transportImp.bindSession(to: message.session);
                 self.joinSessionContinuation = nil;
                 continuation.resume(returning: ());
@@ -214,8 +251,10 @@ public extension GameCenter {
             else {
                 self.session = message.session;
                 self.host = message.host;
+                self.players.append(message.host);
                 self.transportImp.bindSession(to: message.session);
             }
+*/
         }
     }
 }

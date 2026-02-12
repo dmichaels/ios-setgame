@@ -11,39 +11,40 @@ let joinWait: Bool? = true;
 Task {
 
     var sessionA: GameCenter.HttpSession = GameCenter.HttpSession(handler: table, url: url)
-    print("SESSION-A> \(ID.of(sessionA)) player: \(sessionA.player) host: \(sessionA.host) hosting: \(sessionA.hosting) session: \(sessionA.session)")
+    print("SESSION-A> \(ID.of(sessionA)) player: \(sessionA.player) host: \(sessionA.host) hosting: \(sessionA.hosting) session: \(sessionA.session) players: \(sessionA.players)")
     if await sessionA.create() {
-        print("CREATED HOSTED SESSION-A> \(sessionA.session) player: \(sessionA.player)  host: \(sessionA.host) hosting: \(sessionA.hosting)")
+        print("CREATED HOSTED SESSION-A> \(sessionA.session) player: \(sessionA.player)  host: \(sessionA.host) hosting: \(sessionA.hosting) players: \(sessionA.players)")
     }
     else {
-        print("ERROR CREATING SESSION-A> \(sessionA.session) player: \(sessionA.player)  host: \(sessionA.host) hosting: \(sessionA.hosting)")
+        print("ERROR CREATING SESSION-A> \(sessionA.session) player: \(sessionA.player)  host: \(sessionA.host) hosting: \(sessionA.hosting) players: \(sessionA.players)")
     }
 
     var sessionB: GameCenter.Session = GameCenter.HttpSession(
         handler: table,
         transport: { handler in GameCenter.HttpTransport(handler: handler, url: url) }
     )
-    print("SESSION-B> \(ID.of(sessionB)) player: \(sessionB.player) host: \(sessionB.host) hosting: \(sessionB.hosting) session: \(sessionB.session)")
+    print("SESSION-B> \(ID.of(sessionB)) player: \(sessionB.player) host: \(sessionB.host) hosting: \(sessionB.hosting) session: \(sessionB.session) players: \(sessionB.players)")
     print("SESSION-B JOINING SESSION-B to SESSION-A \(joinWait == nil ? "DIRECTLY" : (joinWait == true ? "VIA MESSAGE WITH WAIT" : "VIA MESSAGE"))>")
     // if await sessionB.join(session: sessionA.session) {
     // if await sessionB.joinSession(sessionID: sessionA.session!) {
     // if await sessionB.join(session: sessionA.session) {
     if await sessionB.join(session: sessionA.session, wait: joinWait) {
         if (joinWait == nil) {
-            print("SESSION-B JOINED SESSION-A DIRECTLY> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
+            print("SESSION-B JOINED SESSION-A DIRECTLY> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting) players: \(sessionB.players)")
         }
         else if (joinWait == true) {
-            print("SESSION-B JOINED SESSION-A VIA MESSAGE WITH WAIT> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
+            print("SESSION-B JOINED SESSION-A VIA MESSAGE WITH WAIT> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting) players: \(sessionB.players)")
         }
         else {
-            print("SESSION-B SUBMITTED JOIN SESSION-A REQUEST> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
+            print("SESSION-B SUBMITTED JOIN SESSION-A REQUEST> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting) players: \(sessionB.players)")
         }
     }
     else {
-        print("SESSION-B ERROR JOINING SESSION-A> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
+        print("SESSION-B ERROR JOINING SESSION-A> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting) players: \(sessionB.players)")
     }
     try? await Task.sleep(nanoseconds: 5_000_000_000);
-    print("SESSION-B CHECKUP> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
+    print("SESSION-B CHECKUP> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting) players: \(sessionB.players)")
+    print("SESSION-A CHECKUP> \(sessionA.session) player: \(sessionA.player)  host: \(sessionA.host) hosting: \(sessionA.hosting) players: \(sessionA.players)")
 
 /*
     print("A")
