@@ -1,0 +1,372 @@
+# Simple server for my iOS Logicard (SET Game) app, for development (circa February 2026).
+#
+# These instructions are OBSOLETE.
+# Now using nginx for multiple sites and HTTPS handling; see nginx.conf.
+# Now simply run as simple Python script (no sudo needed); see ios_logicard_server.sh.
+# Note that our dmichaels.dev domain is registered via Squarespace.
+# Note that our static AWS LightSail IP address is: 34.232.248.47
+#
+# On AWS (LightSail) we use (in ios_logicard_server_start.sh) to start:
+#
+# sudo -E \
+#   python3 ios_logicard_server.py \
+#     --cert /etc/letsencrypt/live/dmichaels.dev/fullchain.pem \
+#     --key  /etc/letsencrypt/live/dmichaels.dev/privkey.pem \
+#     --host 0.0.0.0 \
+#     --port 443 \
+#       > ios_logicard_server.log 2>&1 &
+#
+# Note that redirect from HTTP to HTTPS not needed because the .dev TLD requires HTTPS.
+
+import argparse
+from   flask import Flask, request, jsonify
+from   functools import wraps
+import logging
+import os
+import uuid
+from flask import abort
+
+
+# API Key (hardcoded!).
+#
+APIKEY = '.0turangalila'
+
+# Parse arguments, setup logging, and the Flask app itself.
+#
+parser = argparse.ArgumentParser()
+parser.add_argument('--host', type=str, default='127.0.0.1', help='Host address to bind to.')
+parser.add_argument('--port', type=int, default=8001,        help='Port to bind to.')
+parser.add_argument('--cert', type=str, default=None,        help='Path to SSL certificate.')
+parser.add_argument('--key',  type=str, default=None,        help='Path to SSL key.')
+args = parser.parse_args()
+log = logging.getLogger('werkzeug') ; log.setLevel(logging.ERROR)
+app = Flask(__name__)
+
+# Global in-memory state/data.
+# Lame but maybe someday we will use some kind of external database.
+#
+sessions = {}
+
+# Internal utility functions/decorators.
+#
+def _create_session(session = None):
+    global sessions
+    session = session if session else str(uuid.uuid4()).replace('-', '').upper()
+    if session not in sessions:
+        sessions[session] = {
+            'session': session,
+            'host':    None,
+            'players': [],
+            'inbox':   {}
+        }
+    return session
+
+def _okay_response(status = 200):
+    return jsonify({'status': 'OK'}), status
+
+def _nosession_response():
+    return jsonify({'status': 'nosession'}), 404
+
+def _noplayer_response():
+    return jsonify({'status': 'noplayer'}), 404
+
+def _nohost_response(status = 404):
+    return jsonify({'status': 'nohost'}), status
+
+def with_session(func):
+    @wraps(func)
+    def wrapper(session, *args, **kwargs):
+        global sessions
+        if not (found_session := sessions.get(session)):
+            return _nosession_response()
+        return func(found_session, *args, **kwargs)
+    return wrapper
+
+@app.before_request
+def check_api_key():
+    if request.path == '/ping':
+        return
+    if request.headers.get('X-API-Key') != APIKEY:
+        abort(403)
+
+# The endpoints.
+
+# Creates a new session, and registers the given player, and sets that
+# player to the host within that new session; returns the session ID.
+# Example Request:  POST /sessions/host
+# Example Response: {"session" "DEADBEEF"}
+#
+@app.route('/sessions/<player>', methods=['POST'])
+def create_and_host_session_endpoint(player):
+    global sessions
+    session = _create_session()
+    sessions[session]['players'].append(player)
+    sessions[session]['host'] = player
+    return jsonify({'session': session}), 201
+
+# Returns the list of defined session IDs; mostly for debugging.
+# Example Request:  GET /sessions
+# Example Response: ["DEADBEEF","CAFEBABE"]
+#
+@app.route('/sessions', methods=['GET'])
+def get_sessions_endpoint():
+    global sessions
+    return jsonify(list(sessions.keys())), 200
+
+# Returns ALL of the session data for the given session ID; mostly for debugging. 
+# Example Request:  GET /sessions/DEADBEEF
+# Example Response: {"session" "DEADBEEF", "players": ["ada", "bob"],
+#                    "host": "ada", "inbox": {"ada": [{"type": "ping"}]}}
+#
+@app.route('/sessions/<session>', methods=['GET'])
+@with_session
+def get_session_endpoint(session):
+    return jsonify({'session': session['session'],
+                    'host':    session['host'],
+                    'players': session['players'],
+                    'inbox':   session['inbox']}), 200
+
+# Resets ALL data for the given session.
+# Example Request:  POST /DEADBEEF/reset
+# Example Response: {"status": "OK"}
+#
+@app.route('/sessions/<session>/reset', methods=['POST'])
+@with_session
+def reset_session_endpoint(session):
+    session['host'] = None
+    session['players'].clear()
+    session['inbox'].clear()
+    return _okay_response(201)
+
+@app.route('/sessions/<session>/destroy', methods=['POST'])
+@with_session
+def destroy_session_endpoint(session):
+    global sessions
+    if (session := session['session']) in sessions:
+        del sessions[session]
+    return _okay_response(201)
+
+# Registers the given player for the given session, if not yet registered,
+# or if it is already registered then do nothing; additionally in either
+# case, if no host is yet defined, then sets the host to the given player.
+# Example Request:  POST /DEADBEEF/register/ada
+# Example Response: {"host": "ada", "player": "ada", players: ["ada", "bob"]}
+#
+@app.route('/<session>/register/<player>', methods=['POST'])
+@with_session
+def register_player_endpoint(session, player):
+    if player not in session['players']:
+        session['players'].append(player)
+    if not session['host']:
+        session['host'] = player
+    return jsonify({'host':    session['host'],
+                    'player':  player,
+                    'players': session['players']}), 201
+
+# Exactly the same as POST /<session>/register/<player>,
+# immediately follwed by a POST /<session>/send/<player>; except
+# if the player was already registered then does not do the send;
+# and also if no POST data/payload is present then no send is done.
+# Example Request:  POST /DEADBEEF/register_and_send/ada
+# Example Response: {"host": "ada", "player": "ada", "players": ["ada", "bob"]}
+#
+@app.route('/<session>/register_and_send/<player>', methods=['POST'])
+@with_session
+def register_player_and_send_endpoint(session, player):
+    if player not in session['players']:
+        session['players'].append(player)
+        send = True
+    else:
+        send = False
+    if not session['host']:
+        session['host'] = player
+    if send:
+        if (message := request.get_json(silent=True)) is not None:
+            session['inbox'].setdefault(player, []).append(message)
+    return jsonify({'player':  player,
+                    'host':    session['host'],
+                    'players': session['players']}), 201
+
+# Unregisters the given player for the given session.
+# However if the given player is also the host then does nothing;
+# i.e. cannot unregister the host; though the host can be changed
+# via POST /<session>/host/<player>.
+# Example Request:  POST /DEADBEEF/unregister/ada
+# Example Response: {"status": "OK"}
+#
+@app.route('/<session>/unregister/<player>', methods=['POST'])
+@with_session
+def unregister_player_endpoint(session, player):
+    if player not in session['players']:
+        return _noplayer_response()
+    if player == session['host']:
+        return _nohost_response(409) # not allowed to unregister host
+    session['players'].remove(player)
+    session['inbox'].pop(player, None)
+    if session['host'] == player:
+        session['host'] = None
+    return _okay_response(201)
+
+# Returns the list of registered player IDs for the given session.
+# Example Request:  GET /DEADBEEF/players
+# Example Response: {"host": "ada", "players": ["ada", "bob"]}
+#
+@app.route('/<session>/players', methods=['GET'])
+@with_session
+def get_players_endpoint(session):
+    return jsonify({'host':    session['host'],
+                    'players': session['players']}), 200
+
+# Returns the host for the given session.
+# Example Request:  GET /DEADBEEF/host
+# Example Response: {"host": "ada"}
+#
+@app.route('/<session>/host', methods=['GET'])
+@with_session
+def get_host_endpoint(session):
+    return jsonify({'host': session['host']}), 200
+
+# Sets the host to the given player, for the given session;
+# if the given player is not already registered then does nothing.
+# Example Request:  POST /DEADBEEF/host/ada
+# Example Response: {"status": "OK"}
+#
+@app.route('/<session>/host/<player>', methods=['POST'])
+@with_session
+def set_host_endpoint(session, player):
+    if player not in session['players']:
+        return _noplayer_response()
+    session['host'] = player
+    return _okay_response()
+
+# Sends the given message (in the POST data) to the given player,
+# for the given session; if the given player is not already
+# registered then does nothing.
+# Example Request:  POST /DEADBEEF/send/ada
+# Example Response: {"status": "OK"}
+#
+@app.route('/<session>/send/<player>', methods=['POST'])
+@with_session
+def send_message_endpoint(session, player):
+    if player not in session['players']:
+        return _noplayer_response()
+    message = request.get_json()
+    session['inbox'].setdefault(player, []).append(message)
+    return _okay_response()
+
+# Sends the given message (in the POST data) to the host player,
+# for the given session; if there is no host then does nothing.
+# Example Request:  POST /DEADBEEF/send
+# Example Response: {"status": "OK"}
+#
+@app.route('/<session>/send', methods=['POST'])
+@with_session
+def send_host_message_endpoint(session):
+    if not (host := session['host']):
+        return _nohost_response()
+    message = request.get_json()
+    session['inbox'].setdefault(host, []).append(message)
+    return _okay_response()
+
+# Removes and returns any/all of the messages available
+# for the given player, for the given session.
+# Example Request:  GET /DEADBEEF/receive/ada
+# Example Response: [{"type": "ping"}, {"type": "ping"}]
+#
+@app.route('/<session>/receive/<player>', methods=['GET'])
+@with_session
+def receive_messages_endpoint(session, player):
+    if player not in session['players']:
+        return _noplayer_response()
+    messages = session['inbox'].pop(player, [])
+    return jsonify(messages), 200
+
+# Returns (without removal) any/all of the messages available
+# for the given player, for the given session.
+# Example Request:  GET /DEADBEEF/peek/ada
+# Example Response: [{"type": "ping"}, {"type": "ping"}]
+#
+@app.route('/<session>/peek/<player>', methods=['GET'])
+@with_session
+def peek_messages_endpoint(session, player):
+    if player not in session['players']:
+        return _noplayer_response()
+    messages = session['inbox'].get(player, [])
+    return jsonify(messages), 200
+
+# Returns the number of messages available for the given player,
+# for the given session. Returns a dictionary with the message count.
+# Example Request:  GET /DEADBEEF/count/ada
+# Example Response: {"count": 2}
+#
+@app.route('/<session>/count/<player>', methods=['GET'])
+@with_session
+def get_message_count_endpoint(session, player):
+    if player not in session['players']:
+        return _noplayer_response()
+    return jsonify({'count': len(session['inbox'].get(player, []))}), 200
+
+# Returns the number of messages available for all players,
+# for the given session. Returns a dictionary with the message count.
+# Example Request:  GET /DEADBEEF/count
+# Example Response: {"count": 3}
+#
+@app.route('/<session>/count', methods=['GET'])
+@with_session
+def get_session_message_count_endpoint(session):
+    return jsonify({'count': sum(len(messages) for messages in session['inbox'].values())}), 200
+
+# Clears out all message data for the given player, for the given session.
+# Returns a simple status.
+# Example Request:  POST /DEADBEEF/clear/ada
+# Example Response: {"status": "OK"}
+#
+@app.route('/<session>/clear/<player>', methods=['POST'])
+@with_session
+def clear_player_messages_endpoint(session, player):
+    if player not in session['players']:
+        return _noplayer_response()
+    if player in session['inbox']:
+        del session['inbox'][player]
+    return _okay_response()
+
+# Clears out all message data for ALL of the players, for the given session.
+# Example Request:  POST /DEADBEEF/clear
+# Example Response: {"status": "OK"}
+#
+@app.route('/<session>/clear', methods=['POST'])
+@with_session
+def clear_session_messages_endpoint(session):
+    session['inbox'].clear()
+    return _okay_response()
+
+# Resets ALL data for ALL sessions.
+# Example Request:  POST /reset
+# Example Response: {"status": "OK"}
+#
+@app.route('/reset', methods=['POST'])
+def reset_endpoint():
+    global sessions
+    sessions.clear()
+    return _okay_response()
+
+# Simple ping endpoint.
+# Example Request:  POST /ping
+# Example Response: {"status": "OK"}
+#
+@app.route('/ping', methods=['GET'])
+def ping_endpoint():
+    return _okay_response()
+
+# Start the server!
+#
+if __name__ == '__main__':
+    print(f'Starting iOS Logicard Backend.')
+    print(f'Host:        {args.host}')
+    print(f'Port:        {args.port}')
+    if args.cert and args.key:
+        print(f'Certificate: {args.cert}')
+        print(f'Private Key: {args.key}')
+        app.run(host=args.host, port=args.port, ssl_context=(args.cert, args.key))
+    else:
+        app.run(host=args.host, port=args.port)
