@@ -60,8 +60,14 @@ public extension GameCenter {
             else {
                 print("JOINING SESSION INDIRECTLY> player: \(player) host: \(host) session: \(session) self.session: \(self.session)")
                 if await self.transportImp.sendHostMessage(JoinSessionMessage(player: self.player), session: session) {
-                    self.session = session;
-                    self.transportImp.bind(to: session);
+                    //
+                    // Don't actually join the session yet, by setting our session ID;
+                    // as we've only just sent a message to the host that we want to join;
+                    // we need to wait until we receive a JoinedSessionMessage to do that;
+                    // BUT we DO want to bind our transport polling so that it can even receive
+                    // messages (most pointedly the aforementioned JoinedSessionMessage).
+                    // self.session = session;
+                    self.transportImp.bindSessionTentative(to: session);
                     print("JOINED SESSION INDIRECTLY> player: \(player) host: \(host) session: \(session) self.session: \(self.session)")
                 }
                 else {

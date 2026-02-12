@@ -24,6 +24,7 @@ public extension GameCenter {
         private let url: URL;
         private let key: String;
         private var session: String?;
+        private var pollSession: String?;
         private var pollTask: Task<Void, Never>? = nil;
         private let pollInterval: UInt64 = 1_000_000_000;
 
@@ -38,7 +39,7 @@ public extension GameCenter {
             if let session: Json = await self.url.post("/sessions", player, as: Json.self, key: self.key) {
                 if let session: String = session["session"] as? String {
                     if (bind) {
-                        self.bind(to: session);
+                        self.bindSession(to: session);
                     }
                     return session;
                 }
@@ -46,8 +47,23 @@ public extension GameCenter {
             return nil;
         }
 
-        public func bind(to session: String) {
+        // Bind this HttpTransport to the given session ID; and this
+        // includes naturally includes the session ID for message polling.
+        //
+        public func bindSession(to session: String) {
             self.session = session;
+            self.pollSession = session;
+        }
+
+        // Bind this HttpTransport to the given session ID only for message polling.
+        // This is done when we (as a non-host player) have sent to the host a request
+        // to join its session; we (as a non-host player) do not fully bind to the host
+        // session since we need to wait for a message from the host accepting the session
+        // joining request, but to even receive such a message we need to be polling for
+        // messages on the given session.
+        //
+        public func bindSessionTentative(to session: String) {
+            self.pollSession = session;
         }
 
         public func registerPlayer(_ player: String, session: String? = nil) async -> (player: String, host: String)? {
@@ -161,7 +177,7 @@ public extension GameCenter {
             guard self.pollTask == nil else { return }
             self.pollTask = Task {
                 while (!Task.isCancelled) {
-                    let messages: [Message] = await self.retrieveMessages(for: self.player);
+                    let messages: [Message] = await self.retrieveMessages(for: self.player, session: self.pollSession);
                     self.dispatchMessages(messages: messages);
                     try? await Task.sleep(nanoseconds: self.pollInterval);
                 }
