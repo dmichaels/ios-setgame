@@ -166,7 +166,6 @@ public extension GameCenter {
                     }
                 }
             }
-            self.handler.handle(message: message);
         }
 
         private func handle(message: JoinedSessionMessage) {
@@ -175,7 +174,6 @@ public extension GameCenter {
             self.session = message.session;
             self.hostImp = message.host;
             print("HANDLE JOINED MESSAGE DONE> player: \(self.player) session: \(self.session) host: \(self.host) hosting: \(self.hosting) message.session: \(message.session) message.host: \(message.host)")
-            // self.handler.handle(message: message);
         }
     }
 }

@@ -14,7 +14,7 @@ public extension GameCenter.MessageHandler {
     // to bother implementing these, since this should be of no concern there;
     // these are instead handled directly by the Session implementation.
     //
-    func handle(message: GameCenter.PingMessage) { print("DEFAULT-PING-JOIN-SESSION") }
-    func handle(message: GameCenter.JoinSessionMessage) { print("DEFAULT-HANDLE-JOIN-SESSION") }
-    func handle(message: GameCenter.JoinedSessionMessage) { print("DEFAULT-HANDLE-JOINED-SESSION") }
+    func handle(message: GameCenter.PingMessage) {}
+    func handle(message: GameCenter.JoinSessionMessage) {}
+    func handle(message: GameCenter.JoinedSessionMessage) {}
 }
