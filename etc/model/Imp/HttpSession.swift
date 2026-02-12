@@ -182,7 +182,6 @@ public extension GameCenter {
             // We are presumed to be the host player.
             // This is a request message from a non-host player to join this session.
             //
-            print("HANDLE(JoinSessionMessage)> \(message.player)")
             Task {
                 if let session: String = self.session {
                     let player: String = message.player
