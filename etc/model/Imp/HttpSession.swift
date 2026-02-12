@@ -138,7 +138,7 @@ public extension GameCenter {
 
             // Initialize the players list with ourselves.
             //
-            self.players.append(self.player);
+            self.playerAdded(self.player);
         }
 
         private func joinAsync(session: String) async -> Bool {
@@ -202,7 +202,16 @@ public extension GameCenter {
                         //
                         // Add this player to our list of known players (which includes ourself FYI).
                         //
-                        self.players.append(player);
+                        self.playerAdded(player);
+                        let message: Message = UpdateSessionMessage(host: self.host!, players: self.players);
+                        //
+                        // Notify the other player excluding this (host) player and the player just
+                        // added above to the session (since it will receive a JoinedSessionMessage
+                        // in lieu of this), so that the other players can update their players list.
+                        //
+                        for player in self.players(excluding: self.player, player) {
+                            await self.transportImp.sendMessage(message, player: player, session: self.session);
+                        }
                     }
                 }
             }
@@ -221,14 +230,24 @@ public extension GameCenter {
             }
             self.session = message.session;
             self.host = message.host;
-            self.players.append(message.host);
+            self.playerAdded(message.host);
             self.transport.bindSession(to: message.session);
         }
 
         private func handle(message: UpdateSessionMessage) {
-            //
-            // TODO
-            //
+            for player in message.players {
+                self.playerAdded(player);
+            }
+        }
+
+        private func playerAdded(_ player: String) {
+            if (!self.players.contains(player)) {
+                self.players.append(player);
+            }
+        }
+
+        private func players(excluding: String...) -> [String] {
+            return self.players.filter { !excluding.contains($0) }
         }
     }
 }
