@@ -23,7 +23,8 @@ Task {
     )
     print("SESSION-B> \(ID.of(sessionB)) player: \(sessionB.player) host: \(sessionB.host) hosting: \(sessionB.hosting)")
     print("JOINING SESSION-B to SESSION-B")
-    if await sessionB.join(session: sessionA.session) {
+    // if await sessionB.join(session: sessionA.session) {
+    if await sessionB.joinSession(sessionID: sessionA.session!) {
         print("JOINED SESSION-B> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
     }
     else {

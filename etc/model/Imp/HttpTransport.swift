@@ -26,7 +26,7 @@ public extension GameCenter {
         private var session: String?;
         private var pollSession: String?;
         private var pollTask: Task<Void, Never>? = nil;
-        private let pollInterval: UInt64 = 1_000_000_000;
+        private let pollInterval: UInt64 = 2_000_000_000;
 
         public init(handler: MessageHandler, url: URL? = nil) {
             self.handler = handler;
@@ -153,6 +153,9 @@ public extension GameCenter {
                 let player: String = player ?? self.player;
                 if let data: Data = await self.url.get(session, "receive", player, key: self.key) {
                     if let messages: [Message] = MessageConversion.toMessages(data: data) {
+                        if messages.count > 0 {
+                            print("receiveMessages> session: \(session) player: \(player) -> [\(messages.count)] -> \(messages)")
+                        }
                         return messages; 
                     }
                 }
