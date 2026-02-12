@@ -185,7 +185,7 @@ public extension GameCenter {
         private func handle(message: JoinSessionMessage) {
             guard self.hosting else { return; }
             //
-            // We are presumed to be the host player.
+            // We are presumed here to be the HOST player.
             // This is a request message from a non-host player to join this session.
             //
             Task {
@@ -193,22 +193,19 @@ public extension GameCenter {
                     let player: String = message.player
                     let message: GameCenter.Message = GameCenter.JoinedSessionMessage(session: session, host: self.player);
                     //
-                    // Currently just blindly accept this join request;
-                    // register the player (identified in the message)
-                    // for our session; and send a notification message
-                    // to this player that their request has been accepted.
+                    // Currently just blindly accept this join request; register the player,
+                    // identified in the message, for our session (via backend server API); and
+                    // send a notification message to this player that their request has been accepted.
                     // 
                     if let (player, host) = await self.transportImp.registerPlayerAndSend(player, message: message, session: session) {
                         //
                         // Add this player to our list of known players (which includes ourself FYI).
-                        //
-                        self.playerAdded(player);
-                        let message: Message = UpdateSessionMessage(host: self.host!, players: self.players);
-                        //
-                        // Notify the other player excluding this (host) player and the player just
-                        // added above to the session (since it will receive a JoinedSessionMessage
+                        // And then notify the other player excluding this (host) player and the player
+                        // just added here to the session (since they will receive a JoinedSessionMessage
                         // in lieu of this), so that the other players can update their players list.
                         //
+                        self.playerAdded(player);
+                        let message: Message = UpdateSessionMessage(host: self.player, players: self.players);
                         for player in self.players(excluding: self.player, player) {
                             await self.transportImp.sendMessage(message, player: player, session: self.session);
                         }
@@ -220,7 +217,7 @@ public extension GameCenter {
         private func handle(message: JoinedSessionMessage) {
             guard !self.hosting else { return; }
             //
-            // We are presumed to be a non-host player.
+            // We are presumed here to be a NON-host player.
             // This is a notification message from the host player
             // that our request to join their session as been accepted.
             //
