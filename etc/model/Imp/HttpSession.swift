@@ -39,23 +39,42 @@ public extension GameCenter {
             return false;
         }
 
-        public func join(session: String?) async -> Bool {
-            guard let session: String = session, !self.hosting else { return false }
-            return await self.join(session: session, direct: false, wait: false);
-        }
-
-        public func join(session: String?, direct: Bool, wait: Bool) async -> Bool {
+        public func join(session: String?, wait: Bool?) async -> Bool {
             guard let session: String = session, !self.hosting else { return false }
             guard !self.hosting else { return false }
-            if (direct) {
-                return await self.joinDirect(session: session);
-            }
-            else if (wait) {
-                return await self.joinAsyncWithWait(session: session);
+            if let wait: Bool = wait {
+                if (wait) {
+                    //
+                    // If the wait argument is true then send a
+                    // join message to the host and wait for its return.
+                    //
+                    return await self.joinAsyncWithWait(session: session);
+                }
+                else {
+                    //
+                    // If the wait argument is false then send a join message to
+                    // the host and do not wait for its return; i.e. fire-and-forget.
+                    //
+                    return await self.joinAsync(session: session);
+                }
             }
             else {
+                //
+                // If the wait argument is nil then join directly via the server API.
+                //
+                return await self.joinDirect(session: session);
+            }
+            /*
+            if (wait == nil) {
+                return await self.joinDirect(session: session);
+            }
+            else if (wait == true) {
+                return await self.joinAsyncWithWait(session: session);
+            }
+            else if (wait == false) {
                 return await self.joinAsync(session: session);
             }
+            */
         }
 
         // Sends the given message to the given player for the session.
@@ -133,6 +152,7 @@ public extension GameCenter {
             if let (player, host) = await self.transportImp.registerPlayer(self.player, session: session) {
                 self.session = session;
                 self.hostImp = host;
+                self.transportImp.bindSession(to: session);
                 self.transport.setup();
                 return true;
             }
@@ -202,12 +222,14 @@ public extension GameCenter {
                 print("HANDLE(JOINED): \(self.joinSessionContinuation) -> CONTINUATION")
                 self.session = message.session;
                 self.hostImp = message.host;
+                self.transportImp.bindSession(to: message.session);
                 self.joinSessionContinuation = nil;
                 continuation.resume(returning: ());
             }
             else {
                 self.session = message.session;
                 self.hostImp = message.host;
+                self.transportImp.bindSession(to: message.session);
             }
         }
     }

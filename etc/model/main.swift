@@ -2,9 +2,11 @@ import Foundation
 
 print("Main module")
 
-let url: URL = URL.create("https://api.logicard.dmichaels.dev")
-// let url: URL = URL.create("http://127.0.0.1:8001")
+// let url: URL = URL.create("https://api.logicard.dmichaels.dev")
+let url: URL = URL.create("http://127.0.0.1:8001")
 var table: Table = Table()
+
+let joinWait: Bool? = nil;
 
 Task {
 
@@ -22,18 +24,26 @@ Task {
         transport: { handler in GameCenter.HttpTransport(handler: handler, url: url) }
     )
     print("SESSION-B> \(ID.of(sessionB)) player: \(sessionB.player) host: \(sessionB.host) hosting: \(sessionB.hosting) session: \(sessionB.session)")
-    print("JOINING SESSION-B to SESSION-A")
+    print("SESSION-B JOINING SESSION-B to SESSION-A \(joinWait == nil ? "DIRECTLY" : (joinWait == true ? "VIA MESSAGE WITH WAIT" : "VIA MESSAGE"))>")
     // if await sessionB.join(session: sessionA.session) {
     // if await sessionB.joinSession(sessionID: sessionA.session!) {
     // if await sessionB.join(session: sessionA.session) {
-    if await sessionB.join(session: sessionA.session, direct: true, wait: false) {
-        print("JOINED SESSION-B> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
+    if await sessionB.join(session: sessionA.session, wait: joinWait) {
+        if (joinWait == nil) {
+            print("SESSION-B JOINED SESSION-A DIRECTLY> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
+        }
+        else if (joinWait == true) {
+            print("SESSION-B JOINED SESSION-A VIA MESSAGE WITH WAIT> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
+        }
+        else {
+            print("SESSION-B SUBMITTED JOIN SESSION-A REQUEST> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
+        }
     }
     else {
-        print("ERROR JOINING SESSION-B> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
+        print("SESSION-B ERROR JOINING SESSION-A> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
     }
     try? await Task.sleep(nanoseconds: 5_000_000_000);
-    print("CHECK ON SESSION-B> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
+    print("SESSION-B CHECKUP> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
 }
 
 dispatchMain() // 🔒 This keeps the app alive forever.
