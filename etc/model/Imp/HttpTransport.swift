@@ -18,6 +18,25 @@ public extension GameCenter {
             self.nopoll();
         }
 
+        // Bind this HttpTransport to the given session ID; and this
+        // includes naturally includes the session ID for message polling.
+        //
+        public func bindSession(to session: String) {
+            self.session = session;
+            self.pollSession = session;
+        }
+
+        // Bind this HttpTransport to the given session ID only for message polling.
+        // This is done when we (as a non-host player) have sent to the host a request
+        // to join its session; we (as a non-host player) do not fully bind to the host
+        // session since we need to wait for a message from the host accepting the session
+        // joining request, but to even receive such a message we need to be polling for
+        // messages on the given session.
+        //
+        public func bindSessionTentative(to session: String) {
+            self.pollSession = session;
+        }
+
         // HttpTransport class implementation.
 
         private let handler: MessageHandler;
@@ -47,25 +66,6 @@ public extension GameCenter {
                 }
             }
             return nil;
-        }
-
-        // Bind this HttpTransport to the given session ID; and this
-        // includes naturally includes the session ID for message polling.
-        //
-        public func bindSession(to session: String) {
-            self.session = session;
-            self.pollSession = session;
-        }
-
-        // Bind this HttpTransport to the given session ID only for message polling.
-        // This is done when we (as a non-host player) have sent to the host a request
-        // to join its session; we (as a non-host player) do not fully bind to the host
-        // session since we need to wait for a message from the host accepting the session
-        // joining request, but to even receive such a message we need to be polling for
-        // messages on the given session.
-        //
-        public func bindSessionTentative(to session: String) {
-            self.pollSession = session;
         }
 
         public func registerPlayer(_ player: String, session: String? = nil) async -> (player: String, host: String)? {

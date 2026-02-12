@@ -6,7 +6,7 @@ print("Main module")
 let url: URL = URL.create("http://127.0.0.1:8001")
 var table: Table = Table()
 
-let joinWait: Bool? = true;
+let joinWait: Bool = true;
 
 Task {
 
@@ -24,15 +24,12 @@ Task {
         transport: { handler in GameCenter.HttpTransport(handler: handler, url: url) }
     )
     print("SESSION-B> \(ID.of(sessionB)) player: \(sessionB.player) host: \(sessionB.host) hosting: \(sessionB.hosting) session: \(sessionB.session) players: \(sessionB.players)")
-    print("SESSION-B JOINING SESSION-B to SESSION-A \(joinWait == nil ? "DIRECTLY" : (joinWait == true ? "VIA MESSAGE WITH WAIT" : "VIA MESSAGE"))>")
+    print("SESSION-B JOINING SESSION-B to SESSION-A \(joinWait ? "VIA MESSAGE WITH WAIT" : "VIA MESSAGE")>")
     // if await sessionB.join(session: sessionA.session) {
     // if await sessionB.joinSession(sessionID: sessionA.session!) {
     // if await sessionB.join(session: sessionA.session) {
     if await sessionB.join(session: sessionA.session, wait: joinWait) {
-        if (joinWait == nil) {
-            print("SESSION-B JOINED SESSION-A DIRECTLY> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting) players: \(sessionB.players)")
-        }
-        else if (joinWait == true) {
+        if (joinWait) {
             print("SESSION-B JOINED SESSION-A VIA MESSAGE WITH WAIT> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting) players: \(sessionB.players)")
         }
         else {

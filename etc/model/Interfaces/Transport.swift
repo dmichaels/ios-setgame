@@ -11,5 +11,7 @@ public extension GameCenter {
         var  player: String { get }
         func setup();
         func release();
+        func bindSession(to: String);
+        func bindSessionTentative(to: String);
     }
 }
