@@ -4,5 +4,6 @@ public extension GameCenter {
         case ping;
         case joinSession;
         case joinedSession;
+        case updateSession;
     }
 }

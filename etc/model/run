@@ -1,6 +1,6 @@
 DIR=/Users/dmichaels/repos/ios-setgame/etc/model
-# ${DIR}/post  /reset ; ${DIR}/post  /debug
-# ${DIR}/lpost /reset ; ${DIR}/lpost /debug
+${DIR}/post  /reset ; ${DIR}/post  /debug
+${DIR}/lpost /reset ; ${DIR}/lpost /debug
 rm -f ${DIR}/main
 swiftc -suppress-warnings -o \
     ${DIR}/main \
@@ -14,6 +14,7 @@ swiftc -suppress-warnings -o \
     ${DIR}/Messages/MessageType.swift \
     ${DIR}/Messages/JoinSessionMessage.swift \
     ${DIR}/Messages/JoinedSessionMessage.swift \
+    ${DIR}/Messages/UpdateSessionMessage.swift \
     ${DIR}/Messages/PingMessage.swift \
     ${DIR}/Interfaces/Session.swift \
     ${DIR}/Interfaces/SessionHandler.swift \

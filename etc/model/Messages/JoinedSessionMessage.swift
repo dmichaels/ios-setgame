@@ -5,7 +5,7 @@ public extension GameCenter {
         public let session: String;
         public let host: String;
         public init(session: String, host: String) {
-            self.type   = .joinedSession;
+            self.type = .joinedSession;
             self.session = session;
             self.host = host;
         }

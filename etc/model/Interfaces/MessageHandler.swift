@@ -4,6 +4,7 @@ public extension GameCenter {
         func handle(message: PingMessage);
         func handle(message: JoinSessionMessage);
         func handle(message: JoinedSessionMessage);
+        func handle(message: UpdateSessionMessage);
     }
 }
 
@@ -17,4 +18,5 @@ public extension GameCenter.MessageHandler {
     func handle(message: GameCenter.PingMessage) {}
     func handle(message: GameCenter.JoinSessionMessage) {}
     func handle(message: GameCenter.JoinedSessionMessage) {}
+    func handle(message: GameCenter.UpdateSessionMessage) {}
 }

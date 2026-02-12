@@ -30,6 +30,7 @@ public extension GameCenter {
                     case .ping:          return try? JSONDecoder().decode(PingMessage.self, from: data);
                     case .joinSession:   return try? JSONDecoder().decode(JoinSessionMessage.self, from: data);
                     case .joinedSession: return try? JSONDecoder().decode(JoinedSessionMessage.self, from: data);
+                    case .updateSession: return try? JSONDecoder().decode(UpdateSessionMessage.self, from: data);
                 }
             }
             return nil;
