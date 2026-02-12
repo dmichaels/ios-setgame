@@ -13,7 +13,7 @@ Task {
     var sessionA: GameCenter.HttpSession = GameCenter.HttpSession(handler: table, url: url)
     print("SESSION-A> \(ID.of(sessionA)) player: \(sessionA.player) host: \(sessionA.host) hosting: \(sessionA.hosting) session: \(sessionA.session)")
     if await sessionA.create() {
-        print("CREATED SESSION-A> \(sessionA.session) player: \(sessionA.player)  host: \(sessionA.host) hosting: \(sessionA.hosting)")
+        print("CREATED HOSTED SESSION-A> \(sessionA.session) player: \(sessionA.player)  host: \(sessionA.host) hosting: \(sessionA.hosting)")
     }
     else {
         print("ERROR CREATING SESSION-A> \(sessionA.session) player: \(sessionA.player)  host: \(sessionA.host) hosting: \(sessionA.hosting)")

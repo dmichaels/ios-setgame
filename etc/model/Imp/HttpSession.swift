@@ -26,17 +26,21 @@ public extension GameCenter {
         // Session protocol implementation.
 
         public private(set) var session: String?;
-        public var host: String { self.hostImp ?? "" };
+        public private(set) var host: String?
         public var transport: Transport { self.transportImp };
 
         public func create() async -> Bool {
             if let session: String = await self.transportImp.createAndHostSession(host: self.player, bind: true) {
                 self.session = session;
-                self.hostImp = self.player;
+                self.host = self.player;
                 self.transport.setup();
                 return true;
             }
             return false;
+        }
+
+        public func join(session: String?) async -> Bool {
+            return await self.join(session: session, wait: true);
         }
 
         public func join(session: String?, wait: Bool?) async -> Bool {
@@ -100,7 +104,6 @@ public extension GameCenter {
 
         private let transportImp: HttpTransport;
         private var handler: SessionHandler;
-        private var hostImp: String?;
         private var joinSessionContinuation: CheckedContinuation<Void, Error>?
 
         public init(handler: SessionHandler, url: URL? = nil, transport: HttpTransport.Factory? = nil) {
@@ -140,7 +143,7 @@ public extension GameCenter {
             guard let session: String = session, !self.hosting else { return false }
             if let (player, host) = await self.transportImp.registerPlayer(self.player, session: session) {
                 self.session = session;
-                self.hostImp = host;
+                self.host = host;
                 self.transportImp.bindSession(to: session);
                 self.transport.setup();
                 return true;
@@ -148,31 +151,9 @@ public extension GameCenter {
             return false;
         }
 
-        private func joinAsyncWithWait(session: String?) async -> Bool {
-            guard let session: String = session, !self.hosting else { return false }
-            do {
-                let success: Bool = try await withTimeout(seconds: 5) {
-                    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-                        self.joinSessionContinuation = continuation
-                        Task {
-                            let message = JoinSessionMessage(player: self.player)
-                            if await self.transportImp.sendHostMessage(message, session: session) {
-                                self.transportImp.bindSessionTentative(to: session);
-                                self.transport.setup();
-                            }
-                        }
-                    }
-                    return true;
-                }
-                return success;
-            }
-            catch {
-                return false;
-            }
-        }
-
         private func joinAsync(session: String) async -> Bool {
-            if await self.transportImp.sendHostMessage(JoinSessionMessage(player: self.player), session: session) {
+            let message: Message = JoinSessionMessage(player: self.player);
+            if await self.transportImp.sendHostMessage(message, session: session) {
                 //
                 // Don't actually join the session yet, by setting our session ID;
                 // as we've only just sent a message to the host that we want to join;
@@ -182,10 +163,29 @@ public extension GameCenter {
                 // self.session = session;
                 //
                 self.transportImp.bindSessionTentative(to: session);
-                self.transport.setup()
+                self.transport.setup();
                 return true;
             }
             else {
+                return false;
+            }
+        }
+
+        private func joinAsyncWithWait(session: String?) async -> Bool {
+            guard let session: String = session, !self.hosting else { return false }
+            do {
+                let success: Bool = try await withTimeout(seconds: 5) {
+                    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                        self.joinSessionContinuation = continuation
+                        Task {
+                            await self.joinAsync(session: session);
+                        }
+                    }
+                    return true;
+                }
+                return success;
+            }
+            catch {
                 return false;
             }
         }
@@ -206,18 +206,16 @@ public extension GameCenter {
         }
 
         private func handle(message: JoinedSessionMessage) {
-            print("HANDLE(JOINED): \(self.joinSessionContinuation)")
             if let continuation = self.joinSessionContinuation {
-                print("HANDLE(JOINED): \(self.joinSessionContinuation) -> CONTINUATION")
                 self.session = message.session;
-                self.hostImp = message.host;
+                self.host = message.host;
                 self.transportImp.bindSession(to: message.session);
                 self.joinSessionContinuation = nil;
                 continuation.resume(returning: ());
             }
             else {
                 self.session = message.session;
-                self.hostImp = message.host;
+                self.host = message.host;
                 self.transportImp.bindSession(to: message.session);
             }
         }
