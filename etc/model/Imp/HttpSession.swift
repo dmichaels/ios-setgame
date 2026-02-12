@@ -40,48 +40,47 @@ public extension GameCenter {
         }
 
         public func join(session: String?) async -> Bool {
-            guard let session: String = session else { return false }
-            return await self.join(session: session, direct: false);
+            guard let session: String = session, !self.hosting else { return false }
+            return await self.join(session: session, direct: false, wait: false);
         }
 
-        private func join(session: String, direct: Bool = false) async -> Bool {
+        public func join(session: String?, direct: Bool, wait: Bool) async -> Bool {
+            guard let session: String = session, !self.hosting else { return false }
             guard !self.hosting else { return false }
             if (direct) {
-                if let (player, host) = await self.transportImp.registerPlayer(self.player, session: session) {
-                }
-                else {
-                    return false;
-                }
+                return await self.joinDirect(session: session);
+            }
+            else if (wait) {
+                return await self.joinWithWait(session: session);
             }
             else {
-                if await self.transportImp.sendHostMessage(JoinSessionMessage(player: self.player), session: session) {
-                    //
-                    // Don't actually join the session yet, by setting our session ID;
-                    // as we've only just sent a message to the host that we want to join;
-                    // we need to wait until we receive a JoinedSessionMessage to do that;
-                    // BUT we DO want to bind our transport polling so that it can even receive
-                    // messages (most pointedly the aforementioned JoinedSessionMessage).
-                    // self.session = session;
-                    //
-                    self.transportImp.bindSessionTentative(to: session);
-                }
-                else {
-                    return false;
-                }
+                return await self.joinAsync(session: session);
             }
-            self.transport.setup();
             return true;
         }
 
-        public func joinSession(sessionID: String) async -> Bool {
+        private func joinDirect(session: String?) async -> Bool {
+            guard self.session == nil else { return false }
+            guard let session: String = session, !self.hosting else { return false }
+            if let (player, host) = await self.transportImp.registerPlayer(self.player, session: session) {
+                self.session = session;
+                self.hostImp = host;
+                self.transport.setup();
+                return true;
+            }
+            return false;
+        }
+
+        private func joinWithWait(session: String?) async -> Bool {
+            guard let session: String = session, !self.hosting else { return false }
             do {
                 let success: Bool = try await withTimeout(seconds: 5) {
                     try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
                         self.joinSessionContinuation = continuation
                         Task {
                             let message = JoinSessionMessage(player: self.player)
-                            if await self.transportImp.sendHostMessage(message, session: sessionID) {
-                                self.transportImp.bindSessionTentative(to: sessionID);
+                            if await self.transportImp.sendHostMessage(message, session: session) {
+                                self.transportImp.bindSessionTentative(to: session);
                                 self.transport.setup();
                             }
                         }
@@ -91,6 +90,25 @@ public extension GameCenter {
                 return success;
             }
             catch {
+                return false;
+            }
+        }
+
+        private func joinAsync(session: String) async -> Bool {
+            if await self.transportImp.sendHostMessage(JoinSessionMessage(player: self.player), session: session) {
+                //
+                // Don't actually join the session yet, by setting our session ID;
+                // as we've only just sent a message to the host that we want to join;
+                // we need to wait until we receive a JoinedSessionMessage to do that;
+                // BUT we DO want to bind our transport polling so that it can even receive
+                // messages (most pointedly the aforementioned JoinedSessionMessage).
+                // self.session = session;
+                //
+                self.transportImp.bindSessionTentative(to: session);
+                self.transport.setup()
+                return true;
+            }
+            else {
                 return false;
             }
         }
@@ -141,7 +159,7 @@ public extension GameCenter {
                 func handle(message: JoinedSessionMessage) { session?.handle(message: message) }
             }
 
-            self.session = "";
+            // self.session = "";
 
             // Bind ourselves to the given SessionHandler (which in our case is Table);
             // this is so we can pass on incoming messages to that SessionHandler.
@@ -182,17 +200,18 @@ public extension GameCenter {
         }
 
         private func handle(message: JoinedSessionMessage) {
+            print("HANDLE(JOINED): \(self.joinSessionContinuation)")
             if let continuation = self.joinSessionContinuation {
+                print("HANDLE(JOINED): \(self.joinSessionContinuation) -> CONTINUATION")
                 self.session = message.session;
                 self.hostImp = message.host;
                 self.joinSessionContinuation = nil;
                 continuation.resume(returning: ());
             }
-        }
-
-        private func old_handle(message: JoinedSessionMessage) {
-            self.session = message.session;
-            self.hostImp = message.host;
+            else {
+                self.session = message.session;
+                self.hostImp = message.host;
+            }
         }
     }
 }

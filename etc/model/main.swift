@@ -9,7 +9,7 @@ var table: Table = Table()
 Task {
 
     var sessionA: GameCenter.HttpSession = GameCenter.HttpSession(handler: table, url: url)
-    print("SESSION-A> \(ID.of(sessionA)) player: \(sessionA.player) host: \(sessionA.host) hosting: \(sessionA.hosting)")
+    print("SESSION-A> \(ID.of(sessionA)) player: \(sessionA.player) host: \(sessionA.host) hosting: \(sessionA.hosting) session: \(sessionA.session)")
     if await sessionA.create() {
         print("CREATED SESSION-A> \(sessionA.session) player: \(sessionA.player)  host: \(sessionA.host) hosting: \(sessionA.hosting)")
     }
@@ -21,16 +21,18 @@ Task {
         handler: table,
         transport: { handler in GameCenter.HttpTransport(handler: handler, url: url) }
     )
-    print("SESSION-B> \(ID.of(sessionB)) player: \(sessionB.player) host: \(sessionB.host) hosting: \(sessionB.hosting)")
-    print("JOINING SESSION-B to SESSION-B")
+    print("SESSION-B> \(ID.of(sessionB)) player: \(sessionB.player) host: \(sessionB.host) hosting: \(sessionB.hosting) session: \(sessionB.session)")
+    print("JOINING SESSION-B to SESSION-A")
     // if await sessionB.join(session: sessionA.session) {
-    if await sessionB.joinSession(sessionID: sessionA.session!) {
+    // if await sessionB.joinSession(sessionID: sessionA.session!) {
+    // if await sessionB.join(session: sessionA.session) {
+    if await sessionB.join(session: sessionA.session, direct: true, wait: false) {
         print("JOINED SESSION-B> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
     }
     else {
         print("ERROR JOINING SESSION-B> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
     }
-    try? await Task.sleep(nanoseconds: 3_000_000_000);
+    try? await Task.sleep(nanoseconds: 5_000_000_000);
     print("CHECK ON SESSION-B> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
 }
 
