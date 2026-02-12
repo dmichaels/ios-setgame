@@ -1,7 +1,7 @@
 public extension GameCenter {
 
     public protocol Session: AnyObject {
-        var  id: String { get}
+        var  session: String { get}
         var  player: String { get }
         var  host: String { get }
         var  hosting: Bool { get }

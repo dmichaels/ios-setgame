@@ -46,6 +46,7 @@ app = Flask(__name__)
 # Lame but maybe someday we will use some kind of external database.
 #
 sessions = {}
+debug = False
 
 # Internal utility functions/decorators.
 #
@@ -129,10 +130,17 @@ def get_sessions_endpoint():
 @app.route('/sessions/<session>', methods=['GET'])
 @with_session
 def get_session_endpoint(session):
-    return jsonify({'session': session['session'],
-                    'host':    session['host'],
-                    'players': session['players'],
-                    'inbox':   session['inbox']}), 200
+    if debug:
+        return jsonify({'session':  session['session'],
+                        'host':     session['host'],
+                        'players':  session['players'],
+                        'inbox':    session['inbox'],
+                        'received': session.get('received')}), 200
+    else:
+        return jsonify({'session': session['session'],
+                        'host':    session['host'],
+                        'players': session['players'],
+                        'inbox':   session['inbox']}), 200
 
 # Resets ALL data for the given session.
 # Example Request:  POST /DEADBEEF/reset
@@ -287,6 +295,10 @@ def receive_messages_endpoint(session, player):
     if player not in session['players']:
         return _noplayer_response()
     messages = session['inbox'].pop(player, [])
+    if debug:
+        if 'received' not in session:
+            session['received'] = {}
+        session['received'].setdefault(player, []).extend(messages)
     return jsonify(messages), 200
 
 # Returns (without removal) any/all of the messages available
@@ -356,6 +368,21 @@ def clear_session_messages_endpoint(session):
 def reset_endpoint():
     global sessions
     sessions.clear()
+    return _okay_response()
+
+@app.route('/debug', methods=['POST'])
+def debug_endpoint():
+    global debug
+    debug = True
+    return _okay_response()
+
+@app.route('/nodebug', methods=['POST'])
+def nodebug_endpoint():
+    global debug, sessions
+    for session in sessions:
+        if 'received' in session:
+            del session['received']
+    debug = False
     return _okay_response()
 
 # Simple ping endpoint.

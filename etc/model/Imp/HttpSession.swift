@@ -26,46 +26,46 @@ public extension GameCenter {
 
         // Session protocol implementation.
 
-        public private(set) var id: String;
+        public private(set) var session: String;
         public var host: String { self.hostImp };
         public var transport: Transport { self.transportImp };
 
         public func create() async -> Bool {
-            print("CREATING HOSTED SESSION> session: \(self.id) host: \(self.player)");
-            if let id: String = await self.transportImp.createAndHostSession(host: self.player, bind: true) {
-                self.id = id;
-                print("CREATED HOSTED SESSION> session: \(self.id) host: \(self.player)");
+            print("CREATING HOSTED SESSION> session: \(self.session) host: \(self.player)");
+            if let session: String = await self.transportImp.createAndHostSession(host: self.player, bind: true) {
+                self.session = session;
+                print("CREATED HOSTED SESSION> session: \(self.session) host: \(self.player)");
                 self.hostImp = host;
                 self.transport.setup();
             }
             return false;
         }
 
-        public func join(session id: String) async -> Bool {
-            return await self.join(session: id, direct: false);
+        public func join(session: String) async -> Bool {
+            return await self.join(session: session, direct: false);
         }
 
-        private func join(session id: String, direct: Bool = false) async -> Bool {
+        private func join(session: String, direct: Bool = false) async -> Bool {
             guard !self.hosting else { print("BAD ATTEMPT OF HOST \(self.player) TO JOIN SESSION!!!") ; return false }
             if (direct) {
-                print("JOINING SESSION DIRECTLY> player: \(self.player) host: \(self.host) session: \(id)")
-                if let (player, host) = await self.transportImp.registerPlayer(self.player, session: id) {
-                    print("JOINED SESSION DIRECTLY> player: \(player) host: \(host) session: \(id)")
+                print("JOINING SESSION DIRECTLY> player: \(self.player) host: \(self.host) session: \(session)")
+                if let (player, host) = await self.transportImp.registerPlayer(self.player, session: session) {
+                    print("JOINED SESSION DIRECTLY> player: \(player) host: \(host) session: \(session)")
                 }
                 else {
-                    print("FAILED TO JOIN SESSION DIRECTLY> player: \(player) host: \(host) session: \(id)")
+                    print("FAILED TO JOIN SESSION DIRECTLY> player: \(player) host: \(host) session: \(session)")
                     return false;
                 }
             }
             else {
-                print("JOINING SESSION INDIRECTLY> player: \(player) host: \(host) session: \(id) self.id: \(self.id)")
-                if await self.transportImp.sendHostMessage(JoinSessionMessage(player: self.player), session: id) {
-                    self.id = id;
-                    self.transportImp.bind(to: id);
-                    print("JOINED SESSION INDIRECTLY> player: \(player) host: \(host) session: \(id) self.id: \(self.id)")
+                print("JOINING SESSION INDIRECTLY> player: \(player) host: \(host) session: \(session) self.session: \(self.session)")
+                if await self.transportImp.sendHostMessage(JoinSessionMessage(player: self.player), session: session) {
+                    self.session = session;
+                    self.transportImp.bind(to: session);
+                    print("JOINED SESSION INDIRECTLY> player: \(player) host: \(host) session: \(session) self.session: \(self.session)")
                 }
                 else {
-                    print("FAILED TO JOIN SESSION INDIRECTLY> player: \(player) host: \(host) session: \(id) self.id: \(self.id)")
+                    print("FAILED TO JOIN SESSION INDIRECTLY> player: \(player) host: \(host) session: \(session) self.session: \(self.session)")
                     return false;
                 }
             }
@@ -76,14 +76,14 @@ public extension GameCenter {
         // Sends the given message to the given player for the session.
         //
         public func send(message: Message, to player: String) async -> Bool {
-            return await self.transportImp.sendMessage(message, player: player, session: self.id);
+            return await self.transportImp.sendMessage(message, player: player, session: self.session);
         }
 
         // Sends the given message to the HOST for the session via POST /<session>/send;
         // in contrast to sending a message to ANY player via POST /<session>/send/player.
         //
         public func sendHost(message: Message) async -> Bool {
-            return await self.transportImp.sendHostMessage(message, session: self.id);
+            return await self.transportImp.sendHostMessage(message, session: self.session);
         }
 
         // Sends the given message to the given player for the session.
@@ -91,7 +91,7 @@ public extension GameCenter {
         // since it is just a send and we do not really need to get/check the result.
         //
         public func send(message: Message, to player: String) -> Bool {
-            return self.transportImp.sendMessage(message, player: player, session: self.id);
+            return self.transportImp.sendMessage(message, player: player, session: self.session);
         }
 
         // Sends the given message to the HOST for the session via POST /<session>/send;
@@ -100,7 +100,7 @@ public extension GameCenter {
         // since it is just a send and we do not really need to get/check the result.
         //
         public func sendHost(message: Message) -> Bool {
-            return self.transportImp.sendHostMessage(message, session: self.id);
+            return self.transportImp.sendHostMessage(message, session: self.session);
         }
 
         // HttpSession class implementation.
@@ -118,7 +118,7 @@ public extension GameCenter {
                 func handle(message: JoinedSessionMessage) { session?.handle(message: message) }
             }
 
-            self.id = "";
+            self.session = "";
 
             // Bind ourselves to the given SessionHandler (which in our case is Table);
             // this is so we can pass on incoming messages to that SessionHandler.
@@ -144,21 +144,21 @@ public extension GameCenter {
         }
 
         private func handle(message: PingMessage) {
-            print("HANDLE PING MESSAGE> player: \(self.player) message: \(message) session: \(self.id)")
+            print("HANDLE PING MESSAGE> player: \(self.player) message: \(message) session: \(self.session)")
             self.handler.handle(message: message);
         }
 
         private func handle(message: JoinSessionMessage) {
-            print("HANDLE JOIN MESSAGE> player: \(self.player) message: \(message) session: \(self.id)")
+            print("HANDLE JOIN MESSAGE> player: \(self.player) message: \(message) session: \(self.session)")
             Task {
-                if let (player, host) = await self.transportImp.registerPlayerAndSend(message.player, message: GameCenter.JoinedSessionMessage(session: self.id)) {
+                if let (player, host) = await self.transportImp.registerPlayerAndSend(message.player, message: GameCenter.JoinedSessionMessage(session: self.session)) {
                 }
             }
             self.handler.handle(message: message);
         }
 
         private func handle(message: JoinedSessionMessage) {
-            print("HANDLE JOINED MESSAGE> player: \(self.player) message: \(message) session: \(self.id)")
+            print("HANDLE JOINED MESSAGE> player: \(self.player) message: \(message) session: \(self.session)")
             self.handler.handle(message: message);
         }
 

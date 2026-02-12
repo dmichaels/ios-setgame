@@ -11,7 +11,7 @@ print("SESSION-A> \(ID.of(sessionA))")
 
 Task {
     if await sessionA.create() {
-        print("CREATED SESSION> \(sessionA.id) player: \(sessionA.player)")
+        print("CREATED SESSION> \(sessionA.session) player: \(sessionA.player)")
     }
 
     var sessionB: GameCenter.Session = GameCenter.HttpSession(
@@ -20,7 +20,7 @@ Task {
     )
     print("SESSION-B> \(ID.of(sessionB))")
 
-    await sessionB.join(session: sessionA.id)
+    await sessionB.join(session: sessionA.session)
 }
 
 dispatchMain() // 🔒 This keeps the app alive forever.
