@@ -119,7 +119,15 @@ def create_and_host_session_endpoint(player):
 #
 @app.route('/sessions', methods=['GET'])
 def get_sessions_endpoint():
-    global sessions
+    global debug, sessions
+    if debug and len(sessions) == 1:
+        session = sessions[list(sessions.keys())[0]]
+        return jsonify({'session':  session['session'],
+                        'host':     session['host'],
+                        'players':  session['players'],
+                        'inbox':    session['inbox'],
+                        'debug':    True,
+                        'received': session.get('received')}), 200
     return jsonify(list(sessions.keys())), 200
 
 # Returns ALL of the session data for the given session ID; mostly for debugging. 
@@ -130,6 +138,7 @@ def get_sessions_endpoint():
 @app.route('/sessions/<session>', methods=['GET'])
 @with_session
 def get_session_endpoint(session):
+    global debug
     if debug:
         return jsonify({'session':  session['session'],
                         'host':     session['host'],
@@ -137,11 +146,10 @@ def get_session_endpoint(session):
                         'inbox':    session['inbox'],
                         'debug':    True,
                         'received': session.get('received')}), 200
-    else:
-        return jsonify({'session': session['session'],
-                        'host':    session['host'],
-                        'players': session['players'],
-                        'inbox':   session['inbox']}), 200
+    return jsonify({'session': session['session'],
+                    'host':    session['host'],
+                    'players': session['players'],
+                    'inbox':   session['inbox']}), 200
 
 # Resets ALL data for the given session.
 # Example Request:  POST /DEADBEEF/reset
@@ -296,6 +304,7 @@ def receive_messages_endpoint(session, player):
     if player not in session['players']:
         return _noplayer_response()
     messages = session['inbox'].pop(player, [])
+    global debug
     if debug:
         if 'received' not in session:
             session['received'] = {}
