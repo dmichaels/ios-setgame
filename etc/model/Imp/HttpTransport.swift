@@ -31,7 +31,6 @@ public extension GameCenter {
         public init(handler: MessageHandler, url: URL? = nil) {
             self.handler = handler;
             self.url = url ?? URL.create("https://api.logicard.dmichaels.dev");
-            print("HTTP-TRANSPORT CREATED> url: \(self.url.value)")
             self.key = ".0turangalila";
         }
 
@@ -82,13 +81,9 @@ public extension GameCenter {
         }
 
         public func registerPlayerAndSend(_ player: String, message: Message, session: String? = nil) async -> (player: String, host: String)? {
-            print("HttpTransport.registerPlayerAndSend> player: \(player) message: \(message)")
             if let session: String = session ?? self.session {
-                print("HttpTransport.registerPlayerAndSend> player: \(player) message: \(message) session: \(session)")
                 if let message: Json = message.json {
-                    print("HttpTransport.registerPlayerAndSend> player: \(player) message: \(message) session: \(session) message OK")
                     if let response: Json = await self.url.post([session, "/register_and_send", player], data: message, as: Json.self, key: self.key) {
-                        print("HttpTransport.registerPlayerAndSend> player: \(player) message: \(message) session: \(session) response: \(response)")
                         if let player: String = response["player"] as? String,
                             let host: String = response["host"] as? String {
                             return (player: player, host: host);
@@ -154,29 +149,18 @@ public extension GameCenter {
         }
 
         public func retrieveMessages(for player: String? = nil, session: String? = nil) async -> [Message] {
-            // print("RETRIEVE-MESSAGES> player: \(player) session: \(session)");
             if let session: String = session ?? self.session {
-                print("POLLING MESSAGES> player: \(player) session: \(session) self.session: \(self.session)");
-                // print("RETRIEVE-MESSAGES-2> player: \(player) session: \(session)");
                 let player: String = player ?? self.player;
                 if let data: Data = await self.url.get(session, "receive", player, key: self.key) {
-                    // print("RETRIEVE-MESSAGES-3> player: \(player) session: \(session)");
                     if let messages: [Message] = MessageConversion.toMessages(data: data) {
-                        if messages.count > 0 {
-                            print("POLLED MESSAGES> player: \(player) session: \(session) count: \(messages.count) messages: \(messages)");
-                        }
                         return messages; 
                     }
                 }
-            }
-            else {
-                print("NOT POLLING MESSAGES> player: \(player) session: \(session) self.session: \(self.session)");
             }
             return [];
         }
 
         private func poll() {
-            print("START MESSAGE POLLING> player: \(self.player) session: \(self.session)")
             guard self.pollTask == nil else { return }
             self.pollTask = Task {
                 while (!Task.isCancelled) {
@@ -188,7 +172,6 @@ public extension GameCenter {
         }
 
         private func nopoll() {
-            print("STOP MESSAGE POLLING> player: \(self.player) session: \(self.session)")
             self.pollTask?.cancel();
             self.pollTask = nil;
         }

@@ -5,22 +5,32 @@ print("Main module")
 let url: URL = URL.create("https://api.logicard.dmichaels.dev")
 // let url: URL = URL.create("http://127.0.0.1:8001")
 var table: Table = Table()
-var sessionA: GameCenter.HttpSession = GameCenter.HttpSession(handler: table, url: url)
-
-print("SESSION-A> \(ID.of(sessionA))")
 
 Task {
+
+    var sessionA: GameCenter.HttpSession = GameCenter.HttpSession(handler: table, url: url)
+    print("SESSION-A> \(ID.of(sessionA)) player: \(sessionA.player) host: \(sessionA.host) hosting: \(sessionA.hosting)")
     if await sessionA.create() {
-        print("CREATED SESSION> \(sessionA.session) player: \(sessionA.player)")
+        print("CREATED SESSION-A> \(sessionA.session) player: \(sessionA.player)  host: \(sessionA.host) hosting: \(sessionA.hosting)")
+    }
+    else {
+        print("ERROR CREATING SESSION-A> \(sessionA.session) player: \(sessionA.player)  host: \(sessionA.host) hosting: \(sessionA.hosting)")
     }
 
     var sessionB: GameCenter.Session = GameCenter.HttpSession(
         handler: table,
         transport: { handler in GameCenter.HttpTransport(handler: handler, url: url) }
     )
-    print("SESSION-B> \(ID.of(sessionB))")
-
-    await sessionB.join(session: sessionA.session)
+    print("SESSION-B> \(ID.of(sessionB)) player: \(sessionB.player) host: \(sessionB.host) hosting: \(sessionB.hosting)")
+    print("JOINING SESSION-B to SESSION-B")
+    if await sessionB.join(session: sessionA.session) {
+        print("JOINED SESSION-B> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
+    }
+    else {
+        print("ERROR JOINING SESSION-B> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
+    }
+    try? await Task.sleep(nanoseconds: 3_000_000_000);
+    print("CHECK ON SESSION-B> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting)")
 }
 
 dispatchMain() // 🔒 This keeps the app alive forever.
