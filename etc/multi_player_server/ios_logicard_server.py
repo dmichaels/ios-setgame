@@ -92,15 +92,6 @@ def check_api_key():
 
 # The endpoints.
 
-# TODO: OBSOLETE THIS ENDPOINT ; DO NOT ALLOW SESSIONS WITHOUT HOST
-# Creates a new session and returns its ID.
-# Example Request:  POST /sessions
-# Example Response: {"session" "DEADBEEF"}
-#
-# @app.route('/sessions', methods=['POST'])
-# def create_session_endpoint():
-#     return jsonify({'session': _create_session()}), 201
-
 # Creates a new session, and registers the given player, and sets that
 # player to the host within that new session; returns the session ID.
 # Example Request:  POST /sessions/host
