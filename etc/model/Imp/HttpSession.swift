@@ -56,7 +56,6 @@ public extension GameCenter {
             else {
                 return await self.joinAsync(session: session);
             }
-            return true;
         }
 
         // Sends the given message to the given player for the session.
