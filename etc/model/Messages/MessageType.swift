@@ -3,7 +3,7 @@ public extension GameCenter {
     public enum MessageType: String, Codable {
         case ping;
         case joinSession;
-        case joinedSession;
+        case joinSessionConfirmed;
         case leaveSession;
         case updateSession;
     }
@@ -18,7 +18,7 @@ public extension GameCenter.SessionHandler {
     //
     func handle(message: GameCenter.PingMessage) {}
     func handle(message: GameCenter.JoinSessionMessage) {}
-    func handle(message: GameCenter.JoinedSessionMessage) {}
+    func handle(message: GameCenter.JoinSessionConfirmedMessage) {}
     func handle(message: GameCenter.LeaveSessionMessage) {}
     func handle(message: GameCenter.UpdateSessionMessage) {}
 }

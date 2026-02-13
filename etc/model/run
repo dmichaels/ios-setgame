@@ -13,7 +13,7 @@ swiftc -suppress-warnings -o \
     ${DIR}/Messages/MessageConveyance.swift \
     ${DIR}/Messages/MessageType.swift \
     ${DIR}/Messages/JoinSessionMessage.swift \
-    ${DIR}/Messages/JoinedSessionMessage.swift \
+    ${DIR}/Messages/JoinSessionConfirmedMessage.swift \
     ${DIR}/Messages/LeaveSessionMessage.swift \
     ${DIR}/Messages/UpdateSessionMessage.swift \
     ${DIR}/Messages/PingMessage.swift \

@@ -47,7 +47,7 @@ public extension GameCenter {
         // Joins to this (assumed) non-host player to the given session ID,
         // by sending a JoinSessionMessage to the host; the host will presumably
         // honor this request, add the player to the session (via backend server API),
-        // and then will send a JoinedSessionMessage back to this player for confirmation.
+        // and then will send a JoinSessionConfirmedMessage back to this player for confirmation.
         //
         public func join(session: String?, wait: Bool) async -> Bool {
             guard let session: String = session, !self.hosting else { return false }
@@ -116,7 +116,7 @@ public extension GameCenter {
                 var session: HttpSession?;
                 func handle(message: PingMessage) { session?.handle(message: message) }
                 func handle(message: JoinSessionMessage) { session?.handle(message: message) }
-                func handle(message: JoinedSessionMessage) { session?.handle(message: message) }
+                func handle(message: JoinSessionConfirmedMessage) { session?.handle(message: message) }
                 func handle(message: LeaveSessionMessage) { session?.handle(message: message) }
                 func handle(message: UpdateSessionMessage) { session?.handle(message: message) }
             }
@@ -154,9 +154,9 @@ public extension GameCenter {
                 //
                 // Don't actually join the session yet, by setting our session ID;
                 // as we've only just sent a message to the host that we want to join;
-                // we need to wait until we receive a JoinedSessionMessage to do that;
+                // we need to wait until we receive a JoinSessionConfirmedMessage to do that;
                 // BUT we DO want to bind our transport polling so that it can even receive
-                // messages (most pointedly the aforementioned JoinedSessionMessage).
+                // messages (most pointedly the aforementioned JoinSessionConfirmedMessage).
                 // self.session = session;
                 //
                 self.transport.bindSessionTentative(to: session);
@@ -198,7 +198,7 @@ public extension GameCenter {
             Task {
                 if let session: String = self.session {
                     let joiner: String = message.player;
-                    let message: GameCenter.Message = GameCenter.JoinedSessionMessage(session: session, host: self.player);
+                    let message: GameCenter.Message = GameCenter.JoinSessionConfirmedMessage(session: session, host: self.player);
                     //
                     // Currently just blindly accept this join request; register the player,
                     // identified in the message, for our session (via backend server API); and
@@ -240,7 +240,7 @@ public extension GameCenter {
             }
         }
 
-        private func handle(message: JoinedSessionMessage) {
+        private func handle(message: JoinSessionConfirmedMessage) {
             guard !self.hosting else { return; }
             //
             // We are presumed here to be a NON-host player.

@@ -85,11 +85,11 @@ public extension GameCenter {
                 if let message: Json = message.json {
                     //
                     // TODO
-                    // In addition to having the server "send" a JoinedSessionMessage to the
+                    // In addition to having the server "send" a JoinSessionConfirmedMessage to the
                     // registered player, maybe also have the server "send" an UpdateSessionMessage
                     // to each of the other players to update their (host and) players; makes things
                     // a little more complicated/confusing; but hm, the server COULD be setup to actually
-                    // know the structure of the joinedSession and updateSession messages, no? Call the
+                    // know the structure of the joinSessionConfirmed and updateSession messages, no? Call the
                     // additional endpoints register_and_notify and unregister_and_notify; the server is
                     // the source of truth, no?
                     //
