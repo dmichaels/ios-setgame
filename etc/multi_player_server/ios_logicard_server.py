@@ -31,7 +31,7 @@ app = Flask(__name__)
 # Lame but maybe someday we will use some kind of external database.
 #
 sessions = {}
-debug = False
+debug = False ; debugVerbose = False
 
 # Internal decorators et cetera.
 
@@ -337,11 +337,17 @@ def receive_messages_endpoint(session, player):
     if player not in session['players']:
         return _noplayer_response()
     messages = session['inbox'].pop(player, [])
-    global debug
+    global debug, debugVerbose
     if debug:
-        if 'received' not in session:
-            session['received'] = {}
-        session['received'].setdefault(player, []).extend(messages)
+        if len(messages) > 0:
+            if 'received' not in session:
+                session['received'] = []
+            if debugVerbose:
+                session['received'].append({player: messages,
+                                            'state': {'host': str(session['host']),
+                                                      'players': list(session['players'])}})
+            else:
+                session['received'].append({player: messages})
     return jsonify(messages), 200
 
 # Returns (without removal) any/all of the messages available
@@ -425,7 +431,7 @@ def nodebug_endpoint():
     global debug, sessions
     for session in sessions:
         if 'received' in session:
-            del session['received']
+            session['received'].clear()
     debug = False
     return _okay_response()
 
