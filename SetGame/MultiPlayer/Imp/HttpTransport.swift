@@ -18,8 +18,8 @@ public extension MultiPlayer {
             self.nopoll();
         }
 
-        // Bind this HttpTransport to the given session ID; and this
-        // includes naturally includes the session ID for message polling.
+        // Bind this HttpTransport to the given session ID; and note
+        // this includes naturally the session ID for message polling.
         //
         public func bindSession(to session: String) {
             self.session = session;
