@@ -51,7 +51,6 @@ public extension GameCenter {
         //
         public func join(session: String?, wait: Bool) async -> Bool {
             guard let session: String = session, !self.hosting else { return false }
-            guard !self.hosting else { return false }
             if (wait) {
                 //
                 // If the wait argument is true then send a
@@ -189,7 +188,7 @@ public extension GameCenter {
         }
 
         private func handle(message: JoinSessionMessage) {
-            guard self.hosting else { return; }
+            guard self.hosting else { return }
             //
             // We are presumed here to be the HOST player.
             // This is a request message from a non-host player to join this session.
@@ -219,7 +218,7 @@ public extension GameCenter {
         }
 
         private func handle(message: JoinSessionConfirmedMessage) {
-            guard !self.hosting else { return; }
+            guard !self.hosting else { return }
             //
             // We are presumed here to be a NON-host player.
             // This is a notification message from the host player
