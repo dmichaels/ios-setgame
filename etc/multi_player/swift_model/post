@@ -1,0 +1,18 @@
+#!/bin/bash
+HOST=https://api.logicard.dmichaels.dev
+METHOD=POST
+# APIKEY=$(cat .key)
+APIKEY=.0turangalila
+URL="$HOST/$1"
+if [ $# -ge 2 ] && [ -n "$2" ]; then
+    DATA=(-d "$2")
+else
+    DATA=()
+fi
+echo $METHOD $URL
+curl -s \
+  -H "X-API-Key: $APIKEY" \
+  -H "Content-Type: application/json" \
+  -X $METHOD "$URL" \
+  "${DATA[@]}" \
+  | python -m json.tool

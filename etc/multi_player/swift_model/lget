@@ -1,0 +1,12 @@
+#!/bin/bash
+HOST=http://127.0.0.1:8001
+METHOD=GET
+# APIKEY=$(cat .key)
+APIKEY=.0turangalila
+URL="$HOST/$*"
+echo $METHOD $URL
+curl -s \
+  -H "X-API-Key: $APIKEY" \
+  -H "Content-Type: application/json" \
+  -X $METHOD "$URL" \
+   | python -m json.tool
