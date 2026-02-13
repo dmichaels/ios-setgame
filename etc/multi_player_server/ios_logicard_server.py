@@ -128,12 +128,12 @@ def _nohost_response(status = 404):
 # Example Request:  POST /sessions/host
 # Example Response: {"session" "DEADBEEF"}
 #
-@app.route('/sessions/<player>', methods=['POST'])
-def create_and_host_session_endpoint(player):
+@app.route('/sessions/<host>', methods=['POST'])
+def create_and_host_session_endpoint(host):
     global sessions
     session = _create_session()
-    sessions[session]['players'].append(player)
-    sessions[session]['host'] = player
+    sessions[session]['players'].append(host)
+    sessions[session]['host'] = host
     return jsonify({'session': session}), 201
 
 # Returns the list of defined session IDs; mostly for debugging.
@@ -313,6 +313,19 @@ def get_host_endpoint(session):
 @app.route('/<session>/host/<player>', methods=['POST'])
 @with_session
 def set_host_endpoint(session, player):
+    if player not in session['players']:
+        return _noplayer_response()
+    session['host'] = player
+    return _okay_response()
+
+# Sets the host to the given player, for the given session;
+# if the given player is not already registered then does nothing.
+# Example Request:  POST /DEADBEEF/host/ada
+# Example Response: {"status": "OK"}
+#
+@app.route('/<session>/host/<player>', methods=['POST'])
+@with_session
+def set_host_and_notify_endpoint(session, player):
     if player not in session['players']:
         return _noplayer_response()
     session['host'] = player
