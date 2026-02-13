@@ -1,8 +1,7 @@
 # Simple server for my iOS Logicard (SET Game) app, for development (circa February 2026).
 #
-# These instructions are OBSOLETE.
-# Now using nginx for multiple sites and HTTPS handling; see nginx.conf.
-# Now simply run as simple Python script (no sudo needed); see ios_logicard_server.sh.
+# Using nginx for multiple sites and HTTPS handling; see nginx.conf.
+# Run as simple Python script (no sudo needed); see ios_logicard_server_start.sh.
 # Note that our dmichaels.dev domain is registered via Squarespace.
 # Note that our static AWS LightSail IP address is: 34.232.248.47
 # Note that redirect from HTTP to HTTPS not needed because the .dev TLD requires HTTPS.
@@ -15,7 +14,6 @@ import os
 import uuid
 from flask import abort
 
-
 # API Key (hardcoded!).
 #
 APIKEY = '.0turangalila'
@@ -26,7 +24,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--host', type=str, default='127.0.0.1', help='Host address to bind to.')
 parser.add_argument('--port', type=int, default=8001,        help='Port to bind to.')
 args = parser.parse_args()
-
 log = logging.getLogger('werkzeug') ; log.setLevel(logging.ERROR)
 app = Flask(__name__)
 
@@ -35,11 +32,29 @@ app = Flask(__name__)
 #
 sessions = {}
 
+# Internal decorators et cetera.
+
+def with_session(func):
+    @wraps(func)
+    def wrapper(session, *args, **kwargs):
+        global sessions
+        if not (found_session := sessions.get(session)):
+            return _nosession_response()
+        return func(found_session, *args, **kwargs)
+    return wrapper
+
+@app.before_request
+def _check_api_key():
+    if request.path == '/ping':
+        return
+    if request.headers.get('X-API-Key') != APIKEY:
+        abort(403)
+
 # Internal utility functions/decorators.
 #
-def _create_session(session = None):
+def _create_session():
     global sessions
-    session = session if session else str(uuid.uuid4()).replace('-', '').upper()
+    session = _uuid()
     if session not in sessions:
         sessions[session] = {
             'session': session,
@@ -48,6 +63,30 @@ def _create_session(session = None):
             'inbox':   {}
         }
     return session
+
+def _create_join_session_confirmed_message(session):
+    return {'type': 'joinSessionConfirmed',
+            'session': str(session['session']),
+            'host': str(session['host']),
+            'players': list(session['players'])}
+
+def _create_update_session_message(session):
+    return {'type': 'updateSession',
+            'host': str(session['host']),
+            'players': list(session['players'])}
+
+def _send_join_session_confirmed_message(session, player):
+    join_session_confirmed_message = _create_join_session_confirmed_message(session)
+    session['inbox'].setdefault(player, []).append(join_session_confirmed_message)
+
+def _send_update_session_messages(session, excluding = None):
+    update_session_message = _create_update_session_message(session)
+    for player in session['players']:
+        if (player != session['host']) and (player != excluding):
+            session['inbox'].setdefault(player, []).append(update_session_message)
+
+def _uuid():
+    return str(uuid.uuid4()).replace('-', '').upper()
 
 def _okay_response(status = 200):
     return jsonify({'status': 'OK'}), status
@@ -61,22 +100,6 @@ def _noplayer_response():
 def _nohost_response(status = 404):
     return jsonify({'status': 'nohost'}), status
 
-def with_session(func):
-    @wraps(func)
-    def wrapper(session, *args, **kwargs):
-        global sessions
-        if not (found_session := sessions.get(session)):
-            return _nosession_response()
-        return func(found_session, *args, **kwargs)
-    return wrapper
-
-@app.before_request
-def check_api_key():
-    if request.path == '/ping':
-        return
-    if request.headers.get('X-API-Key') != APIKEY:
-        abort(403)
-
 # The endpoints.
 
 # Creates a new session, and registers the given player, and sets that
@@ -84,12 +107,12 @@ def check_api_key():
 # Example Request:  POST /sessions/host
 # Example Response: {"session" "DEADBEEF"}
 #
-@app.route('/sessions/<player>', methods=['POST'])
-def create_and_host_session_endpoint(player):
+@app.route('/sessions/<host>', methods=['POST'])
+def create_and_host_session_endpoint(host):
     global sessions
     session = _create_session()
-    sessions[session]['players'].append(player)
-    sessions[session]['host'] = player
+    sessions[session]['players'].append(host)
+    sessions[session]['host'] = host
     return jsonify({'session': session}), 201
 
 # Returns the list of defined session IDs; mostly for debugging.
@@ -151,28 +174,25 @@ def register_player_endpoint(session, player):
                     'player':  player,
                     'players': session['players']}), 201
 
-# Exactly the same as POST /<session>/register/<player>,
-# immediately follwed by a POST /<session>/send/<player>; except
-# if the player was already registered then does not do the send;
-# and also if no POST data/payload is present then no send is done.
-# Example Request:  POST /DEADBEEF/register_and_send/ada
+# Same as POST /<session>/register/<player> but also "sends" (put in the
+# inbox of) the player just registered a joinSessionConfirmed message and
+# to all of the other players (except the host) an updateSession message;
+# but if the player was already registered then does nothing.
+# Example Request:  POST /DEADBEEF/register_and_notify/ada
 # Example Response: {"host": "ada", "player": "ada", "players": ["ada", "bob"]}
 #
-@app.route('/<session>/register_and_send/<player>', methods=['POST'])
+@app.route('/<session>/register_and_notify/<player>', methods=['POST'])
 @with_session
-def register_player_and_send_endpoint(session, player):
+def register_player_and_notify_endpoint(session, player):
     if player not in session['players']:
         session['players'].append(player)
-        send = True
-    else:
-        send = False
     if not session['host']:
         session['host'] = player
-    if send:
-        if (message := request.get_json(silent=True)) is not None:
-            session['inbox'].setdefault(player, []).append(message)
-    return jsonify({'player':  player,
-                    'host':    session['host'],
+    if len(session['players']) > 1:
+        _send_join_session_confirmed_message(session, player)
+        _send_update_session_messages(session, excluding=player)
+    return jsonify({'host':    session['host'],
+                    'player':  player,
                     'players': session['players']}), 201
 
 # Unregisters the given player for the given session.
@@ -193,6 +213,25 @@ def unregister_player_endpoint(session, player):
     session['inbox'].pop(player, None)
     if session['host'] == player:
         session['host'] = None
+    return _okay_response(201)
+
+# Same as POST /<session>/unregister/<player>  but also "sends" (puts
+# in the inbox of) any other (non-host) players an updateSession message.
+# Example Request:  POST /DEADBEEF/unregister_and_notify/ada
+# Example Response: {"status": "OK"}
+#
+@app.route('/<session>/unregister_and_notify/<player>', methods=['POST'])
+@with_session
+def unregister_player_and_notify_endpoint(session, player):
+    if player not in session['players']:
+        return _noplayer_response()
+    if player == session['host']:
+        return _nohost_response(409) # not allowed to unregister host
+    session['players'].remove(player)
+    session['inbox'].pop(player, None)
+    if session['host'] == player:
+        session['host'] = None
+    _send_update_session_messages(session, excluding=player)
     return _okay_response(201)
 
 # Returns the list of registered player IDs for the given session.
@@ -225,6 +264,20 @@ def set_host_endpoint(session, player):
     if player not in session['players']:
         return _noplayer_response()
     session['host'] = player
+    return _okay_response()
+
+# Sets the host to the given player, for the given session;
+# if the given player is not already registered then does nothing.
+# Example Request:  POST /DEADBEEF/host/ada
+# Example Response: {"status": "OK"}
+#
+@app.route('/<session>/host/<player>', methods=['POST'])
+@with_session
+def set_host_and_notify_endpoint(session, player):
+    if player not in session['players']:
+        return _noplayer_response()
+    session['host'] = player
+    _send_update_session_messages()
     return _okay_response()
 
 # Sends the given message (in the POST data) to the given player,
@@ -349,5 +402,7 @@ def ping_endpoint():
 # Start the server!
 #
 if __name__ == '__main__':
-    print(f'Starting iOS Logicard API Server.')
+    print(f'Starting iOS Logicard Backend.')
+    print(f'Host: {args.host}')
+    print(f'Port: {args.port}')
     app.run(host=args.host, port=args.port)

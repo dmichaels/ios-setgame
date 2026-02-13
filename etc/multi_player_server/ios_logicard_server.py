@@ -1,21 +1,9 @@
 # Simple server for my iOS Logicard (SET Game) app, for development (circa February 2026).
 #
-# These instructions are OBSOLETE.
-# Now using nginx for multiple sites and HTTPS handling; see nginx.conf.
-# Now simply run as simple Python script (no sudo needed); see ios_logicard_server.sh.
+# Using nginx for multiple sites and HTTPS handling; see nginx.conf.
+# Run as simple Python script (no sudo needed); see ios_logicard_server_start.sh.
 # Note that our dmichaels.dev domain is registered via Squarespace.
 # Note that our static AWS LightSail IP address is: 34.232.248.47
-#
-# On AWS (LightSail) we use (in ios_logicard_server_start.sh) to start:
-#
-# sudo -E \
-#   python3 ios_logicard_server.py \
-#     --cert /etc/letsencrypt/live/dmichaels.dev/fullchain.pem \
-#     --key  /etc/letsencrypt/live/dmichaels.dev/privkey.pem \
-#     --host 0.0.0.0 \
-#     --port 443 \
-#       > ios_logicard_server.log 2>&1 &
-#
 # Note that redirect from HTTP to HTTPS not needed because the .dev TLD requires HTTPS.
 
 import argparse
@@ -26,7 +14,6 @@ import os
 import uuid
 from flask import abort
 
-
 # API Key (hardcoded!).
 #
 APIKEY = '.0turangalila'
@@ -36,8 +23,6 @@ APIKEY = '.0turangalila'
 parser = argparse.ArgumentParser()
 parser.add_argument('--host', type=str, default='127.0.0.1', help='Host address to bind to.')
 parser.add_argument('--port', type=int, default=8001,        help='Port to bind to.')
-parser.add_argument('--cert', type=str, default=None,        help='Path to SSL certificate.')
-parser.add_argument('--key',  type=str, default=None,        help='Path to SSL key.')
 args = parser.parse_args()
 log = logging.getLogger('werkzeug') ; log.setLevel(logging.ERROR)
 app = Flask(__name__)
@@ -103,10 +88,6 @@ def _send_update_session_messages(session, excluding = None):
 
 def _uuid():
     return str(uuid.uuid4()).replace('-', '').upper()
-
-def _timestamp():
-    from datetime import datetime
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 def _okay_response(status = 200):
     return jsonify({'status': 'OK'}), status
@@ -210,32 +191,12 @@ def register_player_endpoint(session, player):
                     'player':  player,
                     'players': session['players']}), 201
 
-# Exactly the same as POST /<session>/register/<player>,
-# immediately follwed by a POST /<session>/send/<player>; except
-# if the player was already registered then does not do the send;
-# and also if no POST data/payload is present then no send is done.
-# Example Request:  POST /DEADBEEF/register_and_send/ada
+# Same as POST /<session>/register/<player> but also "sends" (put in the
+# inbox of) the player just registered a joinSessionConfirmed message and
+# to all of the other players (except the host) an updateSession message;
+# but if the player was already registered then does nothing.
+# Example Request:  POST /DEADBEEF/register_and_notify/ada
 # Example Response: {"host": "ada", "player": "ada", "players": ["ada", "bob"]}
-#
-@app.route('/<session>/register_and_send/<player>', methods=['POST'])
-@with_session
-def register_player_and_send_endpoint(session, player):
-    if player not in session['players']:
-        session['players'].append(player)
-        send = True
-    else:
-        send = False
-    if not session['host']:
-        session['host'] = player
-    if send:
-        if (message := request.get_json(silent=True)) is not None:
-            session['inbox'].setdefault(player, []).append(message)
-    return jsonify({'player':  player,
-                    'host':    session['host'],
-                    'players': session['players']}), 201
-
-# TODO
-# Experimental.
 #
 @app.route('/<session>/register_and_notify/<player>', methods=['POST'])
 @with_session
@@ -271,6 +232,11 @@ def unregister_player_endpoint(session, player):
         session['host'] = None
     return _okay_response(201)
 
+# Same as POST /<session>/unregister/<player>  but also "sends" (puts
+# in the inbox of) any other (non-host) players an updateSession message.
+# Example Request:  POST /DEADBEEF/unregister_and_notify/ada
+# Example Response: {"status": "OK"}
+#
 @app.route('/<session>/unregister_and_notify/<player>', methods=['POST'])
 @with_session
 def unregister_player_and_notify_endpoint(session, player):
@@ -475,11 +441,6 @@ def ping_endpoint():
 #
 if __name__ == '__main__':
     print(f'Starting iOS Logicard Backend.')
-    print(f'Host:        {args.host}')
-    print(f'Port:        {args.port}')
-    if args.cert and args.key:
-        print(f'Certificate: {args.cert}')
-        print(f'Private Key: {args.key}')
-        app.run(host=args.host, port=args.port, ssl_context=(args.cert, args.key))
-    else:
-        app.run(host=args.host, port=args.port)
+    print(f'Host: {args.host}')
+    print(f'Port: {args.port}')
+    app.run(host=args.host, port=args.port)
