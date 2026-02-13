@@ -316,6 +316,7 @@ def set_host_endpoint(session, player):
     if player not in session['players']:
         return _noplayer_response()
     session['host'] = player
+    _send_update_session_messages()
     return _okay_response()
 
 # Sends the given message (in the POST data) to the given player,
