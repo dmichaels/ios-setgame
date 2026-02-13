@@ -13,7 +13,7 @@ if (args.count > 2) {
     leaveSessionAfterSomeTime = Int(args[2]);
 }
 
-let url: URL = URL.create("http://127.0.0.1:8001") // URL.create("https://api.logicard.dmichaels.dev")
+let url: URL = URL.create("https://api.logicard.dmichaels.dev") // URL.create("http://127.0.0.1:8001")
 var table: Table = Table()
 let joinWait: Bool = true;
 var pollTask: Task<Void, Never>? = nil;
