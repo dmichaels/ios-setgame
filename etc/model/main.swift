@@ -4,9 +4,13 @@ print("Main module")
 
 let args = CommandLine.arguments;
 var sessionToJoin: String?
+var leaveSessionAfterSomeTime: Int?
 
 if (args.count > 1) {
     sessionToJoin = args[1];
+}
+if (args.count > 2) {
+    leaveSessionAfterSomeTime = Int(args[2]);
 }
 
 let url: URL = URL.create("https://api.logicard.dmichaels.dev") // URL.create("http://127.0.0.1:8001")
@@ -23,6 +27,15 @@ Task {
             print("JOINED SESSION> \(session.session!) player: \(session.player) host: \(session.host!) hosting: \(session.hosting) players: \(session.players)")
         }
         poll(session: session);
+        if let leaveSessionAfterSomeTime = leaveSessionAfterSomeTime {
+            delayCall(seconds: leaveSessionAfterSomeTime) {
+                print("LEAVING SESSION> \(session.session!) player: \(session.player) host: \(session.host!) hosting: \(session.hosting) players: \(session.players)")
+                if await session.leave() {
+                    print("LEFT SESSION> \(session.session!) player: \(session.player) host: \(session.host!) hosting: \(session.hosting) players: \(session.players)")
+                    nopoll();
+                }
+            }
+        }
     }
     else {
         let session: GameCenter.HttpSession = GameCenter.HttpSession(handler: table, url: url);
@@ -79,6 +92,14 @@ private func poll(session: GameCenter.Session) {
 private func nopoll() {
     pollTask?.cancel();
     pollTask = nil;
+}
+
+private func delayCall(seconds: Int, perform: @escaping () async -> Void) {
+    Task {
+        let duration = UInt64(seconds * 1_000_000_000);
+        try? await Task.sleep(nanoseconds: duration);
+        await perform();
+    }
 }
 
 dispatchMain();

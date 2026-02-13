@@ -68,6 +68,12 @@ public extension GameCenter {
             }
         }
 
+        public func leave() async -> Bool {
+            guard !self.hosting else { return false }
+            let message: Message = LeaveSessionMessage(player: self.player);
+            return await self.sendHost(message: message);
+        }
+
         // Sends the given message to the given player for the session.
         //
         public func send(message: Message, to player: String) async -> Bool {
@@ -139,7 +145,7 @@ public extension GameCenter {
 
             // Initialize the players list with ourselves.
             //
-            self.playerAdded(self.player);
+            self.playerJoined(self.player);
         }
 
         private func joinAsync(session: String) async -> Bool {
@@ -191,26 +197,45 @@ public extension GameCenter {
             //
             Task {
                 if let session: String = self.session {
-                    let player: String = message.player
+                    let joiner: String = message.player;
                     let message: GameCenter.Message = GameCenter.JoinedSessionMessage(session: session, host: self.player);
                     //
                     // Currently just blindly accept this join request; register the player,
                     // identified in the message, for our session (via backend server API); and
                     // send a notification message to this player that their request has been accepted.
                     // 
-                    if let (player, host) = await self.transportImp.registerPlayerAndSend(player, message: message, session: session) {
+                    print("PLAYER JOINING: \(joiner) session: \(session)")
+                    if let (player, host) = await self.transportImp.registerPlayerAndSend(joiner, message: message, session: session) {
                         //
                         // Add this player to our list of known players (which includes ourself FYI).
-                        // And then notify the other player excluding this (host) player and the player
-                        // just added here to the session (since they will receive a JoinedSessionMessage
-                        // in lieu of this), so that the other players can update their players list.
+                        // And then notify the other player excluding this (host) player, so that the
+                        // other (non-host) players can update their players list. Note: Initially
+                        // thought we could exclude the player just added here from the update, but
+                        // think wires could get crossed (TODO: think through some more); it should
+                        // not hurt at any rate just to send out UpdateSessionMessage as this just
+                        // synchronizes the host and players with the (non-host) clients to the host values.
                         //
-                        self.playerAdded(player);
+                        self.playerJoined(joiner);
+                        await updateSession();
+                        /*
                         let message: Message = UpdateSessionMessage(host: self.player, players: self.players);
-                        for player in self.players(excluding: self.player, player) {
-                            await self.transportImp.sendMessage(message, player: player, session: self.session);
+                        for player in self.players(excluding: self.player) {
+                            print("SEND UPDATE TO: \(player) session: \(session) host: \(self.host) players: \(self.players)")
+                            await self.transportImp.sendMessage(message, player: player, session: session);
                         }
+                        */
                     }
+                }
+            }
+        }
+
+        private func updateSession() async {
+            guard self.hosting else { return }
+            if let session: String = self.session {
+                let message: Message = UpdateSessionMessage(host: self.player, players: self.players);
+                for player in self.players(excluding: self.player) {
+                    print("SEND UPDATE TO: \(player) session: \(session) host: \(self.host) players: \(self.players)")
+                    await self.transportImp.sendMessage(message, player: player, session: session);
                 }
             }
         }
@@ -221,6 +246,7 @@ public extension GameCenter {
             // We are presumed here to be a NON-host player.
             // This is a notification message from the host player
             // that our request to join their session as been accepted.
+            // Note that we add the host (from the message) to our players list.
             //
             if let continuation = self.joinSessionContinuation {
                 self.joinSessionContinuation = nil;
@@ -228,23 +254,40 @@ public extension GameCenter {
             }
             self.session = message.session;
             self.host = message.host;
-            self.playerAdded(message.host);
+            self.playerJoined(message.host);
             self.transport.bindSession(to: message.session);
         }
 
         private func handle(message: LeaveSessionMessage) {
-            print("handle(LeaveSessionMessage): TODO")
-        }
-
-        private func handle(message: UpdateSessionMessage) {
-            for player in message.players {
-                self.playerAdded(player);
+            guard self.hosting else { return }
+            Task {
+                print("PLAYER LEAVING> \(message.player) session: \(session)")
+                if await self.transportImp.unregisterPlayer(message.player, session: session) {
+                    self.playerLeft(message.player);
+                    await updateSession();
+                }
             }
         }
 
-        private func playerAdded(_ player: String) {
+        private func handle(message: UpdateSessionMessage) {
+            print("UPDATING FROM HOST FROM> player: \(self.player) host: \(self.host) players: \(self.players) ...")
+            print("                     TO> host: \(message.host) players: \(message.players) ...")
+            self.host = message.host;
+            self.players = message.players;
+            // for player in message.players {
+            //     self.playerJoined(player);
+            // }
+        }
+
+        private func playerJoined(_ player: String) {
             if (!self.players.contains(player)) {
                 self.players.append(player);
+            }
+        }
+
+        private func playerLeft(_ player: String) {
+            if let index = self.players.firstIndex(of: player) {
+                self.players.remove(at: index);
             }
         }
 

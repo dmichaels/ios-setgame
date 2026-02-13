@@ -94,6 +94,15 @@ public extension GameCenter {
             return nil;
         }
 
+        public func unregisterPlayer(_ player: String, session: String? = nil) async -> Bool {
+            if let session: String = session ?? self.session {
+                if let response: Json = await self.url.post(session, "/unregister", player, as: Json.self, key: self.key) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         // Sends the given message to the given player for the session.
         //
         public func sendMessage(_ message: Message, player: String, session: String? = nil) async -> Bool {
