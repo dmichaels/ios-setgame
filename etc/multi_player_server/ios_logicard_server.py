@@ -55,7 +55,7 @@ def _check_api_key():
 #
 def _create_session():
     global sessions
-    session = _uuid()
+    session = str(uuid.uuid4()).replace('-', '').upper()
     if session not in sessions:
         sessions[session] = {
             'session': session,
@@ -85,11 +85,6 @@ def _send_update_session_messages(session, excluding = []):
     for player in session['players']:
         if player not in excluding:
             session['inbox'].setdefault(player, []).append(update_session_message)
-        # if (player != session['host']) and (player != excluding):
-        #     session['inbox'].setdefault(player, []).append(update_session_message)
-
-def _uuid():
-    return str(uuid.uuid4()).replace('-', '').upper()
 
 def _okay_response(status = 200):
     return jsonify({'status': 'OK'}), status
@@ -193,7 +188,7 @@ def register_player_endpoint(session, player):
                     'player':  player,
                     'players': session['players']}), 201
 
-# Same as POST /<session>/register/<player> but also "sends" (put in the
+# Same as POST /<session>/register/<player> but also "sends" (puts in the
 # inbox of) the player just registered a joinSessionConfirmed message and
 # to all of the other players (except the host) an updateSession message;
 # but if the player was already registered then does nothing.
@@ -286,8 +281,10 @@ def set_host_endpoint(session, player):
     return _okay_response()
 
 # Sets the host to the given player, for the given session;
-# if the given player is not already registered then does nothing.
-# Example Request:  POST /DEADBEEF/host/ada
+# if the given player is not already registered then does nothing;
+# and also "sends" (puts in the inbox of) a updateSession message
+# to all of the players.
+# Example Request:  POST /DEADBEEF/host_and_notify/ada
 # Example Response: {"status": "OK"}
 #
 @app.route('/<session>/host_and_notify/<player>', methods=['POST'])
@@ -295,8 +292,9 @@ def set_host_endpoint(session, player):
 def set_host_and_notify_endpoint(session, player):
     if player not in session['players']:
         return _noplayer_response()
-    session['host'] = player
-    _send_update_session_messages(session)
+    if player != session['host']:
+        session['host'] = player
+        _send_update_session_messages(session)
     return _okay_response()
 
 # Sends the given message (in the POST data) to the given player,
