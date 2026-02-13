@@ -53,6 +53,7 @@ public extension GameCenter {
             guard let session: String = session, !self.hosting else { return false }
             guard !self.hosting else { return false }
             if (wait) {
+                print("DEB-JOIN-WITH-WAIT")
                 //
                 // If the wait argument is true then send a
                 // join message to the host and wait for its return.
@@ -151,7 +152,9 @@ public extension GameCenter {
 
         private func joinAsync(session: String) async -> Bool {
             let message: Message = JoinSessionMessage(player: self.player);
+            print("SENDING-JOIN-SESSION-MESSAGE-A: \(self.player)")
             if await self.transportImp.sendHostMessage(message, session: session) {
+                print("SENDING-JOIN-SESSION-MESSAGE-B: \(session) \(message)")
                 //
                 // Don't actually join the session yet, by setting our session ID;
                 // as we've only just sent a message to the host that we want to join;
@@ -161,27 +164,38 @@ public extension GameCenter {
                 // self.session = session;
                 //
                 self.transport.bindSessionTentative(to: session);
+                print("SENDING-JOIN-SESSION-MESSAGE-C: \(session) \(message)")
                 self.transport.setup();
+                print("SENDING-JOIN-SESSION-MESSAGE-D: \(session) \(message)")
                 return true;
             }
             else {
+                print("SENDING-JOIN-SESSION-MESSAGE-E")
                 return false;
             }
         }
 
         private func joinAsyncAndWait(session: String?) async -> Bool {
+            print("DEB-JOIN-WITH-WAIT-FUNC")
             guard let session: String = session, !self.hosting else { return false }
+            print("DEB-JOIN-WITH-WAIT-FUNC-2")
             do {
-                let success: Bool = try await withTimeout(seconds: 5) {
+                let success: Bool = try await withTimeout(seconds: 5) { // TODO this timeout might not be working
+                    print("DEB-JOIN-WITH-WAIT-FUNC-3")
                     try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                        print("DEB-JOIN-WITH-WAIT-FUNC-4")
                         self.joinSessionContinuation = continuation
                         Task { await self.joinAsync(session: session) }
+                        print("DEB-JOIN-WITH-WAIT-FUNC-5")
                     }
+                    print("DEB-JOIN-WITH-WAIT-FUNC-6")
                     return true;
                 }
+                print("DEB-JOIN-WITH-WAIT-FUNC-7")
                 return success;
             }
             catch {
+                print("DEB-JOIN-WITH-WAIT-FUNC-8")
                 return false;
             }
         }
@@ -199,14 +213,15 @@ public extension GameCenter {
             Task {
                 if let session: String = self.session {
                     let joiner: String = message.player;
-                    let message: GameCenter.Message = GameCenter.JoinSessionConfirmedMessage(session: session, host: self.player);
+                 // let message: GameCenter.Message = GameCenter.JoinSessionConfirmedMessage(session: session, host: self.player);
                     //
                     // Currently just blindly accept this join request; register the player,
                     // identified in the message, for our session (via backend server API); and
                     // send a notification message to this player that their request has been accepted.
                     // 
                     print("PLAYER JOINING: \(joiner) session: \(session)")
-                    if let (player, host) = await self.transportImp.registerPlayerAndSend(joiner, message: message, session: session) {
+                 // if let (player, host) = await self.transportImp.registerPlayerAndSend(joiner, message: message, session: session) {
+                    if let (player, host) = await self.transportImp.registerPlayerAndNotify(joiner, session: session) {
                         //
                         // Add this player to our list of known players (which includes ourself FYI).
                         // And then notify the other player excluding this (host) player, so that the
@@ -217,7 +232,7 @@ public extension GameCenter {
                         // synchronizes the host and players with the (non-host) clients to the host values.
                         //
                         self.playerJoined(joiner);
-                        await updateSession();
+                        // await updateSession();
                         /*
                         let message: Message = UpdateSessionMessage(host: self.player, players: self.players);
                         for player in self.players(excluding: self.player) {
@@ -249,6 +264,25 @@ public extension GameCenter {
             // that our request to join their session as been accepted.
             // Note that we add the host (from the message) to our players list.
             //
+            print("JOIN CONFIRMED FROM HOST FROM> \(message.session) player: \(self.player) host: \(self.host) players: \(self.players) ...")
+            print("                           TO> \(message.session) host: \(message.host) players: \(message.players) ...")
+            if let continuation = self.joinSessionContinuation {
+                self.joinSessionContinuation = nil;
+                continuation.resume(returning: ());
+            }
+            self.session = message.session;
+            self.host = message.host;
+            self.players = message.players;
+            self.transport.bindSession(to: message.session);
+        }
+        private func old_handle(message: JoinSessionConfirmedMessage) {
+            guard !self.hosting else { return; }
+            //
+            // We are presumed here to be a NON-host player.
+            // This is a notification message from the host player
+            // that our request to join their session as been accepted.
+            // Note that we add the host (from the message) to our players list.
+            //
             if let continuation = self.joinSessionContinuation {
                 self.joinSessionContinuation = nil;
                 continuation.resume(returning: ());
@@ -263,9 +297,10 @@ public extension GameCenter {
             guard self.hosting else { return }
             Task {
                 print("PLAYER LEAVING> \(message.player) session: \(session)")
-                if await self.transportImp.unregisterPlayer(message.player, session: session) {
+             // if await self.transportImp.unregisterPlayer(message.player, session: session) {
+                if await self.transportImp.unregisterPlayerAndNotify(message.player, session: session) {
                     self.playerLeft(message.player);
-                    await updateSession();
+                    // await updateSession();
                 }
             }
         }

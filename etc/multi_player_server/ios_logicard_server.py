@@ -80,21 +80,20 @@ def _create_session():
         }
     return session
 
-def _create_joined_session_message(session):
-    return {'type': 'joinedSession',
-            'timestamp': _timestamp(),
+def _create_join_session_confirmed_message(session):
+    return {'type': 'joinSessionConfirmed',
             'session': str(session['session']),
-            'host': str(session['host'])}
+            'host': str(session['host']),
+            'players': list(session['players'])}
 
 def _create_update_session_message(session):
     return {'type': 'updateSession',
             'host': str(session['host']),
-            'timestamp': _timestamp(),
             'players': list(session['players'])}
 
-def _send_joined_session_message(session, player):
-    joined_session_message = _create_joined_session_message(session)
-    session['inbox'].setdefault(player, []).append(joined_session_message)
+def _send_join_session_confirmed_message(session, player):
+    join_session_confirmed_message = _create_join_session_confirmed_message(session)
+    session['inbox'].setdefault(player, []).append(join_session_confirmed_message)
 
 def _send_update_session_messages(session, excluding = None):
     update_session_message = _create_update_session_message(session)
@@ -246,7 +245,7 @@ def register_player_and_notify_endpoint(session, player):
     if not session['host']:
         session['host'] = player
     if len(session['players']) > 1:
-        _send_joined_session_message(session, player)
+        _send_join_session_confirmed_message(session, player)
         _send_update_session_messages(session, excluding=player)
     return jsonify({'host':    session['host'],
                     'player':  player,

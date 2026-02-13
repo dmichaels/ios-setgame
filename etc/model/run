@@ -1,6 +1,8 @@
 DIR=/Users/dmichaels/repos/ios-setgame/etc/model
 # ${DIR}/post  /reset ; ${DIR}/post  /debug
 # ${DIR}/lpost /reset ; ${DIR}/lpost /debug
+${DIR}/post  /debug
+${DIR}/lpost /debug
 rm -f ${DIR}/main
 swiftc -suppress-warnings -o \
     ${DIR}/main \
