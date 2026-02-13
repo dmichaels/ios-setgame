@@ -19,6 +19,7 @@ public extension GameCenter {
         func registerPlayerAndNotify(player: String, session: String?) async -> (player: String, host: String)?;
         func unregisterPlayerAndNotify(player: String, session: String?) async -> Bool;
         func setHostAndNotify(player: String, session: String?) async -> Bool;
+
         func sendMessage(_ message: GameCenter.Message, player: String, session: String?) async -> Bool;
         func sendHostMessage(_ message: GameCenter.Message, session: String?) async -> Bool;
         func sendHostMessage(_ message: GameCenter.Message, session: String?) -> Bool;
