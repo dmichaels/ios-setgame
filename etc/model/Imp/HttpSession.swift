@@ -53,7 +53,6 @@ public extension GameCenter {
             guard let session: String = session, !self.hosting else { return false }
             guard !self.hosting else { return false }
             if (wait) {
-                print("DEB-JOIN-WITH-WAIT")
                 //
                 // If the wait argument is true then send a
                 // join message to the host and wait for its return.
@@ -152,9 +151,7 @@ public extension GameCenter {
 
         private func joinAsync(session: String) async -> Bool {
             let message: Message = JoinSessionMessage(player: self.player);
-            print("SENDING-JOIN-SESSION-MESSAGE-A: \(self.player)")
             if await self.transportImp.sendHostMessage(message, session: session) {
-                print("SENDING-JOIN-SESSION-MESSAGE-B: \(session) \(message)")
                 //
                 // Don't actually join the session yet, by setting our session ID;
                 // as we've only just sent a message to the host that we want to join;
@@ -164,38 +161,27 @@ public extension GameCenter {
                 // self.session = session;
                 //
                 self.transport.bindSessionTentative(to: session);
-                print("SENDING-JOIN-SESSION-MESSAGE-C: \(session) \(message)")
                 self.transport.setup();
-                print("SENDING-JOIN-SESSION-MESSAGE-D: \(session) \(message)")
                 return true;
             }
             else {
-                print("SENDING-JOIN-SESSION-MESSAGE-E")
                 return false;
             }
         }
 
         private func joinAsyncAndWait(session: String?) async -> Bool {
-            print("DEB-JOIN-WITH-WAIT-FUNC")
             guard let session: String = session, !self.hosting else { return false }
-            print("DEB-JOIN-WITH-WAIT-FUNC-2")
             do {
                 let success: Bool = try await withTimeout(seconds: 5) { // TODO this timeout might not be working
-                    print("DEB-JOIN-WITH-WAIT-FUNC-3")
                     try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-                        print("DEB-JOIN-WITH-WAIT-FUNC-4")
                         self.joinSessionContinuation = continuation
                         Task { await self.joinAsync(session: session) }
-                        print("DEB-JOIN-WITH-WAIT-FUNC-5")
                     }
-                    print("DEB-JOIN-WITH-WAIT-FUNC-6")
                     return true;
                 }
-                print("DEB-JOIN-WITH-WAIT-FUNC-7")
                 return success;
             }
             catch {
-                print("DEB-JOIN-WITH-WAIT-FUNC-8")
                 return false;
             }
         }
@@ -288,13 +274,8 @@ public extension GameCenter {
         }
 
         private func handle(message: UpdateSessionMessage) {
-            print("UPDATING FROM HOST FROM> player: \(self.player) host: \(self.host) players: \(self.players) ...")
-            print("                     TO> host: \(message.host) players: \(message.players) ...")
             self.host = message.host;
             self.players = message.players;
-            // for player in message.players {
-            //     self.playerJoined(player);
-            // }
         }
 
         private func playerJoined(_ player: String) {
