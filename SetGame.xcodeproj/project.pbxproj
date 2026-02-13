@@ -35,7 +35,6 @@
 		9867E14F2F21CF4300CB221F /* TopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1492F21CF4300CB221F /* TopViewController.swift */; };
 		9867E1532F262CB500CB221F /* Comparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1522F262CB500CB221F /* Comparable.swift */; };
 		9874C83B2F305FEA002EEE86 /* GameCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9874C8342F305FEA002EEE86 /* GameCenter.swift */; };
-		9874C8582F30EB5A002EEE86 /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9874C8572F30EB5A002EEE86 /* Messages.swift */; };
 		9874C88B2F33EECA002EEE86 /* RNG.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9874C88A2F33EECA002EEE86 /* RNG.swift */; };
 		989D93692EE8B01D00BE461B /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D93682EE8B01D00BE461B /* Stats.swift */; };
 		989D936B2EEDABC600BE461B /* FoundSetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D936A2EEDABC600BE461B /* FoundSetsView.swift */; };
@@ -52,6 +51,25 @@
 		98A5C74F2F09BBF6009E708D /* Help.md in Resources */ = {isa = PBXBuildFile; fileRef = 98A5C74E2F09BBF6009E708D /* Help.md */; };
 		98C2CA8225F3C1E40050ACDC /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2CA8125F3C1E40050ACDC /* StatsView.swift */; };
 		98C9D21B2F2D080C0094E251 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C9D21A2F2D080C0094E251 /* URL.swift */; };
+		98E1F2C42F3FAA9200F6DAA3 /* LeaveSessionMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2B82F3FAA9200F6DAA3 /* LeaveSessionMessage.swift */; };
+		98E1F2C52F3FAA9200F6DAA3 /* MessageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2BB2F3FAA9200F6DAA3 /* MessageType.swift */; };
+		98E1F2C62F3FAA9200F6DAA3 /* PingMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2BC2F3FAA9200F6DAA3 /* PingMessage.swift */; };
+		98E1F2C72F3FAA9200F6DAA3 /* JoinSessionMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2B72F3FAA9200F6DAA3 /* JoinSessionMessage.swift */; };
+		98E1F2C82F3FAA9200F6DAA3 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2B22F3FAA9200F6DAA3 /* Session.swift */; };
+		98E1F2CA2F3FAA9200F6DAA3 /* MessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2B12F3FAA9200F6DAA3 /* MessageHandler.swift */; };
+		98E1F2CB2F3FAA9200F6DAA3 /* MessageConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2B92F3FAA9200F6DAA3 /* MessageConversion.swift */; };
+		98E1F2CC2F3FAA9200F6DAA3 /* Transport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2B42F3FAA9200F6DAA3 /* Transport.swift */; };
+		98E1F2CD2F3FAA9200F6DAA3 /* HttpTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2AE2F3FAA9200F6DAA3 /* HttpTransport.swift */; };
+		98E1F2CE2F3FAA9200F6DAA3 /* JoinSessionConfirmedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2B62F3FAA9200F6DAA3 /* JoinSessionConfirmedMessage.swift */; };
+		98E1F2CF2F3FAA9200F6DAA3 /* SessionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2B32F3FAA9200F6DAA3 /* SessionHandler.swift */; };
+		98E1F2D02F3FAA9200F6DAA3 /* RequestHostSessionMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2BD2F3FAA9200F6DAA3 /* RequestHostSessionMessage.swift */; };
+		98E1F2D12F3FAA9200F6DAA3 /* UpdateSessionMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2BE2F3FAA9200F6DAA3 /* UpdateSessionMessage.swift */; };
+		98E1F2D22F3FAA9200F6DAA3 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2B02F3FAA9200F6DAA3 /* Message.swift */; };
+		98E1F2D32F3FAA9200F6DAA3 /* HttpSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2AD2F3FAA9200F6DAA3 /* HttpSession.swift */; };
+		98E1F2D42F3FAA9200F6DAA3 /* MultiPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2C02F3FAA9200F6DAA3 /* MultiPlayer.swift */; };
+		98E1F2D62F3FAA9200F6DAA3 /* MessageConveyance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2BA2F3FAA9200F6DAA3 /* MessageConveyance.swift */; };
+		98E1F2E42F3FABC100F6DAA3 /* XMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2E32F3FABC100F6DAA3 /* XMessages.swift */; };
+		98E1F2E62F3FABF000F6DAA3 /* Timeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2E52F3FABF000F6DAA3 /* Timeout.swift */; };
 		98E4E3232773B0AC000EEC5A /* SetGame.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98E4E3222773B0AC000EEC5A /* SetGame.xcassets */; };
 		98EF7E0E2F167C5800A45F63 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E0B2F167C5800A45F63 /* CardView.swift */; };
 		98EF7E0F2F167C5800A45F63 /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E0C2F167C5800A45F63 /* TableView.swift */; };
@@ -113,7 +131,6 @@
 		9867E14A2F21CF4300CB221F /* UIApplication+TopMostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+TopMostViewController.swift"; sourceTree = "<group>"; };
 		9867E1522F262CB500CB221F /* Comparable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparable.swift; sourceTree = "<group>"; };
 		9874C8342F305FEA002EEE86 /* GameCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenter.swift; sourceTree = "<group>"; };
-		9874C8572F30EB5A002EEE86 /* Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messages.swift; sourceTree = "<group>"; };
 		9874C88A2F33EECA002EEE86 /* RNG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNG.swift; sourceTree = "<group>"; };
 		989D93682EE8B01D00BE461B /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		989D936A2EEDABC600BE461B /* FoundSetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundSetsView.swift; sourceTree = "<group>"; };
@@ -130,6 +147,25 @@
 		98A5C74E2F09BBF6009E708D /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Help.md; sourceTree = "<group>"; };
 		98C2CA8125F3C1E40050ACDC /* StatsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		98C9D21A2F2D080C0094E251 /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
+		98E1F2AD2F3FAA9200F6DAA3 /* HttpSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpSession.swift; sourceTree = "<group>"; };
+		98E1F2AE2F3FAA9200F6DAA3 /* HttpTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpTransport.swift; sourceTree = "<group>"; };
+		98E1F2B02F3FAA9200F6DAA3 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		98E1F2B12F3FAA9200F6DAA3 /* MessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHandler.swift; sourceTree = "<group>"; };
+		98E1F2B22F3FAA9200F6DAA3 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		98E1F2B32F3FAA9200F6DAA3 /* SessionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionHandler.swift; sourceTree = "<group>"; };
+		98E1F2B42F3FAA9200F6DAA3 /* Transport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transport.swift; sourceTree = "<group>"; };
+		98E1F2B62F3FAA9200F6DAA3 /* JoinSessionConfirmedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinSessionConfirmedMessage.swift; sourceTree = "<group>"; };
+		98E1F2B72F3FAA9200F6DAA3 /* JoinSessionMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinSessionMessage.swift; sourceTree = "<group>"; };
+		98E1F2B82F3FAA9200F6DAA3 /* LeaveSessionMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaveSessionMessage.swift; sourceTree = "<group>"; };
+		98E1F2B92F3FAA9200F6DAA3 /* MessageConversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageConversion.swift; sourceTree = "<group>"; };
+		98E1F2BA2F3FAA9200F6DAA3 /* MessageConveyance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageConveyance.swift; sourceTree = "<group>"; };
+		98E1F2BB2F3FAA9200F6DAA3 /* MessageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageType.swift; sourceTree = "<group>"; };
+		98E1F2BC2F3FAA9200F6DAA3 /* PingMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingMessage.swift; sourceTree = "<group>"; };
+		98E1F2BD2F3FAA9200F6DAA3 /* RequestHostSessionMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestHostSessionMessage.swift; sourceTree = "<group>"; };
+		98E1F2BE2F3FAA9200F6DAA3 /* UpdateSessionMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSessionMessage.swift; sourceTree = "<group>"; };
+		98E1F2C02F3FAA9200F6DAA3 /* MultiPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiPlayer.swift; sourceTree = "<group>"; };
+		98E1F2E32F3FABC100F6DAA3 /* XMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMessages.swift; sourceTree = "<group>"; };
+		98E1F2E52F3FABF000F6DAA3 /* Timeout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timeout.swift; sourceTree = "<group>"; };
 		98E4E3222773B0AC000EEC5A /* SetGame.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SetGame.xcassets; sourceTree = "<group>"; };
 		98EF7E0B2F167C5800A45F63 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		98EF7E0C2F167C5800A45F63 /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
@@ -195,6 +231,7 @@
 			children = (
 				981B00492F113ABF00875920 /* SetGame.entitlements */,
 				981190EF25ED59CC0083606B /* SetGameApp.swift */,
+				98E1F2C32F3FAA9200F6DAA3 /* MultiPlayer */,
 				98EF7E192F1D070500A45F63 /* Dev */,
 				9867E13A2F1FCA8A00CB221F /* Demo */,
 				9867E13C2F21255600CB221F /* GameCenter */,
@@ -277,6 +314,7 @@
 		9867E12E2F1E573000CB221F /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				98E1F2E52F3FABF000F6DAA3 /* Timeout.swift */,
 				9867E1522F262CB500CB221F /* Comparable.swift */,
 				9867E12D2F1E573000CB221F /* Delay.swift */,
 				98EF7E102F19661F00A45F63 /* ID.swift */,
@@ -300,12 +338,12 @@
 		9867E13C2F21255600CB221F /* GameCenter */ = {
 			isa = PBXGroup;
 			children = (
+				98E1F2E32F3FABC100F6DAA3 /* XMessages.swift */,
 				9874C85F2F316609002EEE86 /* Interfaces */,
 				98C9D1E72F2941160094E251 /* Dev */,
 				9874C8342F305FEA002EEE86 /* GameCenter.swift */,
 				9867E1462F21CF4300CB221F /* GameCenterAuthentication.swift */,
 				9867E1472F21CF4300CB221F /* GameCenterManager.swift */,
-				9874C8572F30EB5A002EEE86 /* Messages.swift */,
 				9867E1482F21CF4300CB221F /* PlayButtonView.swift */,
 				9867E1492F21CF4300CB221F /* TopViewController.swift */,
 				9867E14A2F21CF4300CB221F /* UIApplication+TopMostViewController.swift */,
@@ -319,6 +357,54 @@
 				98A5C74E2F09BBF6009E708D /* Help.md */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		98E1F2AF2F3FAA9200F6DAA3 /* Imp */ = {
+			isa = PBXGroup;
+			children = (
+				98E1F2AD2F3FAA9200F6DAA3 /* HttpSession.swift */,
+				98E1F2AE2F3FAA9200F6DAA3 /* HttpTransport.swift */,
+			);
+			path = Imp;
+			sourceTree = "<group>";
+		};
+		98E1F2B52F3FAA9200F6DAA3 /* Interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				98E1F2B02F3FAA9200F6DAA3 /* Message.swift */,
+				98E1F2B12F3FAA9200F6DAA3 /* MessageHandler.swift */,
+				98E1F2B22F3FAA9200F6DAA3 /* Session.swift */,
+				98E1F2B32F3FAA9200F6DAA3 /* SessionHandler.swift */,
+				98E1F2B42F3FAA9200F6DAA3 /* Transport.swift */,
+			);
+			path = Interfaces;
+			sourceTree = "<group>";
+		};
+		98E1F2BF2F3FAA9200F6DAA3 /* Messages */ = {
+			isa = PBXGroup;
+			children = (
+				98E1F2B62F3FAA9200F6DAA3 /* JoinSessionConfirmedMessage.swift */,
+				98E1F2B72F3FAA9200F6DAA3 /* JoinSessionMessage.swift */,
+				98E1F2B82F3FAA9200F6DAA3 /* LeaveSessionMessage.swift */,
+				98E1F2B92F3FAA9200F6DAA3 /* MessageConversion.swift */,
+				98E1F2BA2F3FAA9200F6DAA3 /* MessageConveyance.swift */,
+				98E1F2BB2F3FAA9200F6DAA3 /* MessageType.swift */,
+				98E1F2BC2F3FAA9200F6DAA3 /* PingMessage.swift */,
+				98E1F2BD2F3FAA9200F6DAA3 /* RequestHostSessionMessage.swift */,
+				98E1F2BE2F3FAA9200F6DAA3 /* UpdateSessionMessage.swift */,
+			);
+			path = Messages;
+			sourceTree = "<group>";
+		};
+		98E1F2C32F3FAA9200F6DAA3 /* MultiPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				98E1F2AF2F3FAA9200F6DAA3 /* Imp */,
+				98E1F2B52F3FAA9200F6DAA3 /* Interfaces */,
+				98E1F2BF2F3FAA9200F6DAA3 /* Messages */,
+				98E1F2C02F3FAA9200F6DAA3 /* MultiPlayer.swift */,
+			);
+			path = MultiPlayer;
 			sourceTree = "<group>";
 		};
 		98EF7E192F1D070500A45F63 /* Dev */ = {
@@ -517,6 +603,7 @@
 				9867E12F2F1E573000CB221F /* Delay.swift in Sources */,
 				9867E14B2F21CF4300CB221F /* GameCenterManager.swift in Sources */,
 				9867E14C2F21CF4300CB221F /* PlayButtonView.swift in Sources */,
+				98E1F2E42F3FABC100F6DAA3 /* XMessages.swift in Sources */,
 				9867E14D2F21CF4300CB221F /* GameCenterAuthentication.swift in Sources */,
 				9867E14E2F21CF4300CB221F /* UIApplication+TopMostViewController.swift in Sources */,
 				98C9D21B2F2D080C0094E251 /* URL.swift in Sources */,
@@ -524,10 +611,27 @@
 				9811914725ED5ACF0083606B /* Table.swift in Sources */,
 				9811914B25ED5ACF0083606B /* CardShape.swift in Sources */,
 				989D936F2EF21DEF00BE461B /* Settings.swift in Sources */,
-				9874C8582F30EB5A002EEE86 /* Messages.swift in Sources */,
 				9811914A25ED5ACF0083606B /* TableCard.swift in Sources */,
 				98A5C74B2F098D02009E708D /* HelpView.swift in Sources */,
 				989D93712EF43A8500BE461B /* DeckView.swift in Sources */,
+				98E1F2C42F3FAA9200F6DAA3 /* LeaveSessionMessage.swift in Sources */,
+				98E1F2C52F3FAA9200F6DAA3 /* MessageType.swift in Sources */,
+				98E1F2C62F3FAA9200F6DAA3 /* PingMessage.swift in Sources */,
+				98E1F2C72F3FAA9200F6DAA3 /* JoinSessionMessage.swift in Sources */,
+				98E1F2C82F3FAA9200F6DAA3 /* Session.swift in Sources */,
+				98E1F2CA2F3FAA9200F6DAA3 /* MessageHandler.swift in Sources */,
+				98E1F2CB2F3FAA9200F6DAA3 /* MessageConversion.swift in Sources */,
+				98E1F2CC2F3FAA9200F6DAA3 /* Transport.swift in Sources */,
+				98E1F2CD2F3FAA9200F6DAA3 /* HttpTransport.swift in Sources */,
+				98E1F2CE2F3FAA9200F6DAA3 /* JoinSessionConfirmedMessage.swift in Sources */,
+				98E1F2CF2F3FAA9200F6DAA3 /* SessionHandler.swift in Sources */,
+				98E1F2D02F3FAA9200F6DAA3 /* RequestHostSessionMessage.swift in Sources */,
+				98E1F2D12F3FAA9200F6DAA3 /* UpdateSessionMessage.swift in Sources */,
+				98E1F2D22F3FAA9200F6DAA3 /* Message.swift in Sources */,
+				98E1F2E62F3FABF000F6DAA3 /* Timeout.swift in Sources */,
+				98E1F2D32F3FAA9200F6DAA3 /* HttpSession.swift in Sources */,
+				98E1F2D42F3FAA9200F6DAA3 /* MultiPlayer.swift in Sources */,
+				98E1F2D62F3FAA9200F6DAA3 /* MessageConveyance.swift in Sources */,
 				98EF7E0E2F167C5800A45F63 /* CardView.swift in Sources */,
 				98EF7E0F2F167C5800A45F63 /* TableView.swift in Sources */,
 				989D93732EF4BEDB00BE461B /* Feedback.swift in Sources */,
