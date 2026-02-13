@@ -118,6 +118,7 @@ public extension GameCenter {
                 func handle(message: JoinSessionMessage) { session?.handle(message: message) }
                 func handle(message: JoinSessionConfirmedMessage) { session?.handle(message: message) }
                 func handle(message: LeaveSessionMessage) { session?.handle(message: message) }
+                func handle(message: RequestHostSessionMessage) { session?.handle(message: message) }
                 func handle(message: UpdateSessionMessage) { session?.handle(message: message) }
             }
 
@@ -267,6 +268,10 @@ public extension GameCenter {
                     await updateSession();
                 }
             }
+        }
+
+        private func handle(message: RequestHostSessionMessage) {
+            print("TODO: HANDLE RequestHostSessionMessage")
         }
 
         private func handle(message: UpdateSessionMessage) {

@@ -5,6 +5,7 @@ public extension GameCenter {
         func handle(message: JoinSessionMessage);
         func handle(message: JoinSessionConfirmedMessage);
         func handle(message: LeaveSessionMessage);
+        func handle(message: RequestHostSessionMessage);
         func handle(message: UpdateSessionMessage);
     }
 }

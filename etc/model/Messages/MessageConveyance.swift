@@ -12,6 +12,7 @@ public extension GameCenter {
                                                joinSession: handler.handle,
                                                joinSessionConfirmed: handler.handle,
                                                leaveSession: handler.handle,
+                                               requestHostSession: handler.handle,
                                                updateSession: handler.handle);
                 }
             }
@@ -22,6 +23,7 @@ public extension GameCenter {
                                     joinSession: ((JoinSessionMessage) -> Void)? = nil,
                                     joinSessionConfirmed: ((JoinSessionConfirmedMessage) -> Void)? = nil,
                                     leaveSession: ((LeaveSessionMessage) -> Void)? = nil,
+                                    requestHostSession: ((RequestHostSessionMessage) -> Void)? = nil,
                                     updateSession: ((UpdateSessionMessage) -> Void)? = nil) {
             if let message: Message = message {
                 switch message {
@@ -29,6 +31,7 @@ public extension GameCenter {
                     case let message as JoinSessionMessage: joinSession?(message);
                     case let message as JoinSessionConfirmedMessage: joinSessionConfirmed?(message);
                     case let message as LeaveSessionMessage: leaveSession?(message);
+                    case let message as RequestHostSessionMessage: requestHostSession?(message);
                     case let message as UpdateSessionMessage: updateSession?(message);
                     default: break;
                 }

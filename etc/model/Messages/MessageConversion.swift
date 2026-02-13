@@ -31,6 +31,7 @@ public extension GameCenter {
                     case .joinSession:   return try? JSONDecoder().decode(JoinSessionMessage.self, from: data);
                     case .joinSessionConfirmed: return try? JSONDecoder().decode(JoinSessionConfirmedMessage.self, from: data);
                     case .leaveSession: return try? JSONDecoder().decode(LeaveSessionMessage.self, from: data);
+                    case .requestHostSession: return try? JSONDecoder().decode(RequestHostSessionMessage.self, from: data);
                     case .updateSession: return try? JSONDecoder().decode(UpdateSessionMessage.self, from: data);
                 }
             }

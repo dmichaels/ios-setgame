@@ -5,6 +5,7 @@ public extension GameCenter {
         case joinSession;
         case joinSessionConfirmed;
         case leaveSession;
+        case requestHostSession;
         case updateSession;
     }
 }
@@ -20,5 +21,6 @@ public extension GameCenter.SessionHandler {
     func handle(message: GameCenter.JoinSessionMessage) {}
     func handle(message: GameCenter.JoinSessionConfirmedMessage) {}
     func handle(message: GameCenter.LeaveSessionMessage) {}
+    func handle(message: GameCenter.RequestHostSessionMessage) {}
     func handle(message: GameCenter.UpdateSessionMessage) {}
 }
