@@ -1,4 +1,4 @@
-public extension GameCenter {
+public extension MultiPlayer {
 
     public enum MessageType: String, Codable {
         case ping;
@@ -10,17 +10,17 @@ public extension GameCenter {
     }
 }
 
-public extension GameCenter.SessionHandler {
+public extension MultiPlayer.SessionHandler {
     //
     // These player joining related message handlers are defaulted so
     // that the main MessageHandler, i.e. Table in our case, does not have
     // to bother implementing these, since this should be of no concern there;
     // these are instead handled directly by the Session implementation.
     //
-    func handle(message: GameCenter.PingMessage) {}
-    func handle(message: GameCenter.JoinSessionMessage) {}
-    func handle(message: GameCenter.JoinSessionConfirmedMessage) {}
-    func handle(message: GameCenter.LeaveSessionMessage) {}
-    func handle(message: GameCenter.RequestHostSessionMessage) {}
-    func handle(message: GameCenter.UpdateSessionMessage) {}
+    func handle(message: MultiPlayer.PingMessage) {}
+    func handle(message: MultiPlayer.JoinSessionMessage) {}
+    func handle(message: MultiPlayer.JoinSessionConfirmedMessage) {}
+    func handle(message: MultiPlayer.LeaveSessionMessage) {}
+    func handle(message: MultiPlayer.RequestHostSessionMessage) {}
+    func handle(message: MultiPlayer.UpdateSessionMessage) {}
 }

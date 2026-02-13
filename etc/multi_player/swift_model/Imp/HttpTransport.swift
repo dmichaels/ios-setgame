@@ -1,10 +1,10 @@
 import Foundation
 
-public extension GameCenter {
+public extension MultiPlayer {
 
     public class HttpTransport: Transport {
 
-        public typealias Factory = (GameCenter.MessageHandler) -> HttpTransport;
+        public typealias Factory = (MultiPlayer.MessageHandler) -> HttpTransport;
 
         // Transport protocol implementation.
 

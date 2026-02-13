@@ -1,4 +1,4 @@
-public extension GameCenter {
+public extension MultiPlayer {
 
     public struct UpdateSessionMessage: Message {
         public let type: MessageType;

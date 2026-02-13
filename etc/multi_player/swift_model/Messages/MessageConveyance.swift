@@ -1,6 +1,6 @@
 import Foundation
 
-public extension GameCenter {
+public extension MultiPlayer {
 
     public struct MessageConveyance {
 

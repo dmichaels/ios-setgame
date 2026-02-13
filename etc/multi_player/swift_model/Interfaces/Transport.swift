@@ -1,4 +1,4 @@
-public extension GameCenter {
+public extension MultiPlayer {
 
     // TODO
     // Rethink this in terms of the ONLY consumer being the Session (protocol) implementation.
@@ -20,9 +20,9 @@ public extension GameCenter {
         func unregisterPlayerAndNotify(player: String, session: String?) async -> Bool;
         func setHostAndNotify(player: String, session: String?) async -> Bool;
 
-        func sendMessage(_ message: GameCenter.Message, player: String, session: String?) async -> Bool;
-        func sendHostMessage(_ message: GameCenter.Message, session: String?) async -> Bool;
-        func sendHostMessage(_ message: GameCenter.Message, session: String?) -> Bool;
-        func sendMessage(_ message: GameCenter.Message, player: String, session: String?) -> Bool;
+        func sendMessage(_ message: MultiPlayer.Message, player: String, session: String?) async -> Bool;
+        func sendHostMessage(_ message: MultiPlayer.Message, session: String?) async -> Bool;
+        func sendHostMessage(_ message: MultiPlayer.Message, session: String?) -> Bool;
+        func sendMessage(_ message: MultiPlayer.Message, player: String, session: String?) -> Bool;
     }
 }

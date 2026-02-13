@@ -1,4 +1,4 @@
-public extension GameCenter {
+public extension MultiPlayer {
 
     public protocol MessageHandler: AnyObject {
         func handle(message: PingMessage);

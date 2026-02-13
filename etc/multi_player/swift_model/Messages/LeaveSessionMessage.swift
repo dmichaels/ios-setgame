@@ -1,4 +1,4 @@
-public extension GameCenter {
+public extension MultiPlayer {
 
     public struct LeaveSessionMessage: Message {
         public let type: MessageType;

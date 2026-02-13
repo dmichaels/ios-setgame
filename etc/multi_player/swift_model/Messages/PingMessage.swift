@@ -1,4 +1,4 @@
-public extension GameCenter {
+public extension MultiPlayer {
 
     public class PingMessage: Message {
         public let type: MessageType;

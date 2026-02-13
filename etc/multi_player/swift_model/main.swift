@@ -48,7 +48,7 @@ let pollInterval: UInt64 = 2_000_000_000;
 Task {
 
     if let joinSession = joinSession {
-        let session: GameCenter.HttpSession = GameCenter.HttpSession(handler: table, url: url);
+        let session: MultiPlayer.HttpSession = MultiPlayer.HttpSession(handler: table, url: url);
         if await session.join(session: joinSession) {
             print("JOINED SESSION> \(session.session!) player: \(session.player) host: \(session.host!) hosting: \(session.hosting) players: \(session.players)")
         }
@@ -72,7 +72,7 @@ Task {
         }
     }
     else {
-        let session: GameCenter.HttpSession = GameCenter.HttpSession(handler: table, url: url);
+        let session: MultiPlayer.HttpSession = MultiPlayer.HttpSession(handler: table, url: url);
         if await session.create() {
             print("CREATED SESSION> \(session.session!) player: \(session.player) host: \(session.host!) hosting: \(session.hosting) players: \(session.players)")
         }
@@ -97,7 +97,7 @@ Task {
     }
 }
 
-private func poll(session: GameCenter.Session) {
+private func poll(session: MultiPlayer.Session) {
     guard pollTask == nil else { return }
     print("START POLLING FOR> session: \(session.session) player: \(session.player)")
     pollTask = Task {

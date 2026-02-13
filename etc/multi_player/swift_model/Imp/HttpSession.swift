@@ -1,6 +1,6 @@
 import Foundation
 
-public extension GameCenter {
+public extension MultiPlayer {
 
     public class HttpSession: Session {
 
@@ -114,7 +114,7 @@ public extension GameCenter {
 
         public init(handler: SessionHandler, url: URL? = nil, transport: HttpTransport.Factory? = nil) {
 
-            class MessageHandler: GameCenter.MessageHandler {
+            class MessageHandler: MultiPlayer.MessageHandler {
                 var session: HttpSession?;
                 func handle(message: PingMessage) { session?.handle(message: message) }
                 func handle(message: JoinSessionMessage) { session?.handle(message: message) }

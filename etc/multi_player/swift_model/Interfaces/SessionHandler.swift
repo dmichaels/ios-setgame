@@ -1,4 +1,4 @@
-public extension GameCenter {
+public extension MultiPlayer {
 
     public protocol SessionHandler: MessageHandler {
         var  session: Session? { get set }

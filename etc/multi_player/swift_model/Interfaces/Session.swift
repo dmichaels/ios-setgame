@@ -1,4 +1,4 @@
-public extension GameCenter {
+public extension MultiPlayer {
 
     public protocol Session: AnyObject {
 
@@ -22,7 +22,7 @@ public extension GameCenter {
     }
 }
 
-public extension GameCenter.Session {
+public extension MultiPlayer.Session {
     public var player: String { self.transport.player };
     public var hosting: Bool { self.player == self.host };
 }

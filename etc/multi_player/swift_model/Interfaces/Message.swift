@@ -1,6 +1,6 @@
 import Foundation
 
-public extension GameCenter {
+public extension MultiPlayer {
 
     public protocol Message: Codable {
         var type: MessageType { get }
@@ -8,7 +8,7 @@ public extension GameCenter {
     }
 }
 
-public extension GameCenter.Message {
+public extension MultiPlayer.Message {
     public var json: [String: Any]? {
         if let data = try? JSONEncoder().encode(self),
         let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {

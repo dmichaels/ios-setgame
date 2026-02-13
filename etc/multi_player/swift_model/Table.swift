@@ -3,21 +3,21 @@ public class TableCard {
     }
 }
 
-public class Table: GameCenter.SessionHandler {
+public class Table: MultiPlayer.SessionHandler {
 
     // SessionHandler protocol implementation.
 
-    public var session: GameCenter.Session?
+    public var session: MultiPlayer.Session?
 
     // MessageHandler (via SessionHandler) protocol implementation.
 
-    public func handle(message: GameCenter.PingMessage) {}
+    public func handle(message: MultiPlayer.PingMessage) {}
 
     // Table class implementation.
 
     public func startNewGame() {
-        if let session: GameCenter.Session = self.session {
-            // session.send(message: GameCenter.PingMessage(), to: session.player);
+        if let session: MultiPlayer.Session = self.session {
+            session.send(message: MultiPlayer.PingMessage(), to: session.player);
         }
     }
 }

@@ -1,1 +1,1 @@
-public struct GameCenter {}
+public struct MultiPlayer {}
