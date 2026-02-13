@@ -77,6 +77,23 @@ Task {
             print("CREATED SESSION> \(session.session!) player: \(session.player) host: \(session.host!) hosting: \(session.hosting) players: \(session.players)")
         }
         poll(session: session);
+        if let leaveSessionAfter = leaveSessionAfter {
+            delayCall(seconds: leaveSessionAfter) {
+                print("LEAVING SESSION> \(session.session!) player: \(session.player) host: \(session.host!) hosting: \(session.hosting) players: \(session.players)")
+                if await session.leave() {
+                    print("LEFT SESSION> \(session.session!) player: \(session.player) host: \(session.host!) hosting: \(session.hosting) players: \(session.players)")
+                    nopoll();
+                }
+            }
+        }
+        if let hostSessionAfter = hostSessionAfter {
+            delayCall(seconds: hostSessionAfter) {
+                print("REQUEST HOST SESSION> \(session.session!) player: \(session.player) host: \(session.host!) hosting: \(session.hosting) players: \(session.players)")
+                if await session.requestHost() {
+                    print("REQUEST HOST SESSION ACCEPTED> \(session.session!) player: \(session.player) host: \(session.host!) hosting: \(session.hosting) players: \(session.players)")
+                }
+            }
+        }
     }
 }
 
