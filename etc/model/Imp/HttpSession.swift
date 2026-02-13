@@ -70,8 +70,7 @@ public extension GameCenter {
 
         public func leave() async -> Bool {
             guard !self.hosting else { return false }
-            let message: Message = LeaveSessionMessage(player: self.player);
-            return await self.sendHost(message: message);
+            return await self.sendHost(message: LeaveSessionMessage(player: self.player));
         }
 
         // Sends the given message to the given player for the session.
