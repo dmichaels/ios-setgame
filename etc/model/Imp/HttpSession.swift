@@ -241,23 +241,6 @@ public extension GameCenter {
             self.players = message.players;
             self.transport.bindSession(to: message.session);
         }
-        private func old_handle(message: JoinSessionConfirmedMessage) {
-            guard !self.hosting else { return; }
-            //
-            // We are presumed here to be a NON-host player.
-            // This is a notification message from the host player
-            // that our request to join their session as been accepted.
-            // Note that we add the host (from the message) to our players list.
-            //
-            if let continuation = self.joinSessionContinuation {
-                self.joinSessionContinuation = nil;
-                continuation.resume(returning: ());
-            }
-            self.session = message.session;
-            self.host = message.host;
-            self.playerJoined(message.host);
-            self.transport.bindSession(to: message.session);
-        }
 
         private func handle(message: LeaveSessionMessage) {
             guard self.hosting else { return }
