@@ -92,7 +92,6 @@ public extension GameCenter {
                     // know the structure of the joinedSession and updateSession messages, no? Call the
                     // additional endpoints register_and_notify and unregister_and_notify; the server is
                     // the source of truth, no?
-                    // 
                     //
                     if let response: Json = await self.url.post([session, "/register_and_send", player], data: message, as: Json.self, key: self.key) {
                         if let player: String = response["player"] as? String,
