@@ -78,39 +78,6 @@ Task {
         }
         poll(session: session);
     }
-
-/*
-    var sessionA: GameCenter.HttpSession = GameCenter.HttpSession(handler: table, url: url)
-    print("SESSION-A> \(ID.of(sessionA)) player: \(sessionA.player) host: \(sessionA.host) hosting: \(sessionA.hosting) session: \(sessionA.session) players: \(sessionA.players)")
-    if await sessionA.create() {
-        print("CREATED HOSTED SESSION-A> \(sessionA.session) player: \(sessionA.player)  host: \(sessionA.host) hosting: \(sessionA.hosting) players: \(sessionA.players)")
-    }
-    else {
-        print("ERROR CREATING SESSION-A> \(sessionA.session) player: \(sessionA.player)  host: \(sessionA.host) hosting: \(sessionA.hosting) players: \(sessionA.players)")
-    }
-
-    var sessionB: GameCenter.Session = GameCenter.HttpSession(
-        handler: table,
-        transport: { handler in GameCenter.HttpTransport(handler: handler, url: url) }
-    )
-    print("SESSION-B> \(ID.of(sessionB)) player: \(sessionB.player) host: \(sessionB.host) hosting: \(sessionB.hosting) session: \(sessionB.session) players: \(sessionB.players)")
-    print("SESSION-B JOINING SESSION-B to SESSION-A \(joinWait ? "VIA MESSAGE WITH WAIT" : "VIA MESSAGE")>")
-    if await sessionB.join(session: sessionA.session, wait: joinWait) {
-        if (joinWait) {
-            print("SESSION-B JOINED SESSION-A VIA MESSAGE WITH WAIT> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting) players: \(sessionB.players)")
-        }
-        else {
-            print("SESSION-B SUBMITTED JOIN SESSION-A REQUEST> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting) players: \(sessionB.players)")
-        }
-    }
-    else {
-        print("SESSION-B ERROR JOINING SESSION-A> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting) players: \(sessionB.players)")
-    }
-    try? await Task.sleep(nanoseconds: 5_000_000_000);
-    print("SESSION-B CHECKUP> \(sessionB.session) player: \(sessionB.player)  host: \(sessionB.host) hosting: \(sessionB.hosting) players: \(sessionB.players)")
-    print("SESSION-A CHECKUP> \(sessionA.session) player: \(sessionA.player)  host: \(sessionA.host) hosting: \(sessionA.hosting) players: \(sessionA.players)")
-*/
-
 }
 
 private func poll(session: GameCenter.Session) {
