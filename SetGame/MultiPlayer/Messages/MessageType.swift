@@ -1,12 +1,12 @@
 public extension MultiPlayer {
 
     public enum MessageType: String, Codable {
-        case ping;
-        case joinSession;
-        case joinSessionConfirmed;
-        case leaveSession;
-        case requestHostSession;
-        case updateSession;
+        case ping;                 // host or non-host
+        case joinSession;          // non-host to host only
+        case joinSessionConfirmed; // server (in response to join) to non-host only
+        case leaveSession;         // non-host to host only
+        case requestHostSession;   // non-host to host only
+        case updateSession;        // host or non-host
     }
 }
 
