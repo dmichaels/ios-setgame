@@ -178,7 +178,7 @@ public extension MultiPlayer {
                 // BUT we DO want to bind our transport polling so that it can even receive
                 // messages (most pointedly the aforementioned JoinSessionConfirmedMessage).
                 //
-                self.transport.bindSessionTentative(to: session);
+                self.transport.bindTentative(to: session);
                 self.transport.engage();
                 return true;
             }
@@ -252,7 +252,7 @@ public extension MultiPlayer {
             self.session = message.session;
             self.host = message.host;
             self.players = message.players;
-            self.transport.bindSession(to: message.session);
+            self.transport.bind(to: message.session);
         }
 
         private func handle(message: LeaveSessionMessage) {

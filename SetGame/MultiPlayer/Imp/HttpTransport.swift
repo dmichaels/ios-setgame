@@ -29,7 +29,7 @@ public extension MultiPlayer {
         // Bind this HttpTransport to the given session ID; and note
         // this includes naturally the session ID for message polling.
         //
-        public func bindSession(to session: String) {
+        public func bind(to session: String) {
             self.session = session;
             self.pollSession = session;
         }
@@ -41,7 +41,7 @@ public extension MultiPlayer {
         // joining request, but to even receive such a message we need to be polling for
         // messages on the given session.
         //
-        public func bindSessionTentative(to session: String) {
+        public func bindTentative(to session: String) {
             self.pollSession = session;
         }
 
@@ -52,7 +52,7 @@ public extension MultiPlayer {
             if let session: Json = await self.url.post("/sessions", player, as: Json.self, key: self.key) {
                 if let session: String = session["session"] as? String {
                     if (bind) {
-                        self.bindSession(to: session);
+                        self.bind(to: session);
                     }
                     return session;
                 }

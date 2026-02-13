@@ -5,8 +5,8 @@ public extension MultiPlayer {
         var  player: String { get }
         func engage();
         func disengage();
-        func bindSession(to: String);
-        func bindSessionTentative(to: String);
+        func bind(to session: String);
+        func bindTentative(to session: String);
 
         func createAndHostSession(host: String, bind: Bool) async -> String?;
         func registerPlayerAndNotify(player: String, session: String?) async -> (player: String, host: String)?;
