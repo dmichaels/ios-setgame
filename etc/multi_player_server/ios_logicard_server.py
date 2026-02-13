@@ -48,31 +48,7 @@ app = Flask(__name__)
 sessions = {}
 debug = False
 
-# Internal utility functions/decorators.
-#
-def _create_session(session = None):
-    global sessions
-    session = session if session else str(uuid.uuid4()).replace('-', '').upper()
-    if session not in sessions:
-        sessions[session] = {
-            'session': session,
-            'host':    None,
-            'players': [],
-            'inbox':   {}
-        }
-    return session
-
-def _okay_response(status = 200):
-    return jsonify({'status': 'OK'}), status
-
-def _nosession_response():
-    return jsonify({'status': 'nosession'}), 404
-
-def _noplayer_response():
-    return jsonify({'status': 'noplayer'}), 404
-
-def _nohost_response(status = 404):
-    return jsonify({'status': 'nohost'}), status
+# Internal decorators et cetera.
 
 def with_session(func):
     @wraps(func)
@@ -90,25 +66,60 @@ def _check_api_key():
     if request.headers.get('X-API-Key') != APIKEY:
         abort(403)
 
+# Internal utility functions/decorators.
+#
+def _create_session():
+    global sessions
+    session = _uuid()
+    if session not in sessions:
+        sessions[session] = {
+            'session': session,
+            'host':    None,
+            'players': [],
+            'inbox':   {}
+        }
+    return session
+
 def _create_joined_session_message(session):
     return {'type': 'joinedSession',
-            'session': session['session'],
-            'host': session['host']}
+            'timestamp': _timestamp(),
+            'session': str(session['session']),
+            'host': str(session['host'])}
 
 def _create_update_session_message(session):
     return {'type': 'updateSession',
-            'host': session['host'],
-            'players': session['players']}
+            'host': str(session['host']),
+            'timestamp': _timestamp(),
+            'players': list(session['players'])}
 
-def _send_joined_session_messages(session, player):
+def _send_joined_session_message(session, player):
     joined_session_message = _create_joined_session_message(session)
     session['inbox'].setdefault(player, []).append(joined_session_message)
 
-def _send_update_session_messages(session):
-    update_session_message = _create_update_session_message()
+def _send_update_session_messages(session, excluding = None):
+    update_session_message = _create_update_session_message(session)
     for player in session['players']:
-        if player != session['host']:
-            session['inbox'].setdefault(player, []).append(joined_session_message)
+        if (player != session['host']) and (player != excluding):
+            session['inbox'].setdefault(player, []).append(update_session_message)
+
+def _uuid():
+    return str(uuid.uuid4()).replace('-', '').upper()
+
+def _timestamp():
+    from datetime import datetime
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+def _okay_response(status = 200):
+    return jsonify({'status': 'OK'}), status
+
+def _nosession_response():
+    return jsonify({'status': 'nosession'}), 404
+
+def _noplayer_response():
+    return jsonify({'status': 'noplayer'}), 404
+
+def _nohost_response(status = 404):
+    return jsonify({'status': 'nohost'}), status
 
 # The endpoints.
 
@@ -234,11 +245,12 @@ def register_player_and_notify_endpoint(session, player):
         session['players'].append(player)
     if not session['host']:
         session['host'] = player
-    _send_joined_session_message(session, player)
-    response = jsonify({'host':    session['host'],
+    if len(session['players']) > 1:
+        _send_joined_session_message(session, player)
+        _send_update_session_messages(session, excluding=player)
+    return jsonify({'host':    session['host'],
                     'player':  player,
                     'players': session['players']}), 201
-    return response
 
 # Unregisters the given player for the given session.
 # However if the given player is also the host then does nothing;
@@ -271,7 +283,7 @@ def unregister_player_and_notify_endpoint(session, player):
     session['inbox'].pop(player, None)
     if session['host'] == player:
         session['host'] = None
-    _send_update_session_messages(session)
+    _send_update_session_messages(session, excluding=player)
     return _okay_response(201)
 
 # Returns the list of registered player IDs for the given session.
