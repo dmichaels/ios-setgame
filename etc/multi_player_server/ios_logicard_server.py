@@ -84,11 +84,31 @@ def with_session(func):
     return wrapper
 
 @app.before_request
-def check_api_key():
+def _check_api_key():
     if request.path == '/ping':
         return
     if request.headers.get('X-API-Key') != APIKEY:
         abort(403)
+
+def _create_joined_session_message(session):
+    return {'type': 'joinedSession',
+            'session': session['session'],
+            'host': session['host']}
+
+def _create_update_session_message(session):
+    return {'type': 'updateSession',
+            'host': session['host'],
+            'players': session['players']}
+
+def _send_joined_session_messages(session, player):
+    joined_session_message = _create_joined_session_message(session)
+    session['inbox'].setdefault(player, []).append(joined_session_message)
+
+def _send_update_session_messages(session):
+    update_session_message = _create_update_session_message()
+    for player in session['players']:
+        if player != session['host']:
+            session['inbox'].setdefault(player, []).append(joined_session_message)
 
 # The endpoints.
 
@@ -204,6 +224,22 @@ def register_player_and_send_endpoint(session, player):
                     'host':    session['host'],
                     'players': session['players']}), 201
 
+# TODO
+# Experimental.
+#
+@app.route('/<session>/register_and_notify/<player>', methods=['POST'])
+@with_session
+def register_player_and_notify_endpoint(session, player):
+    if player not in session['players']:
+        session['players'].append(player)
+    if not session['host']:
+        session['host'] = player
+    _send_joined_session_message(session, player)
+    response = jsonify({'host':    session['host'],
+                    'player':  player,
+                    'players': session['players']}), 201
+    return response
+
 # Unregisters the given player for the given session.
 # However if the given player is also the host then does nothing;
 # i.e. cannot unregister the host; though the host can be changed
@@ -222,6 +258,20 @@ def unregister_player_endpoint(session, player):
     session['inbox'].pop(player, None)
     if session['host'] == player:
         session['host'] = None
+    return _okay_response(201)
+
+@app.route('/<session>/unregister_and_notify/<player>', methods=['POST'])
+@with_session
+def unregister_player_and_notify_endpoint(session, player):
+    if player not in session['players']:
+        return _noplayer_response()
+    if player == session['host']:
+        return _nohost_response(409) # not allowed to unregister host
+    session['players'].remove(player)
+    session['inbox'].pop(player, None)
+    if session['host'] == player:
+        session['host'] = None
+    _send_update_session_messages(session)
     return _okay_response(201)
 
 # Returns the list of registered player IDs for the given session.
