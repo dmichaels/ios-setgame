@@ -31,11 +31,17 @@ public extension MultiPlayer {
         public private(set) var transport: Transport;
 
         public func create() async -> Bool {
-            if let session: String = await self.transport.createAndHostSession(host: self.player, bind: true) {
-                self.session = session;
-                self.host = self.player;
-                self.transport.engage();
-                return true;
+            //
+            // If a session has already been created (or joined),
+            // i.e. self.session is not nil, then do nothing; return false.
+            //
+            if (self.session == nil) {
+                if let session: String = await self.transport.createAndHostSession(host: self.player, bind: true) {
+                    self.session = session;
+                    self.host = self.player;
+                    self.transport.engage();
+                    return true;
+                }
             }
             return false;
         }
