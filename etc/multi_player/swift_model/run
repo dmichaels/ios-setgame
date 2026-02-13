@@ -1,4 +1,4 @@
-DIR=/Users/dmichaels/repos/ios-setgame/etc/model
+DIR=/Users/dmichaels/repos/ios-setgame/etc/multi_player/swift_model
 # ${DIR}/post  /reset ; ${DIR}/post  /debug
 # ${DIR}/lpost /reset ; ${DIR}/lpost /debug
 ${DIR}/post  /debug
