@@ -27,12 +27,12 @@ public extension MultiPlayer {
             if let data: Data = data,
             let envelope: MessageEnvelope = try? JSONDecoder().decode(MessageEnvelope.self, from: data) {
                 switch envelope.type {
-                    case .ping:          return try? JSONDecoder().decode(PingMessage.self, from: data);
-                    case .joinSession:   return try? JSONDecoder().decode(JoinSessionMessage.self, from: data);
+                    case .ping:                 return try? JSONDecoder().decode(PingMessage.self, from: data);
+                    case .joinSession:          return try? JSONDecoder().decode(JoinSessionMessage.self, from: data);
                     case .joinSessionConfirmed: return try? JSONDecoder().decode(JoinSessionConfirmedMessage.self, from: data);
-                    case .leaveSession: return try? JSONDecoder().decode(LeaveSessionMessage.self, from: data);
-                    case .requestHostSession: return try? JSONDecoder().decode(RequestHostSessionMessage.self, from: data);
-                    case .updateSession: return try? JSONDecoder().decode(UpdateSessionMessage.self, from: data);
+                    case .leaveSession:         return try? JSONDecoder().decode(LeaveSessionMessage.self, from: data);
+                    case .requestHostSession:   return try? JSONDecoder().decode(RequestHostSessionMessage.self, from: data);
+                    case .updateSession:        return try? JSONDecoder().decode(UpdateSessionMessage.self, from: data);
                 }
             }
             return nil;
