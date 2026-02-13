@@ -231,26 +231,7 @@ public extension GameCenter {
                         // synchronizes the host and players with the (non-host) clients to the host values.
                         //
                         self.playerJoined(joiner);
-                        // await updateSession();
-                        /*
-                        let message: Message = UpdateSessionMessage(host: self.player, players: self.players);
-                        for player in self.players(excluding: self.player) {
-                            print("SEND UPDATE TO: \(player) session: \(session) host: \(self.host) players: \(self.players)")
-                            await self.transportImp.sendMessage(message, player: player, session: session);
-                        }
-                        */
                     }
-                }
-            }
-        }
-
-        private func updateSession() async {
-            guard self.hosting else { return }
-            if let session: String = self.session {
-                let message: Message = UpdateSessionMessage(host: self.player, players: self.players);
-                for player in self.players(excluding: self.player) {
-                    print("SEND UPDATE TO: \(player) session: \(session) host: \(self.host) players: \(self.players)")
-                    await self.transportImp.sendMessage(message, player: player, session: session);
                 }
             }
         }
@@ -296,10 +277,8 @@ public extension GameCenter {
             guard self.hosting else { return }
             Task {
                 print("PLAYER LEAVING> \(message.player) session: \(session)")
-             // if await self.transportImp.unregisterPlayer(message.player, session: session) {
                 if await self.transportImp.unregisterPlayerAndNotify(message.player, session: session) {
                     self.playerLeft(message.player);
-                    // await updateSession();
                 }
             }
         }
