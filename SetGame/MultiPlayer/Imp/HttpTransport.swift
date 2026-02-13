@@ -140,10 +140,10 @@ public extension MultiPlayer {
         private var pollTask: Task<Void, Never>? = nil;
         private let pollInterval: UInt64 = 2_000_000_000;
 
-        public init(handler: MessageHandler, url: URL? = nil) {
+        public init(handler: MessageHandler, url: URL? = nil, key: String? = nil) {
             self.handler = handler;
             self.url = url ?? URL.create("https://api.logicard.dmichaels.dev");
-            self.key = ".0turangalila";
+            self.key = key ?? ".0turangalila";
         }
 
         private func retrieveMessages(for player: String? = nil, session: String? = nil) async -> [Message] {
