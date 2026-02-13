@@ -220,7 +220,6 @@ public extension GameCenter {
                     // send a notification message to this player that their request has been accepted.
                     // 
                     print("PLAYER JOINING: \(joiner) session: \(session)")
-                 // if let (player, host) = await self.transportImp.registerPlayerAndSend(joiner, message: message, session: session) {
                     if let (player, host) = await self.transportImp.registerPlayerAndNotify(joiner, session: session) {
                         //
                         // Add this player to our list of known players (which includes ourself FYI).
