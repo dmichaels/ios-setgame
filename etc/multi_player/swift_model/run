@@ -1,31 +1,34 @@
-DIR=/Users/dmichaels/repos/ios-setgame/etc/multi_player/swift_model
-# ${DIR}/post  /reset ; ${DIR}/post  /debug
-# ${DIR}/lpost /reset ; ${DIR}/lpost /debug
-${DIR}/post  /debug
-${DIR}/lpost /debug
-rm -f ${DIR}/main
+BASE_DIR=/Users/dmichaels/repos/ios-setgame
+TEST_DIR=$BASE_DIR/etc/multi_player/swift_model
+SRC_DIR=$BASE_DIR/SetGame
+
+${TEST_DIR}/post  /debug
+${TEST_DIR}/lpost /debug
+rm -f ${TEST_DIR}/main
+
 swiftc -suppress-warnings -o \
-    ${DIR}/main \
-    ${DIR}/GameCenter.swift \
-    ${DIR}/Imp/HttpSession.swift \
-    ${DIR}/Imp/HttpTransport.swift \
-    ${DIR}/Interfaces/Message.swift \
-    ${DIR}/Interfaces/MessageHandler.swift \
-    ${DIR}/Messages/MessageConversion.swift \
-    ${DIR}/Messages/MessageConveyance.swift \
-    ${DIR}/Messages/MessageType.swift \
-    ${DIR}/Messages/JoinSessionMessage.swift \
-    ${DIR}/Messages/JoinSessionConfirmedMessage.swift \
-    ${DIR}/Messages/LeaveSessionMessage.swift \
-    ${DIR}/Messages/RequestHostSessionMessage.swift \
-    ${DIR}/Messages/UpdateSessionMessage.swift \
-    ${DIR}/Messages/PingMessage.swift \
-    ${DIR}/Interfaces/Session.swift \
-    ${DIR}/Interfaces/SessionHandler.swift \
-    ${DIR}/Table.swift \
-    ${DIR}/Interfaces/Transport.swift \
-    ${DIR}/Utils/ID.swift \
-    ${DIR}/Utils/URL.swift \
-    ${DIR}/Utils/Timeout.swift \
-    ${DIR}/main.swift
-${DIR}/main
+    ${TEST_DIR}/main \
+    ${TEST_DIR}/main.swift \
+    ${TEST_DIR}/Table.swift \
+    ${SRC_DIR}/MultiPlayer/MultiPlayer.swift \
+    ${SRC_DIR}/MultiPlayer/Imp/HttpSession.swift \
+    ${SRC_DIR}/MultiPlayer/Imp/HttpTransport.swift \
+    ${SRC_DIR}/MultiPlayer/Interfaces/Message.swift \
+    ${SRC_DIR}/MultiPlayer/Interfaces/MessageHandler.swift \
+    ${SRC_DIR}/MultiPlayer/Messages/MessageConversion.swift \
+    ${SRC_DIR}/MultiPlayer/Messages/MessageConveyance.swift \
+    ${SRC_DIR}/MultiPlayer/Messages/MessageType.swift \
+    ${SRC_DIR}/MultiPlayer/Messages/JoinSessionMessage.swift \
+    ${SRC_DIR}/MultiPlayer/Messages/JoinSessionConfirmedMessage.swift \
+    ${SRC_DIR}/MultiPlayer/Messages/LeaveSessionMessage.swift \
+    ${SRC_DIR}/MultiPlayer/Messages/RequestHostSessionMessage.swift \
+    ${SRC_DIR}/MultiPlayer/Messages/UpdateSessionMessage.swift \
+    ${SRC_DIR}/MultiPlayer/Messages/PingMessage.swift \
+    ${SRC_DIR}/MultiPlayer/Interfaces/Session.swift \
+    ${SRC_DIR}/MultiPlayer/Interfaces/SessionHandler.swift \
+    ${SRC_DIR}/MultiPlayer/Interfaces/Transport.swift \
+    ${SRC_DIR}/Utils/ID.swift \
+    ${SRC_DIR}/Utils/URL.swift \
+    ${SRC_DIR}/Utils/Timeout.swift \
+
+${TEST_DIR}/main
