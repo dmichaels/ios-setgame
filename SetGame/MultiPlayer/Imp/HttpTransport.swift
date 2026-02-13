@@ -8,7 +8,7 @@ public extension MultiPlayer {
 
         // Transport protocol implementation.
 
-        public var player: String = ID(veryshort: true).value
+        public private(set) var player: String = ID(veryshort: true).value
 
         public func engage() {
             guard self.pollTask == nil else { return }
