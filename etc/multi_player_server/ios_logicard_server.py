@@ -80,11 +80,13 @@ def _send_join_session_confirmed_message(session, player):
     join_session_confirmed_message = _create_join_session_confirmed_message(session)
     session['inbox'].setdefault(player, []).append(join_session_confirmed_message)
 
-def _send_update_session_messages(session, excluding = None):
+def _send_update_session_messages(session, excluding = []):
     update_session_message = _create_update_session_message(session)
     for player in session['players']:
-        if (player != session['host']) and (player != excluding):
+        if player not in excluding:
             session['inbox'].setdefault(player, []).append(update_session_message)
+        # if (player != session['host']) and (player != excluding):
+        #     session['inbox'].setdefault(player, []).append(update_session_message)
 
 def _uuid():
     return str(uuid.uuid4()).replace('-', '').upper()
@@ -207,7 +209,7 @@ def register_player_and_notify_endpoint(session, player):
         session['host'] = player
     if len(session['players']) > 1:
         _send_join_session_confirmed_message(session, player)
-        _send_update_session_messages(session, excluding=player)
+        _send_update_session_messages(session, excluding=[session['host']])
     return jsonify({'host':    session['host'],
                     'player':  player,
                     'players': session['players']}), 201
@@ -248,7 +250,7 @@ def unregister_player_and_notify_endpoint(session, player):
     session['inbox'].pop(player, None)
     if session['host'] == player:
         session['host'] = None
-    _send_update_session_messages(session, excluding=player)
+    _send_update_session_messages(session, excluding=[session['host'], player])
     return _okay_response(201)
 
 # Returns the list of registered player IDs for the given session.
@@ -288,13 +290,13 @@ def set_host_endpoint(session, player):
 # Example Request:  POST /DEADBEEF/host/ada
 # Example Response: {"status": "OK"}
 #
-@app.route('/<session>/host/<player>', methods=['POST'])
+@app.route('/<session>/host_and_notify/<player>', methods=['POST'])
 @with_session
 def set_host_and_notify_endpoint(session, player):
     if player not in session['players']:
         return _noplayer_response()
     session['host'] = player
-    _send_update_session_messages()
+    _send_update_session_messages(session)
     return _okay_response()
 
 # Sends the given message (in the POST data) to the given player,

@@ -67,6 +67,13 @@ public extension GameCenter {
             }
         }
 
+        // Request to become the host.
+        //
+        public func requestHost() async -> Bool {
+            guard let session: String = session, !self.hosting else { return false }
+            return await self.sendHost(message: RequestHostSessionMessage(player: self.player));
+        }
+
         public func leave() async -> Bool {
             guard !self.hosting else { return false }
             return await self.sendHost(message: LeaveSessionMessage(player: self.player));
@@ -201,7 +208,7 @@ public extension GameCenter {
                     // send a notification message to this player that their request has been accepted.
                     // 
                     print("PLAYER JOINING: \(message.player) session: \(session)")
-                    if let (player, host) = await self.transportImp.registerPlayerAndNotify(message.player, session: session) {
+                    if let (player, host) = await self.transportImp.registerPlayerAndNotify(player: message.player, session: session) {
                         //
                         // Add this player to our list of known players (which includes ourself FYI).
                         // And then notify the other player excluding this (host) player, so that the
@@ -241,14 +248,21 @@ public extension GameCenter {
             guard self.hosting else { return }
             Task {
                 print("PLAYER LEAVING> \(message.player) session: \(session)")
-                if await self.transportImp.unregisterPlayerAndNotify(message.player, session: session) {
+                if await self.transportImp.unregisterPlayerAndNotify(player: message.player, session: session) {
                     self.playerLeft(message.player);
                 }
             }
         }
 
         private func handle(message: RequestHostSessionMessage) {
-            print("TODO: HANDLE RequestHostSessionMessage")
+            print("PLAYER REQUESTING HOST: \(message.player)")
+            guard self.hosting else { return }
+            Task {
+                print("PLAYER REQUESTING HOST> \(message.player) session: \(session)")
+                if await self.transportImp.setHostAndNotify(player: message.player, session: session) {
+                    self.host = message.player;
+                }
+            }
         }
 
         private func handle(message: UpdateSessionMessage) {

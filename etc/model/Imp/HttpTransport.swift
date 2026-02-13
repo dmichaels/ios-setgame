@@ -68,9 +68,9 @@ public extension GameCenter {
             return nil;
         }
 
-        public func registerPlayerAndNotify(_ player: String, session: String? = nil) async -> (player: String, host: String)? {
+        public func registerPlayerAndNotify(player: String, session: String? = nil) async -> (player: String, host: String)? {
             if let session: String = session ?? self.session {
-                if let response: Json = await self.url.post([session, "/register_and_notify", player], as: Json.self, key: self.key) {
+                if let response: Json = await self.url.post(session, "/register_and_notify", player, as: Json.self, key: self.key) {
                     if let player: String = response["player"] as? String,
                         let host: String = response["host"] as? String {
                         return (player: player, host: host);
@@ -80,12 +80,24 @@ public extension GameCenter {
             return nil;
         }
 
-        public func unregisterPlayerAndNotify(_ player: String, session: String? = nil) async -> Bool {
+        public func unregisterPlayerAndNotify(player: String, session: String? = nil) async -> Bool {
             if let session: String = session ?? self.session {
                 if let response: Json = await self.url.post(session, "/unregister_and_notify", player, as: Json.self, key: self.key) {
                     return true;
                 }
             }
+            return false;
+        }
+
+        public func setHostAndNotify(player: String, session: String? = nil) async -> Bool {
+            if let session: String = session ?? self.session {
+                print("DEB:CALLING-HOST-AND-NOTIFY")
+                if let response: Json = await self.url.post(session, "/host_and_notify", player, as: Json.self, key: self.key) {
+                    print("DEB:CALLING-HOST-AND-NOTIFY: OK")
+                    return true;
+                }
+            }
+            print("DEB:CALLING-HOST-AND-NOTIFY: ERROR")
             return false;
         }
 
