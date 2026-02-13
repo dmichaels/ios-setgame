@@ -28,7 +28,7 @@ public extension MultiPlayer {
         public private(set) var session: String?;
         public private(set) var host: String?
         public private(set) var players: [String] = [];
-        public var transport: Transport;
+        public private(set) var transport: Transport;
 
         public func create() async -> Bool {
             if let session: String = await self.transport.createAndHostSession(host: self.player, bind: true) {
@@ -73,8 +73,15 @@ public extension MultiPlayer {
         }
 
         public func leave() async -> Bool {
-            guard !self.hosting else { return false }
-            return await self.sendHost(message: LeaveSessionMessage(player: self.player));
+            if (self.hosting) {
+                guard self.players.count > 1 else { return false }
+                self.session = nil;
+                self.host = nil;
+                return true;
+            }
+            else {
+                return await self.sendHost(message: LeaveSessionMessage(player: self.player));
+            }
         }
 
         // Sends the given message to the given player for the session.
