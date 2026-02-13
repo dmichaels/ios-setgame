@@ -74,10 +74,14 @@ public extension MultiPlayer {
 
         public func leave() async -> Bool {
             if (self.hosting) {
-                guard self.players.count > 1 else { return false }
-                self.session = nil;
-                self.host = nil;
-                return true;
+                if (self.players.count == 1) {
+                    if await self.transport.destroySession(session: self.session) {
+                        self.session = nil;
+                        self.host = nil;
+                        return true;
+                    }
+                }
+                return false;
             }
             else {
                 return await self.sendHost(message: LeaveSessionMessage(player: self.player));

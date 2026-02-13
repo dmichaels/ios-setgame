@@ -98,6 +98,16 @@ public extension MultiPlayer {
             return false;
         }
 
+        public func destroySession(session: String? = nil) async -> Bool {
+            if let session: String = session ?? self.session {
+                if let response: Json = await self.url.post(session, "/destroy", as: Json.self, key: self.key) {
+                    self.release();
+                    return true;
+                }
+            }
+            return false;
+        }
+
         // Sends the given message to the given player for the session.
         //
         public func sendMessage(_ message: Message, player: String, session: String? = nil) async -> Bool {

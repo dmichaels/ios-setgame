@@ -19,6 +19,7 @@ public extension MultiPlayer {
         func registerPlayerAndNotify(player: String, session: String?) async -> (player: String, host: String)?;
         func unregisterPlayerAndNotify(player: String, session: String?) async -> Bool;
         func setHostAndNotify(player: String, session: String?) async -> Bool;
+        func destroySession(session: String?) async -> Bool;
 
         func sendMessage(_ message: MultiPlayer.Message, player: String, session: String?) async -> Bool;
         func sendHostMessage(_ message: MultiPlayer.Message, session: String?) async -> Bool;
