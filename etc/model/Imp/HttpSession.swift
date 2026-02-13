@@ -67,8 +67,6 @@ public extension GameCenter {
             }
         }
 
-        // Request to become the host.
-        //
         public func requestHost() async -> Bool {
             guard let session: String = session, !self.hosting else { return false }
             return await self.sendHost(message: RequestHostSessionMessage(player: self.player));
@@ -207,7 +205,6 @@ public extension GameCenter {
                     // identified in the message, for our session (via backend server API); and
                     // send a notification message to this player that their request has been accepted.
                     // 
-                    print("PLAYER JOINING: \(message.player) session: \(session)")
                     if let (player, host) = await self.transportImp.registerPlayerAndNotify(player: message.player, session: session) {
                         //
                         // Add this player to our list of known players (which includes ourself FYI).
@@ -232,8 +229,6 @@ public extension GameCenter {
             // that our request to join their session as been accepted.
             // Note that we add the host (from the message) to our players list.
             //
-            print("JOIN CONFIRMED FROM HOST FROM> \(message.session) player: \(self.player) host: \(self.host) players: \(self.players) ...")
-            print("                           TO> \(message.session) host: \(message.host) players: \(message.players) ...")
             if let continuation = self.joinSessionContinuation {
                 self.joinSessionContinuation = nil;
                 continuation.resume(returning: ());
@@ -247,7 +242,6 @@ public extension GameCenter {
         private func handle(message: LeaveSessionMessage) {
             guard self.hosting else { return }
             Task {
-                print("PLAYER LEAVING> \(message.player) session: \(session)")
                 if await self.transportImp.unregisterPlayerAndNotify(player: message.player, session: session) {
                     self.playerLeft(message.player);
                 }
@@ -255,10 +249,8 @@ public extension GameCenter {
         }
 
         private func handle(message: RequestHostSessionMessage) {
-            print("PLAYER REQUESTING HOST: \(message.player)")
             guard self.hosting else { return }
             Task {
-                print("PLAYER REQUESTING HOST> \(message.player) session: \(session)")
                 if await self.transportImp.setHostAndNotify(player: message.player, session: session) {
                     self.host = message.player;
                 }

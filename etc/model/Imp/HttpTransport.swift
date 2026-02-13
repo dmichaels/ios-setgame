@@ -91,13 +91,10 @@ public extension GameCenter {
 
         public func setHostAndNotify(player: String, session: String? = nil) async -> Bool {
             if let session: String = session ?? self.session {
-                print("DEB:CALLING-HOST-AND-NOTIFY")
                 if let response: Json = await self.url.post(session, "/host_and_notify", player, as: Json.self, key: self.key) {
-                    print("DEB:CALLING-HOST-AND-NOTIFY: OK")
                     return true;
                 }
             }
-            print("DEB:CALLING-HOST-AND-NOTIFY: ERROR")
             return false;
         }
 
@@ -136,7 +133,6 @@ public extension GameCenter {
                 let player: String = player ?? self.player;
                 if let data: Data = await self.url.get(session, "receive", player, key: self.key) {
                     if let messages: [Message] = MessageConversion.toMessages(data: data) {
-                        if messages.count > 0 { print("RECEIEVED MESSAGES> session: \(session) player: \(player) messages: \(messages.count) -> \(messages)") }
                         return messages; 
                     }
                 }

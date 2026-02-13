@@ -10,11 +10,12 @@ public extension GameCenter {
         func create() async -> Bool;
         func join(session: String?) async -> Bool;
         func join(session: String?, wait: Bool) async -> Bool;
+        func requestHost() async -> Bool;
+        func leave() async -> Bool;
         func send(message: Message, to: String) async -> Bool;
         func sendHost(message: Message) async -> Bool;
         func send(message: Message, to: String) -> Bool;
         func sendHost(message: Message) -> Bool;
-        func leave() async -> Bool;
     }
 }
 
