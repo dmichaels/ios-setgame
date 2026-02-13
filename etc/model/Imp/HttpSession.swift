@@ -158,7 +158,6 @@ public extension GameCenter {
                 // we need to wait until we receive a JoinSessionConfirmedMessage to do that;
                 // BUT we DO want to bind our transport polling so that it can even receive
                 // messages (most pointedly the aforementioned JoinSessionConfirmedMessage).
-                // self.session = session;
                 //
                 self.transport.bindSessionTentative(to: session);
                 self.transport.setup();
@@ -271,10 +270,6 @@ public extension GameCenter {
             if let index = self.players.firstIndex(of: player) {
                 self.players.remove(at: index);
             }
-        }
-
-        private func players(excluding: String...) -> [String] {
-            return self.players.filter { !excluding.contains($0) }
         }
     }
 }
