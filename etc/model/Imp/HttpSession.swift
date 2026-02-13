@@ -197,15 +197,13 @@ public extension GameCenter {
             //
             Task {
                 if let session: String = self.session {
-                    let joiner: String = message.player;
-                 // let message: GameCenter.Message = GameCenter.JoinSessionConfirmedMessage(session: session, host: self.player);
                     //
                     // Currently just blindly accept this join request; register the player,
                     // identified in the message, for our session (via backend server API); and
                     // send a notification message to this player that their request has been accepted.
                     // 
-                    print("PLAYER JOINING: \(joiner) session: \(session)")
-                    if let (player, host) = await self.transportImp.registerPlayerAndNotify(joiner, session: session) {
+                    print("PLAYER JOINING: \(message.player) session: \(session)")
+                    if let (player, host) = await self.transportImp.registerPlayerAndNotify(message.player, session: session) {
                         //
                         // Add this player to our list of known players (which includes ourself FYI).
                         // And then notify the other player excluding this (host) player, so that the
@@ -215,7 +213,7 @@ public extension GameCenter {
                         // not hurt at any rate just to send out UpdateSessionMessage as this just
                         // synchronizes the host and players with the (non-host) clients to the host values.
                         //
-                        self.playerJoined(joiner);
+                        self.playerJoined(message.player);
                     }
                 }
             }
