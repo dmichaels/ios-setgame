@@ -111,6 +111,7 @@ public extension GameCenter {
                 func handle(message: PingMessage) { session?.handle(message: message) }
                 func handle(message: JoinSessionMessage) { session?.handle(message: message) }
                 func handle(message: JoinedSessionMessage) { session?.handle(message: message) }
+                func handle(message: LeaveSessionMessage) { session?.handle(message: message) }
                 func handle(message: UpdateSessionMessage) { session?.handle(message: message) }
             }
 
@@ -229,6 +230,10 @@ public extension GameCenter {
             self.host = message.host;
             self.playerAdded(message.host);
             self.transport.bindSession(to: message.session);
+        }
+
+        private func handle(message: LeaveSessionMessage) {
+            print("handle(LeaveSessionMessage): TODO")
         }
 
         private func handle(message: UpdateSessionMessage) {
