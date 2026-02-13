@@ -11,11 +11,19 @@ public extension MultiPlayer {
         public var player: String = ID(veryshort: true).value
 
         public func engage() {
-            self.poll();
+            guard self.pollTask == nil else { return }
+            self.pollTask = Task {
+                while (!Task.isCancelled) {
+                    let messages: [Message] = await self.retrieveMessages(for: self.player, session: self.pollSession);
+                    self.dispatchMessages(messages: messages);
+                    try? await Task.sleep(nanoseconds: self.pollInterval);
+                }
+            }
         }
 
         public func disengage() {
-            self.nopoll();
+            self.pollTask?.cancel();
+            self.pollTask = nil;
         }
 
         // Bind this HttpTransport to the given session ID; and note
@@ -174,22 +182,6 @@ public extension MultiPlayer {
                 }
             }
             return false;
-        }
-
-        private func poll() {
-            guard self.pollTask == nil else { return }
-            self.pollTask = Task {
-                while (!Task.isCancelled) {
-                    let messages: [Message] = await self.retrieveMessages(for: self.player, session: self.pollSession);
-                    self.dispatchMessages(messages: messages);
-                    try? await Task.sleep(nanoseconds: self.pollInterval);
-                }
-            }
-        }
-
-        private func nopoll() {
-            self.pollTask?.cancel();
-            self.pollTask = nil;
         }
 
         private func dispatchMessages(messages: [Message]) {
