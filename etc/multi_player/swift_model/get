@@ -1,7 +1,6 @@
 #!/bin/bash
 HOST=https://api.logicard.dmichaels.dev
 METHOD=GET
-# APIKEY=$(cat .key)
 APIKEY=.0turangalila
 URL="$HOST/$*"
 echo $METHOD $URL

@@ -1,7 +1,6 @@
 #!/bin/bash
 HOST=http://127.0.0.1:8001
 METHOD=POST
-# APIKEY=$(cat .key)
 APIKEY=.0turangalila
 URL="$HOST/$1"
 if [ $# -ge 2 ] && [ -n "$2" ]; then
