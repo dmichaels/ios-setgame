@@ -83,6 +83,17 @@ public extension GameCenter {
         public func registerPlayerAndSend(_ player: String, message: Message, session: String? = nil) async -> (player: String, host: String)? {
             if let session: String = session ?? self.session {
                 if let message: Json = message.json {
+                    //
+                    // TODO
+                    // In addition to having the server "send" a JoinedSessionMessage to the
+                    // registered player, maybe also have the server "send" an UpdateSessionMessage
+                    // to each of the other players to update their (host and) players; makes things
+                    // a little more complicated/confusing; but hm, the server COULD be setup to actually
+                    // know the structure of the joinedSession and updateSession messages, no? Call the
+                    // additional endpoints register_and_notify and unregister_and_notify; the server is
+                    // the source of truth, no?
+                    // 
+                    //
                     if let response: Json = await self.url.post([session, "/register_and_send", player], data: message, as: Json.self, key: self.key) {
                         if let player: String = response["player"] as? String,
                             let host: String = response["host"] as? String {
