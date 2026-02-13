@@ -37,22 +37,6 @@ public extension MultiPlayer {
             self.pollSession = session;
         }
 
-        // HttpTransport class implementation.
-
-        private let handler: MessageHandler;
-        private let url: URL;
-        private let key: String;
-        private var session: String?;
-        private var pollSession: String?;
-        private var pollTask: Task<Void, Never>? = nil;
-        private let pollInterval: UInt64 = 2_000_000_000;
-
-        public init(handler: MessageHandler, url: URL? = nil) {
-            self.handler = handler;
-            self.url = url ?? URL.create("https://api.logicard.dmichaels.dev");
-            self.key = ".0turangalila";
-        }
-
         // Creates a new session on the server with its initial player,
         // and its host, as the given player; returns the new session ID.
         //
@@ -138,7 +122,23 @@ public extension MultiPlayer {
             return self.postMessage(path: "/send", message: message, session: session);
         }
 
-        public func retrieveMessages(for player: String? = nil, session: String? = nil) async -> [Message] {
+        // HttpTransport class implementation.
+
+        private let handler: MessageHandler;
+        private let url: URL;
+        private let key: String;
+        private var session: String?;
+        private var pollSession: String?;
+        private var pollTask: Task<Void, Never>? = nil;
+        private let pollInterval: UInt64 = 2_000_000_000;
+
+        public init(handler: MessageHandler, url: URL? = nil) {
+            self.handler = handler;
+            self.url = url ?? URL.create("https://api.logicard.dmichaels.dev");
+            self.key = ".0turangalila";
+        }
+
+        private func retrieveMessages(for player: String? = nil, session: String? = nil) async -> [Message] {
             if let session: String = session ?? self.session {
                 let player: String = player ?? self.player;
                 if let data: Data = await self.url.get(session, "receive", player, key: self.key) {
