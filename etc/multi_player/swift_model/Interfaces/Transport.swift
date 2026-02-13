@@ -8,10 +8,20 @@ public extension GameCenter {
     // implementation; time will tell.
     //
     public protocol Transport: AnyObject {
+
         var  player: String { get }
         func setup();
         func release();
         func bindSession(to: String);
         func bindSessionTentative(to: String);
+
+        func createAndHostSession(host: String, bind: Bool) async -> String?;
+        func registerPlayerAndNotify(player: String, session: String?) async -> (player: String, host: String)?;
+        func unregisterPlayerAndNotify(player: String, session: String?) async -> Bool;
+        func setHostAndNotify(player: String, session: String?) async -> Bool;
+        func sendMessage(_ message: GameCenter.Message, player: String, session: String?) async -> Bool;
+        func sendHostMessage(_ message: GameCenter.Message, session: String?) async -> Bool;
+        func sendHostMessage(_ message: GameCenter.Message, session: String?) -> Bool;
+        func sendMessage(_ message: GameCenter.Message, player: String, session: String?) -> Bool;
     }
 }

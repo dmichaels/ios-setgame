@@ -28,10 +28,10 @@ public extension GameCenter {
         public private(set) var session: String?;
         public private(set) var host: String?
         public private(set) var players: [String] = [];
-        public var transport: Transport { self.transportImp };
+        public var transport: Transport;
 
         public func create() async -> Bool {
-            if let session: String = await self.transportImp.createAndHostSession(host: self.player, bind: true) {
+            if let session: String = await self.transport.createAndHostSession(host: self.player, bind: true) {
                 self.session = session;
                 self.host = self.player;
                 self.transport.setup();
@@ -80,14 +80,14 @@ public extension GameCenter {
         // Sends the given message to the given player for the session.
         //
         public func send(message: Message, to player: String) async -> Bool {
-            return await self.transportImp.sendMessage(message, player: player, session: self.session);
+            return await self.transport.sendMessage(message, player: player, session: self.session);
         }
 
         // Sends the given message to the HOST for the session via POST /<session>/send;
         // in contrast to sending a message to ANY player via POST /<session>/send/player.
         //
         public func sendHost(message: Message) async -> Bool {
-            return await self.transportImp.sendHostMessage(message, session: self.session);
+            return await self.transport.sendHostMessage(message, session: self.session);
         }
 
         // Sends the given message to the given player for the session.
@@ -95,7 +95,7 @@ public extension GameCenter {
         // since it is just a send and we do not really need to get/check the result.
         //
         public func send(message: Message, to player: String) -> Bool {
-            return self.transportImp.sendMessage(message, player: player, session: self.session);
+            return self.transport.sendMessage(message, player: player, session: self.session);
         }
 
         // Sends the given message to the HOST for the session via POST /<session>/send;
@@ -104,12 +104,11 @@ public extension GameCenter {
         // since it is just a send and we do not really need to get/check the result.
         //
         public func sendHost(message: Message) -> Bool {
-            return self.transportImp.sendHostMessage(message, session: self.session);
+            return self.transport.sendHostMessage(message, session: self.session);
         }
 
         // HttpSession class implementation.
 
-        private let transportImp: HttpTransport;
         private var handler: SessionHandler;
         private var joinSessionContinuation: CheckedContinuation<Void, Error>?
 
@@ -138,7 +137,7 @@ public extension GameCenter {
             // cause of this slightly confusing and complicated situation here).
             //
             let wrapper: MessageHandler = MessageHandler();
-            self.transportImp = transport?(wrapper) ?? HttpTransport(handler: wrapper, url: url);
+            self.transport = transport?(wrapper) ?? HttpTransport(handler: wrapper, url: url);
             wrapper.session = self;
 
             // Bind the given SessionHandler (which in our case is Table) to ourselves;
@@ -154,7 +153,7 @@ public extension GameCenter {
 
         private func joinAsync(session: String) async -> Bool {
             let message: Message = JoinSessionMessage(player: self.player);
-            if await self.transportImp.sendHostMessage(message, session: session) {
+            if await self.transport.sendHostMessage(message, session: session) {
                 //
                 // Don't actually join the session yet, by setting our session ID;
                 // as we've only just sent a message to the host that we want to join;
@@ -205,7 +204,7 @@ public extension GameCenter {
                     // identified in the message, for our session (via backend server API); and
                     // send a notification message to this player that their request has been accepted.
                     // 
-                    if let (player, host) = await self.transportImp.registerPlayerAndNotify(player: message.player, session: session) {
+                    if let (player, host) = await self.transport.registerPlayerAndNotify(player: message.player, session: session) {
                         //
                         // Add this player to our list of known players (which includes ourself FYI).
                         // And then notify the other player excluding this (host) player, so that the
@@ -242,7 +241,7 @@ public extension GameCenter {
         private func handle(message: LeaveSessionMessage) {
             guard self.hosting else { return }
             Task {
-                if await self.transportImp.unregisterPlayerAndNotify(player: message.player, session: session) {
+                if await self.transport.unregisterPlayerAndNotify(player: message.player, session: session) {
                     self.playerLeft(message.player);
                 }
             }
@@ -251,7 +250,7 @@ public extension GameCenter {
         private func handle(message: RequestHostSessionMessage) {
             guard self.hosting else { return }
             Task {
-                if await self.transportImp.setHostAndNotify(player: message.player, session: session) {
+                if await self.transport.setHostAndNotify(player: message.player, session: session) {
                     self.host = message.player;
                 }
             }
