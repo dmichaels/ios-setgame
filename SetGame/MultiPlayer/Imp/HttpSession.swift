@@ -14,9 +14,9 @@ public extension MultiPlayer {
                 // with the required SessionHandler and (optional) HttpTransport arguments; but
                 // if we do call it multiple times then we just replace the the singleton with
                 // a new instance; we take care in this case to cleanup the existing singleton;
-                // e.g. to stop HttpTransport polling via the Transport.release function.
+                // e.g. to stop HttpTransport polling via the Transport.disengage function.
                 //
-                instance.transport.release();
+                instance.transport.disengage();
                 HttpSession.instance = nil;
             }
             HttpSession.instance = HttpSession(handler: handler, transport: transport);
@@ -34,7 +34,7 @@ public extension MultiPlayer {
             if let session: String = await self.transport.createAndHostSession(host: self.player, bind: true) {
                 self.session = session;
                 self.host = self.player;
-                self.transport.setup();
+                self.transport.engage();
                 return true;
             }
             return false;
@@ -173,7 +173,7 @@ public extension MultiPlayer {
                 // messages (most pointedly the aforementioned JoinSessionConfirmedMessage).
                 //
                 self.transport.bindSessionTentative(to: session);
-                self.transport.setup();
+                self.transport.engage();
                 return true;
             }
             else {

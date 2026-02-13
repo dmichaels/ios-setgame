@@ -10,11 +10,11 @@ public extension MultiPlayer {
 
         public var player: String = ID(veryshort: true).value
 
-        public func setup() {
+        public func engage() {
             self.poll();
         }
 
-        public func release() {
+        public func disengage() {
             self.nopoll();
         }
 
@@ -101,7 +101,7 @@ public extension MultiPlayer {
         public func destroySession(session: String? = nil) async -> Bool {
             if let session: String = session ?? self.session {
                 if let response: Json = await self.url.post(session, "/destroy", as: Json.self, key: self.key) {
-                    self.release();
+                    self.disengage();
                     return true;
                 }
             }
