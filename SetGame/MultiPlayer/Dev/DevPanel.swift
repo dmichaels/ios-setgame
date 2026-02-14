@@ -40,8 +40,11 @@ private struct SessionList {
         (self.sessionsShort, self.shortLength) = SessionList.shortenValues(sessions);
     }
 
-    fileprivate func shorten(_ session: String?) -> String {
-        if let session: String = session { return String(session.prefix(self.shortLength)); } ; return "";
+    fileprivate func shorten(_ session: String?, fallback: String = "") -> String {
+        if let session: String = session {
+            return String(session.prefix(self.shortLength));
+        }
+        return fallback;
     }
 
     // Returns the given array of strings, which is assumed to contain UNIQUE values,
@@ -155,7 +158,7 @@ public extension MultiPlayer {
                         )
                         .padding(.leading, -6)
                     RegularText("session:", size: fontsize, leading: 4)
-                        CopyableText(text: serverState.sessionList.shorten(sessionState.session),
+                        CopyableText(text: serverState.sessionList.shorten(sessionState.session, fallback: "∅"),
                                      // foreground: self.info.isHost ? .red : .primary,
                                      background: self.background,
                                      bold: true,
