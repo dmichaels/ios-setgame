@@ -4,7 +4,7 @@ public extension MultiPlayer {
 
     public class HttpTransport: Transport {
 
-        public typealias Factory = (MultiPlayer.MessageHandler) -> HttpTransport;
+        public typealias Factory = (MessageHandler) -> HttpTransport;
 
         // Transport protocol implementation.
 
@@ -102,14 +102,14 @@ public extension MultiPlayer {
 
         // Sends the given message to the given player for the session.
         //
-        public func sendMessage(_ message: Message, player: String, session: String? = nil) async -> Bool {
+        public func send(message: Message, player: String, session: String? = nil) async -> Bool {
             return await self.postMessage(path: "/send/\(player)", message: message, session: session);
         }
 
         // Sends the given message to the HOST for the session via POST /<session>/send;
         // in contrast to sending a message to ANY player via POST /<session>/send/player.
         //
-        public func sendHostMessage(_ message: Message, session: String? = nil) async -> Bool {
+        public func sendHost(message: Message, session: String? = nil) async -> Bool {
             return await self.postMessage(path: "/send", message: message, session: session);
         }
 
@@ -117,7 +117,7 @@ public extension MultiPlayer {
         // This is a NON-async version of the above for possible convenience;
         // since it is just a send and we do not really need to get/check the result.
         //
-        public func sendMessage(_ message: Message, player: String, session: String? = nil) -> Bool {
+        public func send(message: Message, player: String, session: String? = nil) -> Bool {
             return self.postMessage(path: "/send/\(player)", message: message, session: session);
         }
 
@@ -126,7 +126,7 @@ public extension MultiPlayer {
         // This is a NON-async version of the above for possible convenience;
         // since it is just a send and we do not really need to get/check the result.
         //
-        public func sendHostMessage(_ message: Message, session: String? = nil) -> Bool {
+        public func sendHost(message: Message, session: String? = nil) -> Bool {
             return self.postMessage(path: "/send", message: message, session: session);
         }
 

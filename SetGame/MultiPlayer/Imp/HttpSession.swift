@@ -98,14 +98,14 @@ public extension MultiPlayer {
         // Sends the given message to the given player for the session.
         //
         public func send(message: Message, to player: String) async -> Bool {
-            return await self.transport.sendMessage(message, player: player, session: self.session);
+            return await self.transport.send(message: message, player: player, session: self.session);
         }
 
         // Sends the given message to the HOST for the session via POST /<session>/send;
         // in contrast to sending a message to ANY player via POST /<session>/send/player.
         //
         public func sendHost(message: Message) async -> Bool {
-            return await self.transport.sendHostMessage(message, session: self.session);
+            return await self.transport.sendHost(message: message, session: self.session);
         }
 
         // Sends the given message to the given player for the session.
@@ -113,7 +113,7 @@ public extension MultiPlayer {
         // since it is just a send and we do not really need to get/check the result.
         //
         public func send(message: Message, to player: String) -> Bool {
-            return self.transport.sendMessage(message, player: player, session: self.session);
+            return self.transport.send(message: message, player: player, session: self.session);
         }
 
         // Sends the given message to the HOST for the session via POST /<session>/send;
@@ -122,7 +122,7 @@ public extension MultiPlayer {
         // since it is just a send and we do not really need to get/check the result.
         //
         public func sendHost(message: Message) -> Bool {
-            return self.transport.sendHostMessage(message, session: self.session);
+            return self.transport.sendHost(message: message, session: self.session);
         }
 
         // HttpSession class implementation.
@@ -171,7 +171,7 @@ public extension MultiPlayer {
 
         private func joinAsync(session: String) async -> Bool {
             let message: Message = JoinSessionMessage(player: self.player);
-            if await self.transport.sendHostMessage(message, session: session) {
+            if await self.transport.sendHost(message: message, session: session) {
                 //
                 // Don't actually join the session yet, by setting our session ID;
                 // as we've only just sent a message to the host that we want to join;
