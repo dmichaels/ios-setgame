@@ -20,6 +20,8 @@ private struct ServerState {
     fileprivate var sessionList: SessionList = SessionList();
 }
 
+// All this nonesense is just so we can reliably deal with (view) the session IDs as short values.
+//
 private struct SessionList {
 
     private static           let shortLengthDefault: Int = 2;
