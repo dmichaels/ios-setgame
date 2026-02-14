@@ -37,7 +37,7 @@ private struct SessionList {
 
     fileprivate mutating func update(_ sessions: [String]) {
         self.sessions = sessions;
-        let (list, shortLength) = SessionList.shortenValues(sessions, SessionList.shortLengthDefault);
+        let (list, shortLength) = SessionList.shortenValues(sessions);
         self.sessionsShort = list;
         self.shortLength = shortLength;
     }
@@ -51,16 +51,17 @@ private struct SessionList {
     // of characters; but if not, then the prefix length will be chosen such that the
     // result values will be unique. From ChatGPT wholesale.
     //
-    private static func shortenValues(_ list: [String], _ shortLength: Int) -> (list: [String], shortLength: Int) {
+    private static func shortenValues(_ list: [String]) -> (list: [String], shortLength: Int) {
+        let shortLength: Int = SessionList.shortLengthDefault;
         guard !list.isEmpty else { return (list: [], shortLength: shortLength) }
-        var result = Array(repeating: "", count: list.count); var prefixSize = shortLength;
+        var result = Array(repeating: "", count: list.count); var prefixLength = shortLength;
         while (true) {
             var seen = Set<String>(); var collision = false;
             for (i, item) in list.enumerated() {
-                let prefix = String(item.prefix(prefixSize)); result[i] = prefix;
+                let prefix = String(item.prefix(prefixLength)); result[i] = prefix;
                 if (seen.contains(prefix)) { collision = true; } else { seen.insert(prefix); }
             }
-            if (!collision) { return (list: result, shortLength: prefixSize); } ; prefixSize += 1;
+            if (!collision) { return (list: result, shortLength: prefixLength); } ; prefixLength += 1;
         }
     }
 }
