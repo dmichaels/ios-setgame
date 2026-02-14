@@ -23,48 +23,28 @@ private struct ServerState {
     }
 }
 
-private let shortSessionID: Int = 2;
-
-private extension String? {
-    func shorten(to: Int = shortSessionID) -> String {
-        if let value: String = self {
-            return String(value.prefix(to));
-        }
-        return "";
-    }
-}
-private extension String {
-    func shorten(to: Int = shortSessionID) -> String {
-        return String(self.prefix(to));
-    }
-}
-
 private struct SessionList {
-    private var sessions: [String];
+    private static           let shortDefault: Int = 2;
+    private                  var sessions: [String];
     fileprivate private(set) var sessionsShort: [String];
-    fileprivate var selectedShort: String = "";
-    fileprivate var short: Int = shortSessionID;
+    fileprivate              var selectedShort: String = "";
+    private                  var short: Int = SessionList.shortDefault;
     fileprivate init(_ sessions: [String] = []) {
         self.sessions = sessions;
-        let (list, short) = sessions.shortenValues(min: shortSessionID);
+        let (list, short) = sessions.shortenValues(min: SessionList.shortDefault);
         self.sessionsShort = list;
         self.short = short;
-        print("XYZ1: [\(self.short)]")
     }
     fileprivate mutating func update(_ sessions: [String]) {
         self.sessions = sessions;
-        let (list, short) = sessions.shortenValues(min: shortSessionID);
+        let (list, short) = sessions.shortenValues(min: SessionList.shortDefault);
         self.sessionsShort = list;
         self.short = short;
-        print("XYZ2: [\(self.short)]")
     }
-    // fileprivate var sessionsShort: [String] { self.sessions.shortenValues(min: shortSessionID) }
     fileprivate var selected: String? { self.sessions.find(prefix: self.selectedShort) ?? self.sessions.first }
     fileprivate func shorten(_ session: String?) -> String {
-        print("XYZ3: [\(self.short)] [\(session)]")
         if let session: String = session {
-        print("XYZ4: [\(self.short)] [\(session)]")
-            return session.shorten(to: self.short);
+            return String(session.prefix(self.short));
         }
         return "";
     }
@@ -108,7 +88,7 @@ public extension MultiPlayer {
                     self.sessionState.connected = self.session.connected;
                     self.sessionState.leaveable = self.session.leaveable;
                     if let sessions: [String] = await self.transport.retrieveSessions() {
-                        print("XYZZY: [\(self.serverState.sessionList.selectedShort)] -> [\(self.serverState.sessionList.selected)]")
+                        // print("XYZZY: [\(self.serverState.sessionList.selectedShort)] -> [\(self.serverState.sessionList.selected)]")
                         self.serverState.updateSessions(sessions);
                     }
                 });
@@ -163,7 +143,6 @@ public extension MultiPlayer {
                         )
                         .padding(.leading, -6)
                     RegularText("session:", size: fontsize, leading: 4)
-                        // CopyableText(text: sessionState.session.shorten(to: shortSessionID),
                         CopyableText(text: serverState.sessionList.shorten(sessionState.session),
                                      // foreground: self.info.isHost ? .red : .primary,
                                      background: self.background,
@@ -409,7 +388,7 @@ public extension MultiPlayer {
 // result values will be unique. From ChatGPT wholesale.
 //
 private extension Array<String> {
-    fileprivate func shortenValues(min: Int = shortSessionID) -> (list: [String], short: Int) {
+    fileprivate func shortenValues(min: Int) -> (list: [String], short: Int) {
         guard !self.isEmpty else { return (list: [], short: min) }
         var result = Array(repeating: "", count: self.count); var prefixSize = min;
         while (true) {
