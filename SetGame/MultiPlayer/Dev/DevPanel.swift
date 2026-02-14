@@ -21,6 +21,9 @@ private struct ServerState {
     fileprivate mutating func updateSessions(_ sessions: [String]) {
         self.sessionList.update(sessions);
     }
+    fileprivate func sessionShort(_ session: String?) -> String {
+        return self.sessionList.shorten(session);
+    }
 }
 
 private struct SessionList {
@@ -162,7 +165,8 @@ public extension MultiPlayer {
                         )
                         .padding(.leading, -6)
                     RegularText("session:", size: fontsize, leading: 4)
-                        CopyableText(text: serverState.sessionList.shorten(sessionState.session),
+                        // CopyableText(text: serverState.sessionList.shorten(sessionState.session),
+                        CopyableText(text: serverState.sessionShort(sessionState.session),
                                      // foreground: self.info.isHost ? .red : .primary,
                                      background: self.background,
                                      bold: true,
