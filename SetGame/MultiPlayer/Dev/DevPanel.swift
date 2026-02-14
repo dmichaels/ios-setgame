@@ -230,29 +230,23 @@ private struct CopyableText: View {
     }
 }
 
-public struct SmallButton: View {
+private struct SmallButton: View {
 
-    let text: String?;
-    var icon: String?;
-    var background: Color;
-    var foreground: Color;
-    var size: Int;
-    var disabled: Bool;
-    let action: () async -> Void;
+    private let text: String?;
+    private let icon: String?;
+    private let background: Color;
+    private let foreground: Color;
+    private let size: Int;
+    private let disabled: Bool;
+    private let action: () async -> Void;
 
-    var cornerRadius: CGFloat = 8
-    var horizontalPadding: CGFloat = 10;
-    var verticalPadding: CGFloat = 4;
+    private let cornerRadius: CGFloat = 8
+    private let horizontalPadding: CGFloat = 10;
+    private let verticalPadding: CGFloat = 4;
     
-    public init(
-        _ text: String? = nil,
-        icon: String? = nil,
-        background: Color? = nil,
-        foreground: Color? = nil,
-        size: Int = 13,
-        disabled: Bool = false,
-        action: @escaping () async -> Void
-    ) {
+    public init( _ text: String? = nil, icon: String? = nil,
+                   background: Color? = nil, foreground: Color? = nil, size: Int = 13,
+                   disabled: Bool = false, action: @escaping () async -> Void) {
         self.text = text;
         self.icon = icon;
         self.background = background ?? Color(hex: 0x368077);
@@ -282,8 +276,7 @@ public struct SmallButton: View {
                     .padding(.horizontal, horizontalPadding)
                     .padding(.vertical, verticalPadding)
                     .background(
-                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                            .fill(background)
+                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous).fill(background)
                     )
                     .disabled(disabled)
             }
@@ -304,7 +297,7 @@ private struct DropDown: View {
         return shorten?(value) ?? value;
     }
     
-    var body: some View {
+    fileprivate var body: some View {
         Menu {
             ForEach(items.shortenValues(min: short), id: \.self) { item in
                 Button(item) {
@@ -366,10 +359,6 @@ private class Poller {
 
     fileprivate init(seconds: Int = 2) {
         self.interval = UInt64(seconds * 1_000_000_000);
-    }
-
-    fileprivate init(milliseconds: Int = 2) {
-        self.interval = UInt64(milliseconds * 1_000_000);
     }
 
     fileprivate func start(_ task: @escaping () async -> Void) {
