@@ -18,6 +18,9 @@ private struct SessionState {
 
 private struct ServerState {
     fileprivate var sessionList: SessionList = SessionList();
+    fileprivate mutating func updateSessions(_ sessions: [String]) {
+        self.sessionList.update(sessions);
+    }
 }
 
 private let shortSessionID: Int = 2;
@@ -89,7 +92,8 @@ public extension MultiPlayer {
                     self.sessionState.leaveable = self.session.leaveable;
                     if let sessions: [String] = await self.transport.retrieveSessions() {
                         print("XYZZY: [\(self.serverState.sessionList.selected)] -> [\(self.serverState.sessionList.sessions.find(prefix: self.serverState.sessionList.selected))]")
-                        self.serverState.sessionList.update(sessions);
+                        // self.serverState.sessionList.update(sessions);
+                        self.serverState.updateSessions(sessions);
                     }
                 });
             }
