@@ -93,8 +93,7 @@ public extension MultiPlayer {
                     self.sessionState.connected = self.session.connected;
                     self.sessionState.leaveable = self.session.leaveable;
                     if let sessions: [String] = await self.transport.retrieveSessions() {
-                        print("XYZZY: [\(self.serverState.sessionList.selected)] -> [\(self.serverState.sessionList.sessions.find(prefix: self.serverState.sessionList.selected))]")
-                        // self.serverState.sessionList.update(sessions);
+                        print("XYZZY: [\(self.serverState.sessionList.selected)] -> [\(self.serverState.sessionList.selectedFull)]")
                         self.serverState.updateSessions(sessions);
                     }
                 });
@@ -171,7 +170,6 @@ public extension MultiPlayer {
                     RegularText("", padding: 4)
                     SmallButton(icons ? nil : "create", icon: icons ? "rectangle.portrait.and.arrow.forward" : nil, size: 16, disabled: self.sessionState.connected) {
                         if (!self.session.connected) {
-                            // if let session: String = serverState.sessionList.sessions.find(prefix: serverState.sessionList.selected) {
                             if let session: String = serverState.sessionList.selectedFull {
                                 if await self.session.join(session: session) {
                                     self.sessionState.update(from: self.session);
@@ -334,36 +332,6 @@ public extension MultiPlayer {
             }
         }
     }
-/*
-    private struct old_DropDown: View {
-    
-        @Binding fileprivate var items: [String];
-        @Binding fileprivate var selected: String;
-                 fileprivate var short: Int = shortSessionID;
-                 fileprivate var shorten: ((String) -> String)? = nil;
-
-        private func shortened(_ value: String) -> String {
-            return shorten?(value) ?? value;
-        }
-    
-        fileprivate var body: some View {
-            Menu {
-                ForEach(items.shortenValues(min: short), id: \.self) { item in
-                    Button(item) { selected = item }
-                }
-            } label: {
-                Text(shortened(selected.isEmpty ? items.first ?? "SELECT" : selected) ?? "SELECT")
-                    .font(.system(size: 14, weight: .bold))
-            }
-            .offset(y: 2)
-            .onAppear {
-                if selected.isEmpty, let first = items.first {
-                    selected = first;
-                }
-            }
-        }
-    }
-*/
 
     private struct AnyDevPanel<Content: View>: View {
 
