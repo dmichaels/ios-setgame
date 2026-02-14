@@ -48,7 +48,7 @@ public extension MultiPlayer {
         // Creates a new session on the server with its initial player,
         // and its host, as the given player; returns the new session ID.
         //
-        public func createAndHostSession(host player: String, bind: Bool = false) async -> String? {
+        public func create(host player: String, bind: Bool = false) async -> String? {
             if let session: Json = await self.url.post("/sessions", player, as: Json.self, key: self.key) {
                 if let session: String = session["session"] as? String {
                     if (bind) {

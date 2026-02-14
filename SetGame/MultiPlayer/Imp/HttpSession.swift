@@ -37,7 +37,7 @@ public extension MultiPlayer {
             // i.e. self.session is not nil, then do nothing; return false.
             //
             if (self.session == nil) {
-                if let session: String = await self.transport.createAndHostSession(host: self.player, bind: true) {
+                if let session: String = await self.transport.create(host: self.player, bind: true) {
                     self.session = session;
                     self.host = self.player;
                     self.transport.engage();
