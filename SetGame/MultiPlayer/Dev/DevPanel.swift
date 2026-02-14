@@ -1,17 +1,17 @@
 import SwiftUI
 
-private struct SessionInfo {
+private struct SessionState {
     public var session: String? = nil;
     public let player: String;
     public var players: [String] = [];
 }
 
-private struct ServerInfo {
+private struct ServerState {
     public var sessions: [String] = ["-", "ABC", "DEF", "GHI"];
 }
 
-private func SID(_ session: String?) -> String {
-    return String((session ?? "∅∅∅").prefix(4));
+private func SID(_ session: String?, size: Int = 4) -> String {
+    return String((session ?? "∅∅∅").prefix(size));
 }
 
 public extension MultiPlayer {
@@ -28,14 +28,15 @@ public extension MultiPlayer {
         let session: MultiPlayer.Session;
         let transport: MultiPlayer.HttpTransport;
 
-        @State private var sessionInfo: SessionInfo;
-        @State private var serverInfo: ServerInfo;
+        @State private var sessionState: SessionState;
+        @State private var serverState: ServerState;
         @State private var sessionSelected: String = "-";
                private let poller: Poller = Poller(seconds: 2);
 
         let separator: String = "|" // "\u{2756}";
         let icons: Bool = true;
         let fontsize: Int = 14;
+        let sid: Int = 4;
 
         public init(table: Table, settings: Settings, margin: Int) {
             self.table = table;
@@ -44,8 +45,8 @@ public extension MultiPlayer {
             let session: Session = MultiPlayer.HttpSession.instance;
             self.session = session;
             self.transport = session.transport as! MultiPlayer.HttpTransport;
-            self.sessionInfo = SessionInfo(player: session.player);
-            self.serverInfo = ServerInfo();
+            self.sessionState = SessionState(player: session.player);
+            self.serverState = ServerState();
         }
 
         public var body: some View {
@@ -53,7 +54,7 @@ public extension MultiPlayer {
             AnyDevPanel(table: table, settings: settings) {
                 HStack(spacing: CGFloat(separationPadding)) {
                     RegularText("me:", size: fontsize)
-                        CopyableText(text: sessionInfo.player,
+                        CopyableText(text: sessionState.player,
                                      // foreground: self.info.isHost ? .red : .primary,
                                      background: self.background,
                                      bold: true,
@@ -63,53 +64,52 @@ public extension MultiPlayer {
                         )
                         .padding(.leading, -6)
                     RegularText("session:", size: fontsize, leading: 4)
-                        CopyableText(text: SID(sessionInfo.session),
+                        CopyableText(text: SID(sessionState.session, size: sid),
                                      // foreground: self.info.isHost ? .red : .primary,
                                      background: self.background,
                                      bold: true,
                                      underline: true,
                                      strikeout: false,
-                                     size: sessionInfo.session == nil ? 14 : 13
+                                     size: sessionState.session == nil ? 14 : 13
                         )
                         .padding(.leading, -6)
                     RegularText(separator, size: fontsize, leading: 7, trailing: 10)
                     SmallButton(icons ? nil : "create", icon: icons ? "plus.rectangle.portrait" : nil, size: 16, disabled: self.session.connected) {
                         if (!self.session.connected) {
                             if await self.session.create() {
-                                self.sessionInfo.session = self.session.session;
+                                self.sessionState.session = self.session.session;
                             }
                         }
                     }
                     RegularText("", padding: 4)
                     SmallButton(icons ? nil : "create", icon: icons ? "rectangle.portrait.and.arrow.forward" : nil, size: 16, disabled: self.session.connected) {
                         if (!self.session.connected) {
-                            if let session: String = findSession(items: self.serverInfo.sessions, prefix: self.sessionSelected) {
+                            if let session: String = findSession(items: self.serverState.sessions, prefix: self.sessionSelected) {
                                 if await self.session.join(session: session) {
-                                    self.sessionInfo.session = self.session.session;
+                                    self.sessionState.session = self.session.session;
                                 }
                             }
                         }
                     }
                     RegularText("", padding: 4)
-                    SmallButton(icons ? nil : "leave", icon: icons ? "xmark.rectangle.portrait" : nil, size: 16, disabled: !self.session.connected) {
+                    SmallButton(icons ? nil : "leave", icon: icons ? "xmark.rectangle.portrait" : nil, size: 17, disabled: !self.session.connected) {
                         if (self.session.connected) {
                             if await self.session.leave() {
-                                self.sessionInfo.session = self.session.session;
+                                self.sessionState.session = self.session.session;
                             }
                         }
                     }
                     Spacer()
-                    DropDown(items: $serverInfo.sessions, selected: $sessionSelected)
+                    DropDown(items: $serverState.sessions, selected: $sessionSelected)
                 }
                 .padding(.horizontal, CGFloat(horizontalPadding))
             }
             .onAppear {
                 self.poller.start({
-                    self.sessionInfo.session = self.session.session;
-                    self.sessionInfo.players = self.session.players;
+                    self.sessionState.session = self.session.session;
+                    self.sessionState.players = self.session.players;
                     if let sessions: [String] = await self.transport.retrieveSessions() {
-                        // self.serverInfo.sessions = minimalUniquePrefixes(sessions);
-                        self.serverInfo.sessions = sessions;
+                        self.serverState.sessions = sessions;
                     }
                 });
             }
@@ -139,32 +139,44 @@ private struct RegularText: View {
     }
 }
 
-private struct SessionCreateButton: View {
-
-    @Binding fileprivate var sessionInfo: SessionInfo;
-    @Binding fileprivate var serverInfo: ServerInfo;
-                         let session: MultiPlayer.Session;
-                         let transport: MultiPlayer.HttpTransport;
-
-    public var body: some View {
-            Button {
-                Task {
-                    if (session.session == nil) {
-                        if await session.create() {
-                            sessionInfo.session = session.session;
-                        }
-                    }
+private struct CopyableText: View {
+    let text: String;
+    var foreground: Color = .primary;
+    var background: Color = .white;
+    var bold: Bool = false;
+    var underline: Bool = false;
+    var strikeout: Bool = false;
+    var size: Int = 13;
+    @State private var copied = false;
+    var body: some View {
+        Text(text)
+            .font(.system(size: CGFloat(size), weight: .semibold))
+            .fontWeight(bold ? .bold : .regular)
+            .underline(underline)
+            .strikethrough(strikeout)
+            .padding(8)
+            .cornerRadius(8)
+            .foregroundColor(foreground)
+            .onTapGesture {
+                UIPasteboard.general.string = text
+                copied = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    copied = false
                 }
-            } label: {
-                Text("create")
-                /*
-                Image(systemName: session.session == nil ? "plus.message" : "plus.message.fill")
-                    .foregroundColor(.black)
-                    .font(.system(size: 14))
-                    .fontWeight(.bold)
-                    */
             }
-            .padding(.trailing, 10)
+            .overlay(
+                copied ? Text(" Copied ")
+                    .font(.caption)
+                    .foregroundColor(.green)
+                    .padding(4)
+                    .background(Color.white)
+                    .cornerRadius(6)
+                    .offset(y: -40)
+                    .transition(.opacity)
+                    .fixedSize()
+                : nil
+            )
+            .padding(.trailing, -4)
     }
 }
 
@@ -210,7 +222,7 @@ public struct SmallButton: View {
                 Image(systemName: icon)
                     .foregroundColor(.black)
                     .font(.system(size: CGFloat(size)))
-                    .fontWeight(.bold)
+                    .fontWeight(.semibold)
                     .disabled(disabled)
             }
             else if let text: String = text {
@@ -235,11 +247,11 @@ private struct DropDown: View {
     
     @Binding public var items: [String];
     @Binding public var selected: String;
-                    var minimize: Bool = false;
+                    var minimize: Int = 4;
     
     public var body: some View {
         Picker(selection: $selected) {
-            ForEach(minimalUniquePrefixes(self.items), id: \.self) { item in
+            ForEach(minimalUniquePrefixes(self.items, min: minimize), id: \.self) { item in
                 Text(item).tag(item)
             }
         } label: {
@@ -289,47 +301,6 @@ private struct AnyDevPanel<Content: View>: View {
             )
             Spacer()
         }
-    }
-}
-
-private struct CopyableText: View {
-    let text: String;
-    var foreground: Color = .primary;
-    var background: Color = .white;
-    var bold: Bool = false;
-    var underline: Bool = false;
-    var strikeout: Bool = false;
-    var size: Int = 13;
-    @State private var copied = false;
-    var body: some View {
-        Text(text)
-            .font(.system(size: CGFloat(size), weight: .semibold))
-            .fontWeight(bold ? .bold : .regular)
-            .underline(underline)
-            .strikethrough(strikeout)
-            .padding(8)
-            .cornerRadius(8)
-            .foregroundColor(foreground)
-            .onTapGesture {
-                UIPasteboard.general.string = text
-                copied = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    copied = false
-                }
-            }
-            .overlay(
-                copied ? Text(" Copied ")
-                    .font(.caption)
-                    .foregroundColor(.green)
-                    .padding(4)
-                    .background(Color.white)
-                    .cornerRadius(6)
-                    .offset(y: -40)
-                    .transition(.opacity)
-                    .fixedSize()
-                : nil
-            )
-            .padding(.trailing, -4)
     }
 }
 
