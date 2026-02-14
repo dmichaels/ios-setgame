@@ -268,7 +268,7 @@ public extension MultiPlayer {
         private func handle(message: RequestHostSessionMessage) {
             guard self.hosting else { return }
             Task {
-                if await self.transport.setHostAndNotify(player: message.player, session: session) {
+                if await self.transport.requestHost(player: message.player, session: session) {
                     self.host = message.player;
                 }
             }

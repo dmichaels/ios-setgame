@@ -81,7 +81,7 @@ public extension MultiPlayer {
             return false;
         }
 
-        public func setHostAndNotify(player: String, session: String? = nil) async -> Bool {
+        public func requestHost(player: String, session: String? = nil) async -> Bool {
             if let session: String = session ?? self.session {
                 if let response: Json = await self.url.post(session, "/host_and_notify", player, as: Json.self, key: self.key) {
                     return true;
