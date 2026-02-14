@@ -6,9 +6,10 @@ public extension MultiPlayer {
 
         // Singleton instance.
 
-        public private(set) static var instance: HttpSession? = nil;
+        public private(set) static var singleton: HttpSession? = nil;
+        public static var instance: HttpSession { HttpSession.singleton! }
         public static func instance(handler: SessionHandler, transport: HttpTransport.Factory? = nil) -> HttpSession {
-            if let instance = HttpSession.instance {
+            if let singleton = HttpSession.singleton {
                 //
                 // Should not normally happen; just call this once to initialize the singleton
                 // with the required SessionHandler and (optional) HttpTransport arguments; but
@@ -16,11 +17,11 @@ public extension MultiPlayer {
                 // a new instance; we take care in this case to cleanup the existing singleton;
                 // e.g. to stop HttpTransport polling via the Transport.disengage function.
                 //
-                instance.transport.disengage();
-                HttpSession.instance = nil;
+                singleton.transport.disengage();
+                HttpSession.singleton = nil;
             }
-            HttpSession.instance = HttpSession(handler: handler, transport: transport);
-            return HttpSession.instance!;
+            HttpSession.singleton = HttpSession(handler: handler, transport: transport);
+            return HttpSession.singleton!;
         }
 
         // Session protocol implementation.
@@ -161,7 +162,7 @@ public extension MultiPlayer {
             // this is so this handler (Table in out case) can call into us (as an
             // implementor of Session) to send messages (via Session.send).
             //
-            handler.session = self;
+            handler.xsession = self;
 
             // Initialize the players list with ourselves.
             //

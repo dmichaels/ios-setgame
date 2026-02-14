@@ -16,6 +16,8 @@ struct SetGameApp: App {
         _feedback = StateObject(wrappedValue: Feedback(sounds: settings.sounds,
                                                        haptics: settings.haptics));
         _table = StateObject(wrappedValue: Table(settings: settings));
+
+        MultiPlayer.HttpSession.instance(handler: self.table);
     }
 
     var body: some Scene {

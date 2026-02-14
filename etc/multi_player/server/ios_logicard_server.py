@@ -119,15 +119,7 @@ def create_and_host_session_endpoint(host):
 #
 @app.route('/sessions', methods=['GET'])
 def get_sessions_endpoint():
-    global debug, sessions
-    if debug and len(sessions) == 1:
-        session = sessions[list(sessions.keys())[0]]
-        return jsonify({'session':  session['session'],
-                        'host':     session['host'],
-                        'players':  session['players'],
-                        'inbox':    session['inbox'],
-                        'debug':    True,
-                        'received': session.get('received')}), 200
+    global sessions
     return jsonify(list(sessions.keys())), 200
 
 # Returns ALL of the session data for the given session ID; mostly for debugging. 

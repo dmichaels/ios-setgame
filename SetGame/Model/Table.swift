@@ -5,7 +5,14 @@ import SwiftUI
 /// table cards which are on display; and sundry other data points.
 /// Is this class technically, effectively acting as a "model-view"?
 ///
-public class Table: ObservableObject, GameCenter.SessionHandler {
+public class FOOTable: MultiPlayer.SessionHandler {
+    public var xsession: MultiPlayer.Session?
+    public func handle(message: MultiPlayer.PingMessage) {}
+}
+public class Table: ObservableObject, GameCenter.SessionHandler, MultiPlayer.SessionHandler {
+
+    public var xsession: MultiPlayer.Session?
+    public func handle(message: MultiPlayer.PingMessage) {}
 
     private var settings: Settings;
 

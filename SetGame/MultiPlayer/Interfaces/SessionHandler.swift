@@ -1,6 +1,6 @@
 public extension MultiPlayer {
 
     public protocol SessionHandler: MessageHandler {
-        var session: Session? { get set }
+        var xsession: Session? { get set }
     }
 }

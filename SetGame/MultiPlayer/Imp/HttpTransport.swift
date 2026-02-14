@@ -189,5 +189,14 @@ public extension MultiPlayer {
                 MessageConveyance.dispatch(messages: messages, handler: self.handler);
             }
         }
+
+        // Public only for DevPanel ...
+
+        public func retrieveSessions() async -> [String]? {
+            if let sessions: [String] = await self.url.get("/sessions", as: [String].self, key: self.key) {
+                return sessions;
+            }
+            return nil;
+        }
     }
 }
