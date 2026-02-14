@@ -50,14 +50,13 @@ private struct SessionList {
     // result values will be unique. From ChatGPT wholesale.
     //
     private static func shortenValues(_ list: [String]) -> (list: [String], shortLength: Int) {
-        let shortLength: Int = SessionList.shortLengthDefault;
-        guard !list.isEmpty else { return (list: [], shortLength: shortLength) }
-        var result = Array(repeating: "", count: list.count); var prefixLength = shortLength;
+        guard !list.isEmpty else { return (list: [], shortLength: SessionList.shortLengthDefault) }
+        var result = Array(repeating: "", count: list.count); var prefixLength = SessionList.shortLengthDefault;
         while (true) {
             var seen = Set<String>(); var collision = false;
             for (i, item) in list.enumerated() {
                 let prefix = String(item.prefix(prefixLength)); result[i] = prefix;
-                if (seen.contains(prefix)) { collision = true; } else { seen.insert(prefix); }
+                if (seen.contains(prefix)) { collision = true } else { seen.insert(prefix); }
             }
             if (!collision) { return (list: result, shortLength: prefixLength); } ; prefixLength += 1;
         }
