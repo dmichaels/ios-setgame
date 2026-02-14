@@ -11,7 +11,7 @@ private struct ServerInfo {
 }
 
 private func SID(_ session: String?) -> String {
-    return String((session ?? "∅").prefix(4));
+    return String((session ?? "∅∅∅").prefix(4));
 }
 
 public extension MultiPlayer {
@@ -33,7 +33,8 @@ public extension MultiPlayer {
         @State private var sessionSelected: String = "-";
                private let poller: Poller = Poller(seconds: 2);
 
-        let separator: String = "\u{2756}";
+        let separator: String = "|" // "\u{2756}";
+        let icons: Bool = true;
         let fontsize: Int = 14;
 
         public init(table: Table, settings: Settings, margin: Int) {
@@ -68,24 +69,32 @@ public extension MultiPlayer {
                                      bold: true,
                                      underline: true,
                                      strikeout: false,
-                                     size: sessionInfo.session == nil ? 18 : 13
+                                     size: sessionInfo.session == nil ? 14 : 13
                         )
                         .padding(.leading, -6)
-                    RegularText(separator, size: fontsize, color: .gray, leading: 7, trailing: 10)
-                    SmallButton(icon: "plus.rectangle.portrait" /*"create"*/, size: 16) {
-                        if (self.session.session == nil) {
+                    RegularText(separator, size: fontsize, leading: 7, trailing: 10)
+                    SmallButton(icons ? nil : "create", icon: icons ? "plus.rectangle.portrait" : nil, size: 16, disabled: self.session.connected) {
+                        if (!self.session.connected) {
                             if await self.session.create() {
                                 self.sessionInfo.session = self.session.session;
                             }
                         }
                     }
                     RegularText("", padding: 4)
-                    SmallButton(icon: "rectangle.portrait.and.arrow.forward" /*"join"*/, size: 16) {
-                        if (self.session.session == nil) {
+                    SmallButton(icons ? nil : "create", icon: icons ? "rectangle.portrait.and.arrow.forward" : nil, size: 16, disabled: self.session.connected) {
+                        if (!self.session.connected) {
                             if let session: String = findSession(items: self.serverInfo.sessions, prefix: self.sessionSelected) {
                                 if await self.session.join(session: session) {
                                     self.sessionInfo.session = self.session.session;
                                 }
+                            }
+                        }
+                    }
+                    RegularText("", padding: 4)
+                    SmallButton(icons ? nil : "leave", icon: icons ? "xmark.rectangle.portrait" : nil, size: 16, disabled: !self.session.connected) {
+                        if (self.session.connected) {
+                            if await self.session.leave() {
+                                self.sessionInfo.session = self.session.session;
                             }
                         }
                     }
@@ -166,6 +175,7 @@ public struct SmallButton: View {
     var background: Color;
     var foreground: Color;
     var size: Int;
+    var disabled: Bool;
     let action: () async -> Void;
 
     var cornerRadius: CGFloat = 8
@@ -173,18 +183,20 @@ public struct SmallButton: View {
     var verticalPadding: CGFloat = 4;
     
     public init(
-        _ text: String = "",
+        _ text: String? = nil,
         icon: String? = nil,
         background: Color? = nil,
         foreground: Color? = nil,
         size: Int = 13,
+        disabled: Bool = false,
         action: @escaping () async -> Void
     ) {
         self.text = text;
         self.icon = icon;
         self.background = background ?? Color(hex: 0x368077);
-        self.foreground = foreground ?? .white;
+        self.foreground = foreground ?? .yellow;
         self.size = size;
+        self.disabled = disabled;
         self.action = action;
     }
 
@@ -199,6 +211,7 @@ public struct SmallButton: View {
                     .foregroundColor(.black)
                     .font(.system(size: CGFloat(size)))
                     .fontWeight(.bold)
+                    .disabled(disabled)
             }
             else if let text: String = text {
                 Text(text)
@@ -210,9 +223,11 @@ public struct SmallButton: View {
                         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                             .fill(background)
                     )
+                    .disabled(disabled)
             }
         }
         .buttonStyle(.plain)
+        .disabled(disabled)
     }
 }
 

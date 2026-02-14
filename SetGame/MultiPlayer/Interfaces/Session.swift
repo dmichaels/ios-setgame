@@ -7,6 +7,7 @@ public extension MultiPlayer {
         var  host: String? { get }
         var  hosting: Bool { get }
         var  players: [String] { get }
+        var  connected: Bool { get}
         var  transport: Transport { get }
 
         func create() async -> Bool;
@@ -26,4 +27,5 @@ public extension MultiPlayer {
 public extension MultiPlayer.Session {
     public var player: String { self.transport.player };
     public var hosting: Bool { self.player == self.host };
+    public var connected: Bool { self.session != nil };
 }

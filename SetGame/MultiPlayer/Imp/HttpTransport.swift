@@ -92,7 +92,7 @@ public extension MultiPlayer {
 
         public func destroySession(session: String? = nil) async -> Bool {
             if let session: String = session ?? self.session {
-                if let response: Json = await self.url.post(session, "/destroy", as: Json.self, key: self.key) {
+                if let response: Json = await self.url.post("/sessions", session, "/destroy", as: Json.self, key: self.key) {
                     self.disengage();
                     return true;
                 }
