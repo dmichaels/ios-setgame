@@ -222,7 +222,7 @@ public extension MultiPlayer {
                     // identified in the message, for our session (via backend server API); and
                     // send a notification message to this player that their request has been accepted.
                     // 
-                    if let (player, host) = await self.transport.registerPlayerAndNotify(player: message.player, session: session) {
+                    if let (player, host) = await self.transport.register(player: message.player, session: session) {
                         //
                         // Add this player to our list of known players (which includes ourself FYI).
                         // And then notify the other player excluding this (host) player, so that the
@@ -259,7 +259,7 @@ public extension MultiPlayer {
         private func handle(message: LeaveSessionMessage) {
             guard self.hosting else { return }
             Task {
-                if await self.transport.unregisterPlayerAndNotify(player: message.player, session: session) {
+                if await self.transport.unregister(player: message.player, session: session) {
                     self.playerLeft(message.player);
                 }
             }

@@ -9,8 +9,8 @@ public extension MultiPlayer {
         func bindTentative(to session: String);
 
         func create(host: String, bind: Bool) async -> String?;
-        func registerPlayerAndNotify(player: String, session: String?) async -> (player: String, host: String)?;
-        func unregisterPlayerAndNotify(player: String, session: String?) async -> Bool;
+        func register(player: String, session: String?) async -> (player: String, host: String)?;
+        func unregister(player: String, session: String?) async -> Bool;
         func setHostAndNotify(player: String, session: String?) async -> Bool;
         func destroySession(session: String?) async -> Bool;
 
