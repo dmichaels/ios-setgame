@@ -24,31 +24,48 @@ private struct ServerState {
 }
 
 private struct SessionList {
+
     private static           let shortLengthDefault: Int = 2;
-    private                  var sessions: [String];
-    fileprivate private(set) var sessionsShort: [String];
-    fileprivate              var selected: String? {
-                                     self.sessions.find(prefix: self.selectedShort) ?? self.sessions.first
-                                 }
+    private                  var shortLength: Int = SessionList.shortLengthDefault;
+    private                  var sessions: [String] = [];
+    fileprivate private(set) var sessionsShort: [String] = [];
+    fileprivate              var selected: String? { return self.sessions.first { $0.hasPrefix(self.selectedShort) }; }
     fileprivate              var selectedShort: String = "";
-    private                  var short: Int = SessionList.shortLengthDefault;
+
     fileprivate init(_ sessions: [String] = []) {
-        self.sessions = sessions;
-        let (list, short) = sessions.shortenValues(min: SessionList.shortLengthDefault);
-        self.sessionsShort = list;
-        self.short = short;
+        self.update(sessions);
     }
+
     fileprivate mutating func update(_ sessions: [String]) {
         self.sessions = sessions;
-        let (list, short) = sessions.shortenValues(min: SessionList.shortLengthDefault);
+        let (list, shortLength) = SessionList.shortenValues(sessions, SessionList.shortLengthDefault);
         self.sessionsShort = list;
-        self.short = short;
+        self.shortLength = shortLength;
     }
+
     fileprivate func shorten(_ session: String?) -> String {
         if let session: String = session {
-            return String(session.prefix(self.short));
+            return String(session.prefix(self.shortLength));
         }
         return "";
+    }
+
+    // Returns the given array of strings, which is assumed to contain UNIQUE values,
+    // where each value is truncated to the first, at mininum, the given minimum number
+    // of characters; but if not, then the prefix length will be chosen such that the
+    // result values will be unique. From ChatGPT wholesale.
+    //
+    private static func shortenValues(_ list: [String], _ shortLength: Int) -> (list: [String], shortLength: Int) {
+        guard !list.isEmpty else { return (list: [], shortLength: shortLength) }
+        var result = Array(repeating: "", count: list.count); var prefixSize = shortLength;
+        while (true) {
+            var seen = Set<String>(); var collision = false;
+            for (i, item) in list.enumerated() {
+                let prefix = String(item.prefix(prefixSize)); result[i] = prefix;
+                if (seen.contains(prefix)) { collision = true; } else { seen.insert(prefix); }
+            }
+            if (!collision) { return (list: result, shortLength: prefixSize); } ; prefixSize += 1;
+        }
     }
 }
 
@@ -381,28 +398,5 @@ public extension MultiPlayer {
             task?.cancel();
             task = nil;
         }
-    }
-}
-
-// Returns the given array of strings, which is assumed to contain UNIQUE values,
-// where each value is truncated to the first, at mininum, the given minimum number
-// of characters; but if not, then the prefix length will be chosen such that the
-// result values will be unique. From ChatGPT wholesale.
-//
-private extension Array<String> {
-    fileprivate func shortenValues(min: Int) -> (list: [String], short: Int) {
-        guard !self.isEmpty else { return (list: [], short: min) }
-        var result = Array(repeating: "", count: self.count); var prefixSize = min;
-        while (true) {
-            var seen = Set<String>(); var collision = false;
-            for (i, item) in self.enumerated() {
-                let prefix = String(item.prefix(prefixSize)); result[i] = prefix;
-                if (seen.contains(prefix)) { collision = true; } else { seen.insert(prefix); }
-            }
-            if (!collision) { return (list: result, short: prefixSize); } ; prefixSize += 1;
-        }
-    }
-    fileprivate func find(prefix: String) -> String? {
-        return self.first { $0.hasPrefix(prefix) };
     }
 }
