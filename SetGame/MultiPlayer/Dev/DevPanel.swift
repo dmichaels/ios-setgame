@@ -37,9 +37,7 @@ private struct SessionList {
 
     fileprivate mutating func update(_ sessions: [String]) {
         self.sessions = sessions;
-        let (list, shortLength) = SessionList.shortenValues(sessions);
-        self.sessionsShort = list;
-        self.shortLength = shortLength;
+        (self.sessionsShort, self.shortLength) = SessionList.shortenValues(sessions);
     }
 
     fileprivate func shorten(_ session: String?) -> String {
