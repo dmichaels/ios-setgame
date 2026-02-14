@@ -17,8 +17,6 @@ private struct SessionState {
 }
 
 private struct ServerState {
-    // public var sessions: [String] = [];
-    // public var sessionSelected: String = "";
     fileprivate var sessionList: SessionList = SessionList();
 }
 
@@ -90,8 +88,6 @@ public extension MultiPlayer {
                     self.sessionState.connected = self.session.connected;
                     self.sessionState.leaveable = self.session.leaveable;
                     if let sessions: [String] = await self.transport.retrieveSessions() {
-                        // self.serverState.sessions = sessions;
-                        // self.serverState.sessionList = SessionList(sessions);
                         print("XYZZY: [\(self.serverState.sessionList.selected)] -> [\(self.serverState.sessionList.sessions.find(prefix: self.serverState.sessionList.selected))]")
                         self.serverState.sessionList.update(sessions);
                     }
@@ -169,7 +165,6 @@ public extension MultiPlayer {
                     RegularText("", padding: 4)
                     SmallButton(icons ? nil : "create", icon: icons ? "rectangle.portrait.and.arrow.forward" : nil, size: 16, disabled: self.sessionState.connected) {
                         if (!self.session.connected) {
-                            // if let session: String = serverState.sessions.find(prefix: serverState.sessionSelected) {
                             if let session: String = serverState.sessionList.sessions.find(prefix: serverState.sessionList.selected) {
                                 if await self.session.join(session: session) {
                                     self.sessionState.update(from: self.session);
@@ -186,12 +181,6 @@ public extension MultiPlayer {
                         }
                     }
                     Spacer()
-                    // DropDown(items: $serverState.sessions,
-                      //        selected: $serverState.sessionSelected,
-//                  DropDown(items: $serverState.sessionList.sessions,
-//                           selected: $serverState.sessionList.selected,
-//                           short: shortSessionID,
-//                           shorten: { value in value.shorten() })
                     DropDown(items: serverState.sessionList.sessions.shortenValues(min: shortSessionID),
                              selected: $serverState.sessionList.selected)
                 }
