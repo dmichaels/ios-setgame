@@ -50,7 +50,8 @@ private struct SessionList {
         self.sessions = sessions;
     }
     fileprivate var sessionsShort: [String] { self.sessions.shortenValues(min: shortSessionID) }
-    fileprivate var selectedFull: String? { self.sessions.find(prefix: self.selectedShort) ?? self.sessions.first }
+    fileprivate var selected: String? { self.sessions.find(prefix: self.selectedShort) ?? self.sessions.first }
+    // fileprivate func shorten(_ session: String) { TODO }
 }
 
 public extension MultiPlayer {
@@ -91,7 +92,7 @@ public extension MultiPlayer {
                     self.sessionState.connected = self.session.connected;
                     self.sessionState.leaveable = self.session.leaveable;
                     if let sessions: [String] = await self.transport.retrieveSessions() {
-                        print("XYZZY: [\(self.serverState.sessionList.selectedShort)] -> [\(self.serverState.sessionList.selectedFull)]")
+                        print("XYZZY: [\(self.serverState.sessionList.selectedShort)] -> [\(self.serverState.sessionList.selected)]")
                         self.serverState.updateSessions(sessions);
                     }
                 });
@@ -168,7 +169,7 @@ public extension MultiPlayer {
                     RegularText("", padding: 4)
                     SmallButton(icons ? nil : "create", icon: icons ? "rectangle.portrait.and.arrow.forward" : nil, size: 16, disabled: self.sessionState.connected) {
                         if (!self.session.connected) {
-                            if let session: String = serverState.sessionList.selectedFull {
+                            if let session: String = serverState.sessionList.selected {
                                 if await self.session.join(session: session) {
                                     self.sessionState.update(from: self.session);
                                 }
@@ -184,9 +185,7 @@ public extension MultiPlayer {
                         }
                     }
                     Spacer()
-                    // DropDown(items: serverState.sessionList.sessions.shortenValues(min: shortSessionID),
                     DropDown(items: serverState.sessionList.sessionsShort,
-                             // selected: $serverState.sessionList.selected)
                              selected: $serverState.sessionList.selectedShort)
                 }
                 .padding(.horizontal, CGFloat(horizontalPadding))
