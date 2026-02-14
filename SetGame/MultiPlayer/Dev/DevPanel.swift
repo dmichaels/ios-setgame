@@ -51,6 +51,8 @@ private struct SessionList {
     fileprivate mutating func update(_ sessions: [String]) {
         self.sessions = sessions;
     }
+    fileprivate var sessionsShort: [String] { self.sessions.shortenValues(min: shortSessionID) }
+    fileprivate var selectedFull: String? { self.sessions.find(prefix: self.selected) ?? self.sessions.first }
 }
 
 public extension MultiPlayer {
@@ -169,7 +171,8 @@ public extension MultiPlayer {
                     RegularText("", padding: 4)
                     SmallButton(icons ? nil : "create", icon: icons ? "rectangle.portrait.and.arrow.forward" : nil, size: 16, disabled: self.sessionState.connected) {
                         if (!self.session.connected) {
-                            if let session: String = serverState.sessionList.sessions.find(prefix: serverState.sessionList.selected) {
+                            // if let session: String = serverState.sessionList.sessions.find(prefix: serverState.sessionList.selected) {
+                            if let session: String = serverState.sessionList.selectedFull {
                                 if await self.session.join(session: session) {
                                     self.sessionState.update(from: self.session);
                                 }
@@ -185,7 +188,8 @@ public extension MultiPlayer {
                         }
                     }
                     Spacer()
-                    DropDown(items: serverState.sessionList.sessions.shortenValues(min: shortSessionID),
+                    // DropDown(items: serverState.sessionList.sessions.shortenValues(min: shortSessionID),
+                    DropDown(items: serverState.sessionList.sessionsShort,
                              selected: $serverState.sessionList.selected)
                 }
                 .padding(.horizontal, CGFloat(horizontalPadding))
