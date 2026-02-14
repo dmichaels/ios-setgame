@@ -190,7 +190,7 @@ public extension MultiPlayer {
             }
         }
 
-        // Public only for DevPanel ...
+        // Not part of Transport protocol but also public as these are for DevPanel support.
 
         public func retrieveSessions() async -> [String]? {
             if let sessions: [String] = await self.url.get("/sessions", as: [String].self, key: self.key) {
