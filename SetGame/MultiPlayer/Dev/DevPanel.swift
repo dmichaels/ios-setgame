@@ -2,12 +2,23 @@ import SwiftUI
 
 private struct SessionState {
     public var session: String? = nil;
+    public var host: String? = nil;
     public let player: String;
     public var players: [String] = [];
+    public var connected: Bool = false;
+    public var leaveable: Bool = false;
+    public mutating func update(from session: MultiPlayer.Session) {
+        self.session = session.session;
+        self.host = session.host;
+        self.players = session.players;
+        self.connected = session.connected;
+        self.leaveable = session.leaveable;
+    }
 }
 
 private struct ServerState {
     public var sessions: [String] = ["-", "ABC", "DEF", "GHI"];
+    public var sessionSelected: String = "-";
 }
 
 private func SID(_ session: String?, size: Int = 4) -> String {
@@ -21,22 +32,13 @@ public extension MultiPlayer {
         @ObservedObject var table: Table
         @ObservedObject var settings: Settings;
                         var margin: Int = 10;
-                        var background: Color = Color(hex: 0x8BD2CC);
-                        var horizontalPadding: Int = 10;
-                        var separationPadding: Int = 0;
 
         let session: MultiPlayer.Session;
         let transport: MultiPlayer.HttpTransport;
 
         @State private var sessionState: SessionState;
         @State private var serverState: ServerState;
-        @State private var sessionSelected: String = "-";
                private let poller: Poller = Poller(seconds: 2);
-
-        let separator: String = "|" // "\u{2756}";
-        let icons: Bool = true;
-        let fontsize: Int = 14;
-        let sid: Int = 4;
 
         public init(table: Table, settings: Settings, margin: Int) {
             self.table = table;
@@ -50,8 +52,57 @@ public extension MultiPlayer {
         }
 
         public var body: some View {
+            VStack {
+                DevPanelSession(table: table, session: session, transport: transport, sessionState: $sessionState, serverState: $serverState,  margin: margin)
+            }
+            .onAppear {
+                self.poller.start({
+                    self.sessionState.session = self.session.session;
+                    self.sessionState.host = self.session.host;
+                    self.sessionState.players = self.session.players;
+                    self.sessionState.connected = self.session.connected;
+                    self.sessionState.leaveable = self.session.leaveable;
+                    if let sessions: [String] = await self.transport.retrieveSessions() {
+                        self.serverState.sessions = sessions;
+                    }
+                });
+            }
+        }
+    }
+
+    private struct DevPanelSession: View {
+
+        @ObservedObject var table: Table
+                        let session: MultiPlayer.Session;
+                        let transport: MultiPlayer.HttpTransport;
+        @Binding var sessionState: SessionState;
+        @Binding var serverState: ServerState;
+                        var margin: Int = 10;
+
+        let background: Color = Color(hex: 0x8BD2CC);
+        let horizontalPadding: Int = 10;
+        let separationPadding: Int = 0;
+
+        let separator: String = "|" // "\u{2756}";
+        let icons: Bool = true;
+        let fontsize: Int = 14;
+        let sid: Int = 4;
+
+        public init(table: Table,
+                    session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
+                    sessionState: Binding<SessionState>, serverState: Binding<ServerState>,
+                    margin: Int) {
+            self.table = table;
+            self.session = session;
+            self.transport = transport;
+            self._sessionState = sessionState;
+            self._serverState = serverState;
+            self.margin = margin;
+        }
+
+        public var body: some View {
             Spacer().frame(height: CGFloat(margin))
-            AnyDevPanel(table: table, settings: settings) {
+            AnyDevPanel(table: table) {
                 HStack(spacing: CGFloat(separationPadding)) {
                     RegularText("me:", size: fontsize)
                         CopyableText(text: sessionState.player,
@@ -73,45 +124,38 @@ public extension MultiPlayer {
                                      size: sessionState.session == nil ? 14 : 13
                         )
                         .padding(.leading, -6)
+                    RegularText("p:", size: fontsize, leading: 4)
+                    RegularText("\(self.sessionState.players.count)", size: fontsize, leading: 4)
                     RegularText(separator, size: fontsize, leading: 7, trailing: 10)
-                    SmallButton(icons ? nil : "create", icon: icons ? "plus.rectangle.portrait" : nil, size: 16, disabled: self.session.connected) {
+                    SmallButton(icons ? nil : "create", icon: icons ? "plus.rectangle.portrait" : nil, size: 17, disabled: self.sessionState.connected) {
                         if (!self.session.connected) {
                             if await self.session.create() {
-                                self.sessionState.session = self.session.session;
+                                self.sessionState.update(from: self.session);
                             }
                         }
                     }
                     RegularText("", padding: 4)
-                    SmallButton(icons ? nil : "create", icon: icons ? "rectangle.portrait.and.arrow.forward" : nil, size: 16, disabled: self.session.connected) {
+                    SmallButton(icons ? nil : "create", icon: icons ? "rectangle.portrait.and.arrow.forward" : nil, size: 16, disabled: self.sessionState.connected) {
                         if (!self.session.connected) {
-                            if let session: String = findSession(items: self.serverState.sessions, prefix: self.sessionSelected) {
+                            if let session: String = findSession(items: serverState.sessions, prefix: serverState.sessionSelected) {
                                 if await self.session.join(session: session) {
-                                    self.sessionState.session = self.session.session;
+                                    self.sessionState.update(from: self.session);
                                 }
                             }
                         }
                     }
                     RegularText("", padding: 4)
-                    SmallButton(icons ? nil : "leave", icon: icons ? "xmark.rectangle.portrait" : nil, size: 17, disabled: !self.session.connected) {
+                    SmallButton(icons ? nil : "leave", icon: icons ? "xmark.rectangle.portrait" : nil, size: 17, disabled: !self.sessionState.leaveable) {
                         if (self.session.connected) {
                             if await self.session.leave() {
-                                self.sessionState.session = self.session.session;
+                                self.sessionState.update(from: self.session);
                             }
                         }
                     }
                     Spacer()
-                    DropDown(items: $serverState.sessions, selected: $sessionSelected)
+                    DropDown(items: $serverState.sessions, selected: $serverState.sessionSelected)
                 }
                 .padding(.horizontal, CGFloat(horizontalPadding))
-            }
-            .onAppear {
-                self.poller.start({
-                    self.sessionState.session = self.session.session;
-                    self.sessionState.players = self.session.players;
-                    if let sessions: [String] = await self.transport.retrieveSessions() {
-                        self.serverState.sessions = sessions;
-                    }
-                });
             }
         }
     }
@@ -268,7 +312,6 @@ private struct DropDown: View {
 private struct AnyDevPanel<Content: View>: View {
 
     @ObservedObject var table: Table
-    @ObservedObject var settings: Settings
     private let content: Content
 
     var height: CGFloat = 38;
@@ -277,11 +320,9 @@ private struct AnyDevPanel<Content: View>: View {
 
     public init(
         table: Table,
-        settings: Settings,
         @ViewBuilder content: () -> Content
     ) {
         self.table = table
-        self.settings = settings
         self.content = content()
     }
 

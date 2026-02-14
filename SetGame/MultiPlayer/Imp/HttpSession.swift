@@ -75,14 +75,15 @@ public extension MultiPlayer {
         }
 
         public func requestHost() async -> Bool {
-            guard let session: String = session, !self.hosting else { return false }
+            guard let session: String = self.session, !self.hosting else { return false }
             return await self.sendHost(message: RequestHostSessionMessage(player: self.player));
         }
 
         public func leave() async -> Bool {
+            guard let session: String = self.session else { return false }
             if (self.hosting) {
                 if (self.players.count == 1) {
-                    if await self.transport.destroySession(session: self.session) {
+                    if await self.transport.destroySession(session: session) {
                         self.session = nil;
                         self.host = nil;
                         return true;
