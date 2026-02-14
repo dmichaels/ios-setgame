@@ -2,6 +2,8 @@ import SwiftUI
 
 private struct SessionInfo {
     public var session: String? = nil;
+    public let player: String;
+    public var players: [String] = [];
 }
 
 private struct ServerInfo {
@@ -9,7 +11,7 @@ private struct ServerInfo {
 }
 
 private func SID(_ session: String?) -> String {
-    return String((session ?? "∅").prefix(5));
+    return String((session ?? "∅").prefix(4));
 }
 
 public extension MultiPlayer {
@@ -21,39 +23,100 @@ public extension MultiPlayer {
                         var margin: Int = 10;
                         var background: Color = Color(hex: 0x8BD2CC);
                         var horizontalPadding: Int = 10;
-                        var separationPadding: Int = 10;
+                        var separationPadding: Int = 0;
 
         let session: MultiPlayer.Session;
         let transport: MultiPlayer.HttpTransport;
 
-        @State private var sessionInfo: SessionInfo = SessionInfo();
-        @State private var serverInfo: ServerInfo = ServerInfo();
+        @State private var sessionInfo: SessionInfo;
+        @State private var serverInfo: ServerInfo;
         @State private var sessionSelected: String = "-";
                private let poller: Poller = Poller(seconds: 2);
+
+        let separator: String = "\u{2756}";
 
         public init(table: Table, settings: Settings, margin: Int) {
             self.table = table;
             self.settings = settings;
             self.margin = margin;
-            self.session = MultiPlayer.HttpSession.instance;
-            self.transport = MultiPlayer.HttpSession.instance.transport as! MultiPlayer.HttpTransport;
+            let session: Session = MultiPlayer.HttpSession.instance;
+            self.session = session;
+            self.transport = session.transport as! MultiPlayer.HttpTransport;
+            self.sessionInfo = SessionInfo(player: session.player);
+            self.serverInfo = ServerInfo();
         }
 
         public var body: some View {
             Spacer().frame(height: CGFloat(margin))
             AnyDevPanel(table: table, settings: settings) {
                 HStack(spacing: CGFloat(separationPadding)) {
-                    SessionCreateButton(sessionInfo: $sessionInfo, serverInfo: $serverInfo, session: session, transport: transport)
-                    Text("\(SID(sessionInfo.session))")
+                    RegularText("me:")
+                        CopyableText(text: sessionInfo.player,
+                                     // foreground: self.info.isHost ? .red : .primary,
+                                     background: self.background,
+                                     bold: true,
+                                     // underline: self.info.isHost,
+                                     // strikeout: !self.info.playerRegistered
+                        )
+                        .offset(x: -4).padding(.trailing, 4)
+                    RegularText("session:")
+                        CopyableText(text: SID(sessionInfo.session),
+                                     // foreground: self.info.isHost ? .red : .primary,
+                                     background: self.background,
+                                     bold: false,
+                                     // underline: self.info.isHost,
+                                     // strikeout: !self.info.playerRegistered
+                        )
+                        .offset(x: -4).padding(.trailing, 4)
+                    SmallButton("create") {
+                        if (self.session.session == nil) {
+                            if await self.session.create() {
+                                self.sessionInfo.session = self.session.session;
+                            }
+                        }
+                    }
+                    RegularText(separator, size: 7, color: .gray, padding: 4)
+                    SmallButton("join") {
+                        if (self.session.session == nil) {
+                            if let session: String = findSession(items: self.serverInfo.sessions, prefix: self.sessionSelected) {
+                                if await self.session.join(session: session) {
+                                    self.sessionInfo.session = self.session.session;
+                                }
+                            }
+                        }
+                    }
                     Spacer()
                     DropDown(items: $serverInfo.sessions, selected: $sessionSelected)
                 }
                 .padding(.horizontal, CGFloat(horizontalPadding))
             }
             .onAppear {
-                self.poller.start();
+                self.poller.start({
+                    self.sessionInfo.session = self.session.session;
+                    self.sessionInfo.players = self.session.players;
+                    if let sessions: [String] = await self.transport.retrieveSessions() {
+                        // self.serverInfo.sessions = minimalUniquePrefixes(sessions);
+                        self.serverInfo.sessions = sessions;
+                    }
+                });
             }
         }
+    }
+}
+
+private struct RegularText: View {
+    private let text: String;
+    private let size: Int;
+    private let color: Color;
+    private let padding: Int;
+    public init(_ text: String, size: Int = 13, color: Color = .primary, padding: Int = 0) {
+        self.text = text ; self.size = size ; self.color = color ; self.padding = padding;
+    }
+    public var body: some View {
+        Text(self.text)
+            .font(.system(size: CGFloat(self.size), weight: .semibold))
+            .foregroundColor(self.color)
+            .padding(.leading, CGFloat(self.padding)).padding(.trailing, CGFloat(self.padding))
     }
 }
 
@@ -72,21 +135,76 @@ private struct SessionCreateButton: View {
                             sessionInfo.session = session.session;
                         }
                     }
-                    else {
-                        if let sessions: [String] = await transport.retrieveSessions() {
-                            // serverInfo.sessions = sessions;
-                            // serverInfo.sessions = sessions.map { SID($0) }
-                            serverInfo.sessions =  minimalUniquePrefixes(sessions);
-                        }
-                    }
                 }
             } label: {
+                Text("create")
+                /*
                 Image(systemName: session.session == nil ? "plus.message" : "plus.message.fill")
                     .foregroundColor(.black)
                     .font(.system(size: 14))
                     .fontWeight(.bold)
+                    */
             }
             .padding(.trailing, 10)
+    }
+}
+
+public struct SmallButton: View {
+
+    let title: String
+    let action: () async -> Void
+    
+    var background: Color;
+    var foreground: Color;
+    var cornerRadius: CGFloat = 8
+    var fontSize: CGFloat = 13
+    var horizontalPadding: CGFloat = 10;
+    var verticalPadding: CGFloat = 4;
+    
+    public init(
+        _ title: String,
+        background: Color? = nil,
+        foreground: Color? = nil,
+        action: @escaping () async -> Void
+    ) {
+        self.title = title
+        self.background = background ?? Color(hex: 0x368077);
+        self.foreground = foreground ?? .white;
+        self.action = action
+    }
+
+    public var body: some View {
+        Button {
+            Task {
+                await action()
+            }
+        } label: {
+            Text(title)
+                .font(.system(size: fontSize, weight: .semibold))
+                .foregroundColor(foreground)
+                .padding(.horizontal, horizontalPadding)
+                .padding(.vertical, verticalPadding)
+                .background(
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .fill(background)
+                )
+        }
+        .buttonStyle(.plain)
+        /*
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: fontSize, weight: .semibold))
+                .foregroundColor(foreground)
+                .padding(.horizontal, horizontalPadding)
+                .padding(.vertical, verticalPadding)
+                .background(
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .fill(background)
+                )
+        }
+        .buttonStyle(.plain)   // prevents default oversized styling
+        .contentShape(RoundedRectangle(cornerRadius: cornerRadius))
+        */
     }
 }
 
@@ -94,26 +212,16 @@ private struct DropDown: View {
     
     @Binding public var items: [String];
     @Binding public var selected: String;
+                    var minimize: Bool = false;
     
     public var body: some View {
-        /*
-        Picker("Select Item", selection: $selected) {
-            ForEach(items, id: \.self) { item in
-                Text(item).tag(item)
-            }
-        }
-        .pickerStyle(.menu)   // .menu, .segmented, .wheel, etc.
-        */
         Picker(selection: $selected) {
-            ForEach(items, id: \.self) { item in
+            ForEach(minimalUniquePrefixes(self.items), id: \.self) { item in
                 Text(item).tag(item)
             }
         } label: {
             Text(selected.isEmpty ? "Select…" : selected)
         }
-        // .pickerStyle(.menu)
-        // .frame(minWidth: 120)
-        // .fixedSize()
         .onAppear {
             if selected.isEmpty, let first = items.first {
                 selected = first
@@ -161,6 +269,48 @@ private struct AnyDevPanel<Content: View>: View {
     }
 }
 
+private struct CopyableText: View {
+    let text: String;
+    var foreground: Color = .primary;
+    var background: Color = .white;
+    var bold: Bool = false;
+    var underline: Bool = false;
+    var strikeout: Bool = false;
+    var size: Int = 13;
+    @State private var copied = false;
+    var body: some View {
+        Text(text)
+            // .font(.caption)
+            .font(.system(size: CGFloat(size), weight: .semibold))
+            .fontWeight(bold ? .bold : .regular)
+            .underline(underline)
+            .strikethrough(strikeout)
+            .padding(8)
+            .cornerRadius(8)
+            .foregroundColor(foreground)
+            .onTapGesture {
+                UIPasteboard.general.string = text
+                copied = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    copied = false
+                }
+            }
+            .overlay(
+                copied ? Text(" Copied ")
+                    .font(.caption)
+                    .foregroundColor(.green)
+                    .padding(4)
+                    .background(Color.white)
+                    .cornerRadius(6)
+                    .offset(y: -40)
+                    .transition(.opacity)
+                    .fixedSize()
+                : nil
+            )
+            .padding(.trailing, -4)
+    }
+}
+
 private class Poller {
 
     private let interval: UInt64;
@@ -174,10 +324,11 @@ private class Poller {
         self.interval = UInt64(milliseconds * 1_000_000);
     }
 
-    public func start() {
+    public func start(_ task: @escaping () async -> Void) {
         guard self.task == nil else { return }
         self.task = Task {
             while (!Task.isCancelled) {
+                await task();
                 try? await Task.sleep(nanoseconds: self.interval);
             }
         }
@@ -216,4 +367,8 @@ private func minimalUniquePrefixes(_ items: [String], min: Int = 4) -> [String] 
         }
         prefixLength += 1
     }
+}
+
+private func findSession(items: [String], prefix: String) -> String? {
+    return items.first { $0.hasPrefix(prefix) };
 }
