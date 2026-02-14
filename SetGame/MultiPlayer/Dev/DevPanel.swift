@@ -18,12 +18,6 @@ private struct SessionState {
 
 private struct ServerState {
     fileprivate var sessionList: SessionList = SessionList();
-    fileprivate mutating func updateSessions(_ sessions: [String]) {
-        self.sessionList.update(sessions);
-    }
-    fileprivate func sessionShort(_ session: String?) -> String {
-        return self.sessionList.shorten(session);
-    }
 }
 
 private struct SessionList {
@@ -47,10 +41,7 @@ private struct SessionList {
     }
 
     fileprivate func shorten(_ session: String?) -> String {
-        if let session: String = session {
-            return String(session.prefix(self.shortLength));
-        }
-        return "";
+        if let session: String = session { return String(session.prefix(self.shortLength)); } ; return "";
     }
 
     // Returns the given array of strings, which is assumed to contain UNIQUE values,
@@ -110,8 +101,7 @@ public extension MultiPlayer {
                     self.sessionState.connected = self.session.connected;
                     self.sessionState.leaveable = self.session.leaveable;
                     if let sessions: [String] = await self.transport.retrieveSessions() {
-                        // print("XYZZY: [\(self.serverState.sessionList.selectedShort)] -> [\(self.serverState.sessionList.selected)]")
-                        self.serverState.updateSessions(sessions);
+                        self.serverState.sessionList.update(sessions);
                     }
                 });
             }
@@ -165,7 +155,7 @@ public extension MultiPlayer {
                         )
                         .padding(.leading, -6)
                     RegularText("session:", size: fontsize, leading: 4)
-                        CopyableText(text: serverState.sessionShort(sessionState.session),
+                        CopyableText(text: serverState.sessionList.shorten(sessionState.session),
                                      // foreground: self.info.isHost ? .red : .primary,
                                      background: self.background,
                                      bold: true,
