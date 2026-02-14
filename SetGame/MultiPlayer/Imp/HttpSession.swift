@@ -233,6 +233,7 @@ public extension MultiPlayer {
                         // synchronizes the host and players with the (non-host) clients to the host values.
                         //
                         self.playerJoined(message.player);
+                        self.host = host;
                     }
                 }
             }

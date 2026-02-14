@@ -17,6 +17,7 @@ public extension MultiPlayer {
 
         func send(message: Message, to: String) async -> Bool;
         func sendHost(message: Message) async -> Bool;
+
         func send(message: Message, to: String) -> Bool;
         func sendHost(message: Message) -> Bool;
     }
