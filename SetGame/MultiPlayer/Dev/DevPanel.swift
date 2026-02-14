@@ -34,6 +34,7 @@ public extension MultiPlayer {
                private let poller: Poller = Poller(seconds: 2);
 
         let separator: String = "\u{2756}";
+        let fontsize: Int = 14;
 
         public init(table: Table, settings: Settings, margin: Int) {
             self.table = table;
@@ -50,33 +51,36 @@ public extension MultiPlayer {
             Spacer().frame(height: CGFloat(margin))
             AnyDevPanel(table: table, settings: settings) {
                 HStack(spacing: CGFloat(separationPadding)) {
-                    RegularText("me:")
+                    RegularText("me:", size: fontsize)
                         CopyableText(text: sessionInfo.player,
                                      // foreground: self.info.isHost ? .red : .primary,
                                      background: self.background,
                                      bold: true,
-                                     // underline: self.info.isHost,
-                                     // strikeout: !self.info.playerRegistered
+                                     underline: true,
+                                     strikeout: false,
+                                     size: fontsize
                         )
-                        .offset(x: -4).padding(.trailing, 4)
-                    RegularText("session:")
+                        .padding(.leading, -6)
+                    RegularText("session:", size: fontsize, leading: 4)
                         CopyableText(text: SID(sessionInfo.session),
                                      // foreground: self.info.isHost ? .red : .primary,
                                      background: self.background,
-                                     bold: false,
-                                     // underline: self.info.isHost,
-                                     // strikeout: !self.info.playerRegistered
+                                     bold: true,
+                                     underline: true,
+                                     strikeout: false,
+                                     size: sessionInfo.session == nil ? 18 : 13
                         )
-                        .offset(x: -4).padding(.trailing, 4)
-                    SmallButton("create") {
+                        .padding(.leading, -6)
+                    RegularText(separator, size: fontsize, color: .gray, leading: 7, trailing: 10)
+                    SmallButton(icon: "plus.rectangle.portrait" /*"create"*/, size: 16) {
                         if (self.session.session == nil) {
                             if await self.session.create() {
                                 self.sessionInfo.session = self.session.session;
                             }
                         }
                     }
-                    RegularText(separator, size: 7, color: .gray, padding: 4)
-                    SmallButton("join") {
+                    RegularText("", padding: 4)
+                    SmallButton(icon: "rectangle.portrait.and.arrow.forward" /*"join"*/, size: 16) {
                         if (self.session.session == nil) {
                             if let session: String = findSession(items: self.serverInfo.sessions, prefix: self.sessionSelected) {
                                 if await self.session.join(session: session) {
@@ -108,15 +112,21 @@ private struct RegularText: View {
     private let text: String;
     private let size: Int;
     private let color: Color;
-    private let padding: Int;
-    public init(_ text: String, size: Int = 13, color: Color = .primary, padding: Int = 0) {
-        self.text = text ; self.size = size ; self.color = color ; self.padding = padding;
+    private let leading: Int;
+    private let trailing: Int;
+    public init(_ text: String, size: Int = 13, color: Color = .primary,
+                leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil) {
+        self.text = text;
+        self.size = size;
+        self.color = color;
+        self.leading = leading ?? padding ?? 0;
+        self.trailing = trailing ?? padding ?? 0;
     }
     public var body: some View {
         Text(self.text)
             .font(.system(size: CGFloat(self.size), weight: .semibold))
             .foregroundColor(self.color)
-            .padding(.leading, CGFloat(self.padding)).padding(.trailing, CGFloat(self.padding))
+            .padding(.leading, CGFloat(self.leading)).padding(.trailing, CGFloat(self.trailing))
     }
 }
 
@@ -151,26 +161,31 @@ private struct SessionCreateButton: View {
 
 public struct SmallButton: View {
 
-    let title: String
-    let action: () async -> Void
-    
+    let text: String?;
+    var icon: String?;
     var background: Color;
     var foreground: Color;
+    var size: Int;
+    let action: () async -> Void;
+
     var cornerRadius: CGFloat = 8
-    var fontSize: CGFloat = 13
     var horizontalPadding: CGFloat = 10;
     var verticalPadding: CGFloat = 4;
     
     public init(
-        _ title: String,
+        _ text: String = "",
+        icon: String? = nil,
         background: Color? = nil,
         foreground: Color? = nil,
+        size: Int = 13,
         action: @escaping () async -> Void
     ) {
-        self.title = title
+        self.text = text;
+        self.icon = icon;
         self.background = background ?? Color(hex: 0x368077);
         self.foreground = foreground ?? .white;
-        self.action = action
+        self.size = size;
+        self.action = action;
     }
 
     public var body: some View {
@@ -179,32 +194,25 @@ public struct SmallButton: View {
                 await action()
             }
         } label: {
-            Text(title)
-                .font(.system(size: fontSize, weight: .semibold))
-                .foregroundColor(foreground)
-                .padding(.horizontal, horizontalPadding)
-                .padding(.vertical, verticalPadding)
-                .background(
-                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .fill(background)
-                )
+            if let icon: String = icon {
+                Image(systemName: icon)
+                    .foregroundColor(.black)
+                    .font(.system(size: CGFloat(size)))
+                    .fontWeight(.bold)
+            }
+            else if let text: String = text {
+                Text(text)
+                    .font(.system(size: CGFloat(size), weight: .semibold))
+                    .foregroundColor(foreground)
+                    .padding(.horizontal, horizontalPadding)
+                    .padding(.vertical, verticalPadding)
+                    .background(
+                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                            .fill(background)
+                    )
+            }
         }
         .buttonStyle(.plain)
-        /*
-        Button(action: action) {
-            Text(title)
-                .font(.system(size: fontSize, weight: .semibold))
-                .foregroundColor(foreground)
-                .padding(.horizontal, horizontalPadding)
-                .padding(.vertical, verticalPadding)
-                .background(
-                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .fill(background)
-                )
-        }
-        .buttonStyle(.plain)   // prevents default oversized styling
-        .contentShape(RoundedRectangle(cornerRadius: cornerRadius))
-        */
     }
 }
 
@@ -280,7 +288,6 @@ private struct CopyableText: View {
     @State private var copied = false;
     var body: some View {
         Text(text)
-            // .font(.caption)
             .font(.system(size: CGFloat(size), weight: .semibold))
             .fontWeight(bold ? .bold : .regular)
             .underline(underline)
