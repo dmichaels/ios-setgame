@@ -28,7 +28,8 @@ public extension MultiPlayer {
 
         @State private var sessionInfo: SessionInfo = SessionInfo();
         @State private var serverInfo: ServerInfo = ServerInfo();
-        @State private var foo: String = "-";
+        @State private var sessionSelected: String = "-";
+               private let poller: Poller = Poller(seconds: 2);
 
         public init(table: Table, settings: Settings, margin: Int) {
             self.table = table;
@@ -45,9 +46,12 @@ public extension MultiPlayer {
                     SessionCreateButton(sessionInfo: $sessionInfo, serverInfo: $serverInfo, session: session, transport: transport)
                     Text("\(SID(sessionInfo.session))")
                     Spacer()
-                    DropDown(items: $serverInfo.sessions, selected: $foo)
+                    DropDown(items: $serverInfo.sessions, selected: $sessionSelected)
                 }
                 .padding(.horizontal, CGFloat(horizontalPadding))
+            }
+            .onAppear {
+                self.poller.start();
             }
         }
     }
@@ -142,8 +146,7 @@ private struct AnyDevPanel<Content: View>: View {
     public var body: some View {
         HStack(spacing: padding) {
             Spacer()
-            HStack(alignment: .firstTextBaseline) {
-            // HStack(alignment: .center) {
+            HStack(alignment: .firstTextBaseline) { // .center
                 content
                 Spacer()
             }
@@ -159,13 +162,43 @@ private struct AnyDevPanel<Content: View>: View {
     }
 }
 
+private class Poller {
+
+    private let interval: UInt64;
+    private var task: Task<Void, Never>? = nil;
+
+    public init(seconds: Int = 2) {
+        self.interval = UInt64(seconds * 1_000_000_000);
+    }
+
+    public init(milliseconds: Int = 2) {
+        self.interval = UInt64(milliseconds * 1_000_000);
+    }
+
+    public func start() {
+        guard self.task == nil else { return }
+        self.task = Task {
+            while (!Task.isCancelled) {
+                print("POLLING TASK")
+                try? await Task.sleep(nanoseconds: self.interval);
+            }
+        }
+    }
+
+    public func stop() {
+                print("CANCEL POLLING")
+        task?.cancel();
+        task = nil;
+    }
+}
+
 
 // Returns the given array of strings, which is assumed to contain UNIQUE values,
 // where each value is truncated to the first, at mininum, the given minimum number
 // of characters; but if not, then the prefix length will be chosen such that the
 // result values will be unique. From ChatGPT wholesale.
 //
-func minimalUniquePrefixes(_ items: [String], min: Int = 4) -> [String] {
+private func minimalUniquePrefixes(_ items: [String], min: Int = 4) -> [String] {
     guard !items.isEmpty else { return [] }
     var result = Array(repeating: "", count: items.count)
     var prefixLength = min
