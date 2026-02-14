@@ -17,8 +17,9 @@ private struct SessionState {
 }
 
 private struct ServerState {
-    public var sessions: [String] = [];
-    public var sessionSelected: String = "";
+    // public var sessions: [String] = [];
+    // public var sessionSelected: String = "";
+    fileprivate var sessionList: SessionList = SessionList();
 }
 
 private let shortSessionID: Int = 2;
@@ -34,6 +35,20 @@ private extension String? {
 private extension String {
     func shorten(to: Int = shortSessionID) -> String {
         return String(self.prefix(shortSessionID));
+    }
+}
+
+private struct SessionList {
+    fileprivate var sessions: [String] = [];
+    fileprivate var selected: String = "";
+    fileprivate var short: Int = shortSessionID;
+    fileprivate init(_ sessions: [String] = [], selected: String = "", short: Int = shortSessionID) {
+        self.sessions = sessions;
+        self.selected = selected;
+        self.short = short;
+    }
+    fileprivate mutating func update(_ sessions: [String]) {
+        self.sessions = sessions;
     }
 }
 
@@ -75,7 +90,10 @@ public extension MultiPlayer {
                     self.sessionState.connected = self.session.connected;
                     self.sessionState.leaveable = self.session.leaveable;
                     if let sessions: [String] = await self.transport.retrieveSessions() {
-                        self.serverState.sessions = sessions;
+                        // self.serverState.sessions = sessions;
+                        // self.serverState.sessionList = SessionList(sessions);
+                        print("XYZZY: [\(self.serverState.sessionList.selected)] -> [\(self.serverState.sessionList.sessions.find(prefix: self.serverState.sessionList.selected))]")
+                        self.serverState.sessionList.update(sessions);
                     }
                 });
             }
@@ -151,7 +169,8 @@ public extension MultiPlayer {
                     RegularText("", padding: 4)
                     SmallButton(icons ? nil : "create", icon: icons ? "rectangle.portrait.and.arrow.forward" : nil, size: 16, disabled: self.sessionState.connected) {
                         if (!self.session.connected) {
-                            if let session: String = serverState.sessions.find(prefix: serverState.sessionSelected) {
+                            // if let session: String = serverState.sessions.find(prefix: serverState.sessionSelected) {
+                            if let session: String = serverState.sessionList.sessions.find(prefix: serverState.sessionList.selected) {
                                 if await self.session.join(session: session) {
                                     self.sessionState.update(from: self.session);
                                 }
@@ -167,10 +186,14 @@ public extension MultiPlayer {
                         }
                     }
                     Spacer()
-                    DropDown(items: $serverState.sessions,
-                             selected: $serverState.sessionSelected,
-                             short: shortSessionID,
-                             shorten: { value in value.shorten() })
+                    // DropDown(items: $serverState.sessions,
+                      //        selected: $serverState.sessionSelected,
+//                  DropDown(items: $serverState.sessionList.sessions,
+//                           selected: $serverState.sessionList.selected,
+//                           short: shortSessionID,
+//                           shorten: { value in value.shorten() })
+                    DropDown(items: serverState.sessionList.sessions.shortenValues(min: shortSessionID),
+                             selected: $serverState.sessionList.selected)
                 }
                 .padding(.horizontal, CGFloat(horizontalPadding))
             }
@@ -295,10 +318,31 @@ public extension MultiPlayer {
     }
 
     private struct DropDown: View {
+                 fileprivate var items: [String];
+        @Binding fileprivate var selected: String;
+        fileprivate var body: some View {
+            Menu {
+                ForEach(items, id: \.self) { item in
+                    Button(item) { selected = item }
+                }
+            } label: {
+                Text(selected.isEmpty ? (items.first ?? "SELECT") : selected)
+                    .font(.system(size: 14, weight: .bold))
+            }
+            .offset(y: 2)
+            .onAppear {
+                if selected.isEmpty, let first = items.first {
+                    selected = first;
+                }
+            }
+        }
+    }
+/*
+    private struct old_DropDown: View {
     
         @Binding fileprivate var items: [String];
         @Binding fileprivate var selected: String;
-                 fileprivate var short: Int = 4;
+                 fileprivate var short: Int = shortSessionID;
                  fileprivate var shorten: ((String) -> String)? = nil;
 
         private func shortened(_ value: String) -> String {
@@ -322,6 +366,7 @@ public extension MultiPlayer {
             }
         }
     }
+*/
 
     private struct AnyDevPanel<Content: View>: View {
 
@@ -384,7 +429,7 @@ public extension MultiPlayer {
 // result values will be unique. From ChatGPT wholesale.
 //
 private extension Array<String> {
-    fileprivate func shortenValues(min: Int = 4) -> [String] {
+    fileprivate func shortenValues(min: Int = shortSessionID) -> [String] {
         guard !self.isEmpty else { return [] }
         var result = Array(repeating: "", count: self.count); var prefixSize = min;
         while (true) {
