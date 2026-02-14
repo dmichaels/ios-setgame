@@ -145,7 +145,7 @@ public extension MultiPlayer {
                         }
                     }
                     RegularText("", padding: 4)
-                    SmallButton(icons ? nil : "leave", icon: icons ? "xmark.rectangle.portrait" : nil, size: 17, disabled: !self.sessionState.leaveable) {
+                    SmallButton(icons ? nil : "leave", icon: icons ? "xmark.rectangle.portrait" : nil, size: 18, disabled: !self.sessionState.leaveable) {
                         if (self.session.connected) {
                             if await self.session.leave() {
                                 self.sessionState.update(from: self.session);
