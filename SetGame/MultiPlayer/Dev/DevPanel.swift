@@ -70,7 +70,6 @@ private struct SessionCreateButton: View {
                     if (session.session == nil) {
                         if await session.create() {
                             sessionInfo.session = session.session;
-                            print("SESSION CREATED: \(session.session)")
                         }
                     }
                     else {
@@ -179,14 +178,12 @@ private class Poller {
         guard self.task == nil else { return }
         self.task = Task {
             while (!Task.isCancelled) {
-                print("POLLING TASK")
                 try? await Task.sleep(nanoseconds: self.interval);
             }
         }
     }
 
     public func stop() {
-                print("CANCEL POLLING")
         task?.cancel();
         task = nil;
     }
@@ -208,7 +205,6 @@ private func minimalUniquePrefixes(_ items: [String], min: Int = 4) -> [String] 
         for (i, item) in items.enumerated() {
             let prefix = String(item.prefix(prefixLength))
             result[i] = prefix
-            
             if seen.contains(prefix) {
                 collision = true
             } else {
