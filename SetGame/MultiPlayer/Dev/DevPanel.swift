@@ -24,24 +24,26 @@ private struct ServerState {
 }
 
 private struct SessionList {
-    private static           let shortDefault: Int = 2;
+    private static           let shortLengthDefault: Int = 2;
     private                  var sessions: [String];
     fileprivate private(set) var sessionsShort: [String];
+    fileprivate              var selected: String? {
+                                     self.sessions.find(prefix: self.selectedShort) ?? self.sessions.first
+                                 }
     fileprivate              var selectedShort: String = "";
-    private                  var short: Int = SessionList.shortDefault;
+    private                  var short: Int = SessionList.shortLengthDefault;
     fileprivate init(_ sessions: [String] = []) {
         self.sessions = sessions;
-        let (list, short) = sessions.shortenValues(min: SessionList.shortDefault);
+        let (list, short) = sessions.shortenValues(min: SessionList.shortLengthDefault);
         self.sessionsShort = list;
         self.short = short;
     }
     fileprivate mutating func update(_ sessions: [String]) {
         self.sessions = sessions;
-        let (list, short) = sessions.shortenValues(min: SessionList.shortDefault);
+        let (list, short) = sessions.shortenValues(min: SessionList.shortLengthDefault);
         self.sessionsShort = list;
         self.short = short;
     }
-    fileprivate var selected: String? { self.sessions.find(prefix: self.selectedShort) ?? self.sessions.first }
     fileprivate func shorten(_ session: String?) -> String {
         if let session: String = session {
             return String(session.prefix(self.short));
