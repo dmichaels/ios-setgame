@@ -21,7 +21,7 @@ private struct ServerState {
     public var sessionSelected: String = "";
 }
 
-private func SID(_ session: String?, size: Int = 4) -> String {
+private func shortenSessionID(_ session: String?, size: Int = 4) -> String {
     return String((session ?? "∅∅∅").prefix(size));
 }
 
@@ -67,6 +67,9 @@ public extension MultiPlayer {
                     }
                 });
             }
+            .onDisappear {
+                self.poller.stop();
+            }
         }
     }
 
@@ -86,7 +89,7 @@ public extension MultiPlayer {
         let separator: String = "|" // "\u{2756}";
         let icons: Bool = true;
         let fontsize: Int = 14;
-        let sid: Int = 4;
+        let shortSessionID: Int = 4;
 
         public init(table: Table,
                     session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
@@ -115,7 +118,7 @@ public extension MultiPlayer {
                         )
                         .padding(.leading, -6)
                     RegularText("session:", size: fontsize, leading: 4)
-                        CopyableText(text: SID(sessionState.session, size: sid),
+                        CopyableText(text: shortenSessionID(sessionState.session, size: shortSessionID),
                                      // foreground: self.info.isHost ? .red : .primary,
                                      background: self.background,
                                      bold: true,
@@ -153,7 +156,10 @@ public extension MultiPlayer {
                         }
                     }
                     Spacer()
-                    DropDown(items: $serverState.sessions, selected: $serverState.sessionSelected)
+                    DropDown(items: $serverState.sessions,
+                             selected: $serverState.sessionSelected,
+                             short: shortSessionID,
+                             shorten: { value in shortenSessionID(value) })
                 }
                 .padding(.horizontal, CGFloat(horizontalPadding))
             }
@@ -287,46 +293,26 @@ public struct SmallButton: View {
     }
 }
 
-/*
 private struct DropDown: View {
     
-    @Binding public var items: [String];
-    @Binding public var selected: String;
-                    var minimize: Int = 4;
-    
-    public var body: some View {
-        Picker(selection: $selected) {
-            ForEach(minimalUniquePrefixes(self.items, min: minimize), id: \.self) { item in
-                Text(item).tag(item)
-            }
-        } label: {
-            Text(selected.isEmpty ? "Select…" : selected)
-        }
-        .pickerStyle(.menu)
-        .scaleEffect(0.75, anchor: .trailing)
-        .onAppear {
-            if selected.isEmpty, let first = items.first {
-                selected = first
-            }
-        }
+    @Binding fileprivate var items: [String];
+    @Binding fileprivate var selected: String;
+             fileprivate var short: Int = 4;
+             fileprivate var shorten: ((String) -> String)? = nil;
+
+    private func shortened(_ value: String) -> String {
+        return shorten?(value) ?? value;
     }
-}
-*/
-private struct DropDown: View {
-    
-    @Binding var items: [String]
-    @Binding var selected: String
-    var minimize: Int = 4
     
     var body: some View {
         Menu {
-            ForEach(minimalUniquePrefixes(items, min: minimize), id: \.self) { item in
+            ForEach(items.shortenValues(min: short), id: \.self) { item in
                 Button(item) {
-                    selected = item
+                    selected = item;
                 }
             }
         } label: {
-            Text(selected.isEmpty ? SID(items.first ?? "Select…") : selected)
+            Text(shortened(selected.isEmpty ? items.first ?? "SELECT" : selected) ?? "SELECT")
                 .font(.system(size: 14, weight: .bold))
         }
         .offset(y: 2)
@@ -342,25 +328,22 @@ private struct DropDown: View {
 
 private struct AnyDevPanel<Content: View>: View {
 
-    @ObservedObject var table: Table
-    private let content: Content
+    @ObservedObject private var table: Table;
+                    private let content: Content;
 
-    var height: CGFloat = 38;
-    var padding: CGFloat = 8;
-    var background: Color = Color(hex: 0x8BD2CC);
+    private var height: CGFloat = 38;
+    private var padding: CGFloat = 8;
+    private var background: Color = Color(hex: 0x8BD2CC);
 
-    public init(
-        table: Table,
-        @ViewBuilder content: () -> Content
-    ) {
-        self.table = table
-        self.content = content()
+    fileprivate init( table: Table, @ViewBuilder content: () -> Content) {
+        self.table = table;
+        self.content = content();
     }
 
-    public var body: some View {
+    fileprivate var body: some View {
         HStack(spacing: padding) {
             Spacer()
-            HStack(alignment: .firstTextBaseline) { // .center
+            HStack(alignment: .firstTextBaseline) {
                 content
                 Spacer()
             }
@@ -381,15 +364,15 @@ private class Poller {
     private let interval: UInt64;
     private var task: Task<Void, Never>? = nil;
 
-    public init(seconds: Int = 2) {
+    fileprivate init(seconds: Int = 2) {
         self.interval = UInt64(seconds * 1_000_000_000);
     }
 
-    public init(milliseconds: Int = 2) {
+    fileprivate init(milliseconds: Int = 2) {
         self.interval = UInt64(milliseconds * 1_000_000);
     }
 
-    public func start(_ task: @escaping () async -> Void) {
+    fileprivate func start(_ task: @escaping () async -> Void) {
         guard self.task == nil else { return }
         self.task = Task {
             while (!Task.isCancelled) {
@@ -399,38 +382,29 @@ private class Poller {
         }
     }
 
-    public func stop() {
+    fileprivate func stop() {
         task?.cancel();
         task = nil;
     }
 }
-
 
 // Returns the given array of strings, which is assumed to contain UNIQUE values,
 // where each value is truncated to the first, at mininum, the given minimum number
 // of characters; but if not, then the prefix length will be chosen such that the
 // result values will be unique. From ChatGPT wholesale.
 //
-private func minimalUniquePrefixes(_ items: [String], min: Int = 4) -> [String] {
-    guard !items.isEmpty else { return [] }
-    var result = Array(repeating: "", count: items.count)
-    var prefixLength = min
-    while true {
-        var seen = Set<String>()
-        var collision = false
-        for (i, item) in items.enumerated() {
-            let prefix = String(item.prefix(prefixLength))
-            result[i] = prefix
-            if seen.contains(prefix) {
-                collision = true
-            } else {
-                seen.insert(prefix)
+private extension Array<String> {
+    fileprivate func shortenValues(min: Int = 4) -> [String] {
+        guard !self.isEmpty else { return [] }
+        var result = Array(repeating: "", count: self.count); var prefixSize = min;
+        while (true) {
+            var seen = Set<String>(); var collision = false;
+            for (i, item) in self.enumerated() {
+                let prefix = String(item.prefix(prefixSize)); result[i] = prefix;
+                if (seen.contains(prefix)) { collision = true; } else { seen.insert(prefix); }
             }
+            if (!collision) { return result; } ; prefixSize += 1;
         }
-        if !collision {
-            return result
-        }
-        prefixLength += 1
     }
 }
 
