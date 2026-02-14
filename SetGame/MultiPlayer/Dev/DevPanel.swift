@@ -25,11 +25,11 @@ private struct ServerState {
 private struct SessionList {
 
     private static           let shortLengthDefault: Int = 2;
-    private                  var shortLength: Int = SessionList.shortLengthDefault;
     private                  var sessions: [String] = [];
     fileprivate private(set) var sessionsShort: [String] = [];
     fileprivate              var selected: String? { return self.sessions.first { $0.hasPrefix(self.selectedShort) }; }
     fileprivate              var selectedShort: String = "";
+    private                  var shortLength: Int = SessionList.shortLengthDefault;
 
     fileprivate init(_ sessions: [String] = []) {
         self.update(sessions);
