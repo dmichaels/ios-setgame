@@ -22,7 +22,7 @@ public struct TableView: View {
                 .allowsHitTesting(!self.table.disabled)
             Space(size: 18)
             StatusBar(marginx: marginx)
-            MultiPlayer.DevPanel(table: table, settings: settings, margin: 20)
+            MultiPlayer.DevPanel(table: table, settings: settings, margin: 24)
             MultiPlayerDevelopmentPanelView(table: table, settings: settings)
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)

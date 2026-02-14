@@ -18,13 +18,21 @@ private struct SessionState {
 
 private struct ServerState {
     fileprivate var sessionList: SessionList = SessionList();
+    //
+    // TODO: This cannot be called from the Poller.start closure; doing directly for now.
+    //
+    public mutating func update(from transport: MultiPlayer.HttpTransport) async {
+        if let sessions: [String] = await transport.retrieveSessions() {
+            self.sessionList.update(sessions);
+        }
+    }
 }
 
 // All this nonesense is just so we can reliably deal with (view) the session IDs as short values.
 //
 private struct SessionList {
 
-    private static           let shortLengthDefault: Int = 2;
+    private static           let shortLengthDefault: Int = 4;
     private                  var sessions: [String] = [];
     fileprivate private(set) var sessionsShort: [String] = [];
     fileprivate              var selected: String? { return self.sessions.first { $0.hasPrefix(self.selectedShort) }; }
@@ -66,6 +74,10 @@ private struct SessionList {
     }
 }
 
+private func ids(_ id: String?, fallback: String = "") -> String {
+    if let id: String = id { return id; } else { return fallback; }
+}
+
 public extension MultiPlayer {
 
     public struct DevPanel: View {
@@ -94,15 +106,13 @@ public extension MultiPlayer {
 
         public var body: some View {
             VStack {
-                DevPanelSession(table: table, session: session, transport: transport, sessionState: $sessionState, serverState: $serverState, margin: margin)
+                DevPanelInfo(table: table, session: session, transport: transport, sessionState: $sessionState, serverState: $serverState, margin: margin)
+                DevPanelSession(table: table, session: session, transport: transport, sessionState: $sessionState, serverState: $serverState, margin: 16)
             }
             .onAppear {
                 self.poller.start({
-                    self.sessionState.session = self.session.session;
-                    self.sessionState.host = self.session.host;
-                    self.sessionState.players = self.session.players;
-                    self.sessionState.connected = self.session.connected;
-                    self.sessionState.leaveable = self.session.leaveable;
+                    self.sessionState.update(from: self.session);
+                    // TODO: does not work - await self.serverState.update(from: self.transport);
                     if let sessions: [String] = await self.transport.retrieveSessions() {
                         self.serverState.sessionList.update(sessions);
                     }
@@ -114,7 +124,7 @@ public extension MultiPlayer {
         }
     }
 
-    private struct DevPanelSession: View {
+    private struct DevPanelInfo: View {
 
         @ObservedObject private var table: Table
                         private let session: MultiPlayer.Session;
@@ -152,7 +162,7 @@ public extension MultiPlayer {
                                      // foreground: self.info.isHost ? .red : .primary,
                                      background: self.background,
                                      bold: true,
-                                     underline: true,
+                                     underline: false,
                                      strikeout: false,
                                      size: fontsize
                         )
@@ -162,14 +172,66 @@ public extension MultiPlayer {
                                      // foreground: self.info.isHost ? .red : .primary,
                                      background: self.background,
                                      bold: true,
-                                     underline: true,
+                                     underline: false,
                                      strikeout: false,
                                      size: sessionState.session == nil ? 14 : 13
                         )
                         .padding(.leading, -6)
-                    RegularText("p:", size: fontsize, leading: 4)
+                    RegularText("host:", size: fontsize, leading: 4)
+                    RegularText("\(ids(self.sessionState.host, fallback: "∅"))", size: fontsize, leading: 4)
+                    RegularText("players:", size: fontsize, leading: 8)
                     RegularText("\(self.sessionState.players.count)", size: fontsize, leading: 4)
-                    RegularText(separator, size: fontsize, leading: 7, trailing: 10)
+                    Spacer()
+                }
+                .padding(.horizontal, CGFloat(horizontalPadding))
+            }
+        }
+    }
+
+    private struct DevPanelSession: View {
+
+        @ObservedObject private var table: Table
+                        private let session: MultiPlayer.Session;
+                        private let transport: MultiPlayer.HttpTransport;
+               @Binding private var sessionState: SessionState;
+               @Binding private var serverState: ServerState;
+                        private let margin: Int;
+
+                        private let background: Color = Color(hex: 0x8BD2CC);
+                        private let horizontalPadding: Int = 10;
+                        private let separationPadding: Int = 0;
+
+                        private let separator: String = "|" // "\u{2756}";
+                        private let icons: Bool = false;
+                        private let fontsize: Int = 14;
+
+        fileprivate init(table: Table,
+                         session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
+                         sessionState: Binding<SessionState>, serverState: Binding<ServerState>,
+                         margin: Int = 10) {
+            self.table = table;
+            self.session = session;
+            self.transport = transport;
+            self._sessionState = sessionState;
+            self._serverState = serverState;
+            self.margin = margin;
+        }
+
+        fileprivate var body: some View {
+            Spacer().frame(height: CGFloat(margin))
+            AnyDevPanel(table: table) {
+                HStack(spacing: CGFloat(separationPadding)) {
+                    RegularText("session:", size: fontsize, leading: 4)
+                        CopyableText(text: serverState.sessionList.shorten(sessionState.session, fallback: "∅"),
+                                     // foreground: self.info.isHost ? .red : .primary,
+                                     background: self.background,
+                                     bold: true,
+                                     underline: false,
+                                     strikeout: false,
+                                     size: sessionState.session == nil ? 14 : 13
+                        )
+                        .padding(.leading, -6)
+                    RegularText("", size: fontsize, leading: 7, trailing: 10)
                     SmallButton(icons ? nil : "create", icon: icons ? "plus.rectangle.portrait" : nil, size: 17, disabled: self.sessionState.connected) {
                         if (!self.session.connected) {
                             if await self.session.create() {
@@ -178,7 +240,7 @@ public extension MultiPlayer {
                         }
                     }
                     RegularText("", padding: 4)
-                    SmallButton(icons ? nil : "create", icon: icons ? "rectangle.portrait.and.arrow.forward" : nil, size: 16, disabled: self.sessionState.connected) {
+                    SmallButton(icons ? nil : "join", icon: icons ? "rectangle.portrait.and.arrow.forward" : nil, size: 16, disabled: self.sessionState.connected) {
                         if (!self.session.connected) {
                             if let session: String = serverState.sessionList.selected {
                                 if await self.session.join(session: session) {
@@ -188,6 +250,9 @@ public extension MultiPlayer {
                         }
                     }
                     RegularText("", padding: 4)
+                    DropDown(items: serverState.sessionList.sessionsShort,
+                             selected: $serverState.sessionList.selectedShort)
+                    Spacer()
                     SmallButton(icons ? nil : "leave", icon: icons ? "xmark.rectangle.portrait" : nil, size: 18, disabled: !self.sessionState.leaveable) {
                         if (self.session.connected) {
                             if await self.session.leave() {
@@ -195,9 +260,6 @@ public extension MultiPlayer {
                             }
                         }
                     }
-                    Spacer()
-                    DropDown(items: serverState.sessionList.sessionsShort,
-                             selected: $serverState.sessionList.selectedShort)
                 }
                 .padding(.horizontal, CGFloat(horizontalPadding))
             }
@@ -277,7 +339,7 @@ public extension MultiPlayer {
 
         private let cornerRadius: CGFloat = 8
         private let horizontalPadding: CGFloat = 10;
-        private let verticalPadding: CGFloat = 4;
+        private let verticalPadding: CGFloat = 3;
     
         public init( _ text: String? = nil, icon: String? = nil,
                        background: Color? = nil, foreground: Color? = nil, size: Int = 13,
