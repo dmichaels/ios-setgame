@@ -17,8 +17,8 @@ private struct SessionState {
 }
 
 private struct ServerState {
-    public var sessions: [String] = ["-", "ABC", "DEF", "GHI"];
-    public var sessionSelected: String = "-";
+    public var sessions: [String] = [];
+    public var sessionSelected: String = "";
 }
 
 private func SID(_ session: String?, size: Int = 4) -> String {
@@ -287,6 +287,7 @@ public struct SmallButton: View {
     }
 }
 
+/*
 private struct DropDown: View {
     
     @Binding public var items: [String];
@@ -301,8 +302,38 @@ private struct DropDown: View {
         } label: {
             Text(selected.isEmpty ? "Select…" : selected)
         }
+        .pickerStyle(.menu)
+        .scaleEffect(0.75, anchor: .trailing)
         .onAppear {
             if selected.isEmpty, let first = items.first {
+                selected = first
+            }
+        }
+    }
+}
+*/
+private struct DropDown: View {
+    
+    @Binding var items: [String]
+    @Binding var selected: String
+    var minimize: Int = 4
+    
+    var body: some View {
+        Menu {
+            ForEach(minimalUniquePrefixes(items, min: minimize), id: \.self) { item in
+                Button(item) {
+                    selected = item
+                }
+            }
+        } label: {
+            Text(selected.isEmpty ? SID(items.first ?? "Select…") : selected)
+                .font(.system(size: 14, weight: .bold))
+        }
+        .offset(y: 2)
+        .onAppear {
+                print("fooXyzzy:[\(selected)] [\(selected.isEmpty)] [\(items.first)] [\(items)]")
+            if selected.isEmpty, let first = items.first {
+                print("Xyzzy")
                 selected = first
             }
         }
