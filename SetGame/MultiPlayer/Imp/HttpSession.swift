@@ -40,6 +40,7 @@ public extension MultiPlayer {
                 if let session: String = await self.transport.create(host: self.player, bind: true) {
                     self.session = session;
                     self.host = self.player;
+                    self.playerJoined(self.player);
                     self.transport.engage();
                     return true;
                 }
@@ -154,9 +155,11 @@ public extension MultiPlayer {
             //
             handler.xsession = self;
 
-            // Initialize the players list with ourselves.
-            //
-            self.playerJoined(self.player);
+            // N.B. Do not initialize the players list with ourselves,
+            // because we are not actually connected session on construction;
+            // we only become a connected session via create or join session,
+            // at which time we will add ourselves as a (the first) player.
+            // self.playerJoined(self.player);
         }
 
         private func joinAsync(session: String) async -> Bool {
@@ -244,6 +247,7 @@ public extension MultiPlayer {
             self.session = message.session;
             self.host = message.host;
             self.players = message.players;
+            self.playerJoined(self.player);
             self.transport.bind(to: message.session);
         }
 
