@@ -121,7 +121,7 @@ public extension MultiPlayer {
         private var session: String?;
         private var pollSession: String?;
         private var pollTask: Task<Void, Never>? = nil;
-        private let pollInterval: UInt64 = 200_000_000; // 1_000_000_000;
+        private let pollInterval: UInt64 = 500_000_000;
 
         public init(handler: MessageHandler, url: URL? = nil, key: String? = nil) {
             self.handler = handler;
