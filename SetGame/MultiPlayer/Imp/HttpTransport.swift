@@ -204,5 +204,7 @@ public extension MultiPlayer {
             }
             return (sent: sent, queued: queued, received: received);
         }
+
+        public var engaged: Bool { self.pollTask != nil }
     }
 }
