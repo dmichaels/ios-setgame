@@ -14,10 +14,11 @@ public extension MultiPlayer {
         func create() async -> Bool;
         func join(session: String?) async -> Bool;
         func join(session: String?, wait: Bool) async -> Bool;
-        func leave() async -> Bool;
         func requestHost() async -> Bool;
+        func leave() async -> Bool;
         func send(message: Message, to: String) async -> Bool;
         func sendHost(message: Message) async -> Bool;
+        func disconnect();
     }
 }
 

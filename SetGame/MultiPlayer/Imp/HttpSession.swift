@@ -38,9 +38,7 @@ public extension MultiPlayer {
             //
             if (self.session == nil) {
                 if let session: String = await self.transport.create(host: self.player, bind: true) {
-                    self.session = session;
-                    self.host = self.player;
-                    self.playerJoined(self.player);
+                    self.connect(session: session, host: self.player, players: [self.player]);
                     self.transport.engage();
                     return true;
                 }
@@ -85,9 +83,7 @@ public extension MultiPlayer {
             if (self.hosting) {
                 if (self.players.count == 1) {
                     if await self.transport.destroySession(session: session) {
-                        self.session = nil;
-                        self.host = nil;
-                        self.players = [];
+                        self.disconnect();
                         return true;
                     }
                 }
@@ -95,10 +91,7 @@ public extension MultiPlayer {
             }
             else {
                 await self.sendHost(message: LeaveSessionMessage(player: self.player));
-                self.session = nil;
-                self.host = nil;
-                self.players = [];
-                self.transport.disengage();
+                self.disconnect();
                 return true;
             }
         }
@@ -114,6 +107,19 @@ public extension MultiPlayer {
         //
         public func sendHost(message: Message) async -> Bool {
             return await self.transport.sendHost(message: message, session: self.session);
+        }
+
+        public func disconnect() {
+            self.session = nil;
+            self.host = nil;
+            self.players = [];
+            self.transport.disengage();
+        }
+
+        public func connect(session: String, host: String, players: [String]) {
+            self.session = session;
+            self.host = host;
+            self.players = players;
         }
 
         // HttpSession class implementation.
@@ -244,10 +250,7 @@ public extension MultiPlayer {
                 self.joinSessionContinuation = nil;
                 continuation.resume(returning: ());
             }
-            self.session = message.session;
-            self.host = message.host;
-            self.players = message.players;
-            self.playerJoined(self.player);
+            self.connect(session: message.session, host: message.host, players: self.players + [self.player]);
             self.transport.bind(to: message.session);
         }
 

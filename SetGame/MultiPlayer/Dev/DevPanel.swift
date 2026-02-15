@@ -26,6 +26,8 @@ private struct ServerState {
     }
 }
 
+private let EmptySetChar: String = "∅";
+
 // All this nonesense is just so we can reliably deal with (view) the session IDs as short values.
 //
 private struct SessionList {
@@ -48,6 +50,9 @@ private struct SessionList {
             }
             self.selectedShort = self.shorten(session);
         }
+        else {
+            self.selectedShort = "";
+        }
     }
 
     fileprivate mutating func update(_ sessions: [String]) {
@@ -55,6 +60,9 @@ private struct SessionList {
         (self.sessionsShort, self.shortLength) = SessionList.shortenValues(sessions);
         if let session: String = self.sessions.first {
             self.select(session);
+        }
+        else {
+            self.select(nil);
         }
     }
 
@@ -125,7 +133,18 @@ public extension MultiPlayer {
             }
             .onAppear { self.poller.start({
                 self.sessionState.update(from: self.session);
-                self.serverState.update(sessions: await self.transport.retrieveSessions());
+                if let sessions: [String] = await self.transport.retrieveSessions() {
+                    if let session: String = self.session.session {
+                        if (!sessions.contains(session)) {
+                            //
+                            // Our connected session seems to have disappeared out from under us;
+                            // can happen in dev/testing; disconnect our session object et cetera.
+                            //
+                            self.session.disconnect();
+                        }
+                    }
+                    self.serverState.update(sessions: sessions);
+                }
             })}
             .onDisappear { self.poller.stop() }
         }
@@ -167,7 +186,7 @@ public extension MultiPlayer {
                         )
                         .padding(.leading, -6)
                     RegularText("session:", size: DevPanel.fontsize, leading: 4)
-                        CopyableText(text: serverState.sessionList.shorten(sessionState.session, fallback: "∅"),
+                        CopyableText(text: serverState.sessionList.shorten(sessionState.session, fallback: EmptySetChar),
                                      // foreground: self.info.isHost ? .red : .primary,
                                      background: DevPanel.background,
                                      bold: true,
@@ -177,9 +196,9 @@ public extension MultiPlayer {
                         )
                         .padding(.leading, -6)
                     RegularText("host:", size: DevPanel.fontsize, leading: 4)
-                    RegularText("\(self.sessionState.host ?? "∅")", size: DevPanel.fontsize, color: session.hosting ? .red : .primary, leading: 4)
+                    RegularText("\(self.sessionState.host ?? EmptySetChar)", size: DevPanel.fontsize, color: session.hosting ? .red : .primary, leading: 4)
                     RegularText("players:", size: DevPanel.fontsize, leading: 8)
-                    RegularText("\(self.sessionState.players.count == 0 ? "∅" : "\(self.sessionState.players.count)")", size: DevPanel.fontsize, leading: 4)
+                    RegularText("\(self.sessionState.players.count == 0 ? EmptySetChar : "\(self.sessionState.players.count)")", size: DevPanel.fontsize, leading: 4)
                     Spacer()
                 }
                 .padding(.horizontal, CGFloat(DevPanel.horizontalPadding))
@@ -213,7 +232,7 @@ public extension MultiPlayer {
             AnyDevPanel(table: table) {
                 HStack(spacing: CGFloat(DevPanel.separationPadding)) {
                     RegularText("session:", size: DevPanel.fontsize, leading: 4)
-                        CopyableText(text: serverState.sessionList.shorten(sessionState.session, fallback: "∅"),
+                        CopyableText(text: serverState.sessionList.shorten(sessionState.session, fallback: EmptySetChar),
                                      // foreground: self.info.isHost ? .red : .primary,
                                      background: DevPanel.background,
                                      bold: true,
@@ -394,7 +413,7 @@ public extension MultiPlayer {
                     Button(item) { selected = item }
                 }
             } label: {
-                Text(selected.isEmpty ? (items.first ?? "SELECT") : selected)
+                Text(selected.isEmpty ? (items.first ?? EmptySetChar) : selected)
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(DevPanel.foreground)
             }
