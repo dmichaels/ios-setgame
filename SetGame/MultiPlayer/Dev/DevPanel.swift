@@ -454,7 +454,8 @@ public extension MultiPlayer {
         private let interval: UInt64;
         private var task: Task<Void, Never>? = nil;
         fileprivate init(seconds: Int = 2) {
-            self.interval = UInt64(seconds * 1_000_000_000);
+            // self.interval = UInt64(seconds * 1_000_000_000);
+            self.interval = UInt64(seconds * 200_000_000);
         }
         fileprivate func start(_ task: @escaping () async -> Void) {
             guard self.task == nil else { return }
