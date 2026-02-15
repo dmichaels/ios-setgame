@@ -107,7 +107,7 @@ public extension MultiPlayer {
                         private let poller: Poller;
 
         fileprivate static let background: Color = Color(hex: 0x8BD2CC);
-        fileprivate static let foreground: Color = Color(hex: 0x028433);
+        fileprivate static let foreground: Color = Color(hex: 0x226622);
         fileprivate static let horizontalPadding: Int = 5;
         fileprivate static let separationPadding: Int = 0;
         fileprivate static let fontsize: Int = 14;
@@ -367,7 +367,7 @@ public extension MultiPlayer {
                        disabled: Bool = false, action: @escaping () async -> Void) {
             self.text = text;
             self.icon = icon;
-            self.background = background ?? Color(hex: 0x368077);
+            self.background = background ?? DevPanel.foreground;
             self.foreground = foreground ?? .yellow;
             self.size = size;
             self.disabled = disabled;
