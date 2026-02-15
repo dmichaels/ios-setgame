@@ -184,7 +184,7 @@ public extension MultiPlayer {
                     RegularText("host:", size: DevPanel.fontsize, leading: 4)
                     RegularText("\(self.sessionState.host ?? "∅")", size: DevPanel.fontsize, color: session.hosting ? .red : .primary, leading: 4)
                     RegularText("players:", size: DevPanel.fontsize, leading: 8)
-                    RegularText("\(self.sessionState.players.count)", size: DevPanel.fontsize, leading: 4)
+                    RegularText("\(self.sessionState.players.count == 0 ? "∅" : "\(self.sessionState.players.count)")", size: DevPanel.fontsize, leading: 4)
                     Spacer()
                 }
                 .padding(.horizontal, CGFloat(DevPanel.horizontalPadding))
@@ -389,12 +389,12 @@ public extension MultiPlayer {
                     Button(item) { selected = item }
                 }
             } label: {
-                Text(selected.isEmpty ? (items.first ?? "SELECT") : selected)
+                Text(selected.isEmpty ? (items.last ?? "SELECT") : selected)
                     .font(.system(size: 14, weight: .bold))
             }
             .offset(y: 2)
             .onAppear {
-                if selected.isEmpty, let first = items.first {
+                if selected.isEmpty, let first = items.last {
                     selected = first;
                 }
             }
