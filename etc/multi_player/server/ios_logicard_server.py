@@ -39,6 +39,19 @@ def with_session(func):
     @wraps(func)
     def wrapper(session, *args, **kwargs):
         global sessions
+        if (found_session := sessions.get(session)) is None:
+            # For convenience (dev/testing) allow unique prefix session ID lookup.
+            if len(matches := [key for key in sessions if key.startswith(session)]) != 1:
+                return _nosession_response()
+            found_session = matches[0]
+        found_session = sessions[found_session]
+        return func(found_session, *args, **kwargs)
+    return wrapper
+
+def old_with_session(func):
+    @wraps(func)
+    def wrapper(session, *args, **kwargs):
+        global sessions
         if not (found_session := sessions.get(session)):
             return _nosession_response()
         return func(found_session, *args, **kwargs)
