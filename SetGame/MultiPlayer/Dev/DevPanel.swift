@@ -163,7 +163,7 @@ public extension MultiPlayer {
                 HStack(spacing: CGFloat(DevPanel.separationPadding)) {
                     RegularText("me:", size: DevPanel.fontsize)
                         CopyableText(text: sessionState.player,
-                                     // foreground: self.info.isHost ? .red : .primary,
+                                     foreground: session.hosting ? .red : .primary,
                                      background: DevPanel.background,
                                      bold: true,
                                      underline: false,
@@ -182,7 +182,7 @@ public extension MultiPlayer {
                         )
                         .padding(.leading, -6)
                     RegularText("host:", size: DevPanel.fontsize, leading: 4)
-                    RegularText("\(self.sessionState.host ?? "∅")", size: DevPanel.fontsize, leading: 4)
+                    RegularText("\(self.sessionState.host ?? "∅")", size: DevPanel.fontsize, color: session.hosting ? .red : .primary, leading: 4)
                     RegularText("players:", size: DevPanel.fontsize, leading: 8)
                     RegularText("\(self.sessionState.players.count)", size: DevPanel.fontsize, leading: 4)
                     Spacer()
