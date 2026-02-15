@@ -106,8 +106,12 @@ public extension MultiPlayer {
                  @State private var serverState: ServerState;
                         private let poller: Poller;
 
-        fileprivate static let background: Color = Color(hex: 0x8BD2CC);
-        fileprivate static let foreground: Color = Color(hex: 0x226622);
+        // fileprivate static let background: Color = Color(hex: 0x8BD2CC);
+        // fileprivate static let foreground: Color = Color(hex: 0x226622);
+        // fileprivate static let background: Color = Color(hex: 0x66AAFF);
+        // fileprivate static let foreground: Color = Color(hex: 0x224466);
+        fileprivate static let background: Color = Color(hex: 0x77BBAA);
+        fileprivate static let foreground: Color = Color(hex: 0x226655);
         fileprivate static let horizontalPadding: Int = 5;
         fileprivate static let separationPadding: Int = 0;
         fileprivate static let fontsize: Int = 14;
@@ -187,7 +191,6 @@ public extension MultiPlayer {
                         .padding(.leading, -6)
                     RegularText("session:", size: DevPanel.fontsize, leading: 4)
                         CopyableText(text: serverState.sessionList.shorten(sessionState.session, fallback: EmptySetChar),
-                                     // foreground: self.info.isHost ? .red : .primary,
                                      background: DevPanel.background,
                                      bold: true,
                                      underline: false,
@@ -231,9 +234,8 @@ public extension MultiPlayer {
             Spacer().frame(height: CGFloat(margin))
             AnyDevPanel(table: table) {
                 HStack(spacing: CGFloat(DevPanel.separationPadding)) {
-                    RegularText("session:", size: DevPanel.fontsize, leading: 4)
+                    RegularText("session:", size: DevPanel.fontsize)
                         CopyableText(text: serverState.sessionList.shorten(sessionState.session, fallback: EmptySetChar),
-                                     // foreground: self.info.isHost ? .red : .primary,
                                      background: DevPanel.background,
                                      bold: true,
                                      underline: false,
@@ -262,20 +264,6 @@ public extension MultiPlayer {
                             }
                         }
                     }
-                    /*
-                    SmallButton(DevPanel.icons ? nil : "join", icon: DevPanel.icons ? "rectangle.portrait.and.arrow.forward" : nil, disabled: self.sessionState.connected) {
-                        if (!self.session.connected) {
-                            if let session: String = serverState.sessionList.selected {
-                                if await self.session.join(session: session) {
-                                    self.sessionState.update(from: self.session);
-                                }
-                            }
-                        }
-                    }
-                    RegularText("", padding: 4)
-                    DropDown(items: serverState.sessionList.sessionsShort,
-                             selected: $serverState.sessionList.selectedShort)
-                    */
                     Spacer()
                     SmallButton(DevPanel.icons ? nil : "host",
                                 icon: DevPanel.icons ? "xmark.rectangle.portrait" : nil,
@@ -287,7 +275,8 @@ public extension MultiPlayer {
                         }
                     }
                     RegularText("", padding: 4)
-                    SmallButton(/*DevPanel.icons*/ true ? nil : "leave", icon: /*DevPanel.icons*/ true ? "xmark.rectangle.portrait" : nil, size: 20, disabled: !self.sessionState.leaveable) {
+                    SmallButton(icon: "xmark.rectangle.portrait", size: 21,
+                                disabled: !self.sessionState.leaveable) {
                         if (self.session.connected) {
                             if await self.session.leave() {
                                 self.sessionState.update(from: self.session);
@@ -348,7 +337,7 @@ public extension MultiPlayer {
                 .overlay(
                     copied ? Text(" Copied ")
                         .font(.caption)
-                        .foregroundColor(.green)
+                        .foregroundColor(.black)
                         .padding(4)
                         .background(Color.white)
                         .cornerRadius(6)
@@ -498,7 +487,7 @@ public extension MultiPlayer {
 
         private var height: CGFloat = 38;
         private var padding: CGFloat = 8;
-        private var background: Color = Color(hex: 0x8BD2CC);
+        private var background: Color = DevPanel.background;
 
         fileprivate init( table: Table, @ViewBuilder content: () -> Content) {
             self.table = table;
@@ -528,7 +517,7 @@ public extension MultiPlayer {
         private let interval: UInt64;
         private var task: Task<Void, Never>? = nil;
         fileprivate init(seconds: Int = 2) {
-            self.interval = UInt64(seconds * 1_000_000_000);
+            self.interval = UInt64(seconds * 500_000_000);
         }
         fileprivate func start(_ task: @escaping () async -> Void) {
             guard self.task == nil else { return }
