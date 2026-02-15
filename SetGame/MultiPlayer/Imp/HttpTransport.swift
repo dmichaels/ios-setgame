@@ -113,23 +113,6 @@ public extension MultiPlayer {
             return await self.postMessage(path: "/send", message: message, session: session);
         }
 
-        // Sends the given message to the given player for the session.
-        // This is a NON-async version of the above for possible convenience;
-        // since it is just a send and we do not really need to get/check the result.
-        //
-        public func send(message: Message, player: String, session: String? = nil) -> Bool {
-            return self.postMessage(path: "/send/\(player)", message: message, session: session);
-        }
-
-        // Sends the given message to the HOST for the session via POST /<session>/send;
-        // in contrast to sending a message to ANY player via POST /<session>/send/player.
-        // This is a NON-async version of the above for possible convenience;
-        // since it is just a send and we do not really need to get/check the result.
-        //
-        public func sendHost(message: Message, session: String? = nil) -> Bool {
-            return self.postMessage(path: "/send", message: message, session: session);
-        }
-
         // HttpTransport class implementation.
 
         private let handler: MessageHandler;

@@ -13,11 +13,7 @@ public extension MultiPlayer {
         func unregister(player: String, session: String?) async -> Bool;
         func requestHost(player: String, session: String?) async -> Bool;
         func destroySession(session: String?) async -> Bool;
-
         func send(message: Message, player: String, session: String?) async -> Bool;
         func sendHost(message: Message, session: String?) async -> Bool;
-
-        func send(message: Message, player: String, session: String?) -> Bool;
-        func sendHost(message: Message, session: String?) -> Bool;
     }
 }
