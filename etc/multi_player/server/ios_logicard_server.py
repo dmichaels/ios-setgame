@@ -70,10 +70,12 @@ def _create_session():
     session = str(uuid.uuid4()).replace('-', '').upper()
     if session not in sessions:
         sessions[session] = {
-            'session': session,
-            'host':    None,
-            'players': [],
-            'inbox':   {}
+            'session':  session,
+            'host':     None,
+            'players':  [],
+            'inbox':    {},
+            'sent':     {},
+            'received': {}
         }
     return session
 
@@ -91,6 +93,7 @@ def _create_update_session_message(session):
 def _send_join_session_confirmed_message(session, player):
     join_session_confirmed_message = _create_join_session_confirmed_message(session)
     session['inbox'].setdefault(player, []).append(join_session_confirmed_message)
+    session['sent'].setdefault(player, 0) ; session['sent'][player] += 1
 
 def _send_update_session_messages(session, excluding = []):
     update_session_message = _create_update_session_message(session)
@@ -144,16 +147,20 @@ def get_sessions_endpoint():
 def get_session_endpoint(session):
     global debug
     if debug:
-        return jsonify({'session':  session['session'],
-                        'host':     session['host'],
-                        'players':  session['players'],
-                        'inbox':    session['inbox'],
-                        'debug':    True,
-                        'received': session.get('received')}), 200
-    return jsonify({'session': session['session'],
-                    'host':    session['host'],
-                    'players': session['players'],
-                    'inbox':   session['inbox']}), 200
+        return jsonify({'session':           session['session'],
+                        'host':              session['host'],
+                        'players':           session['players'],
+                        'inbox':             session['inbox'],
+                        'sent':              session['sent'],
+                        'received':          session['received'],
+                        'debug':             True,
+                        'received_messages': session.get('received_messages')}), 200
+    return jsonify({'session':  session['session'],
+                    'host':     session['host'],
+                    'players':  session['players'],
+                    'inbox':    session['inbox'],
+                    'sent':     session['sent'],
+                    'received': session['received']}), 200
 
 # Resets ALL data for the given session.
 # Example Request:  POST /DEADBEEF/reset
@@ -314,6 +321,7 @@ def send_message_endpoint(session, player):
         return _noplayer_response()
     message = request.get_json()
     session['inbox'].setdefault(player, []).append(message)
+    session['sent'].setdefault(player, 0) ; session['sent'][player] += 1;
     return _okay_response()
 
 # Sends the given message (in the POST data) to the host player,
@@ -328,6 +336,7 @@ def send_host_message_endpoint(session):
         return _nohost_response()
     message = request.get_json()
     session['inbox'].setdefault(host, []).append(message)
+    session['sent'].setdefault(host, 0) ; session['sent'][host] += 1;
     return _okay_response()
 
 # Removes and returns any/all of the messages available
@@ -341,17 +350,20 @@ def receive_messages_endpoint(session, player):
     if player not in session['players']:
         return _noplayer_response()
     messages = session['inbox'].pop(player, [])
+    if len(messages) > 0:
+        session['received'].setdefault(player, 0) ; session['received'][player] += 1;
     global debug, debugVerbose
     if debug:
         if len(messages) > 0:
-            if 'received' not in session:
-                session['received'] = []
+            if 'received_messages' not in session:
+                session['received_messages'] = []
             if debugVerbose:
-                session['received'].append({player: messages,
-                                            'state': {'host': str(session['host']),
-                                                      'players': list(session['players'])}})
+                session['received_messages'].append({
+                    player: messages,
+                    'state': {'host': str(session['host']),
+                              'players': list(session['players'])}})
             else:
-                session['received'].append({player: messages})
+                session['received_messages'].append({player: messages})
     return jsonify(messages), 200
 
 # Returns (without removal) any/all of the messages available
@@ -401,6 +413,8 @@ def clear_player_messages_endpoint(session, player):
         return _noplayer_response()
     if player in session['inbox']:
         del session['inbox'][player]
+        del session['sent'][player]
+        del session['received'][player]
     return _okay_response()
 
 # Clears out all message data for ALL of the players, for the given session.
@@ -411,6 +425,8 @@ def clear_player_messages_endpoint(session, player):
 @with_session
 def clear_session_messages_endpoint(session):
     session['inbox'].clear()
+    session['sent'].clear()
+    session['received'].clear()
     return _okay_response()
 
 # Resets ALL data for ALL sessions.
@@ -434,8 +450,8 @@ def debug_endpoint():
 def nodebug_endpoint():
     global debug, sessions
     for session in sessions:
-        if 'received' in session:
-            session['received'].clear()
+        if 'received_messages' in session:
+            session['received_messages'].clear()
     debug = False
     return _okay_response()
 

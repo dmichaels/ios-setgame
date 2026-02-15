@@ -59,7 +59,7 @@ public class Defaults {
         public var http: Bool     = true;
         public var host: Bool     = true;
         public var poll: Bool     = true;
-        public let server: String = "https://dmichaels.dev/apis/logicard"; // "http://127.0.0.1:8001"
+        public let server: String = "http://127.0.0.1:8001" // "https://dmichaels.dev/apis/logicard"; 
         public let apikey: String = ".0turangalila";
     }
 

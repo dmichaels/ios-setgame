@@ -383,7 +383,7 @@ public extension MultiPlayer {
                         Button(item) { selected = item }
                     }
                 } label: {
-                    Text(selected)
+                    Text(selected.isEmpty ? (items.first ?? EmptySetChar) : selected)
                         .font(.system(size: self.fontSize, weight: .bold))
                         .foregroundColor(disabled ? self.foregroundDisabled : self.foreground)
                         .padding(.trailing, self.horizontalPadding)
@@ -394,6 +394,11 @@ public extension MultiPlayer {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .fill(self.background)
             )
+            .onAppear {
+                if selected.isEmpty, let first = items.first {
+                    selected = first;
+                }
+            }
             .disabled(disabled)
         }
     }
