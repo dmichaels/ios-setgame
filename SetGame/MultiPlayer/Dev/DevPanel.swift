@@ -56,6 +56,9 @@ private struct SessionList {
     fileprivate mutating func update(_ sessions: [String]) {
         self.sessions = sessions;
         (self.sessionsShort, self.shortLength) = SessionList.shortenValues(sessions);
+        if let session: String = self.sessions.last {
+            self.select(session);
+        }
     }
 
     fileprivate func shorten(_ session: String?, fallback: String = "") -> String {
