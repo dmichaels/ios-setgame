@@ -125,7 +125,8 @@ public extension MultiPlayer {
 
         public init(handler: MessageHandler, url: URL? = nil, key: String? = nil) {
             self.handler = handler;
-            self.url = url ?? URL.create("https://api.logicard.dmichaels.dev");
+            // self.url = url ?? URL.create("https://api.logicard.dmichaels.dev");
+            self.url = url ?? URL.create("http://127.0.0.1:8001");
             self.key = key ?? ".0turangalila";
         }
 

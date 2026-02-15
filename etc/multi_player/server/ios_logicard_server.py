@@ -43,8 +43,7 @@ def with_session(func):
             # For convenience (dev/testing) allow unique prefix session ID lookup.
             if len(matches := [key for key in sessions if key.startswith(session)]) != 1:
                 return _nosession_response()
-            found_session = matches[0]
-        found_session = sessions[found_session]
+            found_session = sessions[matches[0]]
         return func(found_session, *args, **kwargs)
     return wrapper
 

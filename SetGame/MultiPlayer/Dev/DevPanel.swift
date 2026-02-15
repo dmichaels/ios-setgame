@@ -19,6 +19,11 @@ private struct SessionState {
 
 private struct ServerState {
     fileprivate var sessionList: SessionList = SessionList();
+    fileprivate mutating func update(sessions: [String]?) {
+        if let sessions: [String] = sessions {
+            self.sessionList.update(sessions.reversed());
+        }
+    }
 }
 
 // All this nonesense is just so we can reliably deal with (view) the session IDs as short values.
@@ -118,18 +123,11 @@ public extension MultiPlayer {
                 DevPanelInfo(table: table, session: session, transport: transport, sessionState: $sessionState, serverState: $serverState, margin: margin)
                 DevPanelSession(table: table, session: session, transport: transport, sessionState: $sessionState, serverState: $serverState, margin: 16)
             }
-            .onAppear {
-                self.poller.start({
-                    self.sessionState.update(from: self.session);
-                    // TODO: does not work - await self.serverState.update(from: self.transport);
-                    if let sessions: [String] = await self.transport.retrieveSessions() {
-                        self.serverState.sessionList.update(sessions.reversed());
-                    }
-                });
-            }
-            .onDisappear {
-                self.poller.stop();
-            }
+            .onAppear { self.poller.start({
+                self.sessionState.update(from: self.session);
+                self.serverState.update(sessions: await self.transport.retrieveSessions());
+            })}
+            .onDisappear { self.poller.stop() }
         }
     }
 
