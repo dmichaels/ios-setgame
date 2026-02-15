@@ -121,7 +121,7 @@ public extension MultiPlayer {
         private var handler: SessionHandler;
         private var joinSessionContinuation: CheckedContinuation<Void, Error>?
 
-        public init(handler: SessionHandler, url: URL? = nil, transport: HttpTransport.Factory? = nil) {
+        public init(handler: SessionHandler, url: String? = nil, transport: HttpTransport.Factory? = nil) {
 
             class MessageHandler: MultiPlayer.MessageHandler {
                 var session: HttpSession?;

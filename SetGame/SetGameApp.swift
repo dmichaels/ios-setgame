@@ -17,7 +17,12 @@ struct SetGameApp: App {
                                                        haptics: settings.haptics));
         _table = StateObject(wrappedValue: Table(settings: settings));
 
-        MultiPlayer.HttpSession.instance(handler: self.table);
+        MultiPlayer.HttpSession.instance(handler: self.table, transport: {
+            handler in
+            MultiPlayer.HttpTransport(handler: handler,
+                                      url: settings.multiPlayer.server,
+                                      key: settings.multiPlayer.apikey)
+        });
     }
 
     var body: some Scene {

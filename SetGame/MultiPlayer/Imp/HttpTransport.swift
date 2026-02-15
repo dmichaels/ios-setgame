@@ -123,10 +123,9 @@ public extension MultiPlayer {
         private var pollTask: Task<Void, Never>? = nil;
         private let pollInterval: UInt64 = 500_000_000;
 
-        public init(handler: MessageHandler, url: URL? = nil, key: String? = nil) {
+        public init(handler: MessageHandler, url: String? = nil, key: String? = nil) {
             self.handler = handler;
-            // self.url = url ?? URL.create("https://api.logicard.dmichaels.dev");
-            self.url = url ?? URL.create("http://127.0.0.1:8001");
+            self.url = (url != nil) ? URL.create(url!) : URL.create("https://api.logicard.dmichaels.dev");
             self.key = key ?? ".0turangalila";
         }
 
