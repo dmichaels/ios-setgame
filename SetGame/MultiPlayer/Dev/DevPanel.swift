@@ -361,59 +361,53 @@ public extension MultiPlayer {
         }
     }
 
-private struct JoinControl: View {
+    private struct JoinControl: View {
 
-    let items: [String]
-    @Binding var selected: String
-    let disabled: Bool
-    let action: () async -> Void
+                 let items: [String];
+        @Binding var selected: String;
+                 let disabled: Bool;
+                 let action: () async -> Void;
 
-    private let fontSize: CGFloat = 14;
-    private let horizontalPadding: CGFloat = 7;
-    private let verticalPadding: CGFloat = 5;
-    private let cornerRadius: CGFloat = 8;
-    private let foreground: Color = .yellow;
-    private let background: Color = DevPanel.foreground;
-    private let foregroundDisabled: Color = .gray;
+        private let fontSize: CGFloat = 14;
+        private let horizontalPadding: CGFloat = 7;
+        private let verticalPadding: CGFloat = 4;
+        private let cornerRadius: CGFloat = 8;
+        private let foreground: Color = .yellow;
+        private let background: Color = DevPanel.foreground;
+        private let foregroundDisabled: Color = .gray;
 
-    var body: some View {
-        HStack(spacing: 0) {
-
-            // JOIN button
-            Button {
-                Task { await action() }
-            } label: {
-                Text("join:")
-                    .font(.system(size: self.fontSize, weight: .semibold))
-                    .foregroundColor(self.foreground)
-                    .padding(.leading, self.horizontalPadding)
-                    .padding(.vertical, self.verticalPadding)
-            }
-            .buttonStyle(.plain)
-
-            // Divider line between them
-            Rectangle().fill(self.foreground.opacity(0.4)).frame(width: 3, height: 1)
-
-            // Dropdown
-            Menu {
-                ForEach(items, id: \.self) { item in
-                    Button(item) { selected = item }
+        var body: some View {
+            HStack(spacing: 0) {
+                Button {
+                    Task { await action() }
+                } label: {
+                    Text("join:")
+                        .font(.system(size: self.fontSize, weight: .semibold))
+                        .foregroundColor(self.foreground)
+                        .padding(.leading, self.horizontalPadding)
+                        .padding(.vertical, self.verticalPadding)
                 }
-            } label: {
-                Text(selected)
-                    .font(.system(size: self.fontSize, weight: .bold))
-                    .foregroundColor(disabled ? self.foregroundDisabled : self.foreground)
-                    .padding(.trailing, self.horizontalPadding)
-                    .padding(.vertical, self.verticalPadding)
+                .buttonStyle(.plain)
+                Rectangle().fill(self.foreground.opacity(0.4)).frame(width: 3, height: 1)
+                Menu {
+                    ForEach(items, id: \.self) { item in
+                        Button(item) { selected = item }
+                    }
+                } label: {
+                    Text(selected)
+                        .font(.system(size: self.fontSize, weight: .bold))
+                        .foregroundColor(disabled ? self.foregroundDisabled : self.foreground)
+                        .padding(.trailing, self.horizontalPadding)
+                        .padding(.vertical, self.verticalPadding)
+                }
             }
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(self.background)
+            )
+            .disabled(disabled)
         }
-        .background(
-            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                .fill(self.background)
-        )
-        .disabled(disabled)
     }
-}
 
     private struct SmallButton: View {
 
@@ -426,7 +420,7 @@ private struct JoinControl: View {
         private let action: () async -> Void;
 
         private let horizontalPadding: CGFloat = 7;
-        private let verticalPadding: CGFloat = 5;
+        private let verticalPadding: CGFloat = 4;
         private let cornerRadius: CGFloat = 8
     
         public init( _ text: String? = nil, icon: String? = nil,
