@@ -74,10 +74,6 @@ private struct SessionList {
     }
 }
 
-private func ids(_ id: String?, fallback: String = "") -> String {
-    if let id: String = id { return id; } else { return fallback; }
-}
-
 public extension MultiPlayer {
 
     public struct DevPanel: View {
@@ -178,7 +174,7 @@ public extension MultiPlayer {
                         )
                         .padding(.leading, -6)
                     RegularText("host:", size: fontsize, leading: 4)
-                    RegularText("\(ids(self.sessionState.host, fallback: "∅"))", size: fontsize, leading: 4)
+                    RegularText("\(self.sessionState.host ?? "∅")", size: fontsize, leading: 4)
                     RegularText("players:", size: fontsize, leading: 8)
                     RegularText("\(self.sessionState.players.count)", size: fontsize, leading: 4)
                     Spacer()

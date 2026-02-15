@@ -86,13 +86,18 @@ public extension MultiPlayer {
                     if await self.transport.destroySession(session: session) {
                         self.session = nil;
                         self.host = nil;
+                        self.players = [];
                         return true;
                     }
                 }
                 return false;
             }
             else {
-                return await self.sendHost(message: LeaveSessionMessage(player: self.player));
+                await self.sendHost(message: LeaveSessionMessage(player: self.player));
+                self.session = nil;
+                self.host = nil;
+                self.players = [];
+                return true;
             }
         }
 
