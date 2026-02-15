@@ -97,6 +97,7 @@ public extension MultiPlayer {
                 self.session = nil;
                 self.host = nil;
                 self.players = [];
+                self.transport.disengage();
                 return true;
             }
         }
