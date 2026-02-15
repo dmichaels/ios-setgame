@@ -4,6 +4,7 @@ private struct SessionState {
     public var session: String? = nil;
     public var host: String? = nil;
     public let player: String;
+    public var hosting: Bool { self.player == (self.host ?? "") }
     public var players: [String] = [];
     public var connected: Bool = false;
     public var leaveable: Bool = false;
@@ -250,7 +251,13 @@ public extension MultiPlayer {
                     DropDown(items: serverState.sessionList.sessionsShort,
                              selected: $serverState.sessionList.selectedShort)
                     Spacer()
-                    SmallButton(DevPanel.icons ? nil : "leave", icon: DevPanel.icons ? "xmark.rectangle.portrait" : nil, disabled: !self.sessionState.leaveable) {
+                    SmallButton(DevPanel.icons ? nil : "host", icon: DevPanel.icons ? "xmark.rectangle.portrait" : nil, disabled: self.sessionState.hosting) {
+                        //
+                        // TODO
+                        //
+                    }
+                    RegularText("", padding: 4)
+                    SmallButton(/*DevPanel.icons*/ true ? nil : "leave", icon: /*DevPanel.icons*/ true ? "xmark.rectangle.portrait" : nil, size: 20, disabled: !self.sessionState.leaveable) {
                         if (self.session.connected) {
                             if await self.session.leave() {
                                 self.sessionState.update(from: self.session);
@@ -391,6 +398,7 @@ public extension MultiPlayer {
             } label: {
                 Text(selected.isEmpty ? (items.last ?? "SELECT") : selected)
                     .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(Color(hex: 0x028433))
             }
             .offset(y: 2)
             .onAppear {
