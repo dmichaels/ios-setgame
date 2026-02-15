@@ -19,14 +19,6 @@ private struct SessionState {
 
 private struct ServerState {
     fileprivate var sessionList: SessionList = SessionList();
-    //
-    // TODO: This cannot be called from the Poller.start closure; doing directly for now.
-    //
-    public mutating func update(from transport: MultiPlayer.HttpTransport) async {
-        if let sessions: [String] = await transport.retrieveSessions() {
-            self.sessionList.update(sessions.reversed());
-        }
-    }
 }
 
 // All this nonesense is just so we can reliably deal with (view) the session IDs as short values.
