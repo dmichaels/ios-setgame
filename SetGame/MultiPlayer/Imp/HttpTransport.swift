@@ -132,7 +132,7 @@ public extension MultiPlayer {
         private func retrieveMessages(for player: String? = nil, session: String? = nil) async -> [Message] {
             if let session: String = session ?? self.session {
                 let player: String = player ?? self.player;
-                if let data: Data = await self.url.get(session, "receive", player, key: self.key) {
+                if let data: Data = await self.url.get(session, "/receive", player, key: self.key) {
                     if let messages: [Message] = MessageConversion.toMessages(data: data) {
                         return messages; 
                     }
@@ -180,6 +180,31 @@ public extension MultiPlayer {
                 return sessions;
             }
             return nil;
+        }
+
+        public func sessionInfo(session: String?) async -> Json? {
+            if let session: String = session ?? self.session {
+                if let response: Json = await self.url.get("/sessions", session, as: Json.self, key: self.key) {
+                    return response;
+                }
+            }
+            return nil;
+        }
+
+        public static func messageCounts(info: Json, player: String) -> (sent: Int, queued: Int, received: Int) {
+            var sent: Int = 0;
+            var queued: Int = 0;
+            var received: Int = 0;
+            if let count: Json = info["sent_count"] as? Json, let count = count[player] as? Int {
+                sent = count;
+            }
+            if let count: Json = info["queued_count"] as? Json, let count = count[player] as? Int {
+                queued = count;
+            }
+            if let count: Json = info["received_count"] as? Json, let count = count[player] as? Int {
+                received = count;
+            }
+            return (sent: sent, queued: queued, received: received);
         }
     }
 }

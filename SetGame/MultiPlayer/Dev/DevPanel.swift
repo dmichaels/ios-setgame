@@ -277,6 +277,31 @@ public extension MultiPlayer {
                     RegularText("", padding: 4)
                     SmallButton(icon: "xmark.rectangle.portrait", size: 21,
                                 disabled: !self.sessionState.leaveable) {
+                        // xyzzy
+                        /*
+                        func getPlayerMessageCounts(counts: Json, player: String) -> (sent: Int, queued: Int, received: Int)? {
+                            var sent: Int = 0;
+                            var queued: Int = 0;
+                            var received: Int = 0;
+                            if let count: Json = counts["sent_count"] as? Json, let count = count[player] as? Int {
+                                sent = count;
+                            }
+                            if let count: Json = counts["queued_count"] as? Json, let count = count[player] as? Int {
+                                queued = count;
+                            }
+                            if let count: Json = counts["received_count"] as? Json, let count = count[player] as? Int {
+                                received = count;
+                            }
+                            return (sent: sent, queued: queued, received: received);
+                        }
+                        */
+                        if let info = await self.transport.sessionInfo(session: self.session.session) {
+                            let (sent, queued, received) = HttpTransport.messageCounts(info: info, player: self.session.player);
+                            print("XYZZY-COUNTS: sent: \(sent) queued: \(queued) received: \(received)")
+                            let x = 1
+                        }
+                        let x = 1
+                        // xyzzy
                         if (self.session.connected) {
                             if await self.session.leave() {
                                 self.sessionState.update(from: self.session);

@@ -70,12 +70,12 @@ def _create_session():
     session = str(uuid.uuid4()).replace('-', '').upper()
     if session not in sessions:
         sessions[session] = {
-            'session':  session,
-            'host':     None,
-            'players':  [],
-            'inbox':    {},
-            'sent':     {},
-            'received': {}
+            'session':        session,
+            'host':           None,
+            'players':        [],
+            'inbox':          {},
+            'sent_count':     {},
+            'received_count': {}
         }
     return session
 
@@ -93,13 +93,14 @@ def _create_update_session_message(session):
 def _send_join_session_confirmed_message(session, player):
     join_session_confirmed_message = _create_join_session_confirmed_message(session)
     session['inbox'].setdefault(player, []).append(join_session_confirmed_message)
-    session['sent'].setdefault(player, 0) ; session['sent'][player] += 1
+    session['sent_count'].setdefault(player, 0) ; session['sent_count'][player] += 1
 
 def _send_update_session_messages(session, excluding = []):
     update_session_message = _create_update_session_message(session)
     for player in session['players']:
         if player not in excluding:
             session['inbox'].setdefault(player, []).append(update_session_message)
+            session['sent_count'].setdefault(player, 0) ; session['sent_count'][player] += 1
 
 def _okay_response(status = 200):
     return jsonify({'status': 'OK'}), status
@@ -146,21 +147,38 @@ def get_sessions_endpoint():
 @with_session
 def get_session_endpoint(session):
     global debug
+    response = {'session':        session['session'],
+                'host':           session['host'],
+                'players':        session['players'],
+                'inbox':          session['inbox'],
+                'sent_count':     session['sent_count'],
+                'received_count': session['received_count'],
+                'queued_count':   {user: len(messages) for user, messages in session['inbox'].items()}}
+    if debug:
+        response.update({'debug': True, 'received_messages': session.get('received_messages')})
+    return jsonify(response), 200
+
+def old_get_session_endpoint(session):
+    global debug
     if debug:
         return jsonify({'session':           session['session'],
                         'host':              session['host'],
                         'players':           session['players'],
                         'inbox':             session['inbox'],
-                        'sent':              session['sent'],
-                        'received':          session['received'],
+                        'sent_count':        session['sent_count'],
+                        'received_count':    session['received_count'],
+                        'queued_count':      {user: len(messages) for user, messages in session['inbox'].items()},
                         'debug':             True,
-                        'received_messages': session.get('received_messages')}), 200
+                        'received_messages': session.get('received_messages')
+           }), 200
     return jsonify({'session':  session['session'],
                     'host':     session['host'],
                     'players':  session['players'],
                     'inbox':    session['inbox'],
-                    'sent':     session['sent'],
-                    'received': session['received']}), 200
+                    'sent_count':     session['sent_count'],
+                    'received_count': session['received_count'],
+                    'queued_count':      {user: len(messages) for user, messages in session['inbox'].items()},
+           }), 200
 
 # Resets ALL data for the given session.
 # Example Request:  POST /DEADBEEF/reset
@@ -321,7 +339,7 @@ def send_message_endpoint(session, player):
         return _noplayer_response()
     message = request.get_json()
     session['inbox'].setdefault(player, []).append(message)
-    session['sent'].setdefault(player, 0) ; session['sent'][player] += 1;
+    session['sent_count'].setdefault(player, 0) ; session['sent_count'][player] += 1;
     return _okay_response()
 
 # Sends the given message (in the POST data) to the host player,
@@ -336,7 +354,7 @@ def send_host_message_endpoint(session):
         return _nohost_response()
     message = request.get_json()
     session['inbox'].setdefault(host, []).append(message)
-    session['sent'].setdefault(host, 0) ; session['sent'][host] += 1;
+    session['sent_count'].setdefault(host, 0) ; session['sent_count'][host] += 1;
     return _okay_response()
 
 # Removes and returns any/all of the messages available
@@ -351,7 +369,7 @@ def receive_messages_endpoint(session, player):
         return _noplayer_response()
     messages = session['inbox'].pop(player, [])
     if len(messages) > 0:
-        session['received'].setdefault(player, 0) ; session['received'][player] += 1;
+        session['received_count'].setdefault(player, 0) ; session['received_count'][player] += len(messages);
     global debug, debugVerbose
     if debug:
         if len(messages) > 0:
@@ -379,28 +397,6 @@ def peek_messages_endpoint(session, player):
     messages = session['inbox'].get(player, [])
     return jsonify(messages), 200
 
-# Returns the number of messages available for the given player,
-# for the given session. Returns a dictionary with the message count.
-# Example Request:  GET /DEADBEEF/count/ada
-# Example Response: {"count": 2}
-#
-@app.route('/<session>/count/<player>', methods=['GET'])
-@with_session
-def get_message_count_endpoint(session, player):
-    if player not in session['players']:
-        return _noplayer_response()
-    return jsonify({'count': len(session['inbox'].get(player, []))}), 200
-
-# Returns the number of messages available for all players,
-# for the given session. Returns a dictionary with the message count.
-# Example Request:  GET /DEADBEEF/count
-# Example Response: {"count": 3}
-#
-@app.route('/<session>/count', methods=['GET'])
-@with_session
-def get_session_message_count_endpoint(session):
-    return jsonify({'count': sum(len(messages) for messages in session['inbox'].values())}), 200
-
 # Clears out all message data for the given player, for the given session.
 # Returns a simple status.
 # Example Request:  POST /DEADBEEF/clear/ada
@@ -413,8 +409,8 @@ def clear_player_messages_endpoint(session, player):
         return _noplayer_response()
     if player in session['inbox']:
         del session['inbox'][player]
-        del session['sent'][player]
-        del session['received'][player]
+        del session['sent_count'][player]
+        del session['received_count'][player]
     return _okay_response()
 
 # Clears out all message data for ALL of the players, for the given session.
@@ -425,8 +421,8 @@ def clear_player_messages_endpoint(session, player):
 @with_session
 def clear_session_messages_endpoint(session):
     session['inbox'].clear()
-    session['sent'].clear()
-    session['received'].clear()
+    session['sent_count'].clear()
+    session['received_count'].clear()
     return _okay_response()
 
 # Resets ALL data for ALL sessions.
