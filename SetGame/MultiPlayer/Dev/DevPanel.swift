@@ -24,7 +24,7 @@ private struct ServerState {
     //
     public mutating func update(from transport: MultiPlayer.HttpTransport) async {
         if let sessions: [String] = await transport.retrieveSessions() {
-            self.sessionList.update(sessions);
+            self.sessionList.update(sessions.reversed());
         }
     }
 }
@@ -56,7 +56,7 @@ private struct SessionList {
     fileprivate mutating func update(_ sessions: [String]) {
         self.sessions = sessions;
         (self.sessionsShort, self.shortLength) = SessionList.shortenValues(sessions);
-        if let session: String = self.sessions.last {
+        if let session: String = self.sessions.first {
             self.select(session);
         }
     }
@@ -131,7 +131,7 @@ public extension MultiPlayer {
                     self.sessionState.update(from: self.session);
                     // TODO: does not work - await self.serverState.update(from: self.transport);
                     if let sessions: [String] = await self.transport.retrieveSessions() {
-                        self.serverState.sessionList.update(sessions);
+                        self.serverState.sessionList.update(sessions.reversed());
                     }
                 });
             }
@@ -255,10 +255,14 @@ public extension MultiPlayer {
                     DropDown(items: serverState.sessionList.sessionsShort,
                              selected: $serverState.sessionList.selectedShort)
                     Spacer()
-                    SmallButton(DevPanel.icons ? nil : "host", icon: DevPanel.icons ? "xmark.rectangle.portrait" : nil, disabled: self.sessionState.hosting) {
-                        //
-                        // TODO
-                        //
+                    SmallButton(DevPanel.icons ? nil : "host",
+                                icon: DevPanel.icons ? "xmark.rectangle.portrait" : nil,
+                                disabled: !self.sessionState.connected || self.sessionState.hosting) {
+                        if (self.session.connected) {
+                            if await self.session.requestHost() {
+                                self.sessionState.update(from: self.session);
+                            }
+                        }
                     }
                     RegularText("", padding: 4)
                     SmallButton(/*DevPanel.icons*/ true ? nil : "leave", icon: /*DevPanel.icons*/ true ? "xmark.rectangle.portrait" : nil, size: 20, disabled: !self.sessionState.leaveable) {
@@ -400,13 +404,13 @@ public extension MultiPlayer {
                     Button(item) { selected = item }
                 }
             } label: {
-                Text(selected.isEmpty ? (items.last ?? "SELECT") : selected)
+                Text(selected.isEmpty ? (items.first ?? "SELECT") : selected)
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(DevPanel.foreground)
             }
             .offset(y: 2)
             .onAppear {
-                if selected.isEmpty, let first = items.last {
+                if selected.isEmpty, let first = items.first {
                     selected = first;
                 }
             }
