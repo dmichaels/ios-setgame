@@ -8,12 +8,16 @@ private struct SessionState {
     public var players: [String] = [];
     public var connected: Bool = false;
     public var leaveable: Bool = false;
-    public mutating func update(from session: MultiPlayer.Session) {
+    public var info: Json = [:];
+    public mutating func update(from session: MultiPlayer.Session, info: Json? = nil) {
         self.session = session.session;
         self.host = session.host;
         self.players = session.players;
         self.connected = session.connected;
         self.leaveable = session.leaveable;
+        if let info: Json = info {
+            self.info = info;
+        }
     }
 }
 
@@ -112,7 +116,7 @@ public extension MultiPlayer {
         // fileprivate static let foreground: Color = Color(hex: 0x224466);
         fileprivate static let background: Color = Color(hex: 0x77BBAA);
         fileprivate static let foreground: Color = Color(hex: 0x226655);
-        fileprivate static let horizontalPadding: Int = 5;
+        fileprivate static let horizontalPadding: Int = 7;
         fileprivate static let separationPadding: Int = 0;
         fileprivate static let fontsize: Int = 14;
         fileprivate static let separator: String = "|" // "\u{2756}";
@@ -134,10 +138,13 @@ public extension MultiPlayer {
             VStack {
                 DevPanelInfo(table: table, session: session, transport: transport, sessionState: $sessionState, serverState: $serverState, margin: margin)
                 DevPanelSession(table: table, session: session, transport: transport, sessionState: $sessionState, serverState: $serverState, margin: 16)
+                DevPanelPlayers(table: table, session: session, transport: transport, sessionState: $sessionState, serverState: $serverState, margin: 16)
             }
             .onAppear { self.poller.start({
-                self.sessionState.update(from: self.session);
+                self.sessionState.update(from: self.session,
+                                         info: await self.transport.sessionInfo(session: self.session.session));
                 if let sessions: [String] = await self.transport.retrieveSessions() {
+                    self.serverState.update(sessions: sessions);
                     if let session: String = self.session.session {
                         if (!sessions.contains(session)) {
                             //
@@ -147,10 +154,41 @@ public extension MultiPlayer {
                             self.session.disconnect();
                         }
                     }
-                    self.serverState.update(sessions: sessions);
                 }
             })}
             .onDisappear { self.poller.stop() }
+        }
+    }
+
+    private struct DevPanelPlayers: View {
+
+        @ObservedObject private var table: Table
+                        private let session: MultiPlayer.Session;
+                        private let transport: MultiPlayer.HttpTransport;
+               @Binding private var sessionState: SessionState;
+               @Binding private var serverState: ServerState;
+                        private let margin: Int;
+
+        fileprivate init(table: Table,
+                         session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
+                         sessionState: Binding<SessionState>, serverState: Binding<ServerState>,
+                         margin: Int = 10) {
+            self.table = table;
+            self.session = session;
+            self.transport = transport;
+            self._sessionState = sessionState;
+            self._serverState = serverState;
+            self.margin = margin;
+        }
+
+        fileprivate var body: some View {
+            Spacer().frame(height: CGFloat(margin))
+            AnyDevPanel(table: table) {
+                HStack(spacing: CGFloat(DevPanel.separationPadding)) {
+                    PlayersView(players: self.sessionState.players, info: self.sessionState.info)
+                }
+                .padding(.horizontal, CGFloat(DevPanel.horizontalPadding))
+            }
         }
     }
 
@@ -494,7 +532,7 @@ public extension MultiPlayer {
         @ObservedObject private var table: Table;
                         private let content: Content;
 
-        private var height: CGFloat = 38;
+        private var verticalPadding: CGFloat = 3;
         private var padding: CGFloat = 8;
         private var background: Color = DevPanel.background;
 
@@ -504,23 +542,75 @@ public extension MultiPlayer {
         }
 
         fileprivate var body: some View {
-            HStack(spacing: padding) {
-                Spacer()
-                HStack(alignment: .firstTextBaseline) {
-                    content
+                HStack(spacing: padding) {
+                    Spacer()
+                    HStack(alignment: .firstTextBaseline) {
+                        VStack() {
+                            Spacer().frame(height: CGFloat(self.verticalPadding))
+                            content
+                            Spacer().frame(height: CGFloat(self.verticalPadding - 1))
+                        }
+                        Spacer()
+                    }
+                    .background(
+                        RoundedRectangle(cornerRadius: 4, style: .continuous)
+                            .fill(background)
+                            .opacity(0.8)
+                            .shadow(color: .black.opacity(0.3), radius: 8, x: 3, y: 6)
+                    )
                     Spacer()
                 }
-                .background(
-                    RoundedRectangle(cornerRadius: 4, style: .continuous)
-                        .fill(background)
-                        .opacity(0.8)
-                        .frame(height: height)
-                        .shadow(color: .black.opacity(0.3), radius: 8, x: 3, y: 6)
-                )
-                Spacer()
-            }
         }
     }
+
+private struct PlayersView: View {
+
+    fileprivate let players: [String];
+        private var sent: [String: Int] = [:]
+        private var received: [String: Int] = [:]
+        private var queued: [String: Int] = [:]
+
+    fileprivate init(players: [String], info: Json) {
+        self.players = players + ["foo", "bar"];
+        for player in players {
+            let (sent, queued, received) = HttpTransport.messageCounts(info: info, player: player);
+            self.sent[player] = sent;
+            self.queued[player] = queued;
+            self.received[player] = received;
+        }
+    }
+
+    private let fontSize: CGFloat = 12
+
+    private var columns: [GridItem] {
+        [ GridItem(.flexible(minimum: 60), alignment: .leading),
+          GridItem(.fixed(28), alignment: .trailing),
+          GridItem(.fixed(28), alignment: .trailing),
+          GridItem(.fixed(28), alignment: .trailing) ]
+    }
+
+    fileprivate var body: some View {
+        LazyVGrid(columns: columns, spacing: 4) {
+            Text("player").bold()
+            Text("sent").bold()
+            Text("received").bold()
+            Text("queued").bold()
+            ForEach(Array(players.enumerated()), id: \.element) { index, player in
+            // ForEach(players, id: \.self) { player in
+                let rowBackground = index.isMultiple(of: 2) ? Color.gray.opacity(0.4) : Color.clear;
+                // let rowBackground = index.isMultiple(of: 2) ? Color.red : Color.blue;
+                Group {
+                    Text(player).frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(sent[player] ?? 0)")
+                    Text("\(received[player] ?? 0)")
+                    Text("\(queued[player] ?? 0)")
+                }
+                .background(rowBackground)
+            }
+        }
+        .font(.system(size: fontSize, weight: .semibold, design: .monospaced))
+    }
+}
 
     private class Poller {
         private let interval: UInt64;
