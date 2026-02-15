@@ -130,12 +130,11 @@ public extension MultiPlayer {
                         private let margin: Int;
 
                         private let background: Color = Color(hex: 0x8BD2CC);
-                        private let horizontalPadding: Int = 10;
+                        private let horizontalPadding: Int = 5;
                         private let separationPadding: Int = 0;
-
+                        private let fontsize: Int = 14;
                         private let separator: String = "|" // "\u{2756}";
                         private let icons: Bool = true;
-                        private let fontsize: Int = 14;
 
         fileprivate init(table: Table,
                          session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
@@ -194,7 +193,7 @@ public extension MultiPlayer {
                         private let margin: Int;
 
                         private let background: Color = Color(hex: 0x8BD2CC);
-                        private let horizontalPadding: Int = 10;
+                        private let horizontalPadding: Int = 5;
                         private let separationPadding: Int = 0;
 
                         private let separator: String = "|" // "\u{2756}";
@@ -227,8 +226,8 @@ public extension MultiPlayer {
                                      size: sessionState.session == nil ? 14 : 13
                         )
                         .padding(.leading, -6)
-                    RegularText("", size: fontsize, leading: 7, trailing: 10)
-                    SmallButton(icons ? nil : "create", icon: icons ? "plus.rectangle.portrait" : nil, size: 17, disabled: self.sessionState.connected) {
+                    RegularText("", size: fontsize, leading: 7, trailing: 1)
+                    SmallButton(icons ? nil : "create", icon: icons ? "plus.rectangle.portrait" : nil, disabled: self.sessionState.connected) {
                         if (!self.session.connected) {
                             if await self.session.create() {
                                 self.sessionState.update(from: self.session);
@@ -236,7 +235,7 @@ public extension MultiPlayer {
                         }
                     }
                     RegularText("", padding: 4)
-                    SmallButton(icons ? nil : "join", icon: icons ? "rectangle.portrait.and.arrow.forward" : nil, size: 16, disabled: self.sessionState.connected) {
+                    SmallButton(icons ? nil : "join", icon: icons ? "rectangle.portrait.and.arrow.forward" : nil, disabled: self.sessionState.connected) {
                         if (!self.session.connected) {
                             if let session: String = serverState.sessionList.selected {
                                 if await self.session.join(session: session) {
@@ -249,7 +248,7 @@ public extension MultiPlayer {
                     DropDown(items: serverState.sessionList.sessionsShort,
                              selected: $serverState.sessionList.selectedShort)
                     Spacer()
-                    SmallButton(icons ? nil : "leave", icon: icons ? "xmark.rectangle.portrait" : nil, size: 18, disabled: !self.sessionState.leaveable) {
+                    SmallButton(icons ? nil : "leave", icon: icons ? "xmark.rectangle.portrait" : nil, disabled: !self.sessionState.leaveable) {
                         if (self.session.connected) {
                             if await self.session.leave() {
                                 self.sessionState.update(from: self.session);
@@ -334,11 +333,11 @@ public extension MultiPlayer {
         private let action: () async -> Void;
 
         private let cornerRadius: CGFloat = 8
-        private let horizontalPadding: CGFloat = 10;
+        private let horizontalPadding: CGFloat = 6;
         private let verticalPadding: CGFloat = 3;
     
         public init( _ text: String? = nil, icon: String? = nil,
-                       background: Color? = nil, foreground: Color? = nil, size: Int = 13,
+                       background: Color? = nil, foreground: Color? = nil, size: Int = 14,
                        disabled: Bool = false, action: @escaping () async -> Void) {
             self.text = text;
             self.icon = icon;
