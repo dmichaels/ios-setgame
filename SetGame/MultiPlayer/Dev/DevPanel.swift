@@ -251,6 +251,18 @@ public extension MultiPlayer {
                         }
                     }
                     RegularText("", padding: 4)
+                    JoinControl(items: serverState.sessionList.sessionsShort,
+                                selected: $serverState.sessionList.selectedShort,
+                                disabled: self.sessionState.connected) {
+                        if (!self.session.connected) {
+                            if let session: String = serverState.sessionList.selected {
+                                if await self.session.join(session: session) {
+                                    self.sessionState.update(from: self.session);
+                                }
+                            }
+                        }
+                    }
+                    /*
                     SmallButton(DevPanel.icons ? nil : "join", icon: DevPanel.icons ? "rectangle.portrait.and.arrow.forward" : nil, disabled: self.sessionState.connected) {
                         if (!self.session.connected) {
                             if let session: String = serverState.sessionList.selected {
@@ -263,6 +275,7 @@ public extension MultiPlayer {
                     RegularText("", padding: 4)
                     DropDown(items: serverState.sessionList.sessionsShort,
                              selected: $serverState.sessionList.selectedShort)
+                    */
                     Spacer()
                     SmallButton(DevPanel.icons ? nil : "host",
                                 icon: DevPanel.icons ? "xmark.rectangle.portrait" : nil,
@@ -348,6 +361,60 @@ public extension MultiPlayer {
         }
     }
 
+private struct JoinControl: View {
+
+    let items: [String]
+    @Binding var selected: String
+    let disabled: Bool
+    let action: () async -> Void
+
+    private let fontSize: CGFloat = 14;
+    private let horizontalPadding: CGFloat = 7;
+    private let verticalPadding: CGFloat = 5;
+    private let cornerRadius: CGFloat = 8;
+    private let foreground: Color = .yellow;
+    private let background: Color = DevPanel.foreground;
+    private let foregroundDisabled: Color = .gray;
+
+    var body: some View {
+        HStack(spacing: 0) {
+
+            // JOIN button
+            Button {
+                Task { await action() }
+            } label: {
+                Text("join:")
+                    .font(.system(size: self.fontSize, weight: .semibold))
+                    .foregroundColor(self.foreground)
+                    .padding(.leading, self.horizontalPadding)
+                    .padding(.vertical, self.verticalPadding)
+            }
+            .buttonStyle(.plain)
+
+            // Divider line between them
+            Rectangle().fill(self.foreground.opacity(0.4)).frame(width: 3, height: 1)
+
+            // Dropdown
+            Menu {
+                ForEach(items, id: \.self) { item in
+                    Button(item) { selected = item }
+                }
+            } label: {
+                Text(selected)
+                    .font(.system(size: self.fontSize, weight: .bold))
+                    .foregroundColor(disabled ? self.foregroundDisabled : self.foreground)
+                    .padding(.trailing, self.horizontalPadding)
+                    .padding(.vertical, self.verticalPadding)
+            }
+        }
+        .background(
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .fill(self.background)
+        )
+        .disabled(disabled)
+    }
+}
+
     private struct SmallButton: View {
 
         private let text: String?;
@@ -358,9 +425,9 @@ public extension MultiPlayer {
         private let disabled: Bool;
         private let action: () async -> Void;
 
+        private let horizontalPadding: CGFloat = 7;
+        private let verticalPadding: CGFloat = 5;
         private let cornerRadius: CGFloat = 8
-        private let horizontalPadding: CGFloat = 6;
-        private let verticalPadding: CGFloat = 3;
     
         public init( _ text: String? = nil, icon: String? = nil,
                        background: Color? = nil, foreground: Color? = nil, size: Int = 14,
@@ -415,7 +482,11 @@ public extension MultiPlayer {
             } label: {
                 Text(selected.isEmpty ? (items.first ?? EmptySetChar) : selected)
                     .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(DevPanel.foreground)
+                    // .foregroundColor(DevPanel.foreground)
+                    .foregroundColor(.yellow)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6, style: .continuous).fill(DevPanel.foreground)
+                    )
             }
             .offset(y: 2)
             .onAppear {
