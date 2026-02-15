@@ -43,6 +43,15 @@ private struct SessionList {
         self.update(sessions);
     }
 
+    fileprivate mutating func select(_ session: String?) {
+        if let session: String = session {
+            if (!self.sessions.contains(session)) {
+                self.sessions.append(session);
+            }
+            self.selectedShort = self.shorten(session);
+        }
+    }
+
     fileprivate mutating func update(_ sessions: [String]) {
         self.sessions = sessions;
         (self.sessionsShort, self.shortLength) = SessionList.shortenValues(sessions);
@@ -88,6 +97,13 @@ public extension MultiPlayer {
                  @State private var serverState: ServerState;
                         private let poller: Poller;
 
+        fileprivate static let background: Color = Color(hex: 0x8BD2CC);
+        fileprivate static let horizontalPadding: Int = 5;
+        fileprivate static let separationPadding: Int = 0;
+        fileprivate static let fontsize: Int = 14;
+        fileprivate static let separator: String = "|" // "\u{2756}";
+        fileprivate static let icons: Bool = false;
+
         public init(table: Table, settings: Settings, margin: Int = 0) {
             self.table = table;
             self.settings = settings;
@@ -129,13 +145,6 @@ public extension MultiPlayer {
                @Binding private var serverState: ServerState;
                         private let margin: Int;
 
-                        private let background: Color = Color(hex: 0x8BD2CC);
-                        private let horizontalPadding: Int = 5;
-                        private let separationPadding: Int = 0;
-                        private let fontsize: Int = 14;
-                        private let separator: String = "|" // "\u{2756}";
-                        private let icons: Bool = true;
-
         fileprivate init(table: Table,
                          session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
                          sessionState: Binding<SessionState>, serverState: Binding<ServerState>,
@@ -151,34 +160,34 @@ public extension MultiPlayer {
         fileprivate var body: some View {
             Spacer().frame(height: CGFloat(margin))
             AnyDevPanel(table: table) {
-                HStack(spacing: CGFloat(separationPadding)) {
-                    RegularText("me:", size: fontsize)
+                HStack(spacing: CGFloat(DevPanel.separationPadding)) {
+                    RegularText("me:", size: DevPanel.fontsize)
                         CopyableText(text: sessionState.player,
                                      // foreground: self.info.isHost ? .red : .primary,
-                                     background: self.background,
+                                     background: DevPanel.background,
                                      bold: true,
                                      underline: false,
                                      strikeout: false,
-                                     size: fontsize
+                                     size: DevPanel.fontsize
                         )
                         .padding(.leading, -6)
-                    RegularText("session:", size: fontsize, leading: 4)
+                    RegularText("session:", size: DevPanel.fontsize, leading: 4)
                         CopyableText(text: serverState.sessionList.shorten(sessionState.session, fallback: "∅"),
                                      // foreground: self.info.isHost ? .red : .primary,
-                                     background: self.background,
+                                     background: DevPanel.background,
                                      bold: true,
                                      underline: false,
                                      strikeout: false,
                                      size: sessionState.session == nil ? 14 : 13
                         )
                         .padding(.leading, -6)
-                    RegularText("host:", size: fontsize, leading: 4)
-                    RegularText("\(self.sessionState.host ?? "∅")", size: fontsize, leading: 4)
-                    RegularText("players:", size: fontsize, leading: 8)
-                    RegularText("\(self.sessionState.players.count)", size: fontsize, leading: 4)
+                    RegularText("host:", size: DevPanel.fontsize, leading: 4)
+                    RegularText("\(self.sessionState.host ?? "∅")", size: DevPanel.fontsize, leading: 4)
+                    RegularText("players:", size: DevPanel.fontsize, leading: 8)
+                    RegularText("\(self.sessionState.players.count)", size: DevPanel.fontsize, leading: 4)
                     Spacer()
                 }
-                .padding(.horizontal, CGFloat(horizontalPadding))
+                .padding(.horizontal, CGFloat(DevPanel.horizontalPadding))
             }
         }
     }
@@ -192,14 +201,6 @@ public extension MultiPlayer {
                @Binding private var serverState: ServerState;
                         private let margin: Int;
 
-                        private let background: Color = Color(hex: 0x8BD2CC);
-                        private let horizontalPadding: Int = 5;
-                        private let separationPadding: Int = 0;
-
-                        private let separator: String = "|" // "\u{2756}";
-                        private let icons: Bool = false;
-                        private let fontsize: Int = 14;
-
         fileprivate init(table: Table,
                          session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
                          sessionState: Binding<SessionState>, serverState: Binding<ServerState>,
@@ -215,27 +216,28 @@ public extension MultiPlayer {
         fileprivate var body: some View {
             Spacer().frame(height: CGFloat(margin))
             AnyDevPanel(table: table) {
-                HStack(spacing: CGFloat(separationPadding)) {
-                    RegularText("session:", size: fontsize, leading: 4)
+                HStack(spacing: CGFloat(DevPanel.separationPadding)) {
+                    RegularText("session:", size: DevPanel.fontsize, leading: 4)
                         CopyableText(text: serverState.sessionList.shorten(sessionState.session, fallback: "∅"),
                                      // foreground: self.info.isHost ? .red : .primary,
-                                     background: self.background,
+                                     background: DevPanel.background,
                                      bold: true,
                                      underline: false,
                                      strikeout: false,
                                      size: sessionState.session == nil ? 14 : 13
                         )
                         .padding(.leading, -6)
-                    RegularText("", size: fontsize, leading: 7, trailing: 1)
-                    SmallButton(icons ? nil : "create", icon: icons ? "plus.rectangle.portrait" : nil, disabled: self.sessionState.connected) {
+                    RegularText("", size: DevPanel.fontsize, leading: 7, trailing: 1)
+                    SmallButton(DevPanel.icons ? nil : "create", icon: DevPanel.icons ? "plus.rectangle.portrait" : nil, disabled: self.sessionState.connected) {
                         if (!self.session.connected) {
                             if await self.session.create() {
                                 self.sessionState.update(from: self.session);
+                                self.serverState.sessionList.select(self.session.session);
                             }
                         }
                     }
                     RegularText("", padding: 4)
-                    SmallButton(icons ? nil : "join", icon: icons ? "rectangle.portrait.and.arrow.forward" : nil, disabled: self.sessionState.connected) {
+                    SmallButton(DevPanel.icons ? nil : "join", icon: DevPanel.icons ? "rectangle.portrait.and.arrow.forward" : nil, disabled: self.sessionState.connected) {
                         if (!self.session.connected) {
                             if let session: String = serverState.sessionList.selected {
                                 if await self.session.join(session: session) {
@@ -248,7 +250,7 @@ public extension MultiPlayer {
                     DropDown(items: serverState.sessionList.sessionsShort,
                              selected: $serverState.sessionList.selectedShort)
                     Spacer()
-                    SmallButton(icons ? nil : "leave", icon: icons ? "xmark.rectangle.portrait" : nil, disabled: !self.sessionState.leaveable) {
+                    SmallButton(DevPanel.icons ? nil : "leave", icon: DevPanel.icons ? "xmark.rectangle.portrait" : nil, disabled: !self.sessionState.leaveable) {
                         if (self.session.connected) {
                             if await self.session.leave() {
                                 self.sessionState.update(from: self.session);
@@ -256,7 +258,7 @@ public extension MultiPlayer {
                         }
                     }
                 }
-                .padding(.horizontal, CGFloat(horizontalPadding))
+                .padding(.horizontal, CGFloat(DevPanel.horizontalPadding))
             }
         }
     }
