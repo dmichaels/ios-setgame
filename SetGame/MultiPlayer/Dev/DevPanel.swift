@@ -394,7 +394,7 @@ public extension MultiPlayer {
         }
 
         fileprivate var body: some View {
-            AnyDevPanel(table: table, margin: margin) {
+            AnyDevPanel(table: table, vertical: 5, margin: margin) {
                 RegularText("server: ")
                     RegularText(transport.server, color: self.sessionState.pingable ? .primary : Const.highlightColor, bold: true)
                         RegularText(self.sessionState.pingable ? Const.checkChar : Const.xChar,
