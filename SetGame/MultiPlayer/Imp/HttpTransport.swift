@@ -205,6 +205,29 @@ public extension MultiPlayer {
             return (sent: sent, queued: queued, received: received);
         }
 
+        public static func messagesReceived(info: Json, player: String) -> [Message]? {
+            var result: [Message] = [];
+            if let messagesInfo: [Json] = info["received_messages"] as? [Json] {
+                for messageInfo: Json in messagesInfo {
+                    if let messages: [Json] = messageInfo[player] as? [Json] {
+                        print("XYZ-FOOBAR")
+                        print(messages)
+                        for message in messages {
+                            print("XYZ-GOOBAR")
+                            print(message)
+                            if let message = MessageConversion.toMessage(json: message) {
+                                print("XYZ-HOOBAR")
+                                print(message)
+                                result.append(message);
+                            }
+                        }
+                    }
+                }
+                return result;
+            }
+            return nil;
+        }
+
         public var engaged: Bool { self.pollTask != nil }
 
         public var server: String {

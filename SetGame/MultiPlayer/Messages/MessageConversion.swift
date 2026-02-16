@@ -38,6 +38,16 @@ public extension MultiPlayer {
             return nil;
         }
 
+        public static func toMessage(json: Json) -> Message? {
+            if JSONSerialization.isValidJSONObject(json),
+               let data: Data = try? JSONSerialization.data(withJSONObject: json) {
+                if let message: Message = MessageConversion.toMessage(data: data) {
+                    return message;
+                }
+             }
+             return nil;
+        }
+
         fileprivate static func toCards(_ codes: [String]) -> [TableCard] {
             return codes.compactMap { TableCard($0) };
         }

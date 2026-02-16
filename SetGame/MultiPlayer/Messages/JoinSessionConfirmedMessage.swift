@@ -1,6 +1,9 @@
+import Foundation
+
 public extension MultiPlayer {
 
     public struct JoinSessionConfirmedMessage: Message {
+        public let id: UUID = UUID();
         public let type: MessageType;
         public let session: String;
         public let host: String;
