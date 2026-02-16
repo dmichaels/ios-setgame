@@ -1,16 +1,17 @@
 import SwiftUI
 
 private struct SessionState {
-    public var session: String? = nil;
-    public var host: String? = nil;
-    public let player: String;
-    public var hosting: Bool { self.player == (self.host ?? "") }
-    public var players: [String] = [];
-    public var connected: Bool = false;
-    public var leaveable: Bool = false;
-    public var info: Json = [:];
-    // public var sessionShort: String? { serverState.sessionList.shorten(sessionState.session }
-    public mutating func update(from session: MultiPlayer.Session, info: Json? = nil) {
+    fileprivate var session: String? = nil;
+    fileprivate var host: String? = nil;
+    fileprivate let player: String;
+    fileprivate var hosting: Bool { self.player == (self.host ?? "") }
+    fileprivate var players: [String] = [];
+    fileprivate var connected: Bool = false;
+    fileprivate var leaveable: Bool = false;
+    fileprivate var info: Json = [:];
+    fileprivate var sessions: SessionList = SessionList(); // TODO
+    fileprivate var sessionShort: String { self.sessions.shorten(self.session) } // TODO
+    public mutating func update(from session: MultiPlayer.Session, info: Json? = nil, sessions: [String]? = nil) {
         self.session = session.session;
         self.host = session.host;
         self.players = session.players;
@@ -19,14 +20,13 @@ private struct SessionState {
         if let info: Json = info {
             self.info = info;
         }
-    }
-}
-
-private struct ServerState {
-    fileprivate var sessionList: SessionList = SessionList();
-    fileprivate mutating func update(sessions: [String]?) {
         if let sessions: [String] = sessions {
-            self.sessionList.update(sessions.reversed());
+            self.sessions.update(sessions.reversed());
+        }
+    }
+    fileprivate mutating func updateSessions(sessions: [String]?) {
+        if let sessions: [String] = sessions {
+            self.sessions.update(sessions.reversed());
         }
     }
 }
@@ -46,6 +46,10 @@ private struct SessionList {
 
     fileprivate init(_ sessions: [String] = []) {
         self.update(sessions);
+    }
+
+    fileprivate func contains(_ session: String?) -> Bool {
+        return (session != nil) && self.sessions.contains(session!) ? true : false;
     }
 
     fileprivate mutating func select(_ session: String?) {
@@ -108,13 +112,8 @@ public extension MultiPlayer {
                         private let session: MultiPlayer.Session;
                         private let transport: MultiPlayer.HttpTransport;
                  @State private var sessionState: SessionState;
-                 @State private var serverState: ServerState;
                         private let poller: Poller;
 
-        // fileprivate static let background: Color = Color(hex: 0x8BD2CC);
-        // fileprivate static let foreground: Color = Color(hex: 0x226622);
-        // fileprivate static let background: Color = Color(hex: 0x66AAFF);
-        // fileprivate static let foreground: Color = Color(hex: 0x224466);
         fileprivate static let background: Color = Color(hex: 0x77BBAA);
         fileprivate static let foreground: Color = Color(hex: 0x226655);
         fileprivate static let horizontalPadding: Int = 8;
@@ -131,21 +130,25 @@ public extension MultiPlayer {
             self.session = session;
             self.transport = session.transport as! MultiPlayer.HttpTransport;
             self.sessionState = SessionState(player: session.player);
-            self.serverState = ServerState();
             self.poller = Poller(seconds: 2);
         }
 
         public var body: some View {
             VStack {
-                DevPanelInfo(table: table, session: session, transport: transport, sessionState: $sessionState, serverState: $serverState, margin: margin)
-                DevPanelSession(table: table, session: session, transport: transport, sessionState: $sessionState, serverState: $serverState, margin: 16)
-                DevPanelPlayers(table: table, session: session, transport: transport, sessionState: $sessionState, serverState: $serverState, margin: 16)
+                DevPanelInfo(table: table, session: session, transport: transport, sessionState: $sessionState, margin: margin)
+                DevPanelSession(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 16)
+                DevPanelPlayers(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 16)
             }
             .onAppear { self.poller.start({
                 self.sessionState.update(from: self.session,
-                                         info: await self.transport.sessionInfo(session: self.session.session));
+                                         info: await self.transport.sessionInfo(session: self.session.session),
+                                         sessions: await self.transport.retrieveSessions());
+                if (!self.sessionState.sessions.contains(self.session.session)) {
+                    self.session.disconnect();
+                }
+                /*
                 if let sessions: [String] = await self.transport.retrieveSessions() {
-                    self.serverState.update(sessions: sessions);
+                    self.sessionState.updateSessions(sessions: sessions);
                     if let session: String = self.session.session {
                         if (!sessions.contains(session)) {
                             //
@@ -156,6 +159,7 @@ public extension MultiPlayer {
                         }
                     }
                 }
+                */
             })}
             .onDisappear { self.poller.stop() }
         }
@@ -167,30 +171,28 @@ public extension MultiPlayer {
                         private let session: MultiPlayer.Session;
                         private let transport: MultiPlayer.HttpTransport;
                @Binding private var sessionState: SessionState;
-               @Binding private var serverState: ServerState;
                         private let margin: Int;
 
         fileprivate init(table: Table,
                          session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
-                         sessionState: Binding<SessionState>, serverState: Binding<ServerState>,
+                         sessionState: Binding<SessionState>,
                          margin: Int = 10) {
             self.table = table;
             self.session = session;
             self.transport = transport;
             self._sessionState = sessionState;
-            self._serverState = serverState;
             self.margin = margin;
         }
 
         fileprivate var body: some View {
             AnyDevPanel(table: table, margin: margin) {
                 RegularText("me:", size: DevPanel.fontSize)
-                    CopyableText(sessionState.player, color: self.session.hosting ? .red : .primary, bold: true)
+                    CopyableText(sessionState.player, color: self.session.hosting ? .red : .primary, semibold: true)
                         .padding(.leading, -6)
                 RegularText("host:", size: DevPanel.fontSize, leading: 4)
-                CopyableText("\(self.sessionState.host ?? EmptySetChar)", color: self.session.hosting ? .red : .primary)
+                CopyableText("\(self.sessionState.host ?? EmptySetChar)", color: self.session.hosting ? .red : .primary, semibold: true)
                 RegularText("players:", size: DevPanel.fontSize, leading: 8)
-                RegularText("\(self.sessionState.players.count == 0 ? EmptySetChar : "\(self.sessionState.players.count)")", size: DevPanel.fontSize, leading: 4)
+                RegularText("\(self.sessionState.players.count == 0 ? EmptySetChar : "\(self.sessionState.players.count)")", leading: 4)
                 Spacer()
                 SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", size: 18, disabled: !self.sessionState.connected) {
                     if (self.transport.engaged) {
@@ -210,40 +212,38 @@ public extension MultiPlayer {
                         private let session: MultiPlayer.Session;
                         private let transport: MultiPlayer.HttpTransport;
                @Binding private var sessionState: SessionState;
-               @Binding private var serverState: ServerState;
                         private let margin: Int;
 
         fileprivate init(table: Table,
                          session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
-                         sessionState: Binding<SessionState>, serverState: Binding<ServerState>,
+                         sessionState: Binding<SessionState>,
                          margin: Int = 10) {
             self.table = table;
             self.session = session;
             self.transport = transport;
             self._sessionState = sessionState;
-            self._serverState = serverState;
             self.margin = margin;
         }
 
         fileprivate var body: some View {
             AnyDevPanel(table: table, margin: margin) {
                 RegularText("session:", size: DevPanel.fontSize)
-                    CopyableText(serverState.sessionList.shorten(sessionState.session, fallback: EmptySetChar), copy: sessionState.session, bold: true)
+                    CopyableText(sessionState.sessionShort, copy: sessionState.session, bold: true)
                     .padding(.leading, -6).padding(.trailing, 4)
                 SmallButton(DevPanel.icons ? nil : "create", icon: DevPanel.icons ? "plus.rectangle.portrait" : nil, disabled: self.sessionState.connected) {
                     if (!self.session.connected) {
                         if await self.session.create() {
                             self.sessionState.update(from: self.session);
-                            self.serverState.sessionList.select(self.session.session);
+                            self.sessionState.sessions.select(self.session.session);
                         }
                     }
                 }
                 RegularText("", padding: 1)
-                JoinControl(items: serverState.sessionList.sessionsShort,
-                            selected: $serverState.sessionList.selectedShort,
+                JoinControl(items: sessionState.sessions.sessionsShort,
+                            selected: $sessionState.sessions.selectedShort,
                             disabled: self.sessionState.connected) {
                     if (!self.session.connected) {
-                        if let session: String = serverState.sessionList.selected {
+                        if let session: String = sessionState.sessions.selected {
                             if await self.session.join(session: session) {
                                 self.sessionState.update(from: self.session);
                             }
@@ -282,18 +282,16 @@ public extension MultiPlayer {
                         private let session: MultiPlayer.Session;
                         private let transport: MultiPlayer.HttpTransport;
                @Binding private var sessionState: SessionState;
-               @Binding private var serverState: ServerState;
                         private let margin: Int;
 
         fileprivate init(table: Table,
                          session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
-                         sessionState: Binding<SessionState>, serverState: Binding<ServerState>,
+                         sessionState: Binding<SessionState>,
                          margin: Int = 10) {
             self.table = table;
             self.session = session;
             self.transport = transport;
             self._sessionState = sessionState;
-            self._serverState = serverState;
             self.margin = margin;
         }
 
@@ -540,19 +538,23 @@ public extension MultiPlayer {
         private let text: String;
         private let size: Int;
         private let color: Color;
+        private var bold: Bool = false;
+        private var semibold: Bool = false;
         private let leading: Int;
         private let trailing: Int;
-        fileprivate init(_ text: String, size: Int = 13, color: Color = .primary,
+        fileprivate init(_ text: String, size: Int = 13, color: Color = .primary, bold: Bool = false, semibold: Bool = false,
                            leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil) {
             self.text = text;
             self.size = size;
+            self.bold = bold;
+            self.semibold = semibold;
             self.color = color;
             self.leading = leading ?? padding ?? 0;
             self.trailing = trailing ?? padding ?? 0;
         }
         fileprivate var body: some View {
             Text(self.text)
-                .font(.system(size: CGFloat(self.size), weight: .semibold))
+                .font(.system(size: CGFloat(self.size), weight: bold ? .bold : (semibold ? .semibold : .regular)))
                 .foregroundColor(self.color)
                 .padding(.leading, CGFloat(self.leading)).padding(.trailing, CGFloat(self.trailing))
         }
@@ -565,22 +567,24 @@ public extension MultiPlayer {
         private var color: Color = .primary;
         private var background: Color = .white;
         private var bold: Bool = false;
+        private var semibold: Bool = false;
         private var underline: Bool = false;
         private var strikeout: Bool = false;
         private var fontSize: Int = 13;
         @State private var copied: Bool = false;
 
-        fileprivate init(_ text: String, copy: String? = nil, color: Color = .primary, bold: Bool = false, underline: Bool = false) {
+        fileprivate init(_ text: String, copy: String? = nil, color: Color = .primary, bold: Bool = false, semibold: Bool = false, underline: Bool = false) {
             self.text = text;
             self.copy = copy ?? text;
             self.bold = bold;
+            self.semibold = semibold;
             self.underline = underline;
         }
 
         fileprivate var body: some View {
             Text(text)
-                .font(.system(size: CGFloat(fontSize), weight: .semibold))
-                .fontWeight(bold ? .bold : .regular)
+                .font(.system(size: CGFloat(fontSize), weight: bold ? .bold : (semibold ? .semibold : .regular)))
+                // .fontWeight(bold ? .bold : .regular)
                 .underline(underline)
                 .strikethrough(strikeout)
                 .padding(8)
