@@ -183,8 +183,7 @@ public extension MultiPlayer {
 
         fileprivate init(table: Table,
                          session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
-                         sessionState: Binding<SessionState>,
-                         margin: Int = 10) {
+                         sessionState: Binding<SessionState>, margin: Int = 10) {
             self.table = table;
             self.session = session;
             self.transport = transport;
@@ -227,8 +226,7 @@ public extension MultiPlayer {
 
         fileprivate init(table: Table,
                          session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
-                         sessionState: Binding<SessionState>,
-                         margin: Int = 10) {
+                         sessionState: Binding<SessionState>, margin: Int = 10) {
             self.table = table;
             self.session = session;
             self.transport = transport;
@@ -293,8 +291,7 @@ public extension MultiPlayer {
 
         fileprivate init(table: Table,
                          session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
-                         sessionState: Binding<SessionState>,
-                         margin: Int = 10) {
+                         sessionState: Binding<SessionState>, margin: Int = 10) {
             self.table = table;
             self.session = session;
             self.transport = transport;
@@ -373,6 +370,101 @@ public extension MultiPlayer {
         }
     }
 
+    private struct AnyDevPanel<Content: View>: View {
+
+        @ObservedObject private var table: Table;
+                        private let margin: Int;
+                        private let content: Content;
+
+        private var verticalPadding: CGFloat = 3;
+        private var padding: CGFloat = 8;
+        private var background: Color = Const.background;
+        private let separationPadding: Int = 0;
+        private let horizontalPadding: Int = 8;
+
+        fileprivate init( table: Table, margin: Int = 0, @ViewBuilder content: () -> Content) {
+            self.table = table;
+            self.margin = margin;
+            self.content = content();
+        }
+
+        fileprivate var body: some View {
+            if (margin > 0) { Spacer().frame(height: CGFloat(margin)) }
+            HStack(spacing: padding) {
+                Spacer()
+                HStack(alignment: .firstTextBaseline) {
+                    VStack() {
+                        Spacer().frame(height: CGFloat(self.verticalPadding))
+                        HStack(spacing: CGFloat(self.separationPadding)) {
+                            content
+                        } .padding(.leading, CGFloat(self.horizontalPadding))
+                        Spacer().frame(height: CGFloat(self.verticalPadding - 1))
+                    }
+                    Spacer()
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 4, style: .continuous)
+                        .fill(background)
+                        .opacity(0.8)
+                        .shadow(color: .black.opacity(0.3), radius: 8, x: 3, y: 6)
+                )
+                Spacer()
+            }
+        }
+    }
+
+    private struct JoinControl: View {
+
+                 fileprivate let items: [String];
+        @Binding fileprivate var selected: String;
+                 fileprivate let size: Int = Const.fontSize;
+                 fileprivate let disabled: Bool;
+                 fileprivate let action: () async -> Void;
+
+        private let horizontalPadding: CGFloat = 8;
+        private let verticalPadding: CGFloat = 4;
+        private let cornerRadius: CGFloat = 8;
+        private let color: Color = .yellow;
+        private let background: Color = Const.foreground;
+        private let foregroundDisabled: Color = .gray;
+
+        fileprivate var body: some View {
+            HStack(spacing: 0) {
+                Button {
+                    Task { await action() }
+                } label: {
+                    Text("join:")
+                        .font(.system(size: CGFloat(self.size), weight: .semibold))
+                        .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
+                        .padding(.leading, self.horizontalPadding)
+                        .padding(.vertical, self.verticalPadding)
+                }
+                .buttonStyle(.plain)
+                Rectangle().fill(self.color.opacity(0.4)).frame(width: 3, height: 1)
+                Menu {
+                    ForEach(items, id: \.self) { item in
+                        Button(item) { selected = item }
+                    }
+                } label: {
+                    Text(selected.isEmpty ? (items.first ?? Const.emptySetChar) : selected)
+                        .font(.system(size: CGFloat(self.size - 1)))
+                        .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
+                        .padding(.trailing, self.horizontalPadding)
+                        .padding(.vertical, self.verticalPadding)
+                }
+            }
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(disabled ? self.background.opacity(0.4) : self.background)
+            )
+            .onAppear {
+                if selected.isEmpty, let first = items.first {
+                    selected = first;
+                }
+            }
+        }
+    }
+
     private struct SmallButton: View {
 
         private let text: String?;
@@ -431,101 +523,6 @@ public extension MultiPlayer {
             .buttonStyle(.plain)
             .disabled(disabled)
             .padding(.leading, CGFloat(self.leading)).padding(.trailing, CGFloat(self.trailing))
-        }
-    }
-
-    private struct JoinControl: View {
-
-                 fileprivate let items: [String];
-        @Binding fileprivate var selected: String;
-                 fileprivate let size: Int = Const.fontSize;
-                 fileprivate let disabled: Bool;
-                 fileprivate let action: () async -> Void;
-
-        private let horizontalPadding: CGFloat = 8;
-        private let verticalPadding: CGFloat = 4;
-        private let cornerRadius: CGFloat = 8;
-        private let color: Color = .yellow;
-        private let background: Color = Const.foreground;
-        private let foregroundDisabled: Color = .gray;
-
-        fileprivate var body: some View {
-            HStack(spacing: 0) {
-                Button {
-                    Task { await action() }
-                } label: {
-                    Text("join:")
-                        .font(.system(size: CGFloat(self.size), weight: .semibold))
-                        .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
-                        .padding(.leading, self.horizontalPadding)
-                        .padding(.vertical, self.verticalPadding)
-                }
-                .buttonStyle(.plain)
-                Rectangle().fill(self.color.opacity(0.4)).frame(width: 3, height: 1)
-                Menu {
-                    ForEach(items, id: \.self) { item in
-                        Button(item) { selected = item }
-                    }
-                } label: {
-                    Text(selected.isEmpty ? (items.first ?? Const.emptySetChar) : selected)
-                        .font(.system(size: CGFloat(self.size - 1)))
-                        .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
-                        .padding(.trailing, self.horizontalPadding)
-                        .padding(.vertical, self.verticalPadding)
-                }
-            }
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(disabled ? self.background.opacity(0.4) : self.background)
-            )
-            .onAppear {
-                if selected.isEmpty, let first = items.first {
-                    selected = first;
-                }
-            }
-        }
-    }
-
-    private struct AnyDevPanel<Content: View>: View {
-
-        @ObservedObject private var table: Table;
-                        private let margin: Int;
-                        private let content: Content;
-
-        private var verticalPadding: CGFloat = 3;
-        private var padding: CGFloat = 8;
-        private var background: Color = Const.background;
-        private let separationPadding: Int = 0;
-        private let horizontalPadding: Int = 8;
-
-        fileprivate init( table: Table, margin: Int = 0, @ViewBuilder content: () -> Content) {
-            self.table = table;
-            self.margin = margin;
-            self.content = content();
-        }
-
-        fileprivate var body: some View {
-            if (margin > 0) { Spacer().frame(height: CGFloat(margin)) }
-            HStack(spacing: padding) {
-                Spacer()
-                HStack(alignment: .firstTextBaseline) {
-                    VStack() {
-                        Spacer().frame(height: CGFloat(self.verticalPadding))
-                        HStack(spacing: CGFloat(self.separationPadding)) {
-                            content
-                        } .padding(.leading, CGFloat(self.horizontalPadding))
-                        Spacer().frame(height: CGFloat(self.verticalPadding - 1))
-                    }
-                    Spacer()
-                }
-                .background(
-                    RoundedRectangle(cornerRadius: 4, style: .continuous)
-                        .fill(background)
-                        .opacity(0.8)
-                        .shadow(color: .black.opacity(0.3), radius: 8, x: 3, y: 6)
-                )
-                Spacer()
-            }
         }
     }
 
