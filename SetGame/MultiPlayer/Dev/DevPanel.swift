@@ -371,34 +371,34 @@ public extension MultiPlayer {
     private struct AnyDevPanel<Content: View>: View {
 
         @ObservedObject private var table: Table;
-                        private let vertical: Int;
-                        private let tmargin: Int;
+                        private let verticalPadding: Int;
+                        private let topMargin: Int;
                         private let content: Content;
 
-                        private let hmargin: Int;
+                        private let horizontalMargin: Int;
                         private var background: Color = Const.background;
                         private let separationPadding: Int = 0;
                         private let horizontalPadding: Int = 8;
 
         fileprivate init( table: Table, vertical: Int = 3, margin: Int = 0,  hmargin: Int = 4, @ViewBuilder content: () -> Content) {
             self.table = table;
-            self.tmargin = margin;
-            self.hmargin = hmargin;
-            self.vertical = vertical;
+            self.verticalPadding = vertical;
+            self.topMargin = margin;
+            self.horizontalMargin = hmargin;
             self.content = content();
         }
 
         fileprivate var body: some View {
-            if (self.tmargin > 0) { Spacer().frame(height: CGFloat(self.tmargin)) }
-            HStack(spacing: CGFloat(self.hmargin)) {
+            if (self.topMargin > 0) { Spacer().frame(height: CGFloat(self.topMargin)) }
+            HStack(spacing: CGFloat(self.horizontalMargin)) {
                 Spacer()
                 HStack(alignment: .firstTextBaseline) {
                     VStack() {
-                        Spacer().frame(height: CGFloat(self.vertical))
+                        Spacer().frame(height: CGFloat(self.verticalPadding))
                         HStack(spacing: CGFloat(self.separationPadding)) {
                             content
                         }.padding(.leading, CGFloat(self.horizontalPadding))
-                        Spacer().frame(height: CGFloat(self.vertical - 1))
+                        Spacer().frame(height: CGFloat(self.verticalPadding - 1))
                     }
                     Spacer()
                 }
