@@ -135,6 +135,7 @@ public extension MultiPlayer {
                 DevPanelInfo(table: table, session: session, transport: transport, sessionState: $sessionState, margin: margin)
                 DevPanelSession(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
                 DevPanelPlayers(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
+                DevPanelMessages(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
                 DevPanelServer(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
             }
             .onAppear { self.poller.start({
@@ -348,17 +349,100 @@ public extension MultiPlayer {
                                 .offset(y: 0.5)
                         }
                         HStack {
-                            Text(player + (player == self.player ? " (me)" : ""))
+                            Text(player + (player == self.player ? " ◀" : ""))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .foregroundColor(player == self.host ? Const.highlightColor : Color.primary)
                             Text(self.noplayers ? Const.emptySetChar : "\(sent[player] ?? 0)")
                                 .frame(width: 40, alignment: .trailing)
-
                             Text(self.noplayers ? Const.emptySetChar : "\(received[player] ?? 0)")
                                 .frame(width: 70, alignment: .trailing)
 
                             Text(self.noplayers ? Const.emptySetChar : "\(queued[player] ?? 0)")
                                 .frame(width: 60, alignment: .trailing)
+                        }
+                        .padding(.vertical, 2)
+                        if index < players.count - 1 {
+                            Rectangle()
+                                . fill(Color.black)
+                                .frame(height: 2 / UIScreen.main.scale)
+                                .offset(y: 0.5)
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .font(.system(size: CGFloat(self.size), weight: .semibold))
+            }
+        }
+    }
+
+    private struct DevPanelMessages: View {
+
+        @ObservedObject private var table: Table
+                        private let session: MultiPlayer.Session;
+                        private let transport: MultiPlayer.HttpTransport;
+               @Binding private var sessionState: SessionState;
+                        private let margin: Int;
+
+        fileprivate init(table: Table,
+                         session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
+                         sessionState: Binding<SessionState>, margin: Int = 10) {
+            self.table = table;
+            self.session = session;
+            self.transport = transport;
+            self._sessionState = sessionState;
+            self.margin = margin;
+        }
+
+        fileprivate var body: some View {
+            AnyDevPanel(table: table, margin: margin) {
+                MessagesView(player: self.sessionState.player,
+                             players: self.sessionState.players,
+                             host: self.sessionState.host ?? "",
+                             info: self.sessionState.info)
+            }
+        }
+
+        private struct MessagesView: View {
+
+            private let player: String;
+            private let players: [String];
+            private let noplayers: Bool;
+            private let host: String;
+            private let size: Int;
+
+            fileprivate init(player: String, players: [String], host: String, info: Json, size: Int = Const.fontSize) {
+                self.player = player
+                self.noplayers = players.count == 0;
+                self.players = (players.count == 0) ? [player, "foobar"] : players;
+                self.host = host;
+                self.size = size;
+            }
+
+            fileprivate var body: some View {
+                VStack(spacing: 4) {
+                    HStack {
+                        Text("player").bold().frame(maxWidth: .infinity, alignment: .leading)
+                        Text("received messages").frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    ForEach(Array(players.enumerated()), id: \.element) { index, player in
+                        if index == 0 {
+                            Rectangle()
+                                .fill(Color.black)
+                                .frame(height: 2 / UIScreen.main.scale)
+                                .offset(y: 0.5)
+                        }
+                        HStack {
+                            VStack {
+                                Text(player + (player == self.player ? " ◀" : ""))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Spacer()
+                            }
+                            VStack(alignment: .leading) {
+                                Text("MESSAGE-A")
+                                Text("MESSAGE-B")
+                                Text("MESSAGE-C")
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .padding(.vertical, 2)
                         if index < players.count - 1 {
