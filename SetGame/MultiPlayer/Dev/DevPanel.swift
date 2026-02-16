@@ -287,6 +287,68 @@ public extension MultiPlayer {
                             info: self.sessionState.info)
             }
         }
+
+        private struct PlayersView: View {
+
+            private let players: [String];
+            private let noplayers: Bool;
+            private var sent: [String: Int] = [:];
+            private var received: [String: Int] = [:];
+            private var queued: [String: Int] = [:];
+            private let size: Int;
+
+            fileprivate init(players: [String], player: String, info: Json, size: Int = Const.fontSize) {
+                self.noplayers = (players.count == 0);
+                self.players = (players.count == 0) ? [player] : players;
+                for player in players {
+                    let (sent, queued, received) = HttpTransport.messageCounts(info: info, player: player)
+                    self.sent[player] = sent;
+                    self.queued[player] = queued;
+                    self.received[player] = received;
+                }
+                self.size = size;
+            }
+
+            fileprivate var body: some View {
+                VStack(spacing: 4) {
+                    HStack {
+                        Text("player").bold().frame(maxWidth: .infinity, alignment: .leading)
+                        Text("sent").frame(width: 40, alignment: .trailing)
+                        Text("received").frame(width: 70, alignment: .trailing)
+                        Text("queued").frame(width: 60, alignment: .trailing)
+                    }
+                    ForEach(Array(players.enumerated()), id: \.element) { index, player in
+                        if index == 0 {
+                            Rectangle()
+                                .fill(Color.black)
+                                .frame(height: 2 / UIScreen.main.scale)
+                                .offset(y: 0.5)
+                        }
+                        HStack {
+                            Text(player)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text(self.noplayers ? Const.emptySetChar : "\(sent[player] ?? 0)")
+                                .frame(width: 40, alignment: .trailing)
+
+                            Text(self.noplayers ? Const.emptySetChar : "\(received[player] ?? 0)")
+                                .frame(width: 70, alignment: .trailing)
+
+                            Text(self.noplayers ? Const.emptySetChar : "\(queued[player] ?? 0)")
+                                .frame(width: 60, alignment: .trailing)
+                        }
+                        .padding(.vertical, 2)
+                        if index < players.count - 1 {
+                            Rectangle()
+                                . fill(Color.black)
+                                .frame(height: 2 / UIScreen.main.scale)
+                                .offset(y: 0.5)
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .font(.system(size: CGFloat(self.size), weight: .semibold))
+            }
+        }
     }
 
     private struct SmallButton: View {
@@ -304,7 +366,7 @@ public extension MultiPlayer {
         private let horizontalPadding: CGFloat = 7;
         private let verticalPadding: CGFloat = 4;
         private let cornerRadius: CGFloat = 8
-    
+
         fileprivate init( _ text: String? = nil, icon: String? = nil,
                             color: Color? = nil, background: Color? = nil,
                             size: Int = Const.fontSize, disabled: Bool = false,
@@ -445,89 +507,6 @@ public extension MultiPlayer {
         }
     }
 
-    private struct PlayersView: View {
-
-        private let players: [String];
-        private let noplayers: Bool;
-        private var sent: [String: Int] = [:];
-        private var received: [String: Int] = [:];
-        private var queued: [String: Int] = [:];
-        private let size: Int;
-
-        fileprivate init(players: [String], player: String, info: Json, size: Int = Const.fontSize) {
-            self.noplayers = (players.count == 0);
-            self.players = (players.count == 0) ? [player] : players;
-            for player in players {
-                let (sent, queued, received) = HttpTransport.messageCounts(info: info, player: player)
-                self.sent[player] = sent;
-                self.queued[player] = queued;
-                self.received[player] = received;
-            }
-            self.size = size;
-        }
-
-        fileprivate var body: some View {
-            VStack(spacing: 4) {
-                HStack {
-                    Text("player").bold().frame(maxWidth: .infinity, alignment: .leading)
-                    Text("sent").frame(width: 40, alignment: .trailing)
-                    Text("received").frame(width: 70, alignment: .trailing)
-                    Text("queued").frame(width: 60, alignment: .trailing)
-                }
-                ForEach(Array(players.enumerated()), id: \.element) { index, player in
-                    if index == 0 {
-                        Rectangle()
-                            .fill(Color.black)
-                            .frame(height: 2 / UIScreen.main.scale)
-                            .offset(y: 0.5)
-                    }
-                    HStack {
-                        Text(player)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Text(self.noplayers ? Const.emptySetChar : "\(sent[player] ?? 0)")
-                            .frame(width: 40, alignment: .trailing)
-    
-                        Text(self.noplayers ? Const.emptySetChar : "\(received[player] ?? 0)")
-                            .frame(width: 70, alignment: .trailing)
-    
-                        Text(self.noplayers ? Const.emptySetChar : "\(queued[player] ?? 0)")
-                            .frame(width: 60, alignment: .trailing)
-                    }
-                    .padding(.vertical, 2)
-                    if index < players.count - 1 {
-                        Rectangle()
-                            . fill(Color.black)
-                            .frame(height: 2 / UIScreen.main.scale)
-                            .offset(y: 0.5)
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .font(.system(size: CGFloat(self.size), weight: .semibold))
-        }
-    }
-
-    private class Poller {
-        private let interval: UInt64;
-        private var task: Task<Void, Never>? = nil;
-        fileprivate init(seconds: Int = 2) {
-            self.interval = UInt64(seconds * 500_000_000);
-        }
-        fileprivate func start(_ task: @escaping () async -> Void) {
-            guard self.task == nil else { return }
-            self.task = Task {
-                while (!Task.isCancelled) {
-                    await task();
-                    try? await Task.sleep(nanoseconds: self.interval);
-                }
-            }
-        }
-        fileprivate func stop() {
-            task?.cancel();
-            task = nil;
-        }
-    }
-
     private struct RegularText: View {
         private let text: String;
         private let color: Color;
@@ -613,6 +592,27 @@ public extension MultiPlayer {
                     : nil
                 )
                 .padding(.trailing, -4)
+        }
+    }
+
+    private class Poller {
+        private let interval: UInt64;
+        private var task: Task<Void, Never>? = nil;
+        fileprivate init(seconds: Int = 2) {
+            self.interval = UInt64(seconds * 500_000_000);
+        }
+        fileprivate func start(_ task: @escaping () async -> Void) {
+            guard self.task == nil else { return }
+            self.task = Task {
+                while (!Task.isCancelled) {
+                    await task();
+                    try? await Task.sleep(nanoseconds: self.interval);
+                }
+            }
+        }
+        fileprivate func stop() {
+            task?.cancel();
+            task = nil;
         }
     }
 }
