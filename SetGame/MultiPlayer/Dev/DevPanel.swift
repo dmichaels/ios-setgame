@@ -579,7 +579,7 @@ public extension MultiPlayer {
             private let fontSize: CGFloat = 15;
 
         fileprivate init(players: [String], info: Json) {
-            self.players = players + ["foo", "bar"];
+            self.players = players;
             for player in players {
                 let (sent, queued, received) = HttpTransport.messageCounts(info: info, player: player)
                 self.sent[player] = sent;
