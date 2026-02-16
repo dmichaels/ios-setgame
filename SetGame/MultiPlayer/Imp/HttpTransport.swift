@@ -206,5 +206,26 @@ public extension MultiPlayer {
         }
 
         public var engaged: Bool { self.pollTask != nil }
+
+        public var server: String {
+            if let host: String = self.url.host {
+                if let port: Int = self.url.port {
+                    return "\(host):\(port)";
+                }
+                else {
+                    return host;
+                }
+            }
+            return "server";
+        }
+
+        public func ping() async -> Bool {
+            if let response: Json = await self.url.get("/ping", as: Json.self, key: self.key) {
+                if let status: String = response["status"] as? String, status == "OK" {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

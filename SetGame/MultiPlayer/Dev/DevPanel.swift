@@ -6,6 +6,8 @@ private struct Const {
     fileprivate static let fontSize: Int = 15;
     fileprivate static let separator: String = "|" // "\u{2756}";
     fileprivate static let emptySetChar: String = "∅";
+    fileprivate static let checkChar: String = "✓";
+    fileprivate static let xChar: String = "✗";
     fileprivate static let highlightColor: Color = Color(hex: 0x882211);
 }
 
@@ -20,12 +22,14 @@ private struct SessionState {
     fileprivate var info: Json = [:];
     fileprivate var sessions: SessionList = SessionList();
     fileprivate var sessionShort: String { self.sessions.shorten(self.session ?? Const.emptySetChar) }
-    public mutating func update(from session: MultiPlayer.Session, info: Json? = nil, sessions: [String]? = nil) {
+    fileprivate var pingable: Bool = false;
+    public mutating func update(from session: MultiPlayer.Session, info: Json? = nil, sessions: [String]? = nil, pingable: Bool = false) {
         self.session = session.session;
         self.host = session.host;
         self.players = session.players;
         self.connected = session.connected;
         self.leaveable = session.leaveable;
+        self.pingable = pingable;
         if let info: Json = info {
             self.info = info;
         }
@@ -129,13 +133,15 @@ public extension MultiPlayer {
         public var body: some View {
             VStack {
                 DevPanelInfo(table: table, session: session, transport: transport, sessionState: $sessionState, margin: margin)
-                DevPanelSession(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 16)
-                DevPanelPlayers(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 16)
+                DevPanelSession(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
+                DevPanelPlayers(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
+                DevPanelServer(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
             }
             .onAppear { self.poller.start({
                 self.sessionState.update(from: self.session,
                                          info: await self.transport.sessionInfo(session: self.session.session),
-                                         sessions: await self.transport.retrieveSessions());
+                                         sessions: await self.transport.retrieveSessions(),
+                                         pingable: await self.transport.ping());
                 if (!self.sessionState.sessions.contains(self.session.session)) {
                     //
                     // Our connected session seems to have disappeared out from under us;
@@ -369,6 +375,35 @@ public extension MultiPlayer {
         }
     }
 
+    private struct DevPanelServer: View {
+
+        @ObservedObject private var table: Table
+                        private let session: MultiPlayer.Session;
+                        private let transport: MultiPlayer.HttpTransport;
+               @Binding private var sessionState: SessionState;
+                        private let margin: Int;
+
+        fileprivate init(table: Table,
+                         session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
+                         sessionState: Binding<SessionState>, margin: Int = 10) {
+            self.table = table;
+            self.session = session;
+            self.transport = transport;
+            self._sessionState = sessionState;
+            self.margin = margin;
+        }
+
+        fileprivate var body: some View {
+            AnyDevPanel(table: table, margin: margin) {
+                RegularText("server: ")
+                    RegularText(transport.server, color: self.sessionState.pingable ? .primary : Const.highlightColor, bold: true)
+                        RegularText(self.sessionState.pingable ? Const.checkChar : Const.xChar,
+                                    color: self.sessionState.pingable ? .primary : Const.highlightColor,
+                                    bold: true, leading: 8)
+            }
+        }
+    }
+
     private struct AnyDevPanel<Content: View>: View {
 
         @ObservedObject private var table: Table;
@@ -551,17 +586,20 @@ public extension MultiPlayer {
         private let size: Int;
         private var bold: Bool = false;
         private var semibold: Bool = false;
+        private var strikeout: Bool = false;
         private let leading: Int;
         private let trailing: Int;
         fileprivate init(_ text: String, color: Color = .primary,
                            size: Int = Const.fontSize,
                            bold: Bool = false, semibold: Bool = false,
+                           strikeout: Bool = false,
                            leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil) {
             self.text = text;
+            self.color = color;
             self.size = size;
             self.bold = bold;
             self.semibold = semibold;
-            self.color = color;
+            self.strikeout = strikeout;
             self.leading = leading ?? padding ?? 0;
             self.trailing = trailing ?? padding ?? 0;
         }
@@ -570,6 +608,7 @@ public extension MultiPlayer {
                 .font(.system(size: CGFloat(self.size), weight: bold ? .bold : (semibold ? .semibold : .regular)))
                 .foregroundColor(self.color)
                 .padding(.leading, CGFloat(self.leading)).padding(.trailing, CGFloat(self.trailing))
+                .strikethrough(self.strikeout)
         }
     }
 
