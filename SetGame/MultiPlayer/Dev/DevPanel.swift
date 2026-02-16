@@ -350,7 +350,7 @@ public extension MultiPlayer {
                         HStack {
                             Text(player)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundColor(self.player == self.host ? Const.highlightColor : Color.primary)
+                                .foregroundColor(player == self.host ? Const.highlightColor : Color.primary)
                             Text(self.noplayers ? Const.emptySetChar : "\(sent[player] ?? 0)")
                                 .frame(width: 40, alignment: .trailing)
 
