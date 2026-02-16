@@ -118,7 +118,7 @@ public extension MultiPlayer {
         fileprivate static let foreground: Color = Color(hex: 0x226655);
         fileprivate static let horizontalPadding: Int = 8;
         fileprivate static let separationPadding: Int = 0;
-        fileprivate static let fontsize: Int = 14;
+        fileprivate static let fontsize: Int = 15;
         fileprivate static let separator: String = "|" // "\u{2756}";
         fileprivate static let icons: Bool = false;
 
@@ -211,7 +211,7 @@ public extension MultiPlayer {
                     RegularText("players:", size: DevPanel.fontsize, leading: 8)
                     RegularText("\(self.sessionState.players.count == 0 ? EmptySetChar : "\(self.sessionState.players.count)")", size: DevPanel.fontsize, leading: 4)
                     Spacer()
-                    SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", size: 18, disabled: false) {
+                    SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", size: 18, disabled: !self.sessionState.connected) {
                         if (self.transport.engaged) {
                             self.transport.disengage();
                         }
@@ -570,62 +570,68 @@ public extension MultiPlayer {
         }
     }
 
-private struct PlayersView: View {
+    private struct PlayersView: View {
 
-    fileprivate let players: [String]
-    private var sent: [String: Int] = [:]
-    private var received: [String: Int] = [:]
-    private var queued: [String: Int] = [:]
+        fileprivate let players: [String]
+            private var sent: [String: Int] = [:]
+            private var received: [String: Int] = [:]
+            private var queued: [String: Int] = [:]
+            private let fontSize: CGFloat = 15;
 
-    fileprivate init(players: [String], info: Json) {
-        self.players = players + ["foo", "bar"]
-
-        for player in players {
-            let (s, q, r) = HttpTransport.messageCounts(info: info, player: player)
-            self.sent[player] = s
-            self.queued[player] = q
-            self.received[player] = r
-        }
-    }
-
-    private let fontSize: CGFloat = 12
-
-    fileprivate var body: some View {
-        VStack(spacing: 4) {
-            HStack {
-                Text("player").bold()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                Text("sent")
-                    .frame(width: 40, alignment: .trailing)
-
-                Text("received")
-                    .frame(width: 70, alignment: .trailing)
-
-                Text("queued")
-                    .frame(width: 60, alignment: .trailing)
+        fileprivate init(players: [String], info: Json) {
+            self.players = players + ["foo", "bar"];
+            for player in players {
+                let (sent, queued, received) = HttpTransport.messageCounts(info: info, player: player)
+                self.sent[player] = sent;
+                self.queued[player] = queued;
+                self.received[player] = received;
             }
-            ForEach(Array(players.enumerated()), id: \.element) { index, player in
-                let rowBackground = index.isMultiple(of: 2) ? Color.gray.opacity(0.4) : Color.clear;
+        }
+
+        fileprivate var body: some View {
+            VStack(spacing: 4) {
                 HStack {
-                    Text(player)
+                    Text("player").bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
-
-                    Text("\(sent[player] ?? 0)")
+    
+                    Text("sent")
                         .frame(width: 40, alignment: .trailing)
-
-                    Text("\(received[player] ?? 0)")
+    
+                    Text("received")
                         .frame(width: 70, alignment: .trailing)
-
-                    Text("\(queued[player] ?? 0)")
+    
+                    Text("queued")
                         .frame(width: 60, alignment: .trailing)
                 }
-                .padding(.vertical, 2)
-                .background(rowBackground)
+                ForEach(Array(players.enumerated()), id: \.element) { index, player in
+                    // let rowBackground = index.isMultiple(of: 2) ? Color.gray.opacity(0.4) : Color.clear;
+                    // let rowBackground = index.isMultiple(of: 2) ? DevPanel.background.opacity(0.05) : DevPanel.background;
+                    if index == 0 {
+                    Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale).offset(y: 0.5)
+                    }
+                    HStack {
+                        Text(player)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+    
+                        Text("\(sent[player] ?? 0)")
+                            .frame(width: 40, alignment: .trailing)
+    
+                        Text("\(received[player] ?? 0)")
+                            .frame(width: 70, alignment: .trailing)
+    
+                        Text("\(queued[player] ?? 0)")
+                            .frame(width: 60, alignment: .trailing)
+                    }
+                    .padding(.vertical, 2)
+                    if index < players.count - 1 {
+                    Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale).offset(y: 0.5)
+                    }
+                    // .background(rowBackground)
+                }
             }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .font(.system(size: fontSize, weight: .semibold, design: .monospaced))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .font(.system(size: CGFloat(fontSize), weight: .semibold))
+         // .font(.system(size: fontSize, weight: .semibold, design: .monospaced))
     }
 }
 
