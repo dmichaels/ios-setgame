@@ -373,15 +373,18 @@ public extension MultiPlayer {
         @ObservedObject private var table: Table;
                         private let verticalPadding: Int;
                         private let topMargin: Int;
-                        private let content: Content;
-
                         private let horizontalMargin: Int;
                         private var background: Color = Const.background;
                         private let separationPadding: Int = 0;
-                        private let horizontalPadding: Int = 8;
+                        private let leadingPadding: Int;
+                        private let content: Content;
 
-        fileprivate init( table: Table, vertical: Int = 3, margin: Int = 0,  hmargin: Int = 4, @ViewBuilder content: () -> Content) {
+        fileprivate init(table: Table, leading:  Int = 8,
+                                        vertical: Int = 3,
+                                        margin:   Int = 0,
+                                        hmargin:  Int = 4, @ViewBuilder content: () -> Content) {
             self.table = table;
+            self.leadingPadding = leading;
             self.verticalPadding = vertical;
             self.topMargin = margin;
             self.horizontalMargin = hmargin;
@@ -397,7 +400,7 @@ public extension MultiPlayer {
                         Spacer().frame(height: CGFloat(self.verticalPadding))
                         HStack(spacing: CGFloat(self.separationPadding)) {
                             content
-                        }.padding(.leading, CGFloat(self.horizontalPadding))
+                        }.padding(.leading, CGFloat(self.leadingPadding))
                         Spacer().frame(height: CGFloat(self.verticalPadding - 1))
                     }
                     Spacer()
