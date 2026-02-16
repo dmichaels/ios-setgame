@@ -19,10 +19,10 @@ private struct SessionState {
     fileprivate var players: [String] = [];
     fileprivate var connected: Bool = false;
     fileprivate var leaveable: Bool = false;
+    fileprivate var pingable: Bool = false;
     fileprivate var info: Json = [:];
     fileprivate var sessions: SessionList = SessionList();
     fileprivate var sessionShort: String { self.sessions.shorten(self.session ?? Const.emptySetChar) }
-    fileprivate var pingable: Bool = false;
     public mutating func update(from session: MultiPlayer.Session, info: Json? = nil, sessions: [String]? = nil, pingable: Bool = false) {
         self.session = session.session;
         self.host = session.host;
