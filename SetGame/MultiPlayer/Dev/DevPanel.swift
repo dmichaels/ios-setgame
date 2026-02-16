@@ -9,6 +9,7 @@ private struct SessionState {
     public var connected: Bool = false;
     public var leaveable: Bool = false;
     public var info: Json = [:];
+    // public var sessionShort: String? { serverState.sessionList.shorten(sessionState.session }
     public mutating func update(from session: MultiPlayer.Session, info: Json? = nil) {
         self.session = session.session;
         self.host = session.host;
@@ -118,7 +119,7 @@ public extension MultiPlayer {
         fileprivate static let foreground: Color = Color(hex: 0x226655);
         fileprivate static let horizontalPadding: Int = 8;
         fileprivate static let separationPadding: Int = 0;
-        fileprivate static let fontsize: Int = 15;
+        fileprivate static let fontSize: Int = 15;
         fileprivate static let separator: String = "|" // "\u{2756}";
         fileprivate static let icons: Bool = false;
 
@@ -183,20 +184,13 @@ public extension MultiPlayer {
 
         fileprivate var body: some View {
             AnyDevPanel(table: table, margin: margin) {
-                RegularText("me:", size: DevPanel.fontsize)
-                    CopyableText(text: sessionState.player,
-                                 foreground: session.hosting ? .red : .primary,
-                                 background: DevPanel.background,
-                                 bold: true,
-                                 underline: false,
-                                 strikeout: false,
-                                 size: DevPanel.fontsize
-                    )
-                    .padding(.leading, -6)
-                RegularText("host:", size: DevPanel.fontsize, leading: 4)
-                RegularText("\(self.sessionState.host ?? EmptySetChar)", size: DevPanel.fontsize, color: session.hosting ? .red : .primary, leading: 4)
-                RegularText("players:", size: DevPanel.fontsize, leading: 8)
-                RegularText("\(self.sessionState.players.count == 0 ? EmptySetChar : "\(self.sessionState.players.count)")", size: DevPanel.fontsize, leading: 4)
+                RegularText("me:", size: DevPanel.fontSize)
+                    CopyableText(sessionState.player, color: self.session.hosting ? .red : .primary, bold: true)
+                        .padding(.leading, -6)
+                RegularText("host:", size: DevPanel.fontSize, leading: 4)
+                CopyableText("\(self.sessionState.host ?? EmptySetChar)", color: self.session.hosting ? .red : .primary)
+                RegularText("players:", size: DevPanel.fontSize, leading: 8)
+                RegularText("\(self.sessionState.players.count == 0 ? EmptySetChar : "\(self.sessionState.players.count)")", size: DevPanel.fontSize, leading: 4)
                 Spacer()
                 SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", size: 18, disabled: !self.sessionState.connected) {
                     if (self.transport.engaged) {
@@ -233,14 +227,8 @@ public extension MultiPlayer {
 
         fileprivate var body: some View {
             AnyDevPanel(table: table, margin: margin) {
-                RegularText("session:", size: DevPanel.fontsize)
-                    CopyableText(text: serverState.sessionList.shorten(sessionState.session, fallback: EmptySetChar),
-                                 background: DevPanel.background,
-                                 bold: true,
-                                 underline: false,
-                                 strikeout: false,
-                                 size: sessionState.session == nil ? 14 : 13
-                    )
+                RegularText("session:", size: DevPanel.fontSize)
+                    CopyableText(serverState.sessionList.shorten(sessionState.session, fallback: EmptySetChar), copy: sessionState.session, bold: true)
                     .padding(.leading, -6).padding(.trailing, 4)
                 SmallButton(DevPanel.icons ? nil : "create", icon: DevPanel.icons ? "plus.rectangle.portrait" : nil, disabled: self.sessionState.connected) {
                     if (!self.session.connected) {
@@ -250,7 +238,7 @@ public extension MultiPlayer {
                         }
                     }
                 }
-                RegularText("", padding: 2)
+                RegularText("", padding: 1)
                 JoinControl(items: serverState.sessionList.sessionsShort,
                             selected: $serverState.sessionList.selectedShort,
                             disabled: self.sessionState.connected) {
@@ -571,25 +559,35 @@ public extension MultiPlayer {
     }
 
     private struct CopyableText: View {
-        let text: String;
-        var foreground: Color = .primary;
-        var background: Color = .white;
-        var bold: Bool = false;
-        var underline: Bool = false;
-        var strikeout: Bool = false;
-        var size: Int = 13;
-        @State private var copied = false;
+
+        private let text: String;
+        private var copy: String?;
+        private var color: Color = .primary;
+        private var background: Color = .white;
+        private var bold: Bool = false;
+        private var underline: Bool = false;
+        private var strikeout: Bool = false;
+        private var fontSize: Int = 13;
+        @State private var copied: Bool = false;
+
+        fileprivate init(_ text: String, copy: String? = nil, color: Color = .primary, bold: Bool = false, underline: Bool = false) {
+            self.text = text;
+            self.copy = copy ?? text;
+            self.bold = bold;
+            self.underline = underline;
+        }
+
         fileprivate var body: some View {
             Text(text)
-                .font(.system(size: CGFloat(size), weight: .semibold))
+                .font(.system(size: CGFloat(fontSize), weight: .semibold))
                 .fontWeight(bold ? .bold : .regular)
                 .underline(underline)
                 .strikethrough(strikeout)
                 .padding(8)
                 .cornerRadius(8)
-                .foregroundColor(foreground)
+                .foregroundColor(color)
                 .onTapGesture {
-                    UIPasteboard.general.string = text;
+                    UIPasteboard.general.string = copy ?? text;
                     copied = true;
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { copied = false }
                 }
@@ -600,7 +598,7 @@ public extension MultiPlayer {
                         .padding(4)
                         .background(Color.white)
                         .cornerRadius(6)
-                        .offset(y: -40)
+                        .offset(y: -36)
                         .transition(.opacity)
                         .fixedSize()
                     : nil
