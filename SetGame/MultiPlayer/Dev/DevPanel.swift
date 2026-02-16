@@ -6,6 +6,7 @@ private struct Const {
     fileprivate static let fontSize: Int = 15;
     fileprivate static let separator: String = "|" // "\u{2756}";
     fileprivate static let emptySetChar: String = "∅";
+    fileprivate static let highlightColor: Color = Color(hex: 0x882211);
 }
 
 private struct SessionState {
@@ -28,11 +29,6 @@ private struct SessionState {
         if let info: Json = info {
             self.info = info;
         }
-        if let sessions: [String] = sessions {
-            self.sessions.update(sessions.reversed());
-        }
-    }
-    fileprivate mutating func updateSessions(sessions: [String]?) {
         if let sessions: [String] = sessions {
             self.sessions.update(sessions.reversed());
         }
@@ -195,14 +191,14 @@ public extension MultiPlayer {
             AnyDevPanel(table: table, margin: margin) {
                 RegularText("me:")
                     CopyableText(sessionState.player,
-                                 color: self.session.hosting ? .red : .primary, semibold: true, leading: 3)
+                                 color: self.session.hosting ? Const.highlightColor : .primary, semibold: true, leading: 3)
                 RegularText("host:", leading: 10)
                     CopyableText("\(self.sessionState.host ?? Const.emptySetChar)",
-                                 color: self.session.hosting ? .red : .primary, semibold: true, leading: 3)
+                                 color: self.session.hosting ? Const.highlightColor : .primary, semibold: true, leading: 3)
                 RegularText("players:", leading: 10)
                     RegularText("\(self.sessionState.players.count == 0 ? Const.emptySetChar : "\(self.sessionState.players.count)")", leading: 3)
                 Spacer()
-                SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", size: 18, disabled: !self.sessionState.connected) {
+                SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
                     if (self.transport.engaged) {
                         self.transport.disengage();
                     }
@@ -264,8 +260,7 @@ public extension MultiPlayer {
                     }
                 }
                 RegularText("", padding: 2)
-                SmallButton(icon: "xmark.rectangle.portrait", size: 21,
-                            disabled: !self.sessionState.leaveable) {
+                SmallButton(icon: "xmark.rectangle.portrait", disabled: !self.sessionState.leaveable) {
                     if let info = await self.transport.sessionInfo(session: self.session.session) {
                         let (sent, queued, received) = HttpTransport.messageCounts(info: info, player: self.session.player);
                     }
@@ -301,6 +296,7 @@ public extension MultiPlayer {
             AnyDevPanel(table: table, margin: margin) {
                 PlayersView(players: self.sessionState.players,
                             player: self.sessionState.player,
+                            host: self.sessionState.host ?? "",
                             info: self.sessionState.info)
             }
         }
@@ -308,15 +304,19 @@ public extension MultiPlayer {
         private struct PlayersView: View {
 
             private let players: [String];
+            private let player: String;
+            private let host: String;
             private let noplayers: Bool;
             private var sent: [String: Int] = [:];
             private var received: [String: Int] = [:];
             private var queued: [String: Int] = [:];
             private let size: Int;
 
-            fileprivate init(players: [String], player: String, info: Json, size: Int = Const.fontSize) {
+            fileprivate init(players: [String], player: String, host: String, info: Json, size: Int = Const.fontSize) {
                 self.noplayers = (players.count == 0);
+                self.player = player;
                 self.players = (players.count == 0) ? [player] : players;
+                self.host = host;
                 for player in players {
                     let (sent, queued, received) = HttpTransport.messageCounts(info: info, player: player)
                     self.sent[player] = sent;
@@ -344,6 +344,7 @@ public extension MultiPlayer {
                         HStack {
                             Text(player)
                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                .foregroundColor(self.player == self.host ? Const.highlightColor : Color.primary)
                             Text(self.noplayers ? Const.emptySetChar : "\(sent[player] ?? 0)")
                                 .frame(width: 40, alignment: .trailing)
 
@@ -501,14 +502,14 @@ public extension MultiPlayer {
 
         fileprivate init( _ text: String? = nil, icon: String? = nil,
                             color: Color? = nil, background: Color? = nil,
-                            size: Int = Const.fontSize, disabled: Bool = false,
+                            size: Int? = nil, disabled: Bool = false,
                             leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil,
                             action: @escaping () async -> Void) {
             self.text = text;
             self.icon = icon;
             self.color = color ?? .yellow;
             self.background = background ?? Const.foreground;
-            self.size = size;
+            self.size = (icon != nil) ? 20 : Const.fontSize;
             self.disabled = disabled;
             self.action = action;
             self.leading = leading ?? padding ?? 0;
