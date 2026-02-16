@@ -184,43 +184,29 @@ public extension MultiPlayer {
         fileprivate var body: some View {
             Spacer().frame(height: CGFloat(margin))
             AnyDevPanel(table: table) {
-                HStack(spacing: CGFloat(DevPanel.separationPadding)) {
-                    RegularText("me:", size: DevPanel.fontsize)
-                        CopyableText(text: sessionState.player,
-                                     foreground: session.hosting ? .red : .primary,
-                                     background: DevPanel.background,
-                                     bold: true,
-                                     underline: false,
-                                     strikeout: false,
-                                     size: DevPanel.fontsize
-                        )
-                        .padding(.leading, -6)
-                    /*
-                    RegularText("session:", size: DevPanel.fontsize, leading: 4)
-                        CopyableText(text: serverState.sessionList.shorten(sessionState.session, fallback: EmptySetChar),
-                                     background: DevPanel.background,
-                                     bold: true,
-                                     underline: false,
-                                     strikeout: false,
-                                     size: sessionState.session == nil ? 14 : 13
-                        )
-                        .padding(.leading, -6)
-                    */
-                    RegularText("host:", size: DevPanel.fontsize, leading: 4)
-                    RegularText("\(self.sessionState.host ?? EmptySetChar)", size: DevPanel.fontsize, color: session.hosting ? .red : .primary, leading: 4)
-                    RegularText("players:", size: DevPanel.fontsize, leading: 8)
-                    RegularText("\(self.sessionState.players.count == 0 ? EmptySetChar : "\(self.sessionState.players.count)")", size: DevPanel.fontsize, leading: 4)
-                    Spacer()
-                    SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", size: 18, disabled: !self.sessionState.connected) {
-                        if (self.transport.engaged) {
-                            self.transport.disengage();
-                        }
-                        else {
-                            self.transport.engage();
-                        }
+                RegularText("me:", size: DevPanel.fontsize)
+                    CopyableText(text: sessionState.player,
+                                 foreground: session.hosting ? .red : .primary,
+                                 background: DevPanel.background,
+                                 bold: true,
+                                 underline: false,
+                                 strikeout: false,
+                                 size: DevPanel.fontsize
+                    )
+                    .padding(.leading, -6)
+                RegularText("host:", size: DevPanel.fontsize, leading: 4)
+                RegularText("\(self.sessionState.host ?? EmptySetChar)", size: DevPanel.fontsize, color: session.hosting ? .red : .primary, leading: 4)
+                RegularText("players:", size: DevPanel.fontsize, leading: 8)
+                RegularText("\(self.sessionState.players.count == 0 ? EmptySetChar : "\(self.sessionState.players.count)")", size: DevPanel.fontsize, leading: 4)
+                Spacer()
+                SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", size: 18, disabled: !self.sessionState.connected) {
+                    if (self.transport.engaged) {
+                        self.transport.disengage();
+                    }
+                    else {
+                        self.transport.engage();
                     }
                 }
-                .padding(.leading, CGFloat(DevPanel.horizontalPadding))
             }
         }
     }
@@ -249,61 +235,58 @@ public extension MultiPlayer {
         fileprivate var body: some View {
             Spacer().frame(height: CGFloat(margin))
             AnyDevPanel(table: table) {
-                HStack(spacing: CGFloat(DevPanel.separationPadding)) {
-                    RegularText("session:", size: DevPanel.fontsize)
-                        CopyableText(text: serverState.sessionList.shorten(sessionState.session, fallback: EmptySetChar),
-                                     background: DevPanel.background,
-                                     bold: true,
-                                     underline: false,
-                                     strikeout: false,
-                                     size: sessionState.session == nil ? 14 : 13
-                        )
-                        .padding(.leading, -6)
-                    RegularText("", size: DevPanel.fontsize, leading: 7, trailing: 1)
-                    SmallButton(DevPanel.icons ? nil : "create", icon: DevPanel.icons ? "plus.rectangle.portrait" : nil, disabled: self.sessionState.connected) {
-                        if (!self.session.connected) {
-                            if await self.session.create() {
-                                self.sessionState.update(from: self.session);
-                                self.serverState.sessionList.select(self.session.session);
-                            }
+                RegularText("session:", size: DevPanel.fontsize)
+                    CopyableText(text: serverState.sessionList.shorten(sessionState.session, fallback: EmptySetChar),
+                                 background: DevPanel.background,
+                                 bold: true,
+                                 underline: false,
+                                 strikeout: false,
+                                 size: sessionState.session == nil ? 14 : 13
+                    )
+                    .padding(.leading, -6)
+                RegularText("", size: DevPanel.fontsize, leading: 6, trailing: 1)
+                SmallButton(DevPanel.icons ? nil : "create", icon: DevPanel.icons ? "plus.rectangle.portrait" : nil, disabled: self.sessionState.connected) {
+                    if (!self.session.connected) {
+                        if await self.session.create() {
+                            self.sessionState.update(from: self.session);
+                            self.serverState.sessionList.select(self.session.session);
                         }
                     }
-                    RegularText("", padding: 4)
-                    JoinControl(items: serverState.sessionList.sessionsShort,
-                                selected: $serverState.sessionList.selectedShort,
-                                disabled: self.sessionState.connected) {
-                        if (!self.session.connected) {
-                            if let session: String = serverState.sessionList.selected {
-                                if await self.session.join(session: session) {
-                                    self.sessionState.update(from: self.session);
-                                }
-                            }
-                        }
-                    }
-                    Spacer()
-                    SmallButton(DevPanel.icons ? nil : "host",
-                                icon: DevPanel.icons ? "xmark.rectangle.portrait" : nil,
-                                disabled: !self.sessionState.connected || self.sessionState.hosting) {
-                        if (self.session.connected) {
-                            if await self.session.requestHost() {
-                                self.sessionState.update(from: self.session);
-                            }
-                        }
-                    }
-                    RegularText("", padding: 4)
-                    SmallButton(icon: "xmark.rectangle.portrait", size: 21,
-                                disabled: !self.sessionState.leaveable) {
-                        if let info = await self.transport.sessionInfo(session: self.session.session) {
-                            let (sent, queued, received) = HttpTransport.messageCounts(info: info, player: self.session.player);
-                        }
-                        if (self.session.connected) {
-                            if await self.session.leave() {
+                }
+                RegularText("", padding: 2)
+                JoinControl(items: serverState.sessionList.sessionsShort,
+                            selected: $serverState.sessionList.selectedShort,
+                            disabled: self.sessionState.connected) {
+                    if (!self.session.connected) {
+                        if let session: String = serverState.sessionList.selected {
+                            if await self.session.join(session: session) {
                                 self.sessionState.update(from: self.session);
                             }
                         }
                     }
                 }
-                .padding(.leading, CGFloat(DevPanel.horizontalPadding))
+                Spacer()
+                SmallButton(DevPanel.icons ? nil : "host",
+                            icon: DevPanel.icons ? "xmark.rectangle.portrait" : nil,
+                            disabled: !self.sessionState.connected || self.sessionState.hosting) {
+                    if (self.session.connected) {
+                        if await self.session.requestHost() {
+                            self.sessionState.update(from: self.session);
+                        }
+                    }
+                }
+                RegularText("", padding: 2)
+                SmallButton(icon: "xmark.rectangle.portrait", size: 21,
+                            disabled: !self.sessionState.leaveable) {
+                    if let info = await self.transport.sessionInfo(session: self.session.session) {
+                        let (sent, queued, received) = HttpTransport.messageCounts(info: info, player: self.session.player);
+                    }
+                    if (self.session.connected) {
+                        if await self.session.leave() {
+                            self.sessionState.update(from: self.session);
+                        }
+                    }
+                }
             }
         }
     }
@@ -332,10 +315,9 @@ public extension MultiPlayer {
         fileprivate var body: some View {
             Spacer().frame(height: CGFloat(margin))
             AnyDevPanel(table: table) {
-                HStack(spacing: CGFloat(DevPanel.separationPadding)) {
-                    PlayersView(players: self.sessionState.players, info: self.sessionState.info)
-                }
-                .padding(.leading, CGFloat(DevPanel.horizontalPadding))
+                PlayersView(players: self.sessionState.players,
+                            player: self.sessionState.player,
+                            info: self.sessionState.info)
             }
         }
     }
@@ -408,7 +390,7 @@ public extension MultiPlayer {
                  let disabled: Bool;
                  let action: () async -> Void;
 
-        private let fontSize: CGFloat = 14;
+        private let fontSize: CGFloat = 16;
         private let horizontalPadding: CGFloat = 7;
         private let verticalPadding: CGFloat = 4;
         private let cornerRadius: CGFloat = 8;
@@ -435,10 +417,11 @@ public extension MultiPlayer {
                     }
                 } label: {
                     Text(selected.isEmpty ? (items.first ?? EmptySetChar) : selected)
-                        .font(.system(size: self.fontSize, weight: .bold))
+                        .font(.system(size: self.fontSize - 1))
                         .foregroundColor(disabled ? self.foregroundDisabled : self.foreground)
                         .padding(.trailing, self.horizontalPadding)
                         .padding(.vertical, self.verticalPadding)
+                        .disabled(disabled)
                 }
             }
             .background(
@@ -469,7 +452,7 @@ public extension MultiPlayer {
         private let cornerRadius: CGFloat = 8
     
         public init( _ text: String? = nil, icon: String? = nil,
-                       background: Color? = nil, foreground: Color? = nil, size: Int = 14,
+                       background: Color? = nil, foreground: Color? = nil, size: Int = 16,
                        disabled: Bool = false, action: @escaping () async -> Void) {
             self.text = text;
             self.icon = icon;
@@ -508,32 +491,6 @@ public extension MultiPlayer {
         }
     }
 
-    private struct DropDown: View {
-                 fileprivate var items: [String];
-        @Binding fileprivate var selected: String;
-        fileprivate var body: some View {
-            Menu {
-                ForEach(items, id: \.self) { item in
-                    Button(item) { selected = item }
-                }
-            } label: {
-                Text(selected.isEmpty ? (items.first ?? EmptySetChar) : selected)
-                    .font(.system(size: 14, weight: .bold))
-                    // .foregroundColor(DevPanel.foreground)
-                    .foregroundColor(.yellow)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6, style: .continuous).fill(DevPanel.foreground)
-                    )
-            }
-            .offset(y: 2)
-            .onAppear {
-                if selected.isEmpty, let first = items.first {
-                    selected = first;
-                }
-            }
-        }
-    }
-
     private struct AnyDevPanel<Content: View>: View {
 
         @ObservedObject private var table: Table;
@@ -554,7 +511,9 @@ public extension MultiPlayer {
                     HStack(alignment: .firstTextBaseline) {
                         VStack() {
                             Spacer().frame(height: CGFloat(self.verticalPadding))
-                            content
+                            HStack(spacing: CGFloat(DevPanel.separationPadding)) {
+                                content
+                            } .padding(.leading, CGFloat(DevPanel.horizontalPadding))
                             Spacer().frame(height: CGFloat(self.verticalPadding - 1))
                         }
                         Spacer()
@@ -572,14 +531,16 @@ public extension MultiPlayer {
 
     private struct PlayersView: View {
 
-        fileprivate let players: [String]
-            private var sent: [String: Int] = [:]
-            private var received: [String: Int] = [:]
-            private var queued: [String: Int] = [:]
-            private let fontSize: CGFloat = 15;
+        private let players: [String];
+        private let noplayers: Bool;
+        private var sent: [String: Int] = [:];
+        private var received: [String: Int] = [:];
+        private var queued: [String: Int] = [:];
+        private let fontSize: CGFloat = 15;
 
-        fileprivate init(players: [String], info: Json) {
-            self.players = players;
+        fileprivate init(players: [String], player: String, info: Json) {
+            self.noplayers = (players.count == 0);
+            self.players = (players.count == 0) ? [player] : players;
             for player in players {
                 let (sent, queued, received) = HttpTransport.messageCounts(info: info, player: player)
                 self.sent[player] = sent;
@@ -591,49 +552,44 @@ public extension MultiPlayer {
         fileprivate var body: some View {
             VStack(spacing: 4) {
                 HStack {
-                    Text("player").bold()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-    
-                    Text("sent")
-                        .frame(width: 40, alignment: .trailing)
-    
-                    Text("received")
-                        .frame(width: 70, alignment: .trailing)
-    
-                    Text("queued")
-                        .frame(width: 60, alignment: .trailing)
+                    Text("player").bold().frame(maxWidth: .infinity, alignment: .leading)
+                    Text("sent").frame(width: 40, alignment: .trailing)
+                    Text("received").frame(width: 70, alignment: .trailing)
+                    Text("queued").frame(width: 60, alignment: .trailing)
                 }
+                // if (players.count == 0) { Spacer().frame(height: 0) }
                 ForEach(Array(players.enumerated()), id: \.element) { index, player in
-                    // let rowBackground = index.isMultiple(of: 2) ? Color.gray.opacity(0.4) : Color.clear;
-                    // let rowBackground = index.isMultiple(of: 2) ? DevPanel.background.opacity(0.05) : DevPanel.background;
                     if index == 0 {
-                    Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale).offset(y: 0.5)
+                        Rectangle()
+                            .fill(Color.black)
+                            .frame(height: 2 / UIScreen.main.scale)
+                            .offset(y: 0.5)
                     }
                     HStack {
                         Text(player)
                             .frame(maxWidth: .infinity, alignment: .leading)
-    
-                        Text("\(sent[player] ?? 0)")
+                        Text(self.noplayers ? EmptySetChar : "\(sent[player] ?? 0)")
                             .frame(width: 40, alignment: .trailing)
     
-                        Text("\(received[player] ?? 0)")
+                        Text(self.noplayers ? EmptySetChar : "\(received[player] ?? 0)")
                             .frame(width: 70, alignment: .trailing)
     
-                        Text("\(queued[player] ?? 0)")
+                        Text(self.noplayers ? EmptySetChar : "\(queued[player] ?? 0)")
                             .frame(width: 60, alignment: .trailing)
                     }
                     .padding(.vertical, 2)
                     if index < players.count - 1 {
-                    Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale).offset(y: 0.5)
+                        Rectangle()
+                            . fill(Color.black)
+                            .frame(height: 2 / UIScreen.main.scale)
+                            .offset(y: 0.5)
                     }
-                    // .background(rowBackground)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .font(.system(size: CGFloat(fontSize), weight: .semibold))
-         // .font(.system(size: fontSize, weight: .semibold, design: .monospaced))
+        }
     }
-}
 
     private class Poller {
         private let interval: UInt64;
