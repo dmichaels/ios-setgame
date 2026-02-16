@@ -322,121 +322,6 @@ public extension MultiPlayer {
         }
     }
 
-    private struct RegularText: View {
-        private let text: String;
-        private let size: Int;
-        private let color: Color;
-        private let leading: Int;
-        private let trailing: Int;
-        fileprivate init(_ text: String, size: Int = 13, color: Color = .primary,
-                           leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil) {
-            self.text = text;
-            self.size = size;
-            self.color = color;
-            self.leading = leading ?? padding ?? 0;
-            self.trailing = trailing ?? padding ?? 0;
-        }
-        fileprivate var body: some View {
-            Text(self.text)
-                .font(.system(size: CGFloat(self.size), weight: .semibold))
-                .foregroundColor(self.color)
-                .padding(.leading, CGFloat(self.leading)).padding(.trailing, CGFloat(self.trailing))
-        }
-    }
-
-    private struct CopyableText: View {
-        let text: String;
-        var foreground: Color = .primary;
-        var background: Color = .white;
-        var bold: Bool = false;
-        var underline: Bool = false;
-        var strikeout: Bool = false;
-        var size: Int = 13;
-        @State private var copied = false;
-        var body: some View {
-            Text(text)
-                .font(.system(size: CGFloat(size), weight: .semibold))
-                .fontWeight(bold ? .bold : .regular)
-                .underline(underline)
-                .strikethrough(strikeout)
-                .padding(8)
-                .cornerRadius(8)
-                .foregroundColor(foreground)
-                .onTapGesture {
-                    UIPasteboard.general.string = text;
-                    copied = true;
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { copied = false }
-                }
-                .overlay(
-                    copied ? Text(" Copied ")
-                        .font(.caption)
-                        .foregroundColor(.black)
-                        .padding(4)
-                        .background(Color.white)
-                        .cornerRadius(6)
-                        .offset(y: -40)
-                        .transition(.opacity)
-                        .fixedSize()
-                    : nil
-                )
-                .padding(.trailing, -4)
-        }
-    }
-
-    private struct JoinControl: View {
-
-                 let items: [String];
-        @Binding var selected: String;
-                 let disabled: Bool;
-                 let action: () async -> Void;
-
-        private let fontSize: CGFloat = 16;
-        private let horizontalPadding: CGFloat = 7;
-        private let verticalPadding: CGFloat = 4;
-        private let cornerRadius: CGFloat = 8;
-        private let foreground: Color = .yellow;
-        private let background: Color = DevPanel.foreground;
-        private let foregroundDisabled: Color = .gray;
-
-        var body: some View {
-            HStack(spacing: 0) {
-                Button {
-                    Task { await action() }
-                } label: {
-                    Text("join:")
-                        .font(.system(size: self.fontSize, weight: .semibold))
-                        .foregroundColor(self.foreground)
-                        .padding(.leading, self.horizontalPadding)
-                        .padding(.vertical, self.verticalPadding)
-                }
-                .buttonStyle(.plain)
-                Rectangle().fill(self.foreground.opacity(0.4)).frame(width: 3, height: 1)
-                Menu {
-                    ForEach(items, id: \.self) { item in
-                        Button(item) { selected = item }
-                    }
-                } label: {
-                    Text(selected.isEmpty ? (items.first ?? EmptySetChar) : selected)
-                        .font(.system(size: self.fontSize - 1))
-                        .foregroundColor(disabled ? self.foregroundDisabled : self.foreground)
-                        .padding(.trailing, self.horizontalPadding)
-                        .padding(.vertical, self.verticalPadding)
-                        .disabled(disabled)
-                }
-            }
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(self.background)
-            )
-            .onAppear {
-                if selected.isEmpty, let first = items.first {
-                    selected = first;
-                }
-            }
-            .disabled(disabled)
-        }
-    }
-
     private struct SmallButton: View {
 
         private let text: String?;
@@ -488,6 +373,58 @@ public extension MultiPlayer {
             }
             .buttonStyle(.plain)
             .disabled(disabled)
+        }
+    }
+
+    private struct JoinControl: View {
+
+                 let items: [String];
+        @Binding var selected: String;
+                 let disabled: Bool;
+                 let action: () async -> Void;
+
+        private let fontSize: CGFloat = 16;
+        private let horizontalPadding: CGFloat = 7;
+        private let verticalPadding: CGFloat = 3;
+        private let cornerRadius: CGFloat = 8;
+        private let foreground: Color = .yellow;
+        private let background: Color = DevPanel.foreground;
+        private let foregroundDisabled: Color = .gray;
+
+        var body: some View {
+            HStack(spacing: 0) {
+                Button {
+                    Task { await action() }
+                } label: {
+                    Text("join:")
+                        .font(.system(size: self.fontSize, weight: .semibold))
+                        .foregroundColor(disabled ? self.foreground.opacity(0.4) : self.foreground)
+                        .padding(.leading, self.horizontalPadding)
+                        .padding(.vertical, self.verticalPadding)
+                }
+                .buttonStyle(.plain)
+                Rectangle().fill(self.foreground.opacity(0.4)).frame(width: 3, height: 1)
+                Menu {
+                    ForEach(items, id: \.self) { item in
+                        Button(item) { selected = item }
+                    }
+                } label: {
+                    Text(selected.isEmpty ? (items.first ?? EmptySetChar) : selected)
+                        .font(.system(size: self.fontSize - 0))
+                        .foregroundColor(disabled ? self.foreground.opacity(0.4) : self.foreground)
+                        .padding(.trailing, self.horizontalPadding)
+                        .padding(.vertical, self.verticalPadding)
+                }
+            }
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(disabled ? self.background.opacity(0.4) : self.background)
+            )
+            .onAppear {
+                if selected.isEmpty, let first = items.first {
+                    selected = first;
+                }
+            }
         }
     }
 
@@ -609,6 +546,67 @@ public extension MultiPlayer {
         fileprivate func stop() {
             task?.cancel();
             task = nil;
+        }
+    }
+
+    private struct RegularText: View {
+        private let text: String;
+        private let size: Int;
+        private let color: Color;
+        private let leading: Int;
+        private let trailing: Int;
+        fileprivate init(_ text: String, size: Int = 13, color: Color = .primary,
+                           leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil) {
+            self.text = text;
+            self.size = size;
+            self.color = color;
+            self.leading = leading ?? padding ?? 0;
+            self.trailing = trailing ?? padding ?? 0;
+        }
+        fileprivate var body: some View {
+            Text(self.text)
+                .font(.system(size: CGFloat(self.size), weight: .semibold))
+                .foregroundColor(self.color)
+                .padding(.leading, CGFloat(self.leading)).padding(.trailing, CGFloat(self.trailing))
+        }
+    }
+
+    private struct CopyableText: View {
+        let text: String;
+        var foreground: Color = .primary;
+        var background: Color = .white;
+        var bold: Bool = false;
+        var underline: Bool = false;
+        var strikeout: Bool = false;
+        var size: Int = 13;
+        @State private var copied = false;
+        var body: some View {
+            Text(text)
+                .font(.system(size: CGFloat(size), weight: .semibold))
+                .fontWeight(bold ? .bold : .regular)
+                .underline(underline)
+                .strikethrough(strikeout)
+                .padding(8)
+                .cornerRadius(8)
+                .foregroundColor(foreground)
+                .onTapGesture {
+                    UIPasteboard.general.string = text;
+                    copied = true;
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { copied = false }
+                }
+                .overlay(
+                    copied ? Text(" Copied ")
+                        .font(.caption)
+                        .foregroundColor(.black)
+                        .padding(4)
+                        .background(Color.white)
+                        .cornerRadius(6)
+                        .offset(y: -40)
+                        .transition(.opacity)
+                        .fixedSize()
+                    : nil
+                )
+                .padding(.trailing, -4)
         }
     }
 }
