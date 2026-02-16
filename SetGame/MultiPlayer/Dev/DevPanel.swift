@@ -309,8 +309,9 @@ public extension MultiPlayer {
         private let cornerRadius: CGFloat = 8
     
         fileprivate init( _ text: String? = nil, icon: String? = nil,
-                         color: Color? = nil, background: Color? = nil,  size: Int = 16,
-                         disabled: Bool = false, action: @escaping () async -> Void) {
+                            color: Color? = nil, background: Color? = nil,
+                            size: Int = DevPanel.fontSize,
+                            disabled: Bool = false, action: @escaping () async -> Void) {
             self.text = text;
             self.icon = icon;
             self.color = color ?? .yellow;
@@ -352,10 +353,10 @@ public extension MultiPlayer {
 
                  fileprivate let items: [String];
         @Binding fileprivate var selected: String;
+                 fileprivate let size: Int = DevPanel.fontSize;
                  fileprivate let disabled: Bool;
                  fileprivate let action: () async -> Void;
 
-        private let fontSize: CGFloat = 16;
         private let horizontalPadding: CGFloat = 8;
         private let verticalPadding: CGFloat = 4;
         private let cornerRadius: CGFloat = 8;
@@ -369,7 +370,7 @@ public extension MultiPlayer {
                     Task { await action() }
                 } label: {
                     Text("join:")
-                        .font(.system(size: self.fontSize, weight: .semibold))
+                        .font(.system(size: CGFloat(self.size), weight: .semibold))
                         .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
                         .padding(.leading, self.horizontalPadding)
                         .padding(.vertical, self.verticalPadding)
@@ -382,7 +383,7 @@ public extension MultiPlayer {
                     }
                 } label: {
                     Text(selected.isEmpty ? (items.first ?? EmptySetChar) : selected)
-                        .font(.system(size: self.fontSize - 1))
+                        .font(.system(size: CGFloat(self.size - 1)))
                         .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
                         .padding(.trailing, self.horizontalPadding)
                         .padding(.vertical, self.verticalPadding)
