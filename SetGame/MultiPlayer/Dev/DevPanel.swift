@@ -233,7 +233,7 @@ public extension MultiPlayer {
         }
 
         fileprivate var body: some View {
-            AnyDevPanel(table: table, margin: margin) {
+            AnyDevPanel(table: table, vertical: 8, margin: margin) {
                 RegularText("session:")
                     CopyableText(sessionState.sessionShort, copy: sessionState.session, bold: true, leading: 3)
                 SmallButton("create", disabled: self.sessionState.connected, leading: 8) {
@@ -371,32 +371,34 @@ public extension MultiPlayer {
     private struct AnyDevPanel<Content: View>: View {
 
         @ObservedObject private var table: Table;
-                        private let margin: Int;
+                        private let vertical: Int;
+                        private let tmargin: Int;
                         private let content: Content;
 
-        private var verticalPadding: CGFloat = 3;
-        private var padding: CGFloat = 8;
-        private var background: Color = Const.background;
-        private let separationPadding: Int = 0;
-        private let horizontalPadding: Int = 8;
+                        private let hmargin: Int;
+                        private var background: Color = Const.background;
+                        private let separationPadding: Int = 0;
+                        private let horizontalPadding: Int = 8;
 
-        fileprivate init( table: Table, margin: Int = 0, @ViewBuilder content: () -> Content) {
+        fileprivate init( table: Table, vertical: Int = 3, margin: Int = 0,  hmargin: Int = 4, @ViewBuilder content: () -> Content) {
             self.table = table;
-            self.margin = margin;
+            self.tmargin = margin;
+            self.hmargin = hmargin;
+            self.vertical = vertical;
             self.content = content();
         }
 
         fileprivate var body: some View {
-            if (margin > 0) { Spacer().frame(height: CGFloat(margin)) }
-            HStack(spacing: padding) {
+            if (self.tmargin > 0) { Spacer().frame(height: CGFloat(self.tmargin)) }
+            HStack(spacing: CGFloat(self.hmargin)) {
                 Spacer()
                 HStack(alignment: .firstTextBaseline) {
                     VStack() {
-                        Spacer().frame(height: CGFloat(self.verticalPadding))
+                        Spacer().frame(height: CGFloat(self.vertical))
                         HStack(spacing: CGFloat(self.separationPadding)) {
                             content
-                        } .padding(.leading, CGFloat(self.horizontalPadding))
-                        Spacer().frame(height: CGFloat(self.verticalPadding - 1))
+                        }.padding(.leading, CGFloat(self.horizontalPadding))
+                        Spacer().frame(height: CGFloat(self.vertical - 1))
                     }
                     Spacer()
                 }
