@@ -117,6 +117,7 @@ public extension MultiPlayer {
                         private let transport: MultiPlayer.HttpTransport;
                  @State private var sessionState: SessionState;
                         private let poller: Poller;
+                        private let pollInterval: Int = 1;
 
         public init(table: Table, settings: Settings, margin: Int = 0) {
             self.table = table;
@@ -126,7 +127,7 @@ public extension MultiPlayer {
             self.session = session;
             self.transport = session.transport as! MultiPlayer.HttpTransport;
             self.sessionState = SessionState(player: session.player);
-            self.poller = Poller(seconds: 2);
+            self.poller = Poller(seconds: pollInterval);
         }
 
         public var body: some View {
@@ -148,6 +149,27 @@ public extension MultiPlayer {
                 }
             })}
             .onDisappear { self.poller.stop() }
+        }
+
+        private class Poller {
+            private let interval: UInt64;
+            private var task: Task<Void, Never>? = nil;
+            fileprivate init(seconds: Int = 1) {
+                self.interval = UInt64(seconds * 1_000_000_000);
+            }
+            fileprivate func start(_ task: @escaping () async -> Void) {
+                guard self.task == nil else { return }
+                self.task = Task {
+                    while (!Task.isCancelled) {
+                        await task();
+                        try? await Task.sleep(nanoseconds: self.interval);
+                    }
+                }
+            }
+            fileprivate func stop() {
+                task?.cancel();
+                task = nil;
+            }
         }
     }
 
@@ -592,27 +614,6 @@ public extension MultiPlayer {
                     : nil
                 )
                 .padding(.trailing, -4)
-        }
-    }
-
-    private class Poller {
-        private let interval: UInt64;
-        private var task: Task<Void, Never>? = nil;
-        fileprivate init(seconds: Int = 2) {
-            self.interval = UInt64(seconds * 500_000_000);
-        }
-        fileprivate func start(_ task: @escaping () async -> Void) {
-            guard self.task == nil else { return }
-            self.task = Task {
-                while (!Task.isCancelled) {
-                    await task();
-                    try? await Task.sleep(nanoseconds: self.interval);
-                }
-            }
-        }
-        fileprivate func stop() {
-            task?.cancel();
-            task = nil;
         }
     }
 }
