@@ -182,8 +182,7 @@ public extension MultiPlayer {
         }
 
         fileprivate var body: some View {
-            Spacer().frame(height: CGFloat(margin))
-            AnyDevPanel(table: table) {
+            AnyDevPanel(table: table, margin: margin) {
                 RegularText("me:", size: DevPanel.fontsize)
                     CopyableText(text: sessionState.player,
                                  foreground: session.hosting ? .red : .primary,
@@ -233,8 +232,7 @@ public extension MultiPlayer {
         }
 
         fileprivate var body: some View {
-            Spacer().frame(height: CGFloat(margin))
-            AnyDevPanel(table: table) {
+            AnyDevPanel(table: table, margin: margin) {
                 RegularText("session:", size: DevPanel.fontsize)
                     CopyableText(text: serverState.sessionList.shorten(sessionState.session, fallback: EmptySetChar),
                                  background: DevPanel.background,
@@ -312,8 +310,7 @@ public extension MultiPlayer {
         }
 
         fileprivate var body: some View {
-            Spacer().frame(height: CGFloat(margin))
-            AnyDevPanel(table: table) {
+            AnyDevPanel(table: table, margin: margin) {
                 PlayersView(players: self.sessionState.players,
                             player: self.sessionState.player,
                             info: self.sessionState.info)
@@ -335,9 +332,9 @@ public extension MultiPlayer {
         private let verticalPadding: CGFloat = 4;
         private let cornerRadius: CGFloat = 8
     
-        public init( _ text: String? = nil, icon: String? = nil,
-                       background: Color? = nil, foreground: Color? = nil, size: Int = 16,
-                       disabled: Bool = false, action: @escaping () async -> Void) {
+        fileprivate init( _ text: String? = nil, icon: String? = nil,
+                         background: Color? = nil, foreground: Color? = nil, size: Int = 16,
+                         disabled: Bool = false, action: @escaping () async -> Void) {
             self.text = text;
             self.icon = icon;
             self.background = background ?? DevPanel.foreground;
@@ -347,7 +344,7 @@ public extension MultiPlayer {
             self.action = action;
         }
 
-        public var body: some View {
+        fileprivate var body: some View {
             Button {
                 Task { await action() }
             } label: {
@@ -377,10 +374,10 @@ public extension MultiPlayer {
 
     private struct JoinControl: View {
 
-                 let items: [String];
+        fileprivate        let items: [String];
         @Binding var selected: String;
-                 let disabled: Bool;
-                 let action: () async -> Void;
+        fileprivate        let disabled: Bool;
+        fileprivate        let action: () async -> Void;
 
         private let fontSize: CGFloat = 16;
         private let horizontalPadding: CGFloat = 8;
@@ -390,7 +387,7 @@ public extension MultiPlayer {
         private let background: Color = DevPanel.foreground;
         private let foregroundDisabled: Color = .gray;
 
-        var body: some View {
+        fileprivate var body: some View {
             HStack(spacing: 0) {
                 Button {
                     Task { await action() }
@@ -430,38 +427,41 @@ public extension MultiPlayer {
     private struct AnyDevPanel<Content: View>: View {
 
         @ObservedObject private var table: Table;
+                        private let margin: Int;
                         private let content: Content;
 
         private var verticalPadding: CGFloat = 3;
         private var padding: CGFloat = 8;
         private var background: Color = DevPanel.background;
 
-        fileprivate init( table: Table, @ViewBuilder content: () -> Content) {
+        fileprivate init( table: Table, margin: Int = 0, @ViewBuilder content: () -> Content) {
             self.table = table;
+            self.margin = margin;
             self.content = content();
         }
 
         fileprivate var body: some View {
-                HStack(spacing: padding) {
-                    Spacer()
-                    HStack(alignment: .firstTextBaseline) {
-                        VStack() {
-                            Spacer().frame(height: CGFloat(self.verticalPadding))
-                            HStack(spacing: CGFloat(DevPanel.separationPadding)) {
-                                content
-                            } .padding(.leading, CGFloat(DevPanel.horizontalPadding))
-                            Spacer().frame(height: CGFloat(self.verticalPadding - 1))
-                        }
-                        Spacer()
+            if (margin > 0) { Spacer().frame(height: CGFloat(margin)) }
+            HStack(spacing: padding) {
+                Spacer()
+                HStack(alignment: .firstTextBaseline) {
+                    VStack() {
+                        Spacer().frame(height: CGFloat(self.verticalPadding))
+                        HStack(spacing: CGFloat(DevPanel.separationPadding)) {
+                            content
+                        } .padding(.leading, CGFloat(DevPanel.horizontalPadding))
+                        Spacer().frame(height: CGFloat(self.verticalPadding - 1))
                     }
-                    .background(
-                        RoundedRectangle(cornerRadius: 4, style: .continuous)
-                            .fill(background)
-                            .opacity(0.8)
-                            .shadow(color: .black.opacity(0.3), radius: 8, x: 3, y: 6)
-                    )
                     Spacer()
                 }
+                .background(
+                    RoundedRectangle(cornerRadius: 4, style: .continuous)
+                        .fill(background)
+                        .opacity(0.8)
+                        .shadow(color: .black.opacity(0.3), radius: 8, x: 3, y: 6)
+                )
+                Spacer()
+            }
         }
     }
 
@@ -579,7 +579,7 @@ public extension MultiPlayer {
         var strikeout: Bool = false;
         var size: Int = 13;
         @State private var copied = false;
-        var body: some View {
+        fileprivate var body: some View {
             Text(text)
                 .font(.system(size: CGFloat(size), weight: .semibold))
                 .fontWeight(bold ? .bold : .regular)
