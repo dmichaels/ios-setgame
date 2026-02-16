@@ -10,7 +10,7 @@ private struct SessionState {
     fileprivate var leaveable: Bool = false;
     fileprivate var info: Json = [:];
     fileprivate var sessions: SessionList = SessionList(); // TODO
-    fileprivate var sessionShort: String { self.sessions.shorten(self.session) } // TODO
+    fileprivate var sessionShort: String { self.sessions.shorten(self.session ?? EmptySetChar) }
     public mutating func update(from session: MultiPlayer.Session, info: Json? = nil, sessions: [String]? = nil) {
         self.session = session.session;
         self.host = session.host;
@@ -144,22 +144,12 @@ public extension MultiPlayer {
                                          info: await self.transport.sessionInfo(session: self.session.session),
                                          sessions: await self.transport.retrieveSessions());
                 if (!self.sessionState.sessions.contains(self.session.session)) {
+                    //
+                    // Our connected session seems to have disappeared out from under us;
+                    // can happen in dev/testing; disconnect our session object et cetera.
+                    //
                     self.session.disconnect();
                 }
-                /*
-                if let sessions: [String] = await self.transport.retrieveSessions() {
-                    self.sessionState.updateSessions(sessions: sessions);
-                    if let session: String = self.session.session {
-                        if (!sessions.contains(session)) {
-                            //
-                            // Our connected session seems to have disappeared out from under us;
-                            // can happen in dev/testing; disconnect our session object et cetera.
-                            //
-                            self.session.disconnect();
-                        }
-                    }
-                }
-                */
             })}
             .onDisappear { self.poller.stop() }
         }
@@ -186,12 +176,12 @@ public extension MultiPlayer {
 
         fileprivate var body: some View {
             AnyDevPanel(table: table, margin: margin) {
-                RegularText("me:", size: DevPanel.fontSize)
+                RegularText("me:")
                     CopyableText(sessionState.player, color: self.session.hosting ? .red : .primary, semibold: true)
                         .padding(.leading, -6)
-                RegularText("host:", size: DevPanel.fontSize, leading: 4)
+                RegularText("host:", leading: 4)
                 CopyableText("\(self.sessionState.host ?? EmptySetChar)", color: self.session.hosting ? .red : .primary, semibold: true)
-                RegularText("players:", size: DevPanel.fontSize, leading: 8)
+                RegularText("players:", leading: 8)
                 RegularText("\(self.sessionState.players.count == 0 ? EmptySetChar : "\(self.sessionState.players.count)")", leading: 4)
                 Spacer()
                 SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", size: 18, disabled: !self.sessionState.connected) {
@@ -227,7 +217,7 @@ public extension MultiPlayer {
 
         fileprivate var body: some View {
             AnyDevPanel(table: table, margin: margin) {
-                RegularText("session:", size: DevPanel.fontSize)
+                RegularText("session:")
                     CopyableText(sessionState.sessionShort, copy: sessionState.session, bold: true)
                     .padding(.leading, -6).padding(.trailing, 4)
                 SmallButton(DevPanel.icons ? nil : "create", icon: DevPanel.icons ? "plus.rectangle.portrait" : nil, disabled: self.sessionState.connected) {
@@ -308,8 +298,8 @@ public extension MultiPlayer {
 
         private let text: String?;
         private let icon: String?;
+        private let color: Color;
         private let background: Color;
-        private let foreground: Color;
         private let size: Int;
         private let disabled: Bool;
         private let action: () async -> Void;
@@ -319,12 +309,12 @@ public extension MultiPlayer {
         private let cornerRadius: CGFloat = 8
     
         fileprivate init( _ text: String? = nil, icon: String? = nil,
-                         background: Color? = nil, foreground: Color? = nil, size: Int = 16,
+                         color: Color? = nil, background: Color? = nil,  size: Int = 16,
                          disabled: Bool = false, action: @escaping () async -> Void) {
             self.text = text;
             self.icon = icon;
+            self.color = color ?? .yellow;
             self.background = background ?? DevPanel.foreground;
-            self.foreground = foreground ?? .yellow;
             self.size = size;
             self.disabled = disabled;
             self.action = action;
@@ -337,14 +327,14 @@ public extension MultiPlayer {
                 if let icon: String = icon {
                     Image(systemName: icon)
                         .foregroundColor(.black)
-                        .font(.system(size: CGFloat(size)))
+                        .font(.system(size: CGFloat(self.size)))
                         .fontWeight(.semibold)
                         .disabled(disabled)
                 }
                 else if let text: String = text {
                     Text(text)
-                        .font(.system(size: CGFloat(size), weight: .semibold))
-                        .foregroundColor(foreground)
+                        .font(.system(size: CGFloat(self.size), weight: .semibold))
+                        .foregroundColor(self.color)
                         .padding(.horizontal, horizontalPadding)
                         .padding(.vertical, verticalPadding)
                         .background(
@@ -360,16 +350,16 @@ public extension MultiPlayer {
 
     private struct JoinControl: View {
 
-        fileprivate        let items: [String];
-        @Binding var selected: String;
-        fileprivate        let disabled: Bool;
-        fileprivate        let action: () async -> Void;
+                 fileprivate let items: [String];
+        @Binding fileprivate var selected: String;
+                 fileprivate let disabled: Bool;
+                 fileprivate let action: () async -> Void;
 
         private let fontSize: CGFloat = 16;
         private let horizontalPadding: CGFloat = 8;
         private let verticalPadding: CGFloat = 4;
         private let cornerRadius: CGFloat = 8;
-        private let foreground: Color = .yellow;
+        private let color: Color = .yellow;
         private let background: Color = DevPanel.foreground;
         private let foregroundDisabled: Color = .gray;
 
@@ -380,12 +370,12 @@ public extension MultiPlayer {
                 } label: {
                     Text("join:")
                         .font(.system(size: self.fontSize, weight: .semibold))
-                        .foregroundColor(disabled ? self.foreground.opacity(0.4) : self.foreground)
+                        .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
                         .padding(.leading, self.horizontalPadding)
                         .padding(.vertical, self.verticalPadding)
                 }
                 .buttonStyle(.plain)
-                Rectangle().fill(self.foreground.opacity(0.4)).frame(width: 3, height: 1)
+                Rectangle().fill(self.color.opacity(0.4)).frame(width: 3, height: 1)
                 Menu {
                     ForEach(items, id: \.self) { item in
                         Button(item) { selected = item }
@@ -393,7 +383,7 @@ public extension MultiPlayer {
                 } label: {
                     Text(selected.isEmpty ? (items.first ?? EmptySetChar) : selected)
                         .font(.system(size: self.fontSize - 1))
-                        .foregroundColor(disabled ? self.foreground.opacity(0.4) : self.foreground)
+                        .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
                         .padding(.trailing, self.horizontalPadding)
                         .padding(.vertical, self.verticalPadding)
                 }
@@ -458,9 +448,9 @@ public extension MultiPlayer {
         private var sent: [String: Int] = [:];
         private var received: [String: Int] = [:];
         private var queued: [String: Int] = [:];
-        private let fontSize: CGFloat = 15;
+        private let size: Int;
 
-        fileprivate init(players: [String], player: String, info: Json) {
+        fileprivate init(players: [String], player: String, info: Json, size: Int = DevPanel.fontSize) {
             self.noplayers = (players.count == 0);
             self.players = (players.count == 0) ? [player] : players;
             for player in players {
@@ -469,6 +459,7 @@ public extension MultiPlayer {
                 self.queued[player] = queued;
                 self.received[player] = received;
             }
+            self.size = size;
         }
 
         fileprivate var body: some View {
@@ -479,7 +470,6 @@ public extension MultiPlayer {
                     Text("received").frame(width: 70, alignment: .trailing)
                     Text("queued").frame(width: 60, alignment: .trailing)
                 }
-                // if (players.count == 0) { Spacer().frame(height: 0) }
                 ForEach(Array(players.enumerated()), id: \.element) { index, player in
                     if index == 0 {
                         Rectangle()
@@ -509,7 +499,7 @@ public extension MultiPlayer {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .font(.system(size: CGFloat(fontSize), weight: .semibold))
+            .font(.system(size: CGFloat(self.size), weight: .semibold))
         }
     }
 
@@ -536,13 +526,15 @@ public extension MultiPlayer {
 
     private struct RegularText: View {
         private let text: String;
-        private let size: Int;
         private let color: Color;
+        private let size: Int;
         private var bold: Bool = false;
         private var semibold: Bool = false;
         private let leading: Int;
         private let trailing: Int;
-        fileprivate init(_ text: String, size: Int = 13, color: Color = .primary, bold: Bool = false, semibold: Bool = false,
+        fileprivate init(_ text: String, color: Color = .primary,
+                           size: Int = DevPanel.fontSize,
+                           bold: Bool = false, semibold: Bool = false,
                            leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil) {
             self.text = text;
             self.size = size;
@@ -564,18 +556,22 @@ public extension MultiPlayer {
 
         private let text: String;
         private var copy: String?;
-        private var color: Color = .primary;
+        private let color: Color;
         private var background: Color = .white;
-        private var bold: Bool = false;
-        private var semibold: Bool = false;
-        private var underline: Bool = false;
+        private let size: Int;
+        private let bold: Bool;
+        private let semibold: Bool;
+        private let underline: Bool;
         private var strikeout: Bool = false;
-        private var fontSize: Int = 13;
         @State private var copied: Bool = false;
 
-        fileprivate init(_ text: String, copy: String? = nil, color: Color = .primary, bold: Bool = false, semibold: Bool = false, underline: Bool = false) {
+        fileprivate init(_ text: String, copy: String? = nil, color: Color = .primary,
+                           size: Int = DevPanel.fontSize,
+                           bold: Bool = false, semibold: Bool = false, underline: Bool = false) {
             self.text = text;
             self.copy = copy ?? text;
+            self.color = color;
+            self.size = size;
             self.bold = bold;
             self.semibold = semibold;
             self.underline = underline;
@@ -583,13 +579,12 @@ public extension MultiPlayer {
 
         fileprivate var body: some View {
             Text(text)
-                .font(.system(size: CGFloat(fontSize), weight: bold ? .bold : (semibold ? .semibold : .regular)))
-                // .fontWeight(bold ? .bold : .regular)
+                .font(.system(size: CGFloat(self.size), weight: bold ? .bold : (semibold ? .semibold : .regular)))
                 .underline(underline)
                 .strikethrough(strikeout)
                 .padding(8)
                 .cornerRadius(8)
-                .foregroundColor(color)
+                .foregroundColor(self.color)
                 .onTapGesture {
                     UIPasteboard.general.string = copy ?? text;
                     copied = true;
