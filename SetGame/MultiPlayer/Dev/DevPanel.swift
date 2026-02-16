@@ -243,8 +243,7 @@ public extension MultiPlayer {
                                  strikeout: false,
                                  size: sessionState.session == nil ? 14 : 13
                     )
-                    .padding(.leading, -6)
-                RegularText("", size: DevPanel.fontsize, leading: 6, trailing: 1)
+                    .padding(.leading, -6).padding(.trailing, 4)
                 SmallButton(DevPanel.icons ? nil : "create", icon: DevPanel.icons ? "plus.rectangle.portrait" : nil, disabled: self.sessionState.connected) {
                     if (!self.session.connected) {
                         if await self.session.create() {
@@ -384,8 +383,8 @@ public extension MultiPlayer {
                  let action: () async -> Void;
 
         private let fontSize: CGFloat = 16;
-        private let horizontalPadding: CGFloat = 7;
-        private let verticalPadding: CGFloat = 3;
+        private let horizontalPadding: CGFloat = 8;
+        private let verticalPadding: CGFloat = 4;
         private let cornerRadius: CGFloat = 8;
         private let foreground: Color = .yellow;
         private let background: Color = DevPanel.foreground;
@@ -410,7 +409,7 @@ public extension MultiPlayer {
                     }
                 } label: {
                     Text(selected.isEmpty ? (items.first ?? EmptySetChar) : selected)
-                        .font(.system(size: self.fontSize - 0))
+                        .font(.system(size: self.fontSize - 1))
                         .foregroundColor(disabled ? self.foreground.opacity(0.4) : self.foreground)
                         .padding(.trailing, self.horizontalPadding)
                         .padding(.vertical, self.verticalPadding)
