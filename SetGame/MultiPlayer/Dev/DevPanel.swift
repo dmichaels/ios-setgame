@@ -1,5 +1,13 @@
 import SwiftUI
 
+private struct Const {
+    fileprivate static let background: Color = Color(hex: 0x77BBAA);
+    fileprivate static let foreground: Color = Color(hex: 0x226655);
+    fileprivate static let fontSize: Int = 15;
+    fileprivate static let separator: String = "|" // "\u{2756}";
+    fileprivate static let emptySetChar: String = "∅";
+}
+
 private struct SessionState {
     fileprivate var session: String? = nil;
     fileprivate var host: String? = nil;
@@ -9,8 +17,8 @@ private struct SessionState {
     fileprivate var connected: Bool = false;
     fileprivate var leaveable: Bool = false;
     fileprivate var info: Json = [:];
-    fileprivate var sessions: SessionList = SessionList(); // TODO
-    fileprivate var sessionShort: String { self.sessions.shorten(self.session ?? EmptySetChar) }
+    fileprivate var sessions: SessionList = SessionList();
+    fileprivate var sessionShort: String { self.sessions.shorten(self.session ?? Const.emptySetChar) }
     public mutating func update(from session: MultiPlayer.Session, info: Json? = nil, sessions: [String]? = nil) {
         self.session = session.session;
         self.host = session.host;
@@ -31,10 +39,6 @@ private struct SessionState {
     }
 }
 
-private let EmptySetChar: String = "∅";
-
-// All this nonesense is just so we can reliably deal with (view) the session IDs as short values.
-//
 private struct SessionList {
 
     private static           let shortLengthDefault: Int = 4;
@@ -114,14 +118,6 @@ public extension MultiPlayer {
                  @State private var sessionState: SessionState;
                         private let poller: Poller;
 
-        fileprivate static let background: Color = Color(hex: 0x77BBAA);
-        fileprivate static let foreground: Color = Color(hex: 0x226655);
-        fileprivate static let horizontalPadding: Int = 8;
-        fileprivate static let separationPadding: Int = 0;
-        fileprivate static let fontSize: Int = 15;
-        fileprivate static let separator: String = "|" // "\u{2756}";
-        fileprivate static let icons: Bool = false;
-
         public init(table: Table, settings: Settings, margin: Int = 0) {
             self.table = table;
             self.settings = settings;
@@ -177,12 +173,15 @@ public extension MultiPlayer {
         fileprivate var body: some View {
             AnyDevPanel(table: table, margin: margin) {
                 RegularText("me:")
-                    CopyableText(sessionState.player, color: self.session.hosting ? .red : .primary, semibold: true)
-                        .padding(.leading, -6)
+                    CopyableText(sessionState.player,
+                                 color: self.session.hosting ? .red : .primary,
+                                 semibold: true, leading: -6)
                 RegularText("host:", leading: 4)
-                CopyableText("\(self.sessionState.host ?? EmptySetChar)", color: self.session.hosting ? .red : .primary, semibold: true)
+                    CopyableText("\(self.sessionState.host ?? Const.emptySetChar)",
+                                 color: self.session.hosting ? .red : .primary,
+                                 semibold: true, leading: -6)
                 RegularText("players:", leading: 8)
-                RegularText("\(self.sessionState.players.count == 0 ? EmptySetChar : "\(self.sessionState.players.count)")", leading: 4)
+                RegularText("\(self.sessionState.players.count == 0 ? Const.emptySetChar : "\(self.sessionState.players.count)")", leading: 4)
                 Spacer()
                 SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", size: 18, disabled: !self.sessionState.connected) {
                     if (self.transport.engaged) {
@@ -218,9 +217,8 @@ public extension MultiPlayer {
         fileprivate var body: some View {
             AnyDevPanel(table: table, margin: margin) {
                 RegularText("session:")
-                    CopyableText(sessionState.sessionShort, copy: sessionState.session, bold: true)
-                    .padding(.leading, -6).padding(.trailing, 4)
-                SmallButton(DevPanel.icons ? nil : "create", icon: DevPanel.icons ? "plus.rectangle.portrait" : nil, disabled: self.sessionState.connected) {
+                    CopyableText(sessionState.sessionShort, copy: sessionState.session, bold: true, leading: -6, trailing: 4)
+                SmallButton("create", disabled: self.sessionState.connected, trailing: 3) {
                     if (!self.session.connected) {
                         if await self.session.create() {
                             self.sessionState.update(from: self.session);
@@ -228,7 +226,6 @@ public extension MultiPlayer {
                         }
                     }
                 }
-                RegularText("", padding: 1)
                 JoinControl(items: sessionState.sessions.sessionsShort,
                             selected: $sessionState.sessions.selectedShort,
                             disabled: self.sessionState.connected) {
@@ -241,9 +238,7 @@ public extension MultiPlayer {
                     }
                 }
                 Spacer()
-                SmallButton(DevPanel.icons ? nil : "host",
-                            icon: DevPanel.icons ? "xmark.rectangle.portrait" : nil,
-                            disabled: !self.sessionState.connected || self.sessionState.hosting) {
+                SmallButton("host", disabled: !self.sessionState.connected || self.sessionState.hosting) {
                     if (self.session.connected) {
                         if await self.session.requestHost() {
                             self.sessionState.update(from: self.session);
@@ -302,6 +297,8 @@ public extension MultiPlayer {
         private let background: Color;
         private let size: Int;
         private let disabled: Bool;
+        private let leading: Int;
+        private let trailing: Int;
         private let action: () async -> Void;
 
         private let horizontalPadding: CGFloat = 7;
@@ -310,15 +307,18 @@ public extension MultiPlayer {
     
         fileprivate init( _ text: String? = nil, icon: String? = nil,
                             color: Color? = nil, background: Color? = nil,
-                            size: Int = DevPanel.fontSize,
-                            disabled: Bool = false, action: @escaping () async -> Void) {
+                            size: Int = Const.fontSize, disabled: Bool = false,
+                            leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil,
+                            action: @escaping () async -> Void) {
             self.text = text;
             self.icon = icon;
             self.color = color ?? .yellow;
-            self.background = background ?? DevPanel.foreground;
+            self.background = background ?? Const.foreground;
             self.size = size;
             self.disabled = disabled;
             self.action = action;
+            self.leading = leading ?? padding ?? 0;
+            self.trailing = trailing ?? padding ?? 0;
         }
 
         fileprivate var body: some View {
@@ -346,6 +346,7 @@ public extension MultiPlayer {
             }
             .buttonStyle(.plain)
             .disabled(disabled)
+            .padding(.leading, CGFloat(self.leading)).padding(.trailing, CGFloat(self.trailing))
         }
     }
 
@@ -353,7 +354,7 @@ public extension MultiPlayer {
 
                  fileprivate let items: [String];
         @Binding fileprivate var selected: String;
-                 fileprivate let size: Int = DevPanel.fontSize;
+                 fileprivate let size: Int = Const.fontSize;
                  fileprivate let disabled: Bool;
                  fileprivate let action: () async -> Void;
 
@@ -361,7 +362,7 @@ public extension MultiPlayer {
         private let verticalPadding: CGFloat = 4;
         private let cornerRadius: CGFloat = 8;
         private let color: Color = .yellow;
-        private let background: Color = DevPanel.foreground;
+        private let background: Color = Const.foreground;
         private let foregroundDisabled: Color = .gray;
 
         fileprivate var body: some View {
@@ -382,7 +383,7 @@ public extension MultiPlayer {
                         Button(item) { selected = item }
                     }
                 } label: {
-                    Text(selected.isEmpty ? (items.first ?? EmptySetChar) : selected)
+                    Text(selected.isEmpty ? (items.first ?? Const.emptySetChar) : selected)
                         .font(.system(size: CGFloat(self.size - 1)))
                         .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
                         .padding(.trailing, self.horizontalPadding)
@@ -409,7 +410,9 @@ public extension MultiPlayer {
 
         private var verticalPadding: CGFloat = 3;
         private var padding: CGFloat = 8;
-        private var background: Color = DevPanel.background;
+        private var background: Color = Const.background;
+        private let separationPadding: Int = 0;
+        private let horizontalPadding: Int = 8;
 
         fileprivate init( table: Table, margin: Int = 0, @ViewBuilder content: () -> Content) {
             self.table = table;
@@ -424,9 +427,9 @@ public extension MultiPlayer {
                 HStack(alignment: .firstTextBaseline) {
                     VStack() {
                         Spacer().frame(height: CGFloat(self.verticalPadding))
-                        HStack(spacing: CGFloat(DevPanel.separationPadding)) {
+                        HStack(spacing: CGFloat(self.separationPadding)) {
                             content
-                        } .padding(.leading, CGFloat(DevPanel.horizontalPadding))
+                        } .padding(.leading, CGFloat(self.horizontalPadding))
                         Spacer().frame(height: CGFloat(self.verticalPadding - 1))
                     }
                     Spacer()
@@ -451,7 +454,7 @@ public extension MultiPlayer {
         private var queued: [String: Int] = [:];
         private let size: Int;
 
-        fileprivate init(players: [String], player: String, info: Json, size: Int = DevPanel.fontSize) {
+        fileprivate init(players: [String], player: String, info: Json, size: Int = Const.fontSize) {
             self.noplayers = (players.count == 0);
             self.players = (players.count == 0) ? [player] : players;
             for player in players {
@@ -481,13 +484,13 @@ public extension MultiPlayer {
                     HStack {
                         Text(player)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        Text(self.noplayers ? EmptySetChar : "\(sent[player] ?? 0)")
+                        Text(self.noplayers ? Const.emptySetChar : "\(sent[player] ?? 0)")
                             .frame(width: 40, alignment: .trailing)
     
-                        Text(self.noplayers ? EmptySetChar : "\(received[player] ?? 0)")
+                        Text(self.noplayers ? Const.emptySetChar : "\(received[player] ?? 0)")
                             .frame(width: 70, alignment: .trailing)
     
-                        Text(self.noplayers ? EmptySetChar : "\(queued[player] ?? 0)")
+                        Text(self.noplayers ? Const.emptySetChar : "\(queued[player] ?? 0)")
                             .frame(width: 60, alignment: .trailing)
                     }
                     .padding(.vertical, 2)
@@ -534,7 +537,7 @@ public extension MultiPlayer {
         private let leading: Int;
         private let trailing: Int;
         fileprivate init(_ text: String, color: Color = .primary,
-                           size: Int = DevPanel.fontSize,
+                           size: Int = Const.fontSize,
                            bold: Bool = false, semibold: Bool = false,
                            leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil) {
             self.text = text;
@@ -564,11 +567,14 @@ public extension MultiPlayer {
         private let semibold: Bool;
         private let underline: Bool;
         private var strikeout: Bool = false;
+        private let leading: Int;
+        private let trailing: Int;
         @State private var copied: Bool = false;
 
         fileprivate init(_ text: String, copy: String? = nil, color: Color = .primary,
-                           size: Int = DevPanel.fontSize,
-                           bold: Bool = false, semibold: Bool = false, underline: Bool = false) {
+                           size: Int = Const.fontSize,
+                           bold: Bool = false, semibold: Bool = false, underline: Bool = false,
+                           leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil) {
             self.text = text;
             self.copy = copy ?? text;
             self.color = color;
@@ -576,6 +582,8 @@ public extension MultiPlayer {
             self.bold = bold;
             self.semibold = semibold;
             self.underline = underline;
+            self.leading = leading ?? padding ?? 0;
+            self.trailing = trailing ?? padding ?? 0;
         }
 
         fileprivate var body: some View {
@@ -586,6 +594,7 @@ public extension MultiPlayer {
                 .padding(8)
                 .cornerRadius(8)
                 .foregroundColor(self.color)
+                .padding(.leading, CGFloat(self.leading)).padding(.trailing, CGFloat(self.trailing))
                 .onTapGesture {
                     UIPasteboard.general.string = copy ?? text;
                     copied = true;
