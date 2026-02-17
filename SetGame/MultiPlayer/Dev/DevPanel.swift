@@ -431,6 +431,7 @@ public extension MultiPlayer {
                         Text("player").bold().frame(maxWidth: .infinity, alignment: .leading)
                         Text("received").frame(maxWidth: .infinity, alignment: .leading)
                         Text("host").frame(maxWidth: .infinity, alignment: .leading)
+                        Text("time").frame(maxWidth: .infinity, alignment: .leading)
                     }
                     ForEach(Array(players.enumerated()), id: \.element) { index, player in
                         let messagesReceived: [HttpTransport.MessageReceived] = HttpTransport.messagesReceived(info: self.info, player: player) ?? [];
@@ -449,6 +450,20 @@ public extension MultiPlayer {
                             VStack(alignment: .leading) {
                                 ForEach(messagesReceived, id: \.id) { message in
                                     Text("\(message.message.type)")
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            VStack(alignment: .leading) {
+                                ForEach(messagesReceived, id: \.id) { message in
+                                    Text("\(message.host)")
+                                        .font(.system(size: 13, weight: .regular))
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            VStack(alignment: .leading) {
+                                ForEach(messagesReceived, id: \.id) { message in
+                                    Text("\(message.timestamp)")
+                                        .font(.system(size: 12, weight: .regular))
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)

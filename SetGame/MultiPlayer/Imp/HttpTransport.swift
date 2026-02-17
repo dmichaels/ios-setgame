@@ -223,7 +223,8 @@ public extension MultiPlayer {
                            let messages: [Json] = messagesItem["messages"] as? [Json] {
                             for message in messages {
                                 if let message = MessageConversion.toMessage(json: message) {
-                                    result.append(MessageReceived(timestamp: timestamp, host: host, message: message));
+                                    result.append(MessageReceived(
+                                        timestamp: substring(timestamp, from: 11, length: 11), host: host, message: message));
                                     print(message)
                                 }
                             }
@@ -258,4 +259,17 @@ public extension MultiPlayer {
             return false;
         }
     }
+}
+
+func substring(_ s: String, from start: Int, length: Int) -> String {
+    guard start >= 0,
+          length >= 0,
+          start < s.count else { return "" }
+
+    let startIndex = s.index(s.startIndex, offsetBy: start)
+    let endIndex = s.index(startIndex,
+                           offsetBy: length,
+                           limitedBy: s.endIndex) ?? s.endIndex
+
+    return String(s[startIndex..<endIndex])
 }
