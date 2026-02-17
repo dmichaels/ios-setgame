@@ -381,6 +381,7 @@ def receive_messages_endpoint(session, player):
 		            'timestamp': datetime.now(timezone.utc).isoformat(),
 		            'to': player,
 		            'host': session['host'],
+		            'players': session['players'],
 		            'messages': messages
 	            }
             })

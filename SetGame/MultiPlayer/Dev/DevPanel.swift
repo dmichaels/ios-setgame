@@ -411,21 +411,33 @@ public extension MultiPlayer {
 
             private let player: String;
             private let players: [String];
-            private let noplayers: Bool;
             private let host: String;
             private let info: Json;
             private let size: Int;
 
+            @State private var playersWithMessages: [String] = [];
+            @State private var playersMessages: [String: [HttpTransport.MessageReceived]] = [:];
+
             fileprivate init(player: String, players: [String], host: String, info: Json, size: Int = Const.fontSize) {
+
                 self.player = player
-                self.noplayers = players.count == 0;
                 self.players = (players.count == 0) ? [player, "foobar"] : players;
                 self.host = host;
                 self.info = info;
                 self.size = size;
+
+                    var playersMessages: [String: [HttpTransport.MessageReceived]] = [:];
+                    for player in players {
+                        if let messagesReceived = HttpTransport.messagesReceived(info: info, player: player) {
+                            self.playersMessages[player] = messagesReceived;
+                            self.playersWithMessages.append(player);
+                        }
+                    }
+                    // self.playersWithMessages = playersWithMessages;
+                    // self.playersMessages = playersMessages;
             }
 
-            func messageType(_ message: Message) -> String {
+            private static func messageType(_ message: Message) -> String {
                 switch message.type {
                     case .ping:                 return "ping";
                     case .joinSession:          return "join";
@@ -453,31 +465,31 @@ public extension MultiPlayer {
                     }
                     Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale)
                     ForEach(players, id: \.self) { player in
-                        if let messages: [HttpTransport.MessageReceived] = HttpTransport.messagesReceived(info: info, player: player) {
-                        LazyVGrid(columns: columns, alignment: .leading, spacing: 4) {
-                            Text(player + (player == self.player ? " ◀" : ""))
-                                .fixedSize(horizontal: true, vertical: true)
-                            VStack(alignment: .leading, spacing: 2) {
-                                ForEach(messages, id: \.id) { message in
-                                    Text("\(messageType(message.message))")
-                                        .font(.system(size: 13, weight: .regular))
-                                        .lineLimit(1)
+                        if let received: [HttpTransport.MessageReceived] = HttpTransport.messagesReceived(info: info, player: player) {
+                            LazyVGrid(columns: columns, alignment: .leading, spacing: 4) {
+                                Text(player + (player == self.player ? " ◀" : ""))
+                                    .fixedSize(horizontal: true, vertical: true)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    ForEach(received, id: \.id) { message in
+                                        Text("\(MessagesView.messageType(message.message))")
+                                            .font(.system(size: 13, weight: .regular))
+                                            .lineLimit(1)
+                                    }
+                                }
+                                VStack(alignment: .leading, spacing: 2) {
+                                    ForEach(received, id: \.id) { message in
+                                        Text("\(message.host)")
+                                            .font(.system(size: 13, weight: .regular))
+                                    }
+                                }
+                                VStack(alignment: .leading, spacing: 2) {
+                                    ForEach(received, id: \.id) { message in
+                                        Text("\(message.timestamp)")
+                                            .font(.system(size: 12, weight: .regular))
+                                    }
                                 }
                             }
-                            VStack(alignment: .leading, spacing: 2) {
-                                ForEach(messages, id: \.id) { message in
-                                    Text("\(message.host)")
-                                        .font(.system(size: 13, weight: .regular))
-                                }
-                            }
-                            VStack(alignment: .leading, spacing: 2) {
-                                ForEach(messages, id: \.id) { message in
-                                    Text("\(message.timestamp)")
-                                        .font(.system(size: 12, weight: .regular))
-                                }
-                            }
-                        }
-                        Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale)
+                            Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale)
                         }
                     }
                 }

@@ -208,7 +208,9 @@ public extension MultiPlayer {
         public struct MessageReceived: Identifiable {
             public let id: UUID = UUID();
             public var timestamp: String;
+            public var to: String;
             public var host: String;
+            public var players: [String];
             public var message: Message;
 
         }
@@ -219,13 +221,18 @@ public extension MultiPlayer {
                 for messageInfo: Json in messagesInfo {
                     if let messagesItem: Json = messageInfo[player] as? Json {
                         if let timestamp: String = messagesItem["timestamp"] as? String,
+                           let to: String = messagesItem["to"] as? String,
                            let host: String = messagesItem["host"] as? String,
+                           let players: [String] = messagesItem["players"] as? [String],
                            let messages: [Json] = messagesItem["messages"] as? [Json] {
                             for message in messages {
                                 if let message = MessageConversion.toMessage(json: message) {
                                     result.append(MessageReceived(
                                         timestamp: timestamp.substring(from: 11, length: 11),
-                                        host: host, message: message));
+                                        to: to,
+                                        host: host,
+                                        players: players,
+                                        message: message));
                                 }
                             }
                         }
