@@ -425,7 +425,81 @@ public extension MultiPlayer {
                 self.size = size;
             }
 
+            func messageType(_ message: Message) -> String {
+                switch message.type {
+                    case .ping:                 return "ping";
+                    case .joinSession:          return "join";
+                    case .joinSessionConfirmed: return "joined";
+                    case .leaveSession:         return "leave";
+                    case .requestHostSession:   return "host";
+                    case .updateSession:        return "update";
+                }
+            }
+
+            private var columns: [GridItem] {
+                [
+                    GridItem(.fixed(90), alignment: .leading),      // player
+                    GridItem(.flexible(), alignment: .leading),     // received (expands)
+                    GridItem(.fixed(70), alignment: .leading),      // host
+                    GridItem(.fixed(95), alignment: .leading)       // time
+                ]
+            }
+
             fileprivate var body: some View {
+VStack(spacing: 4) {
+
+    // Header
+    LazyVGrid(columns: columns, alignment: .leading, spacing: 4) {
+        Text("player").bold()
+        Text("received").bold()
+        Text("host").bold()
+        Text("time").bold()
+    }
+
+    Rectangle()
+        .fill(Color.black)
+        .frame(height: 2 / UIScreen.main.scale)
+
+    ForEach(players, id: \.self) { player in
+
+        let messages = HttpTransport.messagesReceived(info: info, player: player) ?? []
+
+        LazyVGrid(columns: columns, alignment: .leading, spacing: 4) {
+
+            Text(player + (player == self.player ? " ◀" : ""))
+                .fixedSize(horizontal: true, vertical: true)
+
+            VStack(alignment: .leading, spacing: 2) {
+                ForEach(messages, id: \.id) { message in
+                    Text("\(messageType(message.message))")
+                        .font(.system(size: 13, weight: .regular))
+                        .lineLimit(1)
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                ForEach(messages, id: \.id) { message in
+                    Text("\(message.host)")
+                        .font(.system(size: 13, weight: .regular))
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                ForEach(messages, id: \.id) { message in
+                    Text("\(message.timestamp)")
+                        .font(.system(size: 12, weight: .regular))
+                }
+            }
+        }
+
+        Rectangle()
+            .fill(Color.black)
+            .frame(height: 2 / UIScreen.main.scale)
+    }
+}
+.font(.system(size: CGFloat(self.size), weight: .semibold))
+.frame(maxWidth: .infinity, alignment: .leading)
+                /*
                 VStack(spacing: 4) {
                     HStack {
                         Text("player").bold().frame(maxWidth: .infinity, alignment: .leading)
@@ -441,42 +515,45 @@ public extension MultiPlayer {
                                 .frame(height: 2 / UIScreen.main.scale)
                                 .offset(y: 0.5)
                         }
-                        HStack {
+                        HStack(alignment: .top) {
+
                             VStack {
                                 Text(player + (player == self.player ? " ◀" : ""))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                Spacer()
+                                    // .frame(maxWidth: .infinity, alignment: .leading)
+                                // Spacer()
                             }
+                            .fixedSize(horizontal: true, vertical: true)
+
                             VStack(alignment: .leading) {
                                 ForEach(messagesReceived, id: \.id) { message in
                                     Text("[\(message.message.type)]")
                                         .font(.system(size: 13, weight: .regular))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .lineLimit(1)
+                                        // .frame(maxWidth: .infinity, alignment: .leading)
                                 }
-                                    Text("ABC")
-                                        .font(.system(size: 13, weight: .regular))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    Text("DEF")
-                                        .font(.system(size: 13, weight: .regular))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .layoutPriority(1)
+
                             VStack(alignment: .leading) {
                                 ForEach(messagesReceived, id: \.id) { message in
                                     Text("[\(message.host)]")
                                         .font(.system(size: 13, weight: .regular))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        // .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                            // .frame(maxWidth: .infinity, alignment: .leading)
+                            .fixedSize(horizontal: true, vertical: false)
+
                             VStack(alignment: .leading) {
                                 ForEach(messagesReceived, id: \.id) { message in
                                     Text("[\(message.timestamp)]")
                                         .font(.system(size: 12, weight: .regular))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        // .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                            // .frame(maxWidth: .infinity, alignment: .leading)
+                            .fixedSize(horizontal: true, vertical: false)
                         }
                         .padding(.vertical, 2)
                         if index < players.count - 1 {
@@ -489,6 +566,7 @@ public extension MultiPlayer {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.system(size: CGFloat(self.size), weight: .semibold))
+                */
             }
         }
     }
