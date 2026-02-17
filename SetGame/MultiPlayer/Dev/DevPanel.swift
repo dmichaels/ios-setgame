@@ -206,9 +206,9 @@ public extension MultiPlayer {
                     RegularText("\(self.sessionState.players.count == 0 ? Const.emptySetChar : "\(self.sessionState.players.count)")", leading: 3)
                 Spacer()
                 SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
-                    if let messagesReceived: [Message] = HttpTransport.messagesReceived(info: self.sessionState.info, player: self.session.player) {
+                    if let messagesReceived: [HttpTransport.MessageReceived] = HttpTransport.messagesReceived(info: self.sessionState.info, player: self.session.player) {
                         for message in messagesReceived {
-                            print("XYZZY-MESSAGE(\(self.session.player): \(message.type)")
+                            print("XYZZY-MESSAGE(\(self.session.player): \(message.message.type)")
                         }
                     }
                     if (self.transport.engaged) {
@@ -429,10 +429,11 @@ public extension MultiPlayer {
                 VStack(spacing: 4) {
                     HStack {
                         Text("player").bold().frame(maxWidth: .infinity, alignment: .leading)
-                        Text("received messages").frame(maxWidth: .infinity, alignment: .leading)
+                        Text("received").frame(maxWidth: .infinity, alignment: .leading)
+                        Text("host").frame(maxWidth: .infinity, alignment: .leading)
                     }
                     ForEach(Array(players.enumerated()), id: \.element) { index, player in
-                        let messagesReceived: [any Message] = HttpTransport.messagesReceived(info: self.info, player: player) ?? [];
+                        let messagesReceived: [HttpTransport.MessageReceived] = HttpTransport.messagesReceived(info: self.info, player: player) ?? [];
                         if index == 0 {
                             Rectangle()
                                 .fill(Color.black)
@@ -447,7 +448,7 @@ public extension MultiPlayer {
                             }
                             VStack(alignment: .leading) {
                                 ForEach(messagesReceived, id: \.id) { message in
-                                    Text("\(message.type)")
+                                    Text("\(message.message.type)")
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)

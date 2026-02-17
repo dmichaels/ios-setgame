@@ -205,17 +205,25 @@ public extension MultiPlayer {
             return (sent: sent, queued: queued, received: received);
         }
 
-        public static func messagesReceived(info: Json, player: String) -> [Message]? {
-            var result: [Message] = [];
+        public struct MessageReceived: Identifiable {
+            public let id: UUID = UUID();
+            public var timestamp: String;
+            public var host: String;
+            public var message: Message;
+
+        }
+
+        public static func messagesReceived(info: Json, player: String) -> [MessageReceived]? {
+            var result: [MessageReceived] = [];
             if let messagesInfo: [Json] = info["received_messages"] as? [Json] {
                 for messageInfo: Json in messagesInfo {
                     if let messagesItem: Json = messageInfo[player] as? Json {
-                        if let messagesTimestamp: String = messagesItem["timestamp"] as? String,
-                           let messagesHost: String = messagesItem["host"] as? String,
+                        if let timestamp: String = messagesItem["timestamp"] as? String,
+                           let host: String = messagesItem["host"] as? String,
                            let messages: [Json] = messagesItem["messages"] as? [Json] {
                             for message in messages {
                                 if let message = MessageConversion.toMessage(json: message) {
-                                    result.append(message);
+                                    result.append(MessageReceived(timestamp: timestamp, host: host, message: message));
                                     print(message)
                                 }
                             }
