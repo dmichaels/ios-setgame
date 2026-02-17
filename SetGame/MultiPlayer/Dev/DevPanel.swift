@@ -399,7 +399,7 @@ public extension MultiPlayer {
         }
 
         fileprivate var body: some View {
-            AnyDevPanel(table: table, margin: margin) {
+            AnyDevPanel(table: table, vertical: 5, margin: margin) {
                 MessagesView(player: self.sessionState.player,
                              players: self.sessionState.players,
                              host: self.sessionState.host ?? "",
@@ -436,137 +436,53 @@ public extension MultiPlayer {
                 }
             }
 
-            private var columns: [GridItem] {
-                [
-                    GridItem(.fixed(90), alignment: .leading),      // player
-                    GridItem(.flexible(), alignment: .leading),     // received (expands)
-                    GridItem(.fixed(70), alignment: .leading),      // host
-                    GridItem(.fixed(95), alignment: .leading)       // time
-                ]
-            }
+            private var columns: [GridItem] {[
+                GridItem(.fixed(90), alignment: .leading),  // player
+                GridItem(.flexible(), alignment: .leading), // received
+                GridItem(.fixed(70), alignment: .leading),  // host
+                GridItem(.fixed(95), alignment: .leading)   // time
+            ]}
 
             fileprivate var body: some View {
-VStack(spacing: 4) {
-
-    // Header
-    LazyVGrid(columns: columns, alignment: .leading, spacing: 4) {
-        Text("player").bold()
-        Text("received").bold()
-        Text("host").bold()
-        Text("time").bold()
-    }
-
-    Rectangle()
-        .fill(Color.black)
-        .frame(height: 2 / UIScreen.main.scale)
-
-    ForEach(players, id: \.self) { player in
-
-        let messages = HttpTransport.messagesReceived(info: info, player: player) ?? []
-
-        LazyVGrid(columns: columns, alignment: .leading, spacing: 4) {
-
-            Text(player + (player == self.player ? " ◀" : ""))
-                .fixedSize(horizontal: true, vertical: true)
-
-            VStack(alignment: .leading, spacing: 2) {
-                ForEach(messages, id: \.id) { message in
-                    Text("\(messageType(message.message))")
-                        .font(.system(size: 13, weight: .regular))
-                        .lineLimit(1)
-                }
-            }
-
-            VStack(alignment: .leading, spacing: 2) {
-                ForEach(messages, id: \.id) { message in
-                    Text("\(message.host)")
-                        .font(.system(size: 13, weight: .regular))
-                }
-            }
-
-            VStack(alignment: .leading, spacing: 2) {
-                ForEach(messages, id: \.id) { message in
-                    Text("\(message.timestamp)")
-                        .font(.system(size: 12, weight: .regular))
-                }
-            }
-        }
-
-        Rectangle()
-            .fill(Color.black)
-            .frame(height: 2 / UIScreen.main.scale)
-    }
-}
-.font(.system(size: CGFloat(self.size), weight: .semibold))
-.frame(maxWidth: .infinity, alignment: .leading)
-                /*
                 VStack(spacing: 4) {
-                    HStack {
-                        Text("player").bold().frame(maxWidth: .infinity, alignment: .leading)
-                        Text("received").frame(maxWidth: .infinity, alignment: .leading)
-                        Text("host").frame(maxWidth: .infinity, alignment: .leading)
-                        Text("time").frame(maxWidth: .infinity, alignment: .leading)
+                    LazyVGrid(columns: columns, alignment: .leading, spacing: 4) {
+                        Text("player").bold()
+                        Text("received").bold()
+                        Text("host").bold()
+                        Text("time").bold()
                     }
-                    ForEach(Array(players.enumerated()), id: \.element) { index, player in
-                        let messagesReceived: [HttpTransport.MessageReceived] = HttpTransport.messagesReceived(info: self.info, player: player) ?? [];
-                        if index == 0 {
-                            Rectangle()
-                                .fill(Color.black)
-                                .frame(height: 2 / UIScreen.main.scale)
-                                .offset(y: 0.5)
-                        }
-                        HStack(alignment: .top) {
-
-                            VStack {
-                                Text(player + (player == self.player ? " ◀" : ""))
-                                    // .frame(maxWidth: .infinity, alignment: .leading)
-                                // Spacer()
-                            }
-                            .fixedSize(horizontal: true, vertical: true)
-
-                            VStack(alignment: .leading) {
-                                ForEach(messagesReceived, id: \.id) { message in
-                                    Text("[\(message.message.type)]")
+                    Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale)
+                    ForEach(players, id: \.self) { player in
+                        if let messages: [HttpTransport.MessageReceived] = HttpTransport.messagesReceived(info: info, player: player) {
+                        LazyVGrid(columns: columns, alignment: .leading, spacing: 4) {
+                            Text(player + (player == self.player ? " ◀" : ""))
+                                .fixedSize(horizontal: true, vertical: true)
+                            VStack(alignment: .leading, spacing: 2) {
+                                ForEach(messages, id: \.id) { message in
+                                    Text("\(messageType(message.message))")
                                         .font(.system(size: 13, weight: .regular))
                                         .lineLimit(1)
-                                        // .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .layoutPriority(1)
-
-                            VStack(alignment: .leading) {
-                                ForEach(messagesReceived, id: \.id) { message in
-                                    Text("[\(message.host)]")
+                            VStack(alignment: .leading, spacing: 2) {
+                                ForEach(messages, id: \.id) { message in
+                                    Text("\(message.host)")
                                         .font(.system(size: 13, weight: .regular))
-                                        // .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
-                            // .frame(maxWidth: .infinity, alignment: .leading)
-                            .fixedSize(horizontal: true, vertical: false)
-
-                            VStack(alignment: .leading) {
-                                ForEach(messagesReceived, id: \.id) { message in
-                                    Text("[\(message.timestamp)]")
+                            VStack(alignment: .leading, spacing: 2) {
+                                ForEach(messages, id: \.id) { message in
+                                    Text("\(message.timestamp)")
                                         .font(.system(size: 12, weight: .regular))
-                                        // .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
-                            // .frame(maxWidth: .infinity, alignment: .leading)
-                            .fixedSize(horizontal: true, vertical: false)
                         }
-                        .padding(.vertical, 2)
-                        if index < players.count - 1 {
-                            Rectangle()
-                                . fill(Color.black)
-                                .frame(height: 2 / UIScreen.main.scale)
-                                .offset(y: 0.5)
+                        Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale)
                         }
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.system(size: CGFloat(self.size), weight: .semibold))
-                */
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }
@@ -603,11 +519,11 @@ VStack(spacing: 4) {
     private struct AnyDevPanel<Content: View>: View {
 
         @ObservedObject private var table: Table;
+                        private let background: Color;
+                        private let leadingPadding: Int;
                         private let verticalPadding: Int;
                         private let topMargin: Int;
                         private let horizontalMargin: Int;
-                        private let background: Color;
-                        private let leadingPadding: Int;
                         private let content: Content;
 
         fileprivate init(table: Table, background: Color = Const.background,
