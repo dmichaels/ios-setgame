@@ -71,7 +71,7 @@
 		98E1F2E42F3FABC100F6DAA3 /* XMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2E32F3FABC100F6DAA3 /* XMessages.swift */; };
 		98E1F2E62F3FABF000F6DAA3 /* Timeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2E52F3FABF000F6DAA3 /* Timeout.swift */; };
 		98E1F2E92F3FDDC500F6DAA3 /* DevPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2E72F3FDDC500F6DAA3 /* DevPanel.swift */; };
-		98E1F3032F4508EE00F6DAA3 /* FoundSetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F3022F4508EE00F6DAA3 /* FoundSetMessage.swift */; };
+		98E1F3032F4508EE00F6DAA3 /* SetFoundMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F3022F4508EE00F6DAA3 /* SetFoundMessage.swift */; };
 		98E4E3232773B0AC000EEC5A /* SetGame.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98E4E3222773B0AC000EEC5A /* SetGame.xcassets */; };
 		98EF7E0E2F167C5800A45F63 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E0B2F167C5800A45F63 /* CardView.swift */; };
 		98EF7E0F2F167C5800A45F63 /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E0C2F167C5800A45F63 /* TableView.swift */; };
@@ -169,7 +169,7 @@
 		98E1F2E32F3FABC100F6DAA3 /* XMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMessages.swift; sourceTree = "<group>"; };
 		98E1F2E52F3FABF000F6DAA3 /* Timeout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timeout.swift; sourceTree = "<group>"; };
 		98E1F2E72F3FDDC500F6DAA3 /* DevPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevPanel.swift; sourceTree = "<group>"; };
-		98E1F3022F4508EE00F6DAA3 /* FoundSetMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundSetMessage.swift; sourceTree = "<group>"; };
+		98E1F3022F4508EE00F6DAA3 /* SetFoundMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetFoundMessage.swift; sourceTree = "<group>"; };
 		98E4E3222773B0AC000EEC5A /* SetGame.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SetGame.xcassets; sourceTree = "<group>"; };
 		98EF7E0B2F167C5800A45F63 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		98EF7E0C2F167C5800A45F63 /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
@@ -387,7 +387,7 @@
 		98E1F2BF2F3FAA9200F6DAA3 /* Messages */ = {
 			isa = PBXGroup;
 			children = (
-				98E1F3022F4508EE00F6DAA3 /* FoundSetMessage.swift */,
+				98E1F3022F4508EE00F6DAA3 /* SetFoundMessage.swift */,
 				98E1F2B62F3FAA9200F6DAA3 /* JoinSessionConfirmedMessage.swift */,
 				98E1F2B72F3FAA9200F6DAA3 /* JoinSessionMessage.swift */,
 				98E1F2B82F3FAA9200F6DAA3 /* LeaveSessionMessage.swift */,
@@ -624,7 +624,7 @@
 				9867E14F2F21CF4300CB221F /* TopViewController.swift in Sources */,
 				9811914725ED5ACF0083606B /* Table.swift in Sources */,
 				9811914B25ED5ACF0083606B /* CardShape.swift in Sources */,
-				98E1F3032F4508EE00F6DAA3 /* FoundSetMessage.swift in Sources */,
+				98E1F3032F4508EE00F6DAA3 /* SetFoundMessage.swift in Sources */,
 				989D936F2EF21DEF00BE461B /* Settings.swift in Sources */,
 				9811914A25ED5ACF0083606B /* TableCard.swift in Sources */,
 				98A5C74B2F098D02009E708D /* HelpView.swift in Sources */,

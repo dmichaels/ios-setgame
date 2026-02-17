@@ -7,7 +7,7 @@ public extension MultiPlayer {
         case leaveSession;         // non-host to host only
         case requestHostSession;   // non-host to host only
         case updateSession;        // host or non-host
-        case foundSet;             // host or non-host
+        case setFound;             // host or non-host
     }
 }
 
@@ -24,5 +24,5 @@ public extension MultiPlayer.SessionHandler {
     func handle(message: MultiPlayer.LeaveSessionMessage) {}
     func handle(message: MultiPlayer.RequestHostSessionMessage) {}
     func handle(message: MultiPlayer.UpdateSessionMessage) {}
-    func handle(message: MultiPlayer.FoundSetMessage) {}
+    func handle(message: MultiPlayer.SetFoundMessage) {}
 }
