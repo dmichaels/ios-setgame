@@ -7,7 +7,8 @@ private struct Const {
     fileprivate static let separator: String = "|" // "\u{2756}";
     fileprivate static let emptySetChar: String = "∅";
     fileprivate static let checkChar: String = "✓";
-    fileprivate static let xChar: String = "✗";
+    fileprivate static let xmarkChar: String = "✗";
+    fileprivate static let leftArrowChar: String = "◀ ";
     fileprivate static let highlightColor: Color = Color(hex: 0x882211);
 }
 
@@ -470,8 +471,9 @@ public extension MultiPlayer {
                     ForEach(players, id: \.self) { player in
                         if let received: [HttpTransport.MessageReceived] = self.messages[player] {
                             LazyVGrid(columns: columns, alignment: .leading, spacing: 4) {
-                                Text(player)
-                                    .fixedSize(horizontal: true, vertical: true)
+                                Text(player + (player == self.player ? " \(Const.leftArrowChar)" : ""))
+                                     .font(.system(size: 13, weight: .semibold))
+                                    .frame(maxHeight: .infinity, alignment: .topLeading)
                                 VStack(alignment: .leading, spacing: 2) {
                                     ForEach(received, id: \.id) { message in
                                         Text("\(MessagesView.messageType(message.message))")
@@ -479,18 +481,21 @@ public extension MultiPlayer {
                                             .lineLimit(1)
                                     }
                                 }
+                                .frame(maxHeight: .infinity, alignment: .topLeading)
                                 VStack(alignment: .leading, spacing: 2) {
                                     ForEach(received, id: \.id) { message in
                                         Text("\(message.host)")
                                             .font(.system(size: 13, weight: .regular))
                                     }
                                 }
+                                .frame(maxHeight: .infinity, alignment: .topLeading)
                                 VStack(alignment: .leading, spacing: 2) {
                                     ForEach(received, id: \.id) { message in
                                         Text("\(message.timestamp)")
-                                            .font(.system(size: 12, weight: .regular))
+                                            .font(.system(size: 13, weight: .regular))
                                     }
                                 }
+                                .frame(maxHeight: .infinity, alignment: .topLeading)
                             }
                             Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale)
                         }
@@ -525,7 +530,7 @@ public extension MultiPlayer {
                 HStack {
                     RegularText("server: ", size: 13)
                         RegularText(transport.server, color: self.sessionState.pingable ? .primary : Const.highlightColor, size: 13, bold: true, leading: -4)
-                            RegularText(self.sessionState.pingable ? Const.checkChar : Const.xChar,
+                            RegularText(self.sessionState.pingable ? Const.checkChar : Const.xmarkChar,
                                         color: self.sessionState.pingable ? .primary : Const.highlightColor,
                                         size: 13, bold: true, leading: 2)
                     RegularText("(\(self.sessionState.npolls))", size: 10)
