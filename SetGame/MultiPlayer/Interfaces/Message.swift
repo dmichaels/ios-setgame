@@ -2,8 +2,7 @@ import Foundation
 
 public extension MultiPlayer {
 
-    public protocol Message: Codable, Identifiable where ID == UUID {
-        var id: UUID { get }
+    public protocol Message: Codable {
         var type: MessageType { get }
         var json: [String: Any]? { get };
     }

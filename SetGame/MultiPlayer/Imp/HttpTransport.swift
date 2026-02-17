@@ -223,9 +223,9 @@ public extension MultiPlayer {
                            let messages: [Json] = messagesItem["messages"] as? [Json] {
                             for message in messages {
                                 if let message = MessageConversion.toMessage(json: message) {
-                                    result.append(MessageReceived(timestamp: timestamp.substring(from: 11, length: 11),
-                                                                  host: host, message: message));
-                                    print(message)
+                                    result.append(MessageReceived(
+                                        timestamp: timestamp.substring(from: 11, length: 11),
+                                        host: host, message: message));
                                 }
                             }
                         }

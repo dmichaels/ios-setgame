@@ -3,7 +3,6 @@ import Foundation
 public extension MultiPlayer {
 
     public struct UpdateSessionMessage: Message {
-        public let id: UUID = UUID();
         public let type: MessageType;
         public let host: String;
         public let players: [String];

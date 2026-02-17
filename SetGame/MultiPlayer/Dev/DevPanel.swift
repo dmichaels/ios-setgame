@@ -450,6 +450,7 @@ public extension MultiPlayer {
                             VStack(alignment: .leading) {
                                 ForEach(messagesReceived, id: \.id) { message in
                                     Text("\(message.message.type)")
+                                        .font(.system(size: 13, weight: .regular))
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
