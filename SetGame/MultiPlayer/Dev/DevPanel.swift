@@ -20,9 +20,12 @@ private struct SessionState {
     fileprivate var connected: Bool = false;
     fileprivate var leaveable: Bool = false;
     fileprivate var pingable: Bool = false;
+    fileprivate var debug: Bool = false;
+    fileprivate var production: Bool = false;
     fileprivate var info: Json = [:];
     fileprivate var sessions: SessionList = SessionList();
     fileprivate var sessionShort: String { self.sessions.shorten(self.session ?? Const.emptySetChar) }
+    fileprivate var npolls: Int = 0;
     public mutating func update(from session: MultiPlayer.Session, info: Json? = nil, sessions: [String]? = nil, pingable: Bool = false) {
         self.session = session.session;
         self.host = session.host;
@@ -117,7 +120,7 @@ public extension MultiPlayer {
                         private let transport: MultiPlayer.HttpTransport;
                  @State private var sessionState: SessionState;
                         private let poller: Poller;
-                        private let pollInterval: Int = 1;
+                        private let pollInterval: Int = 500;
 
         public init(table: Table, settings: Settings, margin: Int = 0) {
             self.table = table;
@@ -127,7 +130,7 @@ public extension MultiPlayer {
             self.session = session;
             self.transport = session.transport as! MultiPlayer.HttpTransport;
             self.sessionState = SessionState(player: session.player);
-            self.poller = Poller(seconds: pollInterval);
+            self.poller = Poller(milliseconds: pollInterval);
         }
 
         public var body: some View {
@@ -139,10 +142,13 @@ public extension MultiPlayer {
                 DevPanelServer(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
             }
             .onAppear { self.poller.start({
+                self.sessionState.npolls += 1;
                 self.sessionState.update(from: self.session,
                                          info: await self.transport.sessionInfo(session: self.session.session),
                                          sessions: await self.transport.retrieveSessions(),
                                          pingable: await self.transport.ping());
+                self.sessionState.debug = await transport.debug;
+                self.sessionState.production = transport.production;
                 if let session: String = self.session.session, !self.sessionState.sessions.contains(session) {
                     //
                     // Our connected session seems to have disappeared out from under us;
@@ -159,6 +165,9 @@ public extension MultiPlayer {
             private var task: Task<Void, Never>? = nil;
             fileprivate init(seconds: Int = 1) {
                 self.interval = UInt64(seconds * 1_000_000_000);
+            }
+            fileprivate init(milliseconds: Int = 1) {
+                self.interval = UInt64(milliseconds * 1_000_000);
             }
             fileprivate func start(_ task: @escaping () async -> Void) {
                 guard self.task == nil else { return }
@@ -518,12 +527,22 @@ public extension MultiPlayer {
         }
 
         fileprivate var body: some View {
-            AnyDevPanel(table: table, vertical: 5, margin: margin) {
-                RegularText("server: ")
-                    RegularText(transport.server, color: self.sessionState.pingable ? .primary : Const.highlightColor, bold: true)
-                        RegularText(self.sessionState.pingable ? Const.checkChar : Const.xChar,
-                                    color: self.sessionState.pingable ? .primary : Const.highlightColor,
-                                    bold: true, leading: 8)
+            AnyDevPanel(table: table, vertical: 2, margin: margin) {
+                HStack {
+                    RegularText("server: ", size: 13)
+                        RegularText(transport.server, color: self.sessionState.pingable ? .primary : Const.highlightColor, size: 13, bold: true, leading: -4)
+                            RegularText(self.sessionState.pingable ? Const.checkChar : Const.xChar,
+                                        color: self.sessionState.pingable ? .primary : Const.highlightColor,
+                                        size: 13, bold: true, leading: 2)
+                    RegularText("(\(self.sessionState.npolls))", size: 10)
+                    Spacer()
+                    SmallButton(icon: self.sessionState.production ? "checkmark.seal" : "atom", size: 16) {
+                        await self.transport.production = !self.sessionState.production;
+                    }
+                    SmallButton(icon: self.sessionState.debug ? "ladybug" : "ladybug.slash", size: 16) {
+                        await self.transport.debug(enable: !self.sessionState.debug);
+                    }
+                }
             }
         }
     }
@@ -668,7 +687,7 @@ public extension MultiPlayer {
             self.icon = icon;
             self.color = color ?? .yellow;
             self.background = background ?? Const.foreground;
-            self.size = (icon != nil) ? 20 : Const.fontSize;
+            self.size = size ?? ((icon != nil) ? 20 : Const.fontSize);
             self.disabled = disabled;
             self.action = action;
             self.leading = leading ?? padding ?? 0;

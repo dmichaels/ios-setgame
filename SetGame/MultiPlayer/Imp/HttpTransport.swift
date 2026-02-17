@@ -116,7 +116,7 @@ public extension MultiPlayer {
         // HttpTransport class implementation.
 
         private let handler: MessageHandler;
-        private let url: URL;
+        private var url: URL;
         private let key: String;
         private var session: String?;
         private var pollSession: String?;
@@ -174,6 +174,9 @@ public extension MultiPlayer {
         }
 
         // Not part of Transport protocol but also public as these are for DevPanel support.
+
+        private static var productionURL: String = "https://api.logicard.dmichaels.dev";
+        private static var developmentURL: String = "http://127.0.0.1:8001";
 
         public func retrieveSessions() async -> [String]? {
             if let sessions: [String] = await self.url.get("/sessions", as: [String].self, key: self.key) {
@@ -265,18 +268,34 @@ public extension MultiPlayer {
             }
             return false;
         }
+
+        public var production: Bool {
+            get {
+                return self.url.value == HttpTransport.productionURL;
+            }
+            set {
+                if (newValue) {
+                    self.url = URL.create(HttpTransport.productionURL);
+                }
+                else {
+                    self.url = URL.create(HttpTransport.developmentURL);
+                }
+            }
+        }
+
+        public var debug: Bool {
+            get async {
+                if let response: Json = await self.url.get("/debug", as: Json.self, key: self.key) {
+                    if let debug: Bool = response["debug"] as? Bool, debug {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        public func debug(enable: Bool) async {
+            await self.url.post(enable ? "/debug" : "/nodebug", as: Json.self, key: self.key);
+        }
     }
-}
-
-func substring(_ s: String, from start: Int, length: Int) -> String {
-    guard start >= 0,
-          length >= 0,
-          start < s.count else { return "" }
-
-    let startIndex = s.index(s.startIndex, offsetBy: start)
-    let endIndex = s.index(startIndex,
-                           offsetBy: length,
-                           limitedBy: s.endIndex) ?? s.endIndex
-
-    return String(s[startIndex..<endIndex])
 }

@@ -439,14 +439,19 @@ def reset_endpoint():
     debug = False
     return _okay_response()
 
+@app.route('/debug', methods=['GET'])
+def get_debug_endpoint():
+    global debug
+    return {"debug": debug}
+
 @app.route('/debug', methods=['POST'])
-def debug_endpoint():
+def set_debug_endpoint():
     global debug
     debug = True
     return _okay_response()
 
 @app.route('/nodebug', methods=['POST'])
-def nodebug_endpoint():
+def set_nodebug_endpoint():
     global debug, sessions
     for session in sessions:
         if 'received_messages' in session:
