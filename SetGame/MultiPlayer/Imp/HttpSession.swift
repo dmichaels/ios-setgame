@@ -138,6 +138,8 @@ public extension MultiPlayer {
                 func handle(message: RequestHostSessionMessage) { session?.handle(message: message) }
                 func handle(message: UpdateSessionMessage) { session?.handle(message: message) }
                 func handle(message: SetFoundMessage) { session?.handle(message: message) }
+                func handle(message: SetConfirmedMessage) { session?.handle(message: message) }
+                func handle(message: SetMissedMessage) { session?.handle(message: message) }
             }
 
             // Bind ourselves to the given SessionHandler (which in our case is Table);
@@ -280,6 +282,14 @@ public extension MultiPlayer {
 
         private func handle(message: SetFoundMessage) {
             deb("TODO: HANDLE SetFoundMessage!")
+        }
+
+        private func handle(message: SetConfirmedMessage) {
+            deb("TODO: HANDLE SetConfirmedMessage!")
+        }
+
+        private func handle(message: SetMissedMessage) {
+            deb("TODO: HANDLE SetMissedMessage!")
         }
 
         private func playerJoined(_ player: String) {

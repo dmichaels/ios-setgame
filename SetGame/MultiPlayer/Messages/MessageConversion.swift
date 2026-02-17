@@ -34,6 +34,8 @@ public extension MultiPlayer {
                     case .requestHostSession:   return try? JSONDecoder().decode(RequestHostSessionMessage.self, from: data);
                     case .updateSession:        return try? JSONDecoder().decode(UpdateSessionMessage.self, from: data);
                     case .setFound:             return try? JSONDecoder().decode(SetFoundMessage.self, from: data);
+                    case .setConfirmed:         return try? JSONDecoder().decode(SetConfirmedMessage.self, from: data);
+                    case .setMissed:            return try? JSONDecoder().decode(SetMissedMessage.self, from: data);
                 }
             }
             return nil;
