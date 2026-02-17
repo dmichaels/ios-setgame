@@ -137,6 +137,7 @@ public extension MultiPlayer {
                 func handle(message: LeaveSessionMessage) { session?.handle(message: message) }
                 func handle(message: RequestHostSessionMessage) { session?.handle(message: message) }
                 func handle(message: UpdateSessionMessage) { session?.handle(message: message) }
+                func handle(message: NewGameMessage) { session?.handle(message: message) }
                 func handle(message: SetFoundMessage) { session?.handle(message: message) }
                 func handle(message: SetConfirmedMessage) { session?.handle(message: message) }
                 func handle(message: SetMissedMessage) { session?.handle(message: message) }
@@ -278,6 +279,10 @@ public extension MultiPlayer {
         private func handle(message: UpdateSessionMessage) {
             self.host = message.host;
             self.players = message.players;
+        }
+
+        private func handle(message: NewGameMessage) {
+            deb("TODO: HANDLE NewGameMessage!")
         }
 
         private func handle(message: SetFoundMessage) {

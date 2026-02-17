@@ -7,6 +7,7 @@ public extension MultiPlayer {
         func handle(message: LeaveSessionMessage);
         func handle(message: RequestHostSessionMessage);
         func handle(message: UpdateSessionMessage);
+        func handle(message: NewGameMessage);
         func handle(message: SetFoundMessage);
         func handle(message: SetConfirmedMessage);
         func handle(message: SetMissedMessage);

@@ -458,6 +458,7 @@ public extension MultiPlayer {
                     case .leaveSession:         return "leave";
                     case .requestHostSession:   return "host";
                     case .updateSession:        return "update";
+                    case .newGame:              return "new-game";
                     case .setFound:             return "set-found";
                     case .setConfirmed:         return "set-confirm";
                     case .setMissed:            return "set-missed";

@@ -14,6 +14,7 @@ public extension MultiPlayer {
                                                leaveSession: handler.handle,
                                                requestHostSession: handler.handle,
                                                updateSession: handler.handle,
+                                               newGame: handler.handle,
                                                setFound: handler.handle,
                                                setConfirmed: handler.handle,
                                                setMissed: handler.handle);
@@ -28,6 +29,7 @@ public extension MultiPlayer {
                                     leaveSession: ((LeaveSessionMessage) -> Void)? = nil,
                                     requestHostSession: ((RequestHostSessionMessage) -> Void)? = nil,
                                     updateSession: ((UpdateSessionMessage) -> Void)? = nil,
+                                    newGame: ((NewGameMessage) -> Void)? = nil,
                                     setFound: ((SetFoundMessage) -> Void)? = nil,
                                     setConfirmed: ((SetConfirmedMessage) -> Void)? = nil,
                                     setMissed: ((SetMissedMessage) -> Void)? = nil) {
@@ -39,6 +41,7 @@ public extension MultiPlayer {
                     case let message as LeaveSessionMessage: leaveSession?(message);
                     case let message as RequestHostSessionMessage: requestHostSession?(message);
                     case let message as UpdateSessionMessage: updateSession?(message);
+                    case let message as NewGameMessage: newGame?(message);
                     case let message as SetFoundMessage: setFound?(message);
                     case let message as SetConfirmedMessage: setConfirmed?(message);
                     case let message as SetMissedMessage: setMissed?(message);
