@@ -419,6 +419,8 @@ public extension MultiPlayer {
             @Binding public  var sessionState: SessionState;
                      private let size: Int = Const.fontSize;
 
+            @State private var verbose: Bool = false;
+
             fileprivate init(sessionState: Binding<SessionState>) {
                 self._sessionState = sessionState;
             }
@@ -433,9 +435,16 @@ public extension MultiPlayer {
 
             private var messages: [String: [HttpTransport.MessageReceived]] {
                 var result: [String: [HttpTransport.MessageReceived]] = [:]
-                for player in sessionState.players {
-                    if let received = HttpTransport.messagesReceived(info: sessionState.info, player: player) {
-                        result[player] = received;
+                if (verbose) {
+                    for player in sessionState.players {
+                        if let received = HttpTransport.messagesReceived(info: sessionState.info, player: player) {
+                            result[player] = received;
+                        }
+                    }
+                }
+                else {
+                    if let received = HttpTransport.messagesReceived(info: sessionState.info, player: sessionState.player) {
+                        result[sessionState.player] = received;
                     }
                 }
                 return result
@@ -462,7 +471,12 @@ public extension MultiPlayer {
             fileprivate var body: some View {
                 VStack(spacing: 4) {
                     LazyVGrid(columns: columns, alignment: .leading, spacing: 4) {
-                        Text("player").bold()
+                        HStack {
+                            Text("player").bold()
+                            SmallButton(icon: verbose ? "ladybug" : "ladybug.slash" , size: 12) {
+                                self.verbose.toggle();
+                            }
+                        }
                         Text("received").bold()
                         Text("host").bold()
                         Text("time").bold()
