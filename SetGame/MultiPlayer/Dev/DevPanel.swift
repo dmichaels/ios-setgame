@@ -409,41 +409,35 @@ public extension MultiPlayer {
 
         fileprivate var body: some View {
             AnyDevPanel(table: table, vertical: 5, margin: margin) {
-                MessagesView(player: self.sessionState.player,
-                             players: self.sessionState.players,
-                             host: self.sessionState.host ?? "",
-                             info: self.sessionState.info)
+                MessagesView(sessionState: $sessionState)
             }
         }
 
         private struct MessagesView: View {
 
-            private let player: String;
-            private let players: [String];
-            private let host: String;
-            private let info: Json;
-            private let size: Int;
+            @Binding public  var sessionState: SessionState;
+                     private let size: Int = Const.fontSize;
 
-            @State private var playersWithMessages: [String] = [];
-            @State private var playersMessages: [String: [HttpTransport.MessageReceived]] = [:];
+            fileprivate init(sessionState: Binding<SessionState>) {
+                self._sessionState = sessionState;
+            }
 
-            fileprivate init(player: String, players: [String], host: String, info: Json, size: Int = Const.fontSize) {
+            private var player: String {
+                return sessionState.player;
+            }
 
-                self.player = player
-                self.players = (players.count == 0) ? [player, "foobar"] : players;
-                self.host = host;
-                self.info = info;
-                self.size = size;
+            private var players: [String] {
+                return sessionState.players;
+            }
 
-                    var playersMessages: [String: [HttpTransport.MessageReceived]] = [:];
-                    for player in players {
-                        if let messagesReceived = HttpTransport.messagesReceived(info: info, player: player) {
-                            self.playersMessages[player] = messagesReceived;
-                            self.playersWithMessages.append(player);
-                        }
+            private var messages: [String: [HttpTransport.MessageReceived]] {
+                var result: [String: [HttpTransport.MessageReceived]] = [:]
+                for player in sessionState.players {
+                    if let received = HttpTransport.messagesReceived(info: sessionState.info, player: player) {
+                        result[player] = received;
                     }
-                    // self.playersWithMessages = playersWithMessages;
-                    // self.playersMessages = playersMessages;
+                }
+                return result
             }
 
             private static func messageType(_ message: Message) -> String {
@@ -474,9 +468,9 @@ public extension MultiPlayer {
                     }
                     Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale)
                     ForEach(players, id: \.self) { player in
-                        if let received: [HttpTransport.MessageReceived] = HttpTransport.messagesReceived(info: info, player: player) {
+                        if let received: [HttpTransport.MessageReceived] = self.messages[player] {
                             LazyVGrid(columns: columns, alignment: .leading, spacing: 4) {
-                                Text(player + (player == self.player ? " ◀" : ""))
+                                Text(player)
                                     .fixedSize(horizontal: true, vertical: true)
                                 VStack(alignment: .leading, spacing: 2) {
                                     ForEach(received, id: \.id) { message in
