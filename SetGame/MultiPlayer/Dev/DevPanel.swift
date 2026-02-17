@@ -482,7 +482,7 @@ public extension MultiPlayer {
                         Text("time").bold()
                     }
                     Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale)
-                    ForEach(players, id: \.self) { player in
+                    ForEach(self.players, id: \.self) { player in
                         if let received: [HttpTransport.MessageReceived] = self.messages[player] {
                             LazyVGrid(columns: columns, alignment: .leading, spacing: 4) {
                                 Text(player + (player == self.player ? " \(Const.leftArrowChar)" : ""))
