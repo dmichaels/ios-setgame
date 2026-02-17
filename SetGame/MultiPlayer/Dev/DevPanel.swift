@@ -473,7 +473,7 @@ public extension MultiPlayer {
                     LazyVGrid(columns: columns, alignment: .leading, spacing: 4) {
                         HStack {
                             Text("player").bold()
-                            SmallButton(icon: verbose ? "ladybug" : "ladybug.slash" , size: 12) {
+                            SmallButton(icon: verbose ? "arrow.down.square" : "arrow.up.square" , size: 16) {
                                 self.verbose.toggle();
                             }
                         }
