@@ -7,6 +7,7 @@ public extension MultiPlayer {
         case leaveSession;         // non-host to host only
         case requestHostSession;   // non-host to host only
         case updateSession;        // host or non-host
+        case foundSet;             // host or non-host
     }
 }
 
@@ -17,10 +18,11 @@ public extension MultiPlayer.SessionHandler {
     // to bother implementing these, since this should be of no concern there;
     // these are instead handled directly by the HttpSession implementation.
     //
+    func handle(message: MultiPlayer.PingMessage) {}
     func handle(message: MultiPlayer.JoinSessionMessage) {}
     func handle(message: MultiPlayer.JoinSessionConfirmedMessage) {}
     func handle(message: MultiPlayer.LeaveSessionMessage) {}
     func handle(message: MultiPlayer.RequestHostSessionMessage) {}
     func handle(message: MultiPlayer.UpdateSessionMessage) {}
-    func handle(message: MultiPlayer.PingMessage) {}
+    func handle(message: MultiPlayer.FoundSetMessage) {}
 }

@@ -23,4 +23,5 @@ public extension MultiPlayer.SessionHandler {
     func handle(message: MultiPlayer.LeaveSessionMessage) {}
     func handle(message: MultiPlayer.RequestHostSessionMessage) {}
     func handle(message: MultiPlayer.UpdateSessionMessage) {}
+    func handle(message: MultiPlayer.FoundSetMessage) {}
 }

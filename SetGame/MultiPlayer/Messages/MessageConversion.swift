@@ -33,6 +33,7 @@ public extension MultiPlayer {
                     case .leaveSession:         return try? JSONDecoder().decode(LeaveSessionMessage.self, from: data);
                     case .requestHostSession:   return try? JSONDecoder().decode(RequestHostSessionMessage.self, from: data);
                     case .updateSession:        return try? JSONDecoder().decode(UpdateSessionMessage.self, from: data);
+                    case .foundSet:             return try? JSONDecoder().decode(FoundSetMessage.self, from: data);
                 }
             }
             return nil;
@@ -48,7 +49,7 @@ public extension MultiPlayer {
              return nil;
         }
 
-        fileprivate static func toCards(_ codes: [String]) -> [TableCard] {
+        public static func toCards(_ codes: [String]) -> [TableCard] {
             return codes.compactMap { TableCard($0) };
         }
     }

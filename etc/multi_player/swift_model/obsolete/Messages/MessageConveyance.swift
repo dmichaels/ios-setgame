@@ -13,7 +13,8 @@ public extension MultiPlayer {
                                                joinSessionConfirmed: handler.handle,
                                                leaveSession: handler.handle,
                                                requestHostSession: handler.handle,
-                                               updateSession: handler.handle);
+                                               updateSession: handler.handle,
+                                               foundSet: handler.handle);
                 }
             }
         }
@@ -24,7 +25,8 @@ public extension MultiPlayer {
                                     joinSessionConfirmed: ((JoinSessionConfirmedMessage) -> Void)? = nil,
                                     leaveSession: ((LeaveSessionMessage) -> Void)? = nil,
                                     requestHostSession: ((RequestHostSessionMessage) -> Void)? = nil,
-                                    updateSession: ((UpdateSessionMessage) -> Void)? = nil) {
+                                    updateSession: ((UpdateSessionMessage) -> Void)? = nil,
+                                    foundSet: ((FoundSetMessage) -> Void)? = nil) {
             if let message: Message = message {
                 switch message {
                     case let message as PingMessage: ping?(message);
@@ -33,6 +35,7 @@ public extension MultiPlayer {
                     case let message as LeaveSessionMessage: leaveSession?(message);
                     case let message as RequestHostSessionMessage: requestHostSession?(message);
                     case let message as UpdateSessionMessage: updateSession?(message);
+                    case let message as FoundSetMessage: foundSet?(message);
                     default: break;
                 }
             }
