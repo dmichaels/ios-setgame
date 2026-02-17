@@ -7,12 +7,12 @@
 # Note that redirect from HTTP to HTTPS not needed because the .dev TLD requires HTTPS.
 
 import argparse
-from   flask import Flask, request, jsonify
+from   datetime import datetime, timezone
+from   flask import abort, Flask, jsonify, request
 from   functools import wraps
 import logging
 import os
 import uuid
-from flask import abort
 
 # API Key (hardcoded!).
 #
@@ -31,7 +31,7 @@ app = Flask(__name__)
 # Lame but maybe someday we will use some kind of external database.
 #
 sessions = {}
-debug = False ; debugVerbose = False
+debug = False
 
 # Internal decorators et cetera.
 
@@ -370,18 +370,20 @@ def receive_messages_endpoint(session, player):
     messages = session['inbox'].pop(player, [])
     if len(messages) > 0:
         session['received_count'].setdefault(player, 0) ; session['received_count'][player] += len(messages);
-    global debug, debugVerbose
+    global debug
     if debug:
         if len(messages) > 0:
             if 'received_messages' not in session:
                 session['received_messages'] = []
-            if debugVerbose:
-                session['received_messages'].append({
-                    player: messages,
-                    'state': {'host': str(session['host']),
-                              'players': list(session['players'])}})
-            else:
-                session['received_messages'].append({player: messages})
+            # session['received_messages'].append({player: messages})
+            session['received_messages'].append({
+                player: {
+		            'timestamp': datetime.now(timezone.utc).isoformat(),
+		            'to': player,
+		            'host': session['host'],
+		            'messages': messages
+	            }
+            })
     return jsonify(messages), 200
 
 # Returns (without removal) any/all of the messages available

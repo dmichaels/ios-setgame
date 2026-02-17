@@ -209,16 +209,15 @@ public extension MultiPlayer {
             var result: [Message] = [];
             if let messagesInfo: [Json] = info["received_messages"] as? [Json] {
                 for messageInfo: Json in messagesInfo {
-                    if let messages: [Json] = messageInfo[player] as? [Json] {
-                        print("XYZ-FOOBAR")
-                        print(messages)
-                        for message in messages {
-                            print("XYZ-GOOBAR")
-                            print(message)
-                            if let message = MessageConversion.toMessage(json: message) {
-                                print("XYZ-HOOBAR")
-                                print(message)
-                                result.append(message);
+                    if let messagesItem: Json = messageInfo[player] as? Json {
+                        if let messagesTimestamp: String = messagesItem["timestamp"] as? String,
+                           let messagesHost: String = messagesItem["host"] as? String,
+                           let messages: [Json] = messagesItem["messages"] as? [Json] {
+                            for message in messages {
+                                if let message = MessageConversion.toMessage(json: message) {
+                                    result.append(message);
+                                    print(message)
+                                }
                             }
                         }
                     }
