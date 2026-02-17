@@ -143,7 +143,7 @@ public extension MultiPlayer {
                                          info: await self.transport.sessionInfo(session: self.session.session),
                                          sessions: await self.transport.retrieveSessions(),
                                          pingable: await self.transport.ping());
-                if (!self.sessionState.sessions.contains(self.session.session)) {
+                if let session: String = self.session.session, !self.sessionState.sessions.contains(session) {
                     //
                     // Our connected session seems to have disappeared out from under us;
                     // can happen in dev/testing; disconnect our session object et cetera.
@@ -449,22 +449,31 @@ public extension MultiPlayer {
                             }
                             VStack(alignment: .leading) {
                                 ForEach(messagesReceived, id: \.id) { message in
-                                    Text("\(message.message.type)")
+                                    Text("[\(message.message.type)]")
                                         .font(.system(size: 13, weight: .regular))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                                    Text("ABC")
+                                        .font(.system(size: 13, weight: .regular))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    Text("DEF")
+                                        .font(.system(size: 13, weight: .regular))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            VStack(alignment: .leading) {
+                                ForEach(messagesReceived, id: \.id) { message in
+                                    Text("[\(message.host)]")
+                                        .font(.system(size: 13, weight: .regular))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             VStack(alignment: .leading) {
                                 ForEach(messagesReceived, id: \.id) { message in
-                                    Text("\(message.host)")
-                                        .font(.system(size: 13, weight: .regular))
-                                }
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            VStack(alignment: .leading) {
-                                ForEach(messagesReceived, id: \.id) { message in
-                                    Text("\(message.timestamp)")
+                                    Text("[\(message.timestamp)]")
                                         .font(.system(size: 12, weight: .regular))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
