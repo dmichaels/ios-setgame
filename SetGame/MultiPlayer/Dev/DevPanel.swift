@@ -68,7 +68,7 @@ private struct SessionState {
         self.poller.stop();
     }
 
-    public mutating func update(from session: MultiPlayer.Session) {
+    fileprivate mutating func update(from session: MultiPlayer.Session) {
         self.session = session.session;
         self.host = session.host;
         self.players = session.players;
@@ -76,7 +76,7 @@ private struct SessionState {
         self.leaveable = session.leaveable;
     }
 
-    public mutating func update(from session: MultiPlayer.Session,
+    fileprivate mutating func update(from session: MultiPlayer.Session,
                                 info: Json?,
                                 sessions: [String]?,
                                 pingable: Bool,
@@ -478,7 +478,7 @@ public extension MultiPlayer {
 
         private struct MessagesView: View {
 
-            @Binding public  var sessionState: SessionState;
+            @Binding fileprivate  var sessionState: SessionState;
                      private let size: Int = Const.fontSize;
 
             @State private var verbose: Bool = false;
