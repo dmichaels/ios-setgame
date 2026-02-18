@@ -173,7 +173,7 @@ public extension MultiPlayer {
             }
         }
 
-        // These are for internal dev/testing (DevPanel) usage only!
+        // These are for internal dev/testing/debugging (DevPanel) usage only!
 
         private static var productionURL: String = "https://api.logicard.dmichaels.dev";
         private static var developmentURL: String = "http://127.0.0.1:8001";
