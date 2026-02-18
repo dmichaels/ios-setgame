@@ -267,13 +267,6 @@ public extension MultiPlayer {
                     RegularText("\(self.sessionState.players.count == 0 ? Const.emptySetChar : "\(self.sessionState.players.count)")", leading: 3)
                 Spacer()
                 SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
-                    /*
-                    if let messagesReceived: [HttpTransport.MessageReceived] = HttpTransport.messagesReceived(info: self.sessionState.info, player: self.session.player) {
-                        for message in messagesReceived {
-                            print("XYZZY-MESSAGE(\(self.session.player): \(message.message.type)")
-                        }
-                    }
-                    */
                     if (self.transport.engaged) {
                         self.transport.disengage();
                     }
