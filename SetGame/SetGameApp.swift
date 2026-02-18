@@ -6,35 +6,26 @@ public func deb(_ message: String) { NSLog("XDEBUG-\(aid)> " + message) }
 @main
 struct SetGameApp: App {
 
-    // @StateObject private var settings = Settings();
-    // @StateObject private var table = Table(settings: Settings());
-    // @StateObject private var feedback = Feedback(sounds: Settings().sounds, haptics: Settings().haptics);
-
-
     @StateObject private var settings: Settings
     @StateObject private var table: Table
     @StateObject private var feedback: Feedback
 
     public init() {
-        deb("SetGameApp.init!!!")
 
-        // 1. Construct pure objects first (locals)
+        let settings: Settings = Settings();
+        let table: Table = Table(settings: settings);
+        let feedback: Feedback = Feedback(sounds: settings.sounds, haptics: settings.haptics);
 
-        let settings = Settings()
-        let table = Table(settings: settings)
-        let feedback = Feedback(
-            sounds: settings.sounds,
-            haptics: settings.haptics
-        )
+        _settings = StateObject(wrappedValue: settings);
+        _table = StateObject(wrappedValue: table);
+        _feedback = StateObject(wrappedValue: feedback);
 
-        // 2. Assign to StateObject backing storage
-
-        _settings = StateObject(wrappedValue: settings)
-        _table = StateObject(wrappedValue: table)
-        _feedback = StateObject(wrappedValue: feedback)
-
-        // 3. Now safely construct HttpSession
-
+        // This MUST be called EXACTLY ONCE at startup; before the
+        // HttpSession.instance property is referenced elsewehere.
+        // And note that this construction is, by design, inert;
+        // meaning it does not access the network or do anything
+        // substantial beyond hooking up internal state/properties.
+        //
         MultiPlayer.HttpSession.instance(
             handler: table,
             transport: { handler in
@@ -44,7 +35,7 @@ struct SetGameApp: App {
                     key: settings.multiPlayer.apikey
                 )
             }
-        )
+        );
     }
 
     var body: some Scene {

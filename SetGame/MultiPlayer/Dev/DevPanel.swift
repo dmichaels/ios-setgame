@@ -1,58 +1,5 @@
 import SwiftUI
 
-    private class DummySession: MultiPlayer.Session {
-
-        var  session: String? { nil }
-        var  player: String { "" }
-        var  host: String? { nil }
-        var  hosting: Bool { false }
-        var  players: [String] { [] }
-        var  connected: Bool { false }
-        var  leaveable: Bool { false }
-        var  transport: MultiPlayer.Transport { DummyTransport() }
-        var  rng: RNG { RNG() }
-
-        func create() async -> Bool { false }
-        func join(session: String?) async -> Bool { false }
-        func join(session: String?, wait: Bool) async -> Bool { false }
-        func requestHost() async -> Bool { false }
-        func leave() async -> Bool { false }
-        func send(message: MultiPlayer.Message) async -> Bool { false }
-        func send(message: MultiPlayer.Message, to: String) async -> Bool { false }
-        func sendHost(message: MultiPlayer.Message) async -> Bool { false }
-        func disconnect() {}
-
-        func send(message: MultiPlayer.Message) -> Bool { false }
-        func send(message: MultiPlayer.Message, to: String) -> Bool { false }
-        func sendHost(message: MultiPlayer.Message) -> Bool { false }
-    }
-
-    private class DummyTransport: MultiPlayer.Transport {
-
-        var  player: String { "" }
-        func engage() {}
-        func disengage() {}
-        func bind(to session: String) {}
-        func bindTentative(to session: String) {}
-
-        func create(host: String, bind: Bool) async -> String? { nil }
-        func register(player: String, session: String?) async -> (player: String, host: String)? { nil}
-        func unregister(player: String, session: String?) async -> Bool { false }
-        func requestHost(player: String, session: String?) async -> Bool { false }
-        func destroySession(session: String?) async -> Bool { false }
-        func send(message: MultiPlayer.Message, player: String, session: String?) async -> Bool { false }
-        func sendHost(message: MultiPlayer.Message, session: String?) async -> Bool { false }
-
-        func retrieveSessions() async -> [String]? { nil }
-        func sessionInfo(session: String?) async -> Json? { nil }
-        var  engaged: Bool { false }
-        var  server: String { "" }
-        func ping() async -> Bool { false }
-        var  production: Bool { get { false } set {} }
-        var  debug: Bool { get async { false } }
-        func debug(enable: Bool) async {}
-    }
-
 private struct Const {
     fileprivate static let background: Color = Color(hex: 0x77BBAA);
     fileprivate static let foreground: Color = Color(hex: 0x226655);
@@ -176,19 +123,14 @@ public extension MultiPlayer {
                         private let poller: Poller;
                         private let pollInterval: Int = 500;
 
-        private var session: MultiPlayer.Session { MultiPlayer.HttpSession.singleton ?? DummySession() }
-        private var transport: MultiPlayer.Transport { MultiPlayer.HttpSession.singleton?.transport ?? DummyTransport() }
+        private var session: MultiPlayer.Session { MultiPlayer.HttpSession.instance }
+        private var transport: MultiPlayer.Transport { MultiPlayer.HttpSession.instance.transport as! MultiPlayer.HttpTransport }
 
         public init(table: Table, settings: Settings, margin: Int = 0) {
-            let session: MultiPlayer.Session = MultiPlayer.HttpSession.singleton ?? DummySession();
             self.table = table;
             self.settings = settings;
             self.margin = margin;
-            // let session: Session = MultiPlayer.HttpSession.instance;
-            // self.session = session;
-            // self.transport = session.transport as! MultiPlayer.Transport;
-            // self.transport = session.transport;
-            self.sessionState = SessionState(player: session.player);
+            self.sessionState = SessionState(player: MultiPlayer.HttpSession.instance.player);
             self.poller = Poller(milliseconds: pollInterval);
         }
 
