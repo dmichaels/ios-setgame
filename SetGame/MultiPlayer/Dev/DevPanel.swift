@@ -35,7 +35,7 @@ private struct SessionState {
     fileprivate var production: Bool = false;
     fileprivate var sessions: SessionList = SessionList();
 
-    // Private properties (inaccessible from external POV).
+    // Inaccessible properties (from external POV).
     //
     private var poller: Poller;
     private var pollerAction: (() async -> Void)? = nil;
