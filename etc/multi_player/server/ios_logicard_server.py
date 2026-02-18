@@ -31,6 +31,7 @@ app = Flask(__name__)
 # Lame but maybe someday we will use some kind of external database.
 #
 sessions = {}
+hits = 0
 debug = False
 
 # Internal decorators et cetera.
@@ -58,6 +59,7 @@ def old_with_session(func):
 
 @app.before_request
 def _check_api_key():
+    global hits ; hits += 1
     if request.path == '/ping':
         return
     if request.headers.get('X-API-Key') != APIKEY:
@@ -466,6 +468,10 @@ def set_nodebug_endpoint():
 @app.route('/ping', methods=['GET'])
 def ping_endpoint():
     return _okay_response()
+
+@app.route('/hits', methods=['GET'])
+def hits_endpoint():
+    return {"hits": hits}
 
 # Start the server!
 #

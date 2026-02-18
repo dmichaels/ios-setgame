@@ -654,7 +654,9 @@ public extension MultiPlayer {
             AnyDevPanel(table: table, vertical: 2, margin: margin) {
                 HStack {
                     RegularText("server: ", size: 13)
-                        RegularText(transport.server, color: self.sessionState.pingable ? .primary : Const.highlightColor, size: 13, bold: true, leading: -4)
+                        RegularText(transport.server,
+                                    color: self.sessionState.pingable ? .primary : Const.highlightColor,
+                                    size: 12, bold: true, leading: -4)
                             RegularText(self.sessionState.pingable ? Const.checkChar : Const.xmarkChar,
                                         color: self.sessionState.pingable ? .primary : Const.highlightColor,
                                         size: 13, bold: true, leading: 2)
