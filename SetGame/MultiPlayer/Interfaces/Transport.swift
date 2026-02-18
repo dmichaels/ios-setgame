@@ -18,8 +18,8 @@ public extension MultiPlayer {
 
         // These are for internal dev/testing (DevPanel) usage only!
 
-        func retrieveSessions() async -> [String]?;
-        func sessionInfo(session: String?) async -> Json?;
+        func sessions() async -> [String]?;
+        func session(_ session: String?) async -> Json?;
         var  engaged: Bool { get }
         var  server: String { get }
         var  production: Bool { get set }

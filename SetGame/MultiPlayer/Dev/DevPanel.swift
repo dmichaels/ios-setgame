@@ -145,8 +145,8 @@ public extension MultiPlayer {
             .onAppear { self.poller.start({
                 self.sessionState.npolls += 1;
                 self.sessionState.update(from: self.session,
-                                         info: await self.transport.sessionInfo(session: self.session.session),
-                                         sessions: await self.transport.retrieveSessions(),
+                                         info: await self.transport.session(self.session.session),
+                                         sessions: await self.transport.sessions(),
                                          pingable: await self.transport.ping());
                 self.sessionState.debug = await transport.debug(enable: nil);
                 self.sessionState.production = transport.production;
@@ -283,7 +283,7 @@ public extension MultiPlayer {
                 }
                 RegularText("", padding: 2)
                 SmallButton(icon: "xmark.rectangle.portrait", disabled: !self.sessionState.leaveable) {
-                    if let info = await self.transport.sessionInfo(session: self.session.session) {
+                    if let info = await self.transport.session(self.session.session) {
                         let (sent, queued, received) = HttpTransport.messageCounts(info: info, player: self.session.player);
                     }
                     if (self.session.connected) {

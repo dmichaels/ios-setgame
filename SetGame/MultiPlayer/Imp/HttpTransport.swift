@@ -178,14 +178,14 @@ public extension MultiPlayer {
         private static var productionURL: String = "https://api.logicard.dmichaels.dev";
         private static var developmentURL: String = "http://127.0.0.1:8001";
 
-        public func retrieveSessions() async -> [String]? {
+        public func sessions() async -> [String]? {
             if let sessions: [String] = await self.url.get("/sessions", as: [String].self, key: self.key) {
                 return sessions;
             }
             return nil;
         }
 
-        public func sessionInfo(session: String?) async -> Json? {
+        public func session(_ session: String?) async -> Json? {
             if let session: String = session ?? self.session {
                 if let response: Json = await self.url.get("/sessions", session, as: Json.self, key: self.key) {
                     return response;
