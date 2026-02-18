@@ -4,24 +4,18 @@ public extension MultiPlayer {
 
     public class HttpSession: Session {
 
-        // Singleton instance.
-
-        public private(set) static var singleton: HttpSession? = nil;
-        public static var instance: HttpSession { HttpSession.singleton! }
-        public static func instance(handler: SessionHandler, transport: HttpTransport.Factory? = nil) -> HttpSession {
-            if let singleton = HttpSession.singleton {
-                fatalError("HttpSession.instance: Multiple instance calls not allowed! Coding error!");
-                //
-                // Should not normally happen; just call this once to initialize the singleton
-                // with the required SessionHandler and (optional) HttpTransport arguments; but
-                // if we do call it multiple times then we just replace the the singleton with
-                // a new instance; we take care in this case to cleanup the existing singleton;
-                // e.g. to stop HttpTransport polling via the Transport.disengage function.
-                //
-                singleton.transport.disengage();
-                HttpSession.singleton = nil;
+        // HttpSession singleton management: Note that the HttpSession.instance
+        // static FUNCTION MUST be called EXACTLY ONCE at startup; and BEFORE the
+        // HttpSession.instance PROPERTY is referenced elswhere. And note that the
+        // HttpSession construction (init) is, by design, inert; meaning it does not
+        // access the network or do anything substantial beyond hooking up its internal state.
+        //
+        private static var singleton: HttpSession? = nil;
+        public  static var instance: HttpSession { HttpSession.singleton! }
+        public  static func instance(handler: SessionHandler, transport: HttpTransport.Factory? = nil) -> HttpSession {
+            if (HttpSession.singleton == nil) {
+                HttpSession.singleton = HttpSession(handler: handler, transport: transport);
             }
-            HttpSession.singleton = HttpSession(handler: handler, transport: transport);
             return HttpSession.singleton!;
         }
 

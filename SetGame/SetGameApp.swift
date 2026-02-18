@@ -20,7 +20,7 @@ struct SetGameApp: App {
         _table = StateObject(wrappedValue: table);
         _feedback = StateObject(wrappedValue: feedback);
 
-        // This MUST be called EXACTLY ONCE at startup; before the
+        // This MUST be called EXACTLY ONCE at startup; BEFORE the
         // HttpSession.instance property is referenced elsewehere.
         // And note that this construction is, by design, inert;
         // meaning it does not access the network or do anything
