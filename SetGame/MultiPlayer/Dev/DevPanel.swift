@@ -68,16 +68,23 @@ private struct SessionState {
         self.poller.stop();
     }
 
-    public mutating func update(from session: MultiPlayer.Session,
-                                info: Json? = nil,
-                                sessions: [String]? = nil,
-                                pingable: Bool = false) {
+    public mutating func update(from session: MultiPlayer.Session) {
         self.session = session.session;
         self.host = session.host;
         self.players = session.players;
         self.connected = session.connected;
         self.leaveable = session.leaveable;
+    }
+
+    public mutating func update(from session: MultiPlayer.Session,
+                                info: Json?,
+                                sessions: [String]?,
+                                pingable: Bool,
+                                production: Bool,
+                                debug: Bool) {
+        self.update(from: session);
         self.pingable = pingable;
+        self.debug = debug;
         self.pollCount = self.poller.count;
         if let info: Json = info {
             self.info = info;
@@ -215,9 +222,9 @@ public extension MultiPlayer {
                 self.sessionState.update(from: self.session,
                                          info: await self.transport.session(self.session.session),
                                          sessions: await self.transport.sessions(),
-                                         pingable: await self.transport.ping());
-                self.sessionState.debug = await transport.debug(enable: nil);
-                self.sessionState.production = transport.production;
+                                         pingable: await self.transport.ping(),
+                                         production: transport.production,
+                                         debug: await transport.debug(enable: nil));
                 if let session: String = self.session.session, !self.sessionState.sessions.contains(session) {
                     //
                     // Our connected session seems to have disappeared out from under us;
@@ -315,6 +322,9 @@ public extension MultiPlayer {
                         if let session: String = sessionState.sessions.selected {
                             if await self.session.join(session: session) {
                                 self.sessionState.update(from: self.session);
+                                //
+                                // TODO: Do something if join-session fails?
+                                //
                             }
                         }
                     }
@@ -324,6 +334,9 @@ public extension MultiPlayer {
                     if (self.session.connected) {
                         if await self.session.requestHost() {
                             self.sessionState.update(from: self.session);
+                            //
+                            // TODO: Do something if request-host fails?
+                            //
                         }
                     }
                 }
@@ -335,6 +348,9 @@ public extension MultiPlayer {
                     if (self.session.connected) {
                         if await self.session.leave() {
                             self.sessionState.update(from: self.session);
+                            //
+                            // TODO: Do something if leave-session fails?
+                            //
                         }
                     }
                 }
