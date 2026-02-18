@@ -251,6 +251,10 @@ public extension MultiPlayer {
             return nil;
         }
 
+        public static func mergeMessages(_ lists: [[MessageReceived]], reverse: Bool = false) -> [MessageReceived] {
+            return lists.flatMap { $0 }.sorted { reverse ? $0.timestamp > $1.timestamp : $0.timestamp < $1.timestamp }
+        }
+
         public var engaged: Bool { self.pollTask != nil }
 
         public var server: String {
