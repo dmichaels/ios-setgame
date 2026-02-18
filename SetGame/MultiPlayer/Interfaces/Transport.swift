@@ -16,15 +16,14 @@ public extension MultiPlayer {
         func send(message: Message, player: String, session: String?) async -> Bool;
         func sendHost(message: Message, session: String?) async -> Bool;
 
-        // For internal dev/testing (DevPanel) usage only!
+        // These are for internal dev/testing (DevPanel) usage only!
 
         func retrieveSessions() async -> [String]?;
         func sessionInfo(session: String?) async -> Json?;
         var  engaged: Bool { get }
         var  server: String { get }
-        func ping() async -> Bool;
         var  production: Bool { get set }
-        var  debug: Bool { get async }
-        func debug(enable: Bool) async;
+        func debug(enable: Bool?) async -> Bool;
+        func ping() async -> Bool;
     }
 }

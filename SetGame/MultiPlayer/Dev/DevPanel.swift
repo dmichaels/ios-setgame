@@ -148,7 +148,7 @@ public extension MultiPlayer {
                                          info: await self.transport.sessionInfo(session: self.session.session),
                                          sessions: await self.transport.retrieveSessions(),
                                          pingable: await self.transport.ping());
-                self.sessionState.debug = await transport.debug;
+                self.sessionState.debug = await transport.debug(enable: nil);
                 self.sessionState.production = transport.production;
                 if let session: String = self.session.session, !self.sessionState.sessions.contains(session) {
                     //

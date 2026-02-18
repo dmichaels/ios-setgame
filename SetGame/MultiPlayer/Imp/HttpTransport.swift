@@ -173,7 +173,7 @@ public extension MultiPlayer {
             }
         }
 
-        // Not part of Transport protocol but also public as these are for DevPanel support.
+        // These are for internal dev/testing (DevPanel) usage only!
 
         private static var productionURL: String = "https://api.logicard.dmichaels.dev";
         private static var developmentURL: String = "http://127.0.0.1:8001";
@@ -259,15 +259,6 @@ public extension MultiPlayer {
             return "server";
         }
 
-        public func ping() async -> Bool {
-            if let response: Json = await self.url.get("/ping", as: Json.self, key: self.key) {
-                if let status: String = response["status"] as? String, status == "OK" {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         public var production: Bool {
             get {
                 return self.url.value == HttpTransport.productionURL;
@@ -282,19 +273,25 @@ public extension MultiPlayer {
             }
         }
 
-        public var debug: Bool {
-            get async {
-                if let response: Json = await self.url.get("/debug", as: Json.self, key: self.key) {
-                    if let debug: Bool = response["debug"] as? Bool, debug {
-                        return true;
-                    }
-                }
-                return false;
+        public func debug(enable: Bool?) async -> Bool {
+            if let enable: Bool = enable {
+                await self.url.post(enable ? "/debug" : "/nodebug", as: Json.self, key: self.key);
             }
+            if let response: Json = await self.url.get("/debug", as: Json.self, key: self.key) {
+                if let debug: Bool = response["debug"] as? Bool, debug {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        public func debug(enable: Bool) async {
-            await self.url.post(enable ? "/debug" : "/nodebug", as: Json.self, key: self.key);
+        public func ping() async -> Bool {
+            if let response: Json = await self.url.get("/ping", as: Json.self, key: self.key) {
+                if let status: String = response["status"] as? String, status == "OK" {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
