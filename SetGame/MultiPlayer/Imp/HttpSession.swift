@@ -11,8 +11,8 @@ public extension MultiPlayer {
         // inert; meaning it does not access the network or do anything
         // substantial beyond hooking up its internal properties and state.
         //
-        private static var singleton: HttpSession? = nil;
-        public  static var instance: HttpSession { HttpSession.singleton! }
+        private static var  singleton: HttpSession? = nil;
+        public  static var  instance: HttpSession { HttpSession.singleton! }
         public  static func instance(handler: SessionHandler, transport: HttpTransport.Factory? = nil) -> HttpSession {
             if (HttpSession.singleton == nil) {
                 HttpSession.singleton = HttpSession(handler: handler, transport: transport);
