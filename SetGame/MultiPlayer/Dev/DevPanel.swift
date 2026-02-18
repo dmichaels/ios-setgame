@@ -475,6 +475,7 @@ public extension MultiPlayer {
                      private let size: Int = Const.fontSize;
 
             @State private var verbose: Bool = false;
+            @State private var flat: Bool = false;
 
             fileprivate init(sessionState: Binding<SessionState>) {
                 self._sessionState = sessionState;
@@ -490,7 +491,10 @@ public extension MultiPlayer {
 
             private var messages: [String: [HttpTransport.MessageReceived]] {
                 var result: [String: [HttpTransport.MessageReceived]] = [:]
-                if (verbose) {
+                let xyz = HttpTransport.messagesReceivedByTimestamp(info: sessionState.info);
+                if (flat) {
+                }
+                else if (verbose) {
                     for player in sessionState.players {
                         if let received = HttpTransport.messagesReceived(info: sessionState.info, player: player) {
                             result[player] = received;

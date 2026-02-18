@@ -251,8 +251,34 @@ public extension MultiPlayer {
             return nil;
         }
 
-        public static func mergeMessages(_ lists: [[MessageReceived]], reverse: Bool = false) -> [MessageReceived] {
-            return lists.flatMap { $0 }.sorted { reverse ? $0.timestamp > $1.timestamp : $0.timestamp < $1.timestamp }
+        public static func messagesReceivedByTimestamp(info: Json, reversed: Bool = false) -> [MessageReceived]? {
+            var result: [MessageReceived] = [];
+            if let messagesInfo: [Json] = info["received_messages"] as? [Json] {
+                for messageInfo: Json in messagesInfo {
+                    for (player, messagesItem): (String, Any) in messageInfo {
+                        if let messagesItem: Json = messagesItem as? Json {
+                            if let timestamp: String = messagesItem["timestamp"] as? String,
+                               let to: String = messagesItem["to"] as? String,
+                               let host: String = messagesItem["host"] as? String,
+                               let players: [String] = messagesItem["players"] as? [String],
+                               let messages: [Json] = messagesItem["messages"] as? [Json] {
+                                for message in messages {
+                                    if let message = MessageConversion.toMessage(json: message) {
+                                        result.append(MessageReceived(
+                                            timestamp: timestamp.substring(from: 11, length: 12),
+                                            to: to,
+                                            host: host,
+                                            players: players,
+                                            message: message));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return result.sorted { reversed ? $0.timestamp > $1.timestamp : $0.timestamp < $1.timestamp };
+            }
+            return nil;
         }
 
         public var engaged: Bool { self.pollTask != nil }
