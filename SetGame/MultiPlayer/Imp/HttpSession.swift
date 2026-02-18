@@ -5,10 +5,11 @@ public extension MultiPlayer {
     public class HttpSession: Session {
 
         // HttpSession singleton management: Note that the HttpSession.instance
-        // static FUNCTION MUST be called EXACTLY ONCE at startup; and BEFORE the
-        // HttpSession.instance PROPERTY is referenced elswhere. And note that the
-        // HttpSession construction (init) is, by design, inert; meaning it does not
-        // access the network or do anything substantial beyond hooking up its internal state.
+        // static FUNCTION MUST be called EXACTLY ONCE at startup (see SetGameApp);
+        // and BEFORE the HttpSession.instance PROPERTY is referenced elswhere.
+        // And note that the HttpSession construction (init) is, by design,
+        // inert; meaning it does not access the network or do anything
+        // substantial beyond hooking up its internal properties and state.
         //
         private static var singleton: HttpSession? = nil;
         public  static var instance: HttpSession { HttpSession.singleton! }
