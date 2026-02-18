@@ -475,7 +475,7 @@ public extension MultiPlayer {
                      private let size: Int = Const.fontSize;
 
             @State private var verbose: Bool = false;
-            @State private var flat: Bool = false;
+            @State private var flat: Bool = true;
 
             fileprivate init(sessionState: Binding<SessionState>) {
                 self._sessionState = sessionState;
@@ -491,10 +491,7 @@ public extension MultiPlayer {
 
             private var messages: [String: [HttpTransport.MessageReceived]] {
                 var result: [String: [HttpTransport.MessageReceived]] = [:]
-                let xyz = HttpTransport.messagesReceivedByTimestamp(info: sessionState.info);
-                if (flat) {
-                }
-                else if (verbose) {
+                if (verbose) {
                     for player in sessionState.players {
                         if let received = HttpTransport.messagesReceived(info: sessionState.info, player: player) {
                             result[player] = received;
@@ -506,7 +503,14 @@ public extension MultiPlayer {
                         result[sessionState.player] = received;
                     }
                 }
-                return result
+                return result;
+            }
+
+            private var messagesByTimestamp: [HttpTransport.MessageReceived] {
+                if let messages = HttpTransport.messagesReceivedByTimestamp(info: sessionState.info) {
+                    return messages;
+                }
+                return [];
             }
 
             private static func messageType(_ message: Message) -> String {
@@ -545,6 +549,23 @@ public extension MultiPlayer {
                         Text("time").bold()
                     }
                     Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale)
+                    if (flat) {
+                        ForEach(self.messagesByTimestamp) { message in
+                            LazyVGrid(columns: MessagesView.columns, alignment: .leading, spacing: 4) {
+                                Text(message.to + (message.to == self.player ? " \(Const.leftArrowChar)" : ""))
+                                     .font(.system(size: 13, weight: .semibold))
+                                    .frame(maxHeight: .infinity, alignment: .topLeading)
+                                Text("\(MessagesView.messageType(message.message))")
+                                    .font(.system(size: 13, weight: .regular))
+                                    .lineLimit(1)
+                                Text("\(message.host)")
+                                    .font(.system(size: 13, weight: .regular))
+                                Text("\(message.timestamp)")
+                                    .font(.system(size: 13, weight: .regular))
+                            }
+                        }
+                    }
+                    else {
                     ForEach(self.players, id: \.self) { player in
                         if let received: [HttpTransport.MessageReceived] = self.messages[player] {
                             LazyVGrid(columns: MessagesView.columns, alignment: .leading, spacing: 4) {
@@ -576,6 +597,7 @@ public extension MultiPlayer {
                             }
                             Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale)
                         }
+                    }
                     }
                 }
                 .font(.system(size: CGFloat(self.size), weight: .semibold))
