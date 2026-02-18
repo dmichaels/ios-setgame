@@ -13,28 +13,72 @@ private struct Const {
 }
 
 private struct SessionState {
-    fileprivate var session: String? = nil;
-    fileprivate var host: String? = nil;
-    fileprivate let player: String;
-    fileprivate var hosting: Bool { self.player == (self.host ?? "") }
-    fileprivate var players: [String] = [];
-    fileprivate var connected: Bool = false;
-    fileprivate var leaveable: Bool = false;
-    fileprivate var pingable: Bool = false;
+
+    // Readonly properties (from external POV).
+    //
+    fileprivate private(set) var session: String? = nil;
+    fileprivate private(set) var host: String? = nil;
+    fileprivate              let player: String;
+    fileprivate              var hosting: Bool { self.player == (self.host ?? "") }
+    fileprivate private(set) var players: [String] = [];
+    fileprivate private(set) var connected: Bool = false;
+    fileprivate private(set) var leaveable: Bool = false;
+    fileprivate private(set) var pingable: Bool = false;
+    fileprivate private(set) var info: Json = [:];
+    fileprivate              var sessionShort: String { self.sessions.shorten(self.session ?? Const.emptySetChar) }
+    fileprivate private(set) var polling: Bool = false;
+    fileprivate private(set) var pollCount: Int = 0;
+
+    // Read/write properties (from external POV).
+    //
     fileprivate var debug: Bool = false;
     fileprivate var production: Bool = false;
-    fileprivate var info: Json = [:];
     fileprivate var sessions: SessionList = SessionList();
-    fileprivate var sessionShort: String { self.sessions.shorten(self.session ?? Const.emptySetChar) }
-    fileprivate var npolls: Int = 0;
-    fileprivate let poller: MultiPlayer.DevPanel.Poller;
-    public mutating func update(from session: MultiPlayer.Session, info: Json? = nil, sessions: [String]? = nil, pingable: Bool = false) {
+
+    // Private properties (inaccessible from external POV).
+    //
+    private var poller: Poller;
+    private var pollerAction: (() async -> Void)? = nil;
+
+    fileprivate init(player: String, pollInterval: Int) {
+        self.player = player;
+        poller = Poller(milliseconds: pollInterval);
+    }
+
+    fileprivate mutating func poll(enable: Bool) {
+        if (enable) {
+            if let pollerAction = self.pollerAction {
+                self.polling = true;
+                self.poller.start(pollerAction);
+            }
+        }
+        else {
+            self.polling = false;
+            self.poller.stop();
+        }
+    }
+
+    fileprivate mutating func poll(_ action: (@escaping () async -> Void)) {
+        self.pollerAction = action;
+        self.polling = true;
+        self.poller.start(action);
+    }
+
+    fileprivate func nopoll() {
+        self.poller.stop();
+    }
+
+    public mutating func update(from session: MultiPlayer.Session,
+                                info: Json? = nil,
+                                sessions: [String]? = nil,
+                                pingable: Bool = false) {
         self.session = session.session;
         self.host = session.host;
         self.players = session.players;
         self.connected = session.connected;
         self.leaveable = session.leaveable;
         self.pingable = pingable;
+        self.pollCount = self.poller.count;
         if let info: Json = info {
             self.info = info;
         }
@@ -42,70 +86,96 @@ private struct SessionState {
             self.sessions.update(sessions.reversed());
         }
     }
-}
 
-private struct SessionList {
-
-    private static           let shortLengthDefault: Int = 4;
-    private                  var sessions: [String] = [];
-    fileprivate private(set) var sessionsShort: [String] = [];
-    fileprivate              var selected: String? { return self.sessions.first { $0.hasPrefix(self.selectedShort) }; }
-    fileprivate              var selectedShort: String = "";
-    private                  var shortLength: Int = SessionList.shortLengthDefault;
-
-    fileprivate init(_ sessions: [String] = []) {
-        self.update(sessions);
-    }
-
-    fileprivate func contains(_ session: String?) -> Bool {
-        return (session != nil) && self.sessions.contains(session!) ? true : false;
-    }
-
-    fileprivate mutating func select(_ session: String?) {
-        if let session: String = session {
-            if (!self.sessions.contains(session)) {
-                self.sessions.append(session);
+    fileprivate class Poller {
+        private let interval: UInt64;
+        private var task: Task<Void, Never>? = nil;
+        fileprivate private(set) var count: Int = 0;
+        fileprivate init(seconds: Int = 1) {
+            self.interval = UInt64(seconds * 1_000_000_000);
+        }
+        fileprivate init(milliseconds: Int = 1) {
+            self.interval = UInt64(milliseconds * 1_000_000);
+        }
+        fileprivate func start(_ task: @escaping () async -> Void) {
+            guard self.task == nil else { return }
+            self.task = Task {
+                while (!Task.isCancelled) {
+                    self.count += 1;
+                    await task();
+                    try? await Task.sleep(nanoseconds: self.interval);
+                }
             }
-            self.selectedShort = self.shorten(session);
         }
-        else {
-            self.selectedShort = "";
-        }
-    }
-
-    fileprivate mutating func update(_ sessions: [String]) {
-        self.sessions = sessions;
-        (self.sessionsShort, self.shortLength) = SessionList.shortenValues(sessions);
-        if let session: String = self.sessions.first {
-            self.select(session);
-        }
-        else {
-            self.select(nil);
+        fileprivate func stop() {
+            task?.cancel();
+            task = nil;
         }
     }
 
-    fileprivate func shorten(_ session: String?, fallback: String = "") -> String {
-        if let session: String = session {
-            return String(session.prefix(self.shortLength));
-        }
-        return fallback;
-    }
+    fileprivate struct SessionList {
 
-    // Returns the given array of strings, which is assumed to contain UNIQUE values,
-    // where each value is truncated to the first, at mininum, the given minimum number
-    // of characters; but if not, then the prefix length will be chosen such that the
-    // result values will be unique. From ChatGPT wholesale.
-    //
-    private static func shortenValues(_ list: [String]) -> (list: [String], shortLength: Int) {
-        guard !list.isEmpty else { return (list: [], shortLength: SessionList.shortLengthDefault) }
-        var result = Array(repeating: "", count: list.count); var prefixLength = SessionList.shortLengthDefault;
-        while (true) {
-            var seen = Set<String>(); var collision = false;
-            for (i, item) in list.enumerated() {
-                let prefix = String(item.prefix(prefixLength)); result[i] = prefix;
-                if (seen.contains(prefix)) { collision = true } else { seen.insert(prefix); }
+        private static           let shortLengthDefault: Int = 4;
+        private                  var sessions: [String] = [];
+        fileprivate private(set) var sessionsShort: [String] = [];
+        fileprivate              var selected: String? { return self.sessions.first { $0.hasPrefix(self.selectedShort) }; }
+        fileprivate              var selectedShort: String = "";
+        private                  var shortLength: Int = SessionList.shortLengthDefault;
+
+        fileprivate init(_ sessions: [String] = []) {
+            self.update(sessions);
+        }
+
+        fileprivate func contains(_ session: String?) -> Bool {
+            return (session != nil) && self.sessions.contains(session!) ? true : false;
+        }
+
+        fileprivate mutating func select(_ session: String?) {
+            if let session: String = session {
+                if (!self.sessions.contains(session)) {
+                    self.sessions.append(session);
+                }
+                self.selectedShort = self.shorten(session);
             }
-            if (!collision) { return (list: result, shortLength: prefixLength); } ; prefixLength += 1;
+            else {
+                self.selectedShort = "";
+            }
+        }
+
+        fileprivate mutating func update(_ sessions: [String]) {
+            self.sessions = sessions;
+            (self.sessionsShort, self.shortLength) = SessionList.shortenValues(sessions);
+            if let session: String = self.sessions.first {
+                self.select(session);
+            }
+            else {
+                self.select(nil);
+            }
+        }
+
+        fileprivate func shorten(_ session: String?, fallback: String = "") -> String {
+            if let session: String = session {
+                return String(session.prefix(self.shortLength));
+            }
+            return fallback;
+        }
+
+        // Returns the given array of strings, which is assumed to contain UNIQUE values,
+        // where each value is truncated to the first, at mininum, the given minimum number
+        // of characters; but if not, then the prefix length will be chosen such that the
+        // result values will be unique. From ChatGPT wholesale.
+        //
+        private static func shortenValues(_ list: [String]) -> (list: [String], shortLength: Int) {
+            guard !list.isEmpty else { return (list: [], shortLength: SessionList.shortLengthDefault) }
+            var result = Array(repeating: "", count: list.count); var prefixLength = SessionList.shortLengthDefault;
+            while (true) {
+                var seen = Set<String>(); var collision = false;
+                for (i, item) in list.enumerated() {
+                    let prefix = String(item.prefix(prefixLength)); result[i] = prefix;
+                    if (seen.contains(prefix)) { collision = true } else { seen.insert(prefix); }
+                }
+                if (!collision) { return (list: result, shortLength: prefixLength); } ; prefixLength += 1;
+            }
         }
     }
 }
@@ -129,7 +199,8 @@ public extension MultiPlayer {
             self.settings = settings;
             self.margin = margin;
             self.sessionState = SessionState(player: MultiPlayer.HttpSession.instance.player,
-                                             poller: Poller(milliseconds: pollInterval));
+                                             pollInterval: pollInterval);
+                                             // poller: SessionState.Poller(milliseconds: pollInterval));
         }
 
         public var body: some View {
@@ -140,8 +211,7 @@ public extension MultiPlayer {
                 DevPanelMessages(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
                 DevPanelServer(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
             }
-            .onAppear { self.sessionState.poller.start({
-                self.sessionState.npolls += 1;
+            .onAppear { self.sessionState.poll({
                 self.sessionState.update(from: self.session,
                                          info: await self.transport.session(self.session.session),
                                          sessions: await self.transport.sessions(),
@@ -156,38 +226,7 @@ public extension MultiPlayer {
                     self.session.disconnect();
                 }
             })}
-            .onDisappear { self.sessionState.poller.stop() }
-        }
-
-        fileprivate class Poller {
-            private let interval: UInt64;
-            private var task: Task<Void, Never>? = nil;
-            private var closure: (() async -> Void)? = nil;
-            fileprivate init(seconds: Int = 1) {
-                self.interval = UInt64(seconds * 1_000_000_000);
-            }
-            fileprivate init(milliseconds: Int = 1) {
-                self.interval = UInt64(milliseconds * 1_000_000);
-            }
-            fileprivate var running: Bool { self.task != nil }
-            fileprivate func toggle() { if (self.running) { self.stop() } else { self.start() } }
-            fileprivate func start() {
-                if let closure = self.closure { self.start(closure) }
-            }
-            fileprivate func start(_ task: @escaping () async -> Void) {
-                guard self.task == nil else { return }
-                self.closure = task;
-                self.task = Task {
-                    while (!Task.isCancelled) {
-                        await self.closure?();
-                        try? await Task.sleep(nanoseconds: self.interval);
-                    }
-                }
-            }
-            fileprivate func stop() {
-                task?.cancel();
-                task = nil;
-            }
+            .onDisappear { self.sessionState.poll(enable: false) }
         }
     }
 
@@ -221,11 +260,13 @@ public extension MultiPlayer {
                     RegularText("\(self.sessionState.players.count == 0 ? Const.emptySetChar : "\(self.sessionState.players.count)")", leading: 3)
                 Spacer()
                 SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
+                    /*
                     if let messagesReceived: [HttpTransport.MessageReceived] = HttpTransport.messagesReceived(info: self.sessionState.info, player: self.session.player) {
                         for message in messagesReceived {
                             print("XYZZY-MESSAGE(\(self.session.player): \(message.message.type)")
                         }
                     }
+                    */
                     if (self.transport.engaged) {
                         self.transport.disengage();
                     }
@@ -556,10 +597,10 @@ public extension MultiPlayer {
                             RegularText(self.sessionState.pingable ? Const.checkChar : Const.xmarkChar,
                                         color: self.sessionState.pingable ? .primary : Const.highlightColor,
                                         size: 13, bold: true, leading: 2)
-                    RegularText("(\(self.sessionState.npolls))", size: 10)
+                    RegularText("(\(self.sessionState.pollCount))", size: 10)
                     Spacer()
-                    SmallButton(icon: self.sessionState.poller.running ? "pause.circle" : "play.circle", size: 17) {
-                        self.sessionState.poller.toggle();
+                    SmallButton(icon: self.sessionState.polling ? "pause.circle" : "play.circle", size: 17) {
+                        self.sessionState.poll(enable: !self.sessionState.polling);
                     }
                     SmallButton(icon: self.sessionState.production ? "checkmark.seal" : "atom", size: 16) {
                         await self.transport.production = !self.sessionState.production;
