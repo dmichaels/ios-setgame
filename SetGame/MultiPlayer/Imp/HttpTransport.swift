@@ -229,8 +229,14 @@ public extension MultiPlayer {
                            let messages: [Json] = messagesItem["messages"] as? [Json] {
                             for message in messages {
                                 if let message = MessageConversion.toMessage(json: message) {
+                                    //
+                                    // Note that the timestamp value from our little Python
+                                    // server looks like this: "2026-02-18T18:56:31.446055+00:00";
+                                    // we do not bother with conversion to/from Date type; only
+                                    // interested in the time: hour, minute, second, milliseconds.
+                                    //
                                     result.append(MessageReceived(
-                                        timestamp: timestamp.substring(from: 11, length: 11),
+                                        timestamp: timestamp.substring(from: 11, length: 12),
                                         to: to,
                                         host: host,
                                         players: players,
