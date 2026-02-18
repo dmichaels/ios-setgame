@@ -475,7 +475,9 @@ public extension MultiPlayer {
                      private let size: Int = Const.fontSize;
 
             @State private var verbose: Bool = false;
-            @State private var flat: Bool = true;
+            @State private var verboseSave: Bool = false;
+            @State private var byTimestamp: Bool = false;
+            @State private var byTimestampReversed: Bool = false;
 
             fileprivate init(sessionState: Binding<SessionState>) {
                 self._sessionState = sessionState;
@@ -507,7 +509,7 @@ public extension MultiPlayer {
             }
 
             private var messagesByTimestamp: [HttpTransport.MessageReceived] {
-                if let messages = HttpTransport.messagesReceivedByTimestamp(info: sessionState.info) {
+                if let messages = HttpTransport.messagesReceivedByTimestamp(info: sessionState.info, reversed: self.byTimestampReversed) {
                     return messages;
                 }
                 return [];
@@ -535,21 +537,45 @@ public extension MultiPlayer {
                 GridItem(.fixed(95), alignment: .leading)   // time
             ];
 
+            private func expandButtonDownArrow() -> Bool {
+                if (self.byTimestamp) {
+                    return !self.byTimestampReversed;
+                }
+                else {
+                    return self.verbose;
+                }
+            }
+
             fileprivate var body: some View {
                 VStack(spacing: 4) {
                     LazyVGrid(columns: MessagesView.columns, alignment: .leading, spacing: 4) {
                         HStack {
-                            Text("player").bold()
-                            SmallButton(icon: verbose ? "arrow.down.square" : "arrow.up.square" , size: 16) {
-                                self.verbose.toggle();
+                            Text("to").bold()
+                            SmallButton(icon: self.expandButtonDownArrow() ? "arrow.down.square" : "arrow.up.square" , size: 16) {
+                                if (self.byTimestamp) {
+                                    self.byTimestampReversed.toggle();
+                                }
+                                else {
+                                    self.verbose.toggle();
+                                }
+                            }
+                            SmallButton(icon: verbose ? "clock" : "clock", color: self.byTimestamp ? .red : .primary , size: 16) {
+                                if (self.byTimestamp) {
+                                    self.byTimestamp = false;
+                                    self.verbose = self.verboseSave;
+                                }
+                                else {
+                                    self.byTimestamp = true;
+                                    self.verboseSave = self.verbose;
+                                }
                             }
                         }
-                        Text("received").bold()
+                        Text("type").bold()
                         Text("host").bold()
                         Text("time").bold()
                     }
                     Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale)
-                    if (flat) {
+                    if (self.byTimestamp) {
                         ForEach(self.messagesByTimestamp) { message in
                             LazyVGrid(columns: MessagesView.columns, alignment: .leading, spacing: 4) {
                                 Text(message.to + (message.to == self.player ? " \(Const.leftArrowChar)" : ""))
@@ -632,8 +658,8 @@ public extension MultiPlayer {
                             RegularText(self.sessionState.pingable ? Const.checkChar : Const.xmarkChar,
                                         color: self.sessionState.pingable ? .primary : Const.highlightColor,
                                         size: 13, bold: true, leading: 2)
-                    RegularText("(\(self.sessionState.pollCount))", size: 10)
                     Spacer()
+                    RegularText("(\(self.sessionState.pollCount))", size: 12)
                     SmallButton(icon: self.sessionState.polling ? "pause.circle" : "play.circle", size: 17) {
                         self.sessionState.poll(enable: !self.sessionState.polling);
                     }
@@ -786,7 +812,7 @@ public extension MultiPlayer {
                             action: @escaping () async -> Void) {
             self.text = text;
             self.icon = icon;
-            self.color = color ?? .yellow;
+            self.color = color ?? ((icon != nil) ? .black : .yellow);
             self.background = background ?? Const.foreground;
             self.size = size ?? ((icon != nil) ? 20 : Const.fontSize);
             self.disabled = disabled;
@@ -801,7 +827,7 @@ public extension MultiPlayer {
             } label: {
                 if let icon: String = icon {
                     Image(systemName: icon)
-                        .foregroundColor(.black)
+                        .foregroundColor(color)
                         .font(.system(size: CGFloat(self.size)))
                         .fontWeight(.semibold)
                         .disabled(disabled)
