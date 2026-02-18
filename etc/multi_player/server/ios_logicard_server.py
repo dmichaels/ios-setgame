@@ -60,7 +60,7 @@ def old_with_session(func):
 @app.before_request
 def _check_api_key():
     global hits ; hits += 1
-    if request.path == '/ping':
+    if (request.path == '/ping') or (request.path == '/hits'):
         return
     if request.headers.get('X-API-Key') != APIKEY:
         abort(403)
