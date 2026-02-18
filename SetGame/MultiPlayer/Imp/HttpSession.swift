@@ -10,6 +10,7 @@ public extension MultiPlayer {
         public static var instance: HttpSession { HttpSession.singleton! }
         public static func instance(handler: SessionHandler, transport: HttpTransport.Factory? = nil) -> HttpSession {
             if let singleton = HttpSession.singleton {
+                fatalError("HttpSession.instance: Multiple instance calls not allowed! Coding error!");
                 //
                 // Should not normally happen; just call this once to initialize the singleton
                 // with the required SessionHandler and (optional) HttpTransport arguments; but
@@ -30,6 +31,7 @@ public extension MultiPlayer {
         public private(set) var host: String?
         public private(set) var players: [String] = [];
         public private(set) var transport: Transport;
+        public final lazy var rng: RNG = { return RNG() }()
 
         public func create() async -> Bool {
             //
@@ -95,6 +97,31 @@ public extension MultiPlayer {
                 return true;
             }
         }
+        //// xyzzy
+        public func send(message: Message) async -> Bool {
+            if (self.hosting) {
+                //
+                // We are the HOST; send the message to ALL of the clients;
+                // and INCLUDING to ourselves (the host), so that we (the
+                // host) act as much as possible like the clients.
+                //
+                var success: Bool = true;
+                for player in self.players {
+                    if await self.transport.send(message: message, player: player, session: self.session) {
+                        success = false;
+                    }
+                }
+                return success;
+            }
+            else {
+                //
+                // We are the CLIENT (NOT the HOST);
+                // send the message ONLY to the HOST.
+                //
+                return await self.transport.sendHost(message: message, session: self.session);
+            }
+        }
+        //// xyzzy
 
         // Sends the given message to the given player for the session.
         //
@@ -107,6 +134,20 @@ public extension MultiPlayer {
         //
         public func sendHost(message: Message) async -> Bool {
             return await self.transport.sendHost(message: message, session: self.session);
+        }
+
+        // Non-async versions of above.
+        public func send(message: Message) -> Bool {
+            Task { await self.send(message: message) }
+            return true;
+        }
+        public func send(message: Message, to player: String) -> Bool {
+            Task { await self.send(message: message, to: player) }
+            return true;
+        }
+        public func sendHost(message: Message) -> Bool {
+            Task { await self.sendHost(message: message) }
+            return true;
         }
 
         public func disconnect() {
@@ -129,18 +170,20 @@ public extension MultiPlayer {
 
         public init(handler: SessionHandler, url: String? = nil, transport: HttpTransport.Factory? = nil) {
 
+            deb("HttpSession.init!!!")
+
             class MessageHandler: MultiPlayer.MessageHandler {
                 var session: HttpSession?;
-                func handle(message: PingMessage) { session?.handle(message: message) }
-                func handle(message: JoinSessionMessage) { session?.handle(message: message) }
+                func handle(message: PingMessage)                 { session?.handle(message: message) }
+                func handle(message: JoinSessionMessage)          { session?.handle(message: message) }
                 func handle(message: JoinSessionConfirmedMessage) { session?.handle(message: message) }
-                func handle(message: LeaveSessionMessage) { session?.handle(message: message) }
-                func handle(message: RequestHostSessionMessage) { session?.handle(message: message) }
-                func handle(message: UpdateSessionMessage) { session?.handle(message: message) }
-                func handle(message: NewGameMessage) { session?.handle(message: message) }
-                func handle(message: SetFoundMessage) { session?.handle(message: message) }
-                func handle(message: SetConfirmedMessage) { session?.handle(message: message) }
-                func handle(message: SetMissedMessage) { session?.handle(message: message) }
+                func handle(message: LeaveSessionMessage)         { session?.handle(message: message) }
+                func handle(message: RequestHostSessionMessage)   { session?.handle(message: message) }
+                func handle(message: UpdateSessionMessage)        { session?.handle(message: message) }
+                func handle(message: NewGameMessage)              { session?.handler.handle(message: message) }
+                func handle(message: SetFoundMessage)             { session?.handler.handle(message: message) }
+                func handle(message: SetConfirmedMessage)         { session?.handler.handle(message: message) }
+                func handle(message: SetMissedMessage)            { session?.handler.handle(message: message) }
             }
 
             // Bind ourselves to the given SessionHandler (which in our case is Table);
@@ -163,7 +206,10 @@ public extension MultiPlayer {
             // this is so this handler (Table in out case) can call into us (as an
             // implementor of Session) to send messages (via Session.send).
             //
-            handler.xsession = self;
+            handler.session = self;
+
+            let xyzzy: Table? = handler as? Table;
+            let xyzzy2 = 1
 
             // N.B. Do not initialize the players list with ourselves,
             // because we are not actually connected session on construction;
@@ -279,22 +325,6 @@ public extension MultiPlayer {
         private func handle(message: UpdateSessionMessage) {
             self.host = message.host;
             self.players = message.players;
-        }
-
-        private func handle(message: NewGameMessage) {
-            deb("TODO: HANDLE NewGameMessage!")
-        }
-
-        private func handle(message: SetFoundMessage) {
-            deb("TODO: HANDLE SetFoundMessage!")
-        }
-
-        private func handle(message: SetConfirmedMessage) {
-            deb("TODO: HANDLE SetConfirmedMessage!")
-        }
-
-        private func handle(message: SetMissedMessage) {
-            deb("TODO: HANDLE SetMissedMessage!")
         }
 
         private func playerJoined(_ player: String) {

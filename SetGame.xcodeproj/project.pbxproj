@@ -75,6 +75,7 @@
 		98E1F3052F4524E800F6DAA3 /* SetConfirmedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F3042F4524E800F6DAA3 /* SetConfirmedMessage.swift */; };
 		98E1F3072F45269800F6DAA3 /* SetMissedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F3062F45269800F6DAA3 /* SetMissedMessage.swift */; };
 		98E1F3092F4527B600F6DAA3 /* NewGameMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F3082F4527B600F6DAA3 /* NewGameMessage.swift */; };
+		98E1F30B2F45D29200F6DAA3 /* MultiPlayerGameButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F30A2F45D29200F6DAA3 /* MultiPlayerGameButton.swift */; };
 		98E4E3232773B0AC000EEC5A /* SetGame.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98E4E3222773B0AC000EEC5A /* SetGame.xcassets */; };
 		98EF7E0E2F167C5800A45F63 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E0B2F167C5800A45F63 /* CardView.swift */; };
 		98EF7E0F2F167C5800A45F63 /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EF7E0C2F167C5800A45F63 /* TableView.swift */; };
@@ -176,6 +177,7 @@
 		98E1F3042F4524E800F6DAA3 /* SetConfirmedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetConfirmedMessage.swift; sourceTree = "<group>"; };
 		98E1F3062F45269800F6DAA3 /* SetMissedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetMissedMessage.swift; sourceTree = "<group>"; };
 		98E1F3082F4527B600F6DAA3 /* NewGameMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGameMessage.swift; sourceTree = "<group>"; };
+		98E1F30A2F45D29200F6DAA3 /* MultiPlayerGameButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiPlayerGameButton.swift; sourceTree = "<group>"; };
 		98E4E3222773B0AC000EEC5A /* SetGame.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SetGame.xcassets; sourceTree = "<group>"; };
 		98EF7E0B2F167C5800A45F63 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		98EF7E0C2F167C5800A45F63 /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
@@ -241,11 +243,11 @@
 			children = (
 				981B00492F113ABF00875920 /* SetGame.entitlements */,
 				981190EF25ED59CC0083606B /* SetGameApp.swift */,
-				98E1F2C32F3FAA9200F6DAA3 /* MultiPlayer */,
 				98EF7E192F1D070500A45F63 /* Dev */,
 				9867E13A2F1FCA8A00CB221F /* Demo */,
 				9867E13C2F21255600CB221F /* GameCenter */,
 				9811911D25ED5A0C0083606B /* Model */,
+				98E1F2C32F3FAA9200F6DAA3 /* MultiPlayer */,
 				9867E12E2F1E573000CB221F /* Utils */,
 				9811914F25ED5CFE0083606B /* Views */,
 				981190F325ED59CD0083606B /* Assets.xcassets */,
@@ -348,6 +350,7 @@
 		9867E13C2F21255600CB221F /* GameCenter */ = {
 			isa = PBXGroup;
 			children = (
+				98E1F30A2F45D29200F6DAA3 /* MultiPlayerGameButton.swift */,
 				98E1F2E32F3FABC100F6DAA3 /* XMessages.swift */,
 				9874C85F2F316609002EEE86 /* Interfaces */,
 				98C9D1E72F2941160094E251 /* Dev */,
@@ -634,6 +637,7 @@
 				98C9D21B2F2D080C0094E251 /* URL.swift in Sources */,
 				9867E14F2F21CF4300CB221F /* TopViewController.swift in Sources */,
 				98E1F3072F45269800F6DAA3 /* SetMissedMessage.swift in Sources */,
+				98E1F30B2F45D29200F6DAA3 /* MultiPlayerGameButton.swift in Sources */,
 				9811914725ED5ACF0083606B /* Table.swift in Sources */,
 				9811914B25ED5ACF0083606B /* CardShape.swift in Sources */,
 				98E1F3032F4508EE00F6DAA3 /* SetFoundMessage.swift in Sources */,

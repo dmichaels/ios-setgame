@@ -45,11 +45,11 @@ import SwiftUI
 
         func retrieveSessions() async -> [String]? { nil }
         func sessionInfo(session: String?) async -> Json? { nil }
-        var  engaged: Bool { false }
-        var  server: String { "" }
+        var engaged: Bool { false }
+        var server: String { "" }
         func ping() async -> Bool { false }
-        var  production: Bool { get { false } set {} }
-        var  debug: Bool { get async { false } }
+        var production: Bool { false }
+        var debug: Bool { get async { false } }
         func debug(enable: Bool) async {}
     }
 
@@ -171,13 +171,12 @@ public extension MultiPlayer {
                         private var margin: Int = 10;
 
                         // private let session: MultiPlayer.Session;
-                        // private let transport: MultiPlayer.Transport;
+                        private let transport: MultiPlayer.HttpTransport;
                  @State private var sessionState: SessionState;
                         private let poller: Poller;
                         private let pollInterval: Int = 500;
 
         private var session: MultiPlayer.Session { MultiPlayer.HttpSession.singleton ?? DummySession() }
-        private var transport: MultiPlayer.Transport { MultiPlayer.HttpSession.singleton?.transport ?? DummyTransport() }
 
         public init(table: Table, settings: Settings, margin: Int = 0) {
             let session: MultiPlayer.Session = MultiPlayer.HttpSession.singleton ?? DummySession();
@@ -186,8 +185,8 @@ public extension MultiPlayer {
             self.margin = margin;
             // let session: Session = MultiPlayer.HttpSession.instance;
             // self.session = session;
-            // self.transport = session.transport as! MultiPlayer.Transport;
-            // self.transport = session.transport;
+            // self.transport = session.transport as! MultiPlayer.HttpTransport;
+            self.transport = session.transport;
             self.sessionState = SessionState(player: session.player);
             self.poller = Poller(milliseconds: pollInterval);
         }
@@ -248,12 +247,12 @@ public extension MultiPlayer {
 
         @ObservedObject private var table: Table
                         private let session: MultiPlayer.Session;
-                        private let transport: MultiPlayer.Transport;
+                        private let transport: MultiPlayer.HttpTransport;
                @Binding private var sessionState: SessionState;
                         private let margin: Int;
 
         fileprivate init(table: Table,
-                         session: MultiPlayer.Session, transport: MultiPlayer.Transport,
+                         session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
                          sessionState: Binding<SessionState>, margin: Int = 10) {
             self.table = table;
             self.session = session;
@@ -294,12 +293,12 @@ public extension MultiPlayer {
 
         @ObservedObject private var table: Table
                         private let session: MultiPlayer.Session;
-                        private let transport: MultiPlayer.Transport;
+                        private let transport: MultiPlayer.HttpTransport;
                @Binding private var sessionState: SessionState;
                         private let margin: Int;
 
         fileprivate init(table: Table,
-                         session: MultiPlayer.Session, transport: MultiPlayer.Transport,
+                         session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
                          sessionState: Binding<SessionState>, margin: Int = 10) {
             self.table = table;
             self.session = session;
@@ -358,12 +357,12 @@ public extension MultiPlayer {
 
         @ObservedObject private var table: Table
                         private let session: MultiPlayer.Session;
-                        private let transport: MultiPlayer.Transport;
+                        private let transport: MultiPlayer.HttpTransport;
                @Binding private var sessionState: SessionState;
                         private let margin: Int;
 
         fileprivate init(table: Table,
-                         session: MultiPlayer.Session, transport: MultiPlayer.Transport,
+                         session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
                          sessionState: Binding<SessionState>, margin: Int = 10) {
             self.table = table;
             self.session = session;
@@ -452,12 +451,12 @@ public extension MultiPlayer {
 
         @ObservedObject private var table: Table
                         private let session: MultiPlayer.Session;
-                        private let transport: MultiPlayer.Transport;
+                        private let transport: MultiPlayer.HttpTransport;
                @Binding private var sessionState: SessionState;
                         private let margin: Int;
 
         fileprivate init(table: Table,
-                         session: MultiPlayer.Session, transport: MultiPlayer.Transport,
+                         session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
                          sessionState: Binding<SessionState>, margin: Int = 10) {
             self.table = table;
             self.session = session;
@@ -587,12 +586,12 @@ public extension MultiPlayer {
 
         @ObservedObject private var table: Table
                         private let session: MultiPlayer.Session;
-                        private let transport: MultiPlayer.Transport;
+                        private let transport: MultiPlayer.HttpTransport;
                @Binding private var sessionState: SessionState;
                         private let margin: Int;
 
         fileprivate init(table: Table,
-                         session: MultiPlayer.Session, transport: MultiPlayer.Transport,
+                         session: MultiPlayer.Session, transport: MultiPlayer.HttpTransport,
                          sessionState: Binding<SessionState>, margin: Int = 10) {
             self.table = table;
             self.session = session;

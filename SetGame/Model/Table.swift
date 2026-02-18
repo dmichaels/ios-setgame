@@ -5,14 +5,9 @@ import SwiftUI
 /// table cards which are on display; and sundry other data points.
 /// Is this class technically, effectively acting as a "model-view"?
 ///
-public class FOOTable: MultiPlayer.SessionHandler {
-    public var xsession: MultiPlayer.Session?
-    public func handle(message: MultiPlayer.PingMessage) {}
-}
-public class Table: ObservableObject, GameCenter.SessionHandler, MultiPlayer.SessionHandler {
+public class Table: ObservableObject, /* GameCenter.SessionHandler */ MultiPlayer.SessionHandler {
 
-    public var xsession: MultiPlayer.Session?
-    public func handle(message: MultiPlayer.PingMessage) {}
+    public var session: MultiPlayer.Session?
 
     private var settings: Settings;
 
@@ -21,7 +16,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler, MultiPlayer.Ses
     // SessionManagerHandler protocol implementation;
     // and see Table extension at the end of this file.
 
-    public var session: GameCenter.Session?;
+    //// public var session: GameCenter.Session?;
 
     // Table implementation.
 
@@ -56,6 +51,7 @@ public class Table: ObservableObject, GameCenter.SessionHandler, MultiPlayer.Ses
     private var effects: TableCardEffects;
 
     public init(settings: Settings, effects: TableCardEffects? = nil) {
+        deb("Table.init!!!")
         self.settings = settings;
         self.cards = [];
         self.deck  = TableDeck(simple: self.settings.simpleDeck);
@@ -63,11 +59,11 @@ public class Table: ObservableObject, GameCenter.SessionHandler, MultiPlayer.Ses
         self.effects = effects ?? TableCardEffects.defaults;
     }
 
-    private var multiPlayer: GameCenter.Session? {
+    private var multiPlayer: MultiPlayer.Session? {
         return self.settings.multiPlayer.enabled ? self.session : nil;
     }
 
-    private var multiPlayerHost: GameCenter.Session? {
+    private var multiPlayerHost: MultiPlayer.Session? {
         if (self.settings.multiPlayer.enabled) {
             if let session = self.session {
                 if (session.hosting) {
@@ -77,6 +73,21 @@ public class Table: ObservableObject, GameCenter.SessionHandler, MultiPlayer.Ses
         }
         return nil;
     }
+
+////    private var multiPlayer: GameCenter.Session? {
+////        return self.settings.multiPlayer.enabled ? self.session : nil;
+////    }
+
+////    private var multiPlayerHost: GameCenter.Session? {
+////        if (self.settings.multiPlayer.enabled) {
+////            if let session = self.session {
+////                if (session.hosting) {
+////                    return session;
+////                }
+////            }
+////        }
+////        return nil;
+////    }
 
     private var rng: RNG? {
         return self.session?.rng
@@ -101,7 +112,8 @@ public class Table: ObservableObject, GameCenter.SessionHandler, MultiPlayer.Ses
                 // gotten an explicit request (e.g. from menu-item)
                 // to start a new game; just sound out a NewGameMessage.
                 //
-                session.send(message: GameCenter.NewGameMessage());
+                //// session.send(message: GameCenter.NewGameMessage());
+                session.send(message: MultiPlayer.NewGameMessage()); // TODO
                 return;
             }
             deb("startNewGame: seed: \(seed) rng.seed: \(self.rng?.seed)")
@@ -269,7 +281,8 @@ public class Table: ObservableObject, GameCenter.SessionHandler, MultiPlayer.Ses
 
         if let session = self.multiPlayer, selectedCards.isSet() {
             self.state.receivedExpectedFoundSetResponseMessage = false;
-            session.send(message: GameCenter.FoundSetMessage(
+            //// session.send(message: GameCenter.FoundSetMessage(
+            session.send(message: MultiPlayer.SetFoundMessage( // TODO
                 player: session.player,
                 cards: selectedCards
             ));
@@ -658,6 +671,25 @@ public class Table: ObservableObject, GameCenter.SessionHandler, MultiPlayer.Ses
     }
 }
 
+// NEW: Here are all of the SessionHandler implementation functionss for Table.
+//
+public extension Table {
+    public func handle(message: MultiPlayer.PingMessage) {}
+    public func handle(message: MultiPlayer.JoinSessionMessage) {}
+    public func handle(message: MultiPlayer.JoinSessionConfirmedMessage) {}
+    public func handle(message: MultiPlayer.LeaveSessionMessage) {}
+    public func handle(message: MultiPlayer.RequestHostSessionMessage) {}
+    public func handle(message: MultiPlayer.UpdateSessionMessage) {}
+    public func handle(message: MultiPlayer.NewGameMessage) {
+        deb("Table.handle(newGameMessage)")
+        self.startNewGame(seed: message.seed);
+    }
+    public func handle(message: MultiPlayer.SetFoundMessage) {}
+    public func handle(message: MultiPlayer.SetConfirmedMessage) {}
+    public func handle(message: MultiPlayer.SetMissedMessage) {}
+}
+
+/*
 // Here are all of the SessionHandler implementation functionss for Table.
 //
 private extension Table {
@@ -748,3 +780,4 @@ private extension Table {
         self.state.receivedExpectedFoundSetResponseMessage = true;
     }
 }
+*/

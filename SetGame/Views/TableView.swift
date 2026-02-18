@@ -23,10 +23,8 @@ public struct TableView: View {
             Space(size: 18)
             StatusBar(marginx: marginx)
             MultiPlayer.DevPanel(table: table, settings: settings, margin: 24)
-            MultiPlayerDevelopmentPanelView(table: table, settings: settings)
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)
-            MultiPlayerGameButton()
         }
     }
 
@@ -53,16 +51,6 @@ public struct TableView: View {
                     Spacer()
                 }
             }
-        }
-    }
-}
-
-private struct MultiPlayerGameButton: View {
-    @ObservedObject private var gameCenter = GameCenterManager.shared;
-    var body: some View {
-        if (true) {
-            PlayButtonView(gameCenter: gameCenter)
-                .padding(.horizontal)
         }
     }
 }

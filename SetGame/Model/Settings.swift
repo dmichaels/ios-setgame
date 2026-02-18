@@ -55,13 +55,14 @@ public class Defaults {
     // GameCenter/MultiPlayer related properties.
 
     public struct MultiPlayer {
-        public var enabled: Bool  = false;
-        public var http: Bool     = true;
-        public var host: Bool     = true;
-        public var poll: Bool     = true;
-        // public let server: String =  "https://api.logicard.dmichaels.dev";
-        public let server: String =  "http://127.0.0.1:8001"
-        public let apikey: String = ".0turangalila";
+        public var enabled: Bool          = true;
+        public var http: Bool             = true;
+        public var host: Bool             = true;
+        public var poll: Bool             = true;
+        public let productionURL: String  = "https://api.logicard.dmichaels.dev"
+        public let developmentURL: String = "http://127.0.0.1:8001"
+        public let server: String         = "http://127.0.0.1:8001"
+        public let apikey: String         = ".0turangalila";
     }
 
     public static let multiPlayer: MultiPlayer = MultiPlayer();

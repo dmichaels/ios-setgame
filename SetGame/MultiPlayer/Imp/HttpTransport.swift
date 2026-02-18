@@ -215,7 +215,6 @@ public extension MultiPlayer {
             public var host: String;
             public var players: [String];
             public var message: Message;
-
         }
 
         public static func messagesReceived(info: Json, player: String) -> [MessageReceived]? {

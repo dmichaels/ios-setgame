@@ -10,15 +10,21 @@ public extension MultiPlayer {
         var  connected: Bool { get }
         var  leaveable: Bool { get }
         var  transport: Transport { get }
+        var  rng: RNG { get }
 
         func create() async -> Bool;
         func join(session: String?) async -> Bool;
         func join(session: String?, wait: Bool) async -> Bool;
         func requestHost() async -> Bool;
         func leave() async -> Bool;
+        func send(message: Message) async -> Bool;
         func send(message: Message, to: String) async -> Bool;
         func sendHost(message: Message) async -> Bool;
         func disconnect();
+
+        func send(message: Message) -> Bool;
+        func send(message: Message, to: String) -> Bool;
+        func sendHost(message: Message) -> Bool;
     }
 }
 
