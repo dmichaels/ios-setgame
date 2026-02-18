@@ -13,11 +13,10 @@ public extension MultiPlayer {
         //
         private static var  singleton: HttpSession? = nil;
         public  static var  instance: HttpSession { HttpSession.singleton! }
-        public  static func instance(handler: SessionHandler, transport: HttpTransport.Factory? = nil) -> HttpSession {
+        public  static func instance(handler: SessionHandler, transport: HttpTransport.Factory? = nil) {
             if (HttpSession.singleton == nil) {
                 HttpSession.singleton = HttpSession(handler: handler, transport: transport);
             }
-            return HttpSession.singleton!;
         }
 
         // Session protocol implementation.
