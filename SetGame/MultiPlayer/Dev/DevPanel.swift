@@ -520,16 +520,16 @@ public extension MultiPlayer {
                 }
             }
 
-            private var columns: [GridItem] {[
+            private static let columns: [GridItem] = [
                 GridItem(.fixed(90), alignment: .leading),  // player
                 GridItem(.flexible(), alignment: .leading), // received
                 GridItem(.fixed(70), alignment: .leading),  // host
                 GridItem(.fixed(95), alignment: .leading)   // time
-            ]}
+            ];
 
             fileprivate var body: some View {
                 VStack(spacing: 4) {
-                    LazyVGrid(columns: columns, alignment: .leading, spacing: 4) {
+                    LazyVGrid(columns: MessagesView.columns, alignment: .leading, spacing: 4) {
                         HStack {
                             Text("player").bold()
                             SmallButton(icon: verbose ? "arrow.down.square" : "arrow.up.square" , size: 16) {
@@ -543,7 +543,7 @@ public extension MultiPlayer {
                     Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale)
                     ForEach(self.players, id: \.self) { player in
                         if let received: [HttpTransport.MessageReceived] = self.messages[player] {
-                            LazyVGrid(columns: columns, alignment: .leading, spacing: 4) {
+                            LazyVGrid(columns: MessagesView.columns, alignment: .leading, spacing: 4) {
                                 Text(player + (player == self.player ? " \(Const.leftArrowChar)" : ""))
                                      .font(.system(size: 13, weight: .semibold))
                                     .frame(maxHeight: .infinity, alignment: .topLeading)
