@@ -27,6 +27,7 @@ private struct SessionState {
     fileprivate var sessions: SessionList = SessionList();
     fileprivate var sessionShort: String { self.sessions.shorten(self.session ?? Const.emptySetChar) }
     fileprivate var npolls: Int = 0;
+    fileprivate let poller: MultiPlayer.DevPanel.Poller;
     public mutating func update(from session: MultiPlayer.Session, info: Json? = nil, sessions: [String]? = nil, pingable: Bool = false) {
         self.session = session.session;
         self.host = session.host;
@@ -117,10 +118,7 @@ public extension MultiPlayer {
         @ObservedObject private var settings: Settings;
                         private var margin: Int = 10;
 
-                        // private let session: MultiPlayer.Session;
-                        // private let transport: MultiPlayer.Transport;
                  @State private var sessionState: SessionState;
-                        private let poller: Poller;
                         private let pollInterval: Int = 500;
 
         private var session: MultiPlayer.Session { MultiPlayer.HttpSession.instance }
@@ -130,8 +128,8 @@ public extension MultiPlayer {
             self.table = table;
             self.settings = settings;
             self.margin = margin;
-            self.sessionState = SessionState(player: MultiPlayer.HttpSession.instance.player);
-            self.poller = Poller(milliseconds: pollInterval);
+            self.sessionState = SessionState(player: MultiPlayer.HttpSession.instance.player,
+                                             poller: Poller(milliseconds: pollInterval));
         }
 
         public var body: some View {
@@ -142,7 +140,7 @@ public extension MultiPlayer {
                 DevPanelMessages(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
                 DevPanelServer(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
             }
-            .onAppear { self.poller.start({
+            .onAppear { self.sessionState.poller.start({
                 self.sessionState.npolls += 1;
                 self.sessionState.update(from: self.session,
                                          info: await self.transport.session(self.session.session),
@@ -158,23 +156,30 @@ public extension MultiPlayer {
                     self.session.disconnect();
                 }
             })}
-            .onDisappear { self.poller.stop() }
+            .onDisappear { self.sessionState.poller.stop() }
         }
 
-        private class Poller {
+        fileprivate class Poller {
             private let interval: UInt64;
             private var task: Task<Void, Never>? = nil;
+            private var closure: (() async -> Void)? = nil;
             fileprivate init(seconds: Int = 1) {
                 self.interval = UInt64(seconds * 1_000_000_000);
             }
             fileprivate init(milliseconds: Int = 1) {
                 self.interval = UInt64(milliseconds * 1_000_000);
             }
+            fileprivate var running: Bool { self.task != nil }
+            fileprivate func toggle() { if (self.running) { self.stop() } else { self.start() } }
+            fileprivate func start() {
+                if let closure = self.closure { self.start(closure) }
+            }
             fileprivate func start(_ task: @escaping () async -> Void) {
                 guard self.task == nil else { return }
+                self.closure = task;
                 self.task = Task {
                     while (!Task.isCancelled) {
-                        await task();
+                        await self.closure?();
                         try? await Task.sleep(nanoseconds: self.interval);
                     }
                 }
@@ -553,6 +558,9 @@ public extension MultiPlayer {
                                         size: 13, bold: true, leading: 2)
                     RegularText("(\(self.sessionState.npolls))", size: 10)
                     Spacer()
+                    SmallButton(icon: self.sessionState.poller.running ? "pause.circle" : "play.circle", size: 17) {
+                        self.sessionState.poller.toggle();
+                    }
                     SmallButton(icon: self.sessionState.production ? "checkmark.seal" : "atom", size: 16) {
                         await self.transport.production = !self.sessionState.production;
                     }
