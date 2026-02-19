@@ -315,9 +315,12 @@ public extension MultiPlayer {
                         if let session: String = sessionState.sessions.selected {
                             if await self.session.join(session: session) {
                                 self.sessionState.update(from: self.session);
+                            }
+                            else {
                                 //
                                 // TODO: Do something if join-session fails?
                                 //
+                                let x = 1;
                             }
                         }
                     }

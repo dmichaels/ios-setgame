@@ -231,10 +231,13 @@ public extension MultiPlayer {
             }
         }
 
+        /*
         private func joinAsyncAndWait(session: String?) async -> Bool {
-            guard let session: String = session, !self.hosting else { return false }
+            guard let session: String = session, !self.hosting else {
+                return false
+            }
             do {
-                let success: Bool = try await withTimeout(seconds: 5) { // TODO this timeout might not be working
+                let success: Bool = try await withTimeout(seconds: 5) {
                     try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
                         self.joinSessionContinuation = continuation
                         Task { await self.joinAsync(session: session) }
@@ -242,6 +245,36 @@ public extension MultiPlayer {
                     return true;
                 }
                 return success;
+            }
+            catch {
+                return false;
+            }
+        }
+        */
+
+        private func joinAsyncAndWait(session: String?, timeout: Int = 5000) async -> Bool {
+            //
+            // This is mostly courtesy of ChatGPT; should understand more.
+            //
+            guard let session, !self.hosting else { return false }
+            if (self.joinSessionContinuation != nil) {
+                return false;
+            }
+            do {
+                try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                    self.joinSessionContinuation = continuation;
+                    Task {
+                        _ = await self.joinAsync(session: session);
+                    }
+                    Task {
+                        try? await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000));
+                        if let continuation = self.joinSessionContinuation {
+                            self.joinSessionContinuation = nil;
+                            continuation.resume(throwing: TimeoutError());
+                        }
+                    }
+                }
+                return true;
             }
             catch {
                 return false;

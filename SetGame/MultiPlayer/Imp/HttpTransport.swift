@@ -134,6 +134,7 @@ public extension MultiPlayer {
                 let player: String = player ?? self.player;
                 if let data: Data = await self.url.get(session, "/receive", player, key: self.key) {
                     if let messages: [Message] = MessageConversion.toMessages(data: data) {
+                        if messages.count > 0 { for message in messages { deb("MESSAGE RECEIVED: \(message.type)") } }
                         return messages; 
                     }
                 }
