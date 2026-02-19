@@ -118,6 +118,7 @@ public extension MultiPlayer {
         // Sends the given message to the given player for the session.
         //
         public func send(message: Message, to player: String) async -> Bool {
+            log.log("HttpSession.send> player: (\(player) message: \(message)")
             return await self.transport.send(message: message, player: player, session: self.session);
         }
 
@@ -259,30 +260,48 @@ public extension MultiPlayer {
         private var pingContinuations: [String: CheckedContinuation<Void, Error>] = [:];
 		public func ping(player: String, timeout: Int = 5000) async -> Bool {
 		    let message = PingMessage(from: self.player);
+            log.log("HttpSession.ping> (\(player)")
 		    do {
 		        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
 		            self.pingContinuations[message.id] = continuation;
 		            Task {
+                        log.log("HttpSession.ping> (\(player) awaiting send")
 		                await self.send(message: message, to: player);
+                        log.log("HttpSession.ping> (\(player) back from awaiting send")
 		            }
 		            Task {
+                        log.log("HttpSession.ping> (\(player) sleeping before checking continuation")
 		                try? await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000));
+                        log.log("HttpSession.ping> (\(player) after sleeping before checking continuation")
 		                if let continuation = self.pingContinuations[message.id] {
+                            log.log("HttpSession.ping> (\(player) got continuation after sleeping")
 		                    self.pingContinuations.removeValue(forKey: message.id);
+                            log.log("HttpSession.ping> (\(player) after remove-value for continuation after sleeping - resuming")
 		                    continuation.resume(throwing: TimeoutError());
+                            log.log("HttpSession.ping> (\(player) after resuming for continuation")
 		                }
+                        log.log("HttpSession.ping> (\(player) after continuation block")
 		            }
 		        }
+                log.log("HttpSession.ping> (\(player) returning true")
 		        return true;
 		
 		    }
             catch {
+                log.log("HttpSession.ping> (\(player) returning false from catch")
 		        return false;
 		    }
+            log.log("HttpSession.ping> (\(player) fall-thru")
 		}
 
         private func handle(message: PingMessage) {
-            self.handler.handle(message: message);
+            log.log("handling ping message from [\(message.from)]")
+            // self.handler.handle(message: message);
+            let ack = PingAcknowledgeMessage(from: self.player, id: message.id)
+            Task {
+                await self.send(message: ack, to: message.from)
+            }
+            log.log("handling ping message done from [\(message.from)]")
         }
 
         private func handle(message: PingAcknowledgeMessage) {

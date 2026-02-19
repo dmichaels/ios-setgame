@@ -103,6 +103,7 @@ public extension MultiPlayer {
         // Sends the given message to the given player for the session.
         //
         public func send(message: Message, player: String, session: String? = nil) async -> Bool {
+            deb("HttpTransport.send(\(message.type)> player: \(player) session: \(session)")
             return await self.postMessage(path: "/send/\(player)", message: message, session: session);
         }
 

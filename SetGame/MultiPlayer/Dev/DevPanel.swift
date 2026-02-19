@@ -1,5 +1,7 @@
 import SwiftUI
 
+let log: MultiPlayer.Dev.FileLogger = MultiPlayer.Dev.FileLogger(prefix: aid, file: "/tmp/app_\(aid.lowercased()).log");
+
 private struct Const {
     fileprivate static let background: Color = Color(hex: 0x77BBAA);
     fileprivate static let foreground: Color = Color(hex: 0x226655);
@@ -181,7 +183,7 @@ private struct SessionState {
     }
 }
 
-public extension MultiPlayer {
+public extension MultiPlayer.Dev {
 
     public struct DevPanel: View {
 
@@ -196,6 +198,8 @@ public extension MultiPlayer {
         private var transport: MultiPlayer.Transport { MultiPlayer.HttpSession.instance.transport as! MultiPlayer.HttpTransport }
 
         public init(table: Table, settings: Settings, margin: Int = 0) {
+            log.log("DevPanel.init!!!")
+            deb("DevPanel.init!!! \(log.path)")
             self.table = table;
             self.settings = settings;
             self.margin = margin;
@@ -305,8 +309,6 @@ public extension MultiPlayer {
                 JoinControl(items: sessionState.sessions.sessionsShort,
                             selected: $sessionState.sessions.selectedShort,
                             disabled: self.sessionState.connected, leading: 8) {
-                    deb("AAA: [\(self.sessionState.sessions.selectedShort)")
-                    deb("BBB: [\(self.sessionState.sessions.selected)")
                     if (!self.session.connected) {
                         if let session: String = sessionState.sessions.selected {
                             if await self.session.join(session: session) {
@@ -337,7 +339,7 @@ public extension MultiPlayer {
                 RegularText("", padding: 2)
                 SmallButton(icon: "xmark.rectangle.portrait", disabled: !self.sessionState.leaveable) {
                     if let info = await self.transport.session(self.session.session) {
-                        let (sent, queued, received) = HttpTransport.messageCounts(info: info, player: self.session.player);
+                        let (sent, queued, received) = MultiPlayer.HttpTransport.messageCounts(info: info, player: self.session.player);
                     }
                     if (self.session.connected) {
                         if await self.session.leave() {
@@ -375,7 +377,8 @@ public extension MultiPlayer {
 
         fileprivate var body: some View {
             AnyDevPanel(table: table, margin: margin) {
-                PlayersView(players: self.sessionState.players,
+                PlayersView(session: self.session,
+                            players: self.sessionState.players,
                             player: self.sessionState.player,
                             host: self.sessionState.host ?? "",
                             info: self.sessionState.info)
@@ -384,6 +387,7 @@ public extension MultiPlayer {
 
         private struct PlayersView: View {
 
+            private let session: MultiPlayer.Session;
             private let players: [String];
             private let player: String;
             private let host: String;
@@ -393,13 +397,14 @@ public extension MultiPlayer {
             private var queued: [String: Int] = [:];
             private let size: Int;
 
-            fileprivate init(players: [String], player: String, host: String, info: Json, size: Int = Const.fontSize) {
+            fileprivate init(session: MultiPlayer.Session, players: [String], player: String, host: String, info: Json, size: Int = Const.fontSize) {
+                self.session = session;
                 self.noplayers = (players.count == 0);
                 self.player = player;
                 self.players = (players.count == 0) ? [player] : players;
                 self.host = host;
                 for player in players {
-                    let (sent, queued, received) = HttpTransport.messageCounts(info: info, player: player)
+                    let (sent, queued, received) = MultiPlayer.HttpTransport.messageCounts(info: info, player: player)
                     self.sent[player] = sent;
                     self.queued[player] = queued;
                     self.received[player] = received;
@@ -423,9 +428,17 @@ public extension MultiPlayer {
                                 .offset(y: 0.5)
                         }
                         HStack {
+                            HStack {
                             Text(player + (player == self.player ? " ◀" : ""))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .foregroundColor(player == self.host ? Const.highlightColor : Color.primary)
+                                SmallButton(icon: "target", size: 17) {
+                                    log.log("sending ping to: \(player)")
+                                    let xxx = await self.session.ping(player: player, timeout: 5000);
+                                    log.log("back from await for sending ping to: \(player)")
+                                    log.log(xxx ? "ping result true" : "ping result false")
+                                }
+                            }
                             Text(self.noplayers ? Const.emptySetChar : "\(sent[player] ?? 0)")
                                 .frame(width: 40, alignment: .trailing)
                             Text(self.noplayers ? Const.emptySetChar : "\(received[player] ?? 0)")
@@ -495,31 +508,31 @@ public extension MultiPlayer {
                 return sessionState.players;
             }
 
-            private var messages: [String: [HttpTransport.MessageReceived]] {
-                var result: [String: [HttpTransport.MessageReceived]] = [:]
+            private var messages: [String: [MultiPlayer.HttpTransport.MessageReceived]] {
+                var result: [String: [MultiPlayer.HttpTransport.MessageReceived]] = [:]
                 if (verbose) {
                     for player in sessionState.players {
-                        if let received = HttpTransport.messagesReceived(info: sessionState.info, player: player) {
+                        if let received = MultiPlayer.HttpTransport.messagesReceived(info: sessionState.info, player: player) {
                             result[player] = received;
                         }
                     }
                 }
                 else {
-                    if let received = HttpTransport.messagesReceived(info: sessionState.info, player: sessionState.player) {
+                    if let received = MultiPlayer.HttpTransport.messagesReceived(info: sessionState.info, player: sessionState.player) {
                         result[sessionState.player] = received;
                     }
                 }
                 return result;
             }
 
-            private var messagesByTimestamp: [HttpTransport.MessageReceived] {
-                if let messages = HttpTransport.messagesReceivedByTimestamp(info: sessionState.info, reversed: self.byTimestampReversed) {
+            private var messagesByTimestamp: [MultiPlayer.HttpTransport.MessageReceived] {
+                if let messages = MultiPlayer.HttpTransport.messagesReceivedByTimestamp(info: sessionState.info, reversed: self.byTimestampReversed) {
                     return messages;
                 }
                 return [];
             }
 
-            private static func messageType(_ message: Message) -> String {
+            private static func messageType(_ message: MultiPlayer.Message) -> String {
                 switch message.type {
                     case .ping:                 return "ping";
                     case .pingAcknowledge:      return "ping-ack";
@@ -598,7 +611,7 @@ public extension MultiPlayer {
                     }
                     else {
                     ForEach(self.players, id: \.self) { player in
-                        if let received: [HttpTransport.MessageReceived] = self.messages[player] {
+                        if let received: [MultiPlayer.HttpTransport.MessageReceived] = self.messages[player] {
                             LazyVGrid(columns: MessagesView.columns, alignment: .leading, spacing: 4) {
                                 Text(player + (player == self.player ? " \(Const.leftArrowChar)" : ""))
                                      .font(.system(size: 13, weight: .semibold))

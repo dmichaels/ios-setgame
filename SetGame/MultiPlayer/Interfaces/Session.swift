@@ -25,6 +25,8 @@ public extension MultiPlayer {
         func send(message: Message) -> Bool;
         func send(message: Message, to: String) -> Bool;
         func sendHost(message: Message) -> Bool;
+
+        func ping(player: String, timeout: Int) async -> Bool;
     }
 }
 
