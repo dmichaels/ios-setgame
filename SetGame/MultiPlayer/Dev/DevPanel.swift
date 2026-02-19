@@ -152,12 +152,6 @@ private struct SessionState {
         fileprivate mutating func update(_ sessions: [String]) {
             self.sessions = sessions;
             (self.sessionsShort, self.shortLength) = SessionList.shortenValues(sessions);
-            if let session: String = self.sessions.first {
-                self.select(session);
-            }
-            else {
-                self.select(nil);
-            }
         }
 
         fileprivate func shorten(_ session: String?, fallback: String = "") -> String {
@@ -311,6 +305,8 @@ public extension MultiPlayer {
                 JoinControl(items: sessionState.sessions.sessionsShort,
                             selected: $sessionState.sessions.selectedShort,
                             disabled: self.sessionState.connected, leading: 8) {
+                    deb("AAA: [\(self.sessionState.sessions.selectedShort)")
+                    deb("BBB: [\(self.sessionState.sessions.selected)")
                     if (!self.session.connected) {
                         if let session: String = sessionState.sessions.selected {
                             if await self.session.join(session: session) {
@@ -321,6 +317,7 @@ public extension MultiPlayer {
                                 // TODO: Do something if join-session fails?
                                 //
                                 let x = 1;
+                                deb("join-failed: \(sessionState.sessions.selected)")
                             }
                         }
                     }
@@ -333,6 +330,7 @@ public extension MultiPlayer {
                             //
                             // TODO: Do something if request-host fails?
                             //
+                            deb("host-failed")
                         }
                     }
                 }
@@ -344,9 +342,12 @@ public extension MultiPlayer {
                     if (self.session.connected) {
                         if await self.session.leave() {
                             self.sessionState.update(from: self.session);
+                        }
+                        else {
                             //
                             // TODO: Do something if leave-session fails?
                             //
+                            deb("leave-failed")
                         }
                     }
                 }
