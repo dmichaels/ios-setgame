@@ -11,6 +11,7 @@ private struct Const {
     fileprivate static let leftArrowChar: String = "◀ ";
     fileprivate static let highlightColor: Color = Color(hex: 0x882211);
     fileprivate static let iconColor: Color = Color(hex: 0x0044BB);
+    fileprivate static let iconSize: Int = 16;
 }
 
 private struct SessionState {
@@ -34,6 +35,7 @@ private struct SessionState {
     //
     fileprivate var debug: Bool = false;
     fileprivate var production: Bool = false;
+    fileprivate var server: String = "";
     fileprivate var sessions: SessionList = SessionList();
 
     // Inaccessible properties (from external POV).
@@ -82,10 +84,12 @@ private struct SessionState {
                                      sessions: [String]?,
                                      pingable: Bool,
                                      production: Bool,
+                                     server: String,
                                      debug: Bool) {
         self.update(from: session);
         self.pingable = pingable;
         self.production = production;
+        self.server = server;
         self.debug = debug;
         self.pollCount = self.poller.count;
         if let info: Json = info {
@@ -225,6 +229,7 @@ public extension MultiPlayer.Dev {
                                          sessions: await self.transport.sessions(),
                                          pingable: await self.transport.ping(),
                                          production: transport.production,
+                                         server: transport.server,
                                          debug: await transport.debug(enable: nil));
                 if let session: String = self.session.session, !self.sessionState.sessions.contains(session) {
                     //
@@ -577,7 +582,7 @@ public extension MultiPlayer.Dev {
                     LazyVGrid(columns: MessagesView.columns, alignment: .leading, spacing: 4) {
                         HStack {
                             Text("to").bold()
-                            SmallButton(icon: self.expandButtonDownArrow() ? "arrow.down.square" : "arrow.up.square" , size: 16) {
+                            SmallButton(icon: self.expandButtonDownArrow() ? "arrow.down.square" : "arrow.up.square" , size: Const.iconSize) {
                                 if (self.byTimestamp) {
                                     self.byTimestampReversed.toggle();
                                 }
@@ -585,7 +590,7 @@ public extension MultiPlayer.Dev {
                                     self.verbose.toggle();
                                 }
                             }
-                            SmallButton(icon: verbose ? "clock" : "clock", color: self.byTimestamp ? .red : Const.iconColor , size: 16) {
+                            SmallButton(icon: verbose ? "clock" : "clock", color: self.byTimestamp ? .red : Const.iconColor , size: Const.iconSize) {
                                 if (self.byTimestamp) {
                                     self.byTimestamp = false;
                                     self.verbose = self.verboseSave;
@@ -691,21 +696,29 @@ public extension MultiPlayer.Dev {
             AnyDevPanel(table: table, vertical: 2, margin: margin) {
                 HStack {
                     RegularText("server: ", size: 13)
-                        RegularText(transport.server,
+                        // RegularText(transport.server,
+                        RegularText(self.sessionState.server,
                                     color: self.sessionState.pingable ? .primary : Const.highlightColor,
                                     size: 12, bold: true, leading: -4)
                             RegularText(self.sessionState.pingable ? Const.checkChar : Const.xmarkChar,
                                         color: self.sessionState.pingable ? .primary : Const.highlightColor,
                                         size: 12, semibold: true, leading: 2)
                     Spacer()
-                    RegularText(self.pollCountChar, size: 11)
-                    SmallButton(icon: self.sessionState.polling ? "pause.circle" : "play.circle", size: 17) {
-                        self.sessionState.poll(enable: !self.sessionState.polling);
+                    HStack {
+                        if (self.sessionState.polling) {
+                            PollSpinner(pollCount: self.sessionState.pollCount, size: Const.iconSize)
+                        }
+                        else {
+                            Image(systemName: "play.circle")
+                                .font(.system(size: CGFloat(Const.iconSize)))
+                                .foregroundColor(Const.iconColor)
+                        }
                     }
-                    SmallButton(icon: self.sessionState.production ? "checkmark.seal" : "atom", size: 16) {
+                    .onTapGesture { self.sessionState.poll(enable: !self.sessionState.polling); }
+                    SmallButton(icon: self.sessionState.production ? "checkmark.seal" : "atom", size: Const.iconSize) {
                         await self.transport.production = !self.sessionState.production;
                     }
-                    SmallButton(icon: self.sessionState.debug ? "ladybug" : "ladybug.slash", size: 16) {
+                    SmallButton(icon: self.sessionState.debug ? "ladybug" : "ladybug.slash", size: Const.iconSize) {
                         await self.transport.debug(enable: !self.sessionState.debug);
                     }
                 }
@@ -979,5 +992,20 @@ public extension MultiPlayer.Dev {
                     : nil
                 )
         }
+    }
+}
+struct PollSpinner: View {
+    let pollCount: Int
+    var size: Int = Const.iconSize;
+    var color: Color = Const.iconColor;
+    var steps: Int = 12;
+    var body: some View {
+        let angle = Double(pollCount % steps) * (360.0 / Double(steps))
+        Image(systemName: "arrow.triangle.2.circlepath")
+            .rotationEffect(.degrees(angle))
+            .font(.system(size: CGFloat(self.size - 1), weight: .semibold))
+            .foregroundColor(color)
+            .animation(nil, value: pollCount)
+            .offset(y: 0.2)
     }
 }
