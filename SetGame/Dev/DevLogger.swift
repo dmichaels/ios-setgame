@@ -1,8 +1,13 @@
 import Foundation
 
+public let  LOGGER: DevFileLogger = DevFileLogger(prefix: DevFileLogger.ID, file: "/tmp/APP_\(DevFileLogger.ID).LOG");
+public func LOG(_ message: String) { LOGGER.log(message) }
+public func DEB(_ message: String) { NSLog("XDEBUG-\(DevFileLogger.ID)> " + message) }
+
 public final class DevFileLogger {
 
-    static let instance = DevFileLogger();
+    public static let ID: String = String(SetGame.ID(size: 4).value);
+    public static let instance = DevFileLogger();
 
     private let url: URL
     private let queue: DispatchQueue;

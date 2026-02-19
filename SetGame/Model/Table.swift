@@ -51,7 +51,7 @@ public class Table: ObservableObject, /* GameCenter.SessionHandler */ MultiPlaye
     private var effects: TableCardEffects;
 
     public init(settings: Settings, effects: TableCardEffects? = nil) {
-        deb("Table.init!!!")
+        DEB("Table.init!!!")
         self.settings = settings;
         self.cards = [];
         self.deck  = TableDeck(simple: self.settings.simpleDeck);
@@ -116,7 +116,7 @@ public class Table: ObservableObject, /* GameCenter.SessionHandler */ MultiPlaye
                 session.send(message: MultiPlayer.NewGameMessage()); // TODO
                 return;
             }
-            deb("startNewGame: seed: \(seed) rng.seed: \(self.rng?.seed)")
+            DEB("startNewGame: seed: \(seed) rng.seed: \(self.rng?.seed)")
         }
 
         self.cards = [];
@@ -229,7 +229,7 @@ public class Table: ObservableObject, /* GameCenter.SessionHandler */ MultiPlaye
                               onNoSet: (([TableCard], @escaping () -> Void) -> Void)? = nil,
                               onCardsMoved: (([TableCard]) -> Void)? = nil) {
 
-        deb("CARD-TOUCHED \(card) resolving: \(self.state.resolving) disabled: \(self.disabled)")
+        DEB("CARD-TOUCHED \(card) resolving: \(self.state.resolving) disabled: \(self.disabled)")
         guard !self.state.resolving else {
             //
             // We are already in the process of resolving a three-card selection;
@@ -300,10 +300,10 @@ public class Table: ObservableObject, /* GameCenter.SessionHandler */ MultiPlaye
             Task {
                 try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
                 if (!self.state.receivedExpectedFoundSetResponseMessage) {
-                    deb("NO RESPONSE FROM FOUND-SET (receivedExpectedFoundSetResponseMessage == FALSE | \(self.state.resolving) \(self.disabled)")
+                    DEB("NO RESPONSE FROM FOUND-SET (receivedExpectedFoundSetResponseMessage == FALSE | \(self.state.resolving) \(self.disabled)")
                     self.state.resolving = false;
                     self.unselectCards();
-                    deb("NO RESPONSE FROM FOUND-SET (receivedExpectedFoundSetResponseMessage == FALSE X | \(self.state.resolving) \(self.disabled)")
+                    DEB("NO RESPONSE FROM FOUND-SET (receivedExpectedFoundSetResponseMessage == FALSE X | \(self.state.resolving) \(self.disabled)")
                 }
             }
             return;
@@ -349,7 +349,7 @@ public class Table: ObservableObject, /* GameCenter.SessionHandler */ MultiPlaye
     private func resolveSet(_ movedCardsCallback: (([TableCard]) -> Void)? = nil) {
 
         let selectedCards: [TableCard] = self.selectedCards();
-        deb("Table.resolveSet: \(selectedCards)")
+        DEB("Table.resolveSet: \(selectedCards)")
 
         guard selectedCards.count == 3 else {
             //
@@ -357,13 +357,13 @@ public class Table: ObservableObject, /* GameCenter.SessionHandler */ MultiPlaye
             //
             return;
         }
-        deb("Table.resolveSet: \(selectedCards) OK")
+        DEB("Table.resolveSet: \(selectedCards) OK")
 
         // We have three cards selected; now see if
         // we have a SET selected, or a wrong guess.
 
         if (selectedCards.isSet()) {
-            deb("Table.resolveSet: \(selectedCards) OK OK")
+            DEB("Table.resolveSet: \(selectedCards) OK OK")
             //
             // We have a SET!
             // Unselect the SET cards, calling the given callback if any,
@@ -423,10 +423,10 @@ public class Table: ObservableObject, /* GameCenter.SessionHandler */ MultiPlaye
                     movedCardsCallback(movedCards);
                 }
             }
-            deb("Table.resolveSet: \(selectedCards) DONE")
+            DEB("Table.resolveSet: \(selectedCards) DONE")
         }
         else {
-            deb("Table.resolveSet: \(selectedCards) NOSET")
+            DEB("Table.resolveSet: \(selectedCards) NOSET")
             //
             // We do NOT have a SET :-(
             //
@@ -681,7 +681,7 @@ public extension Table {
     public func handle(message: MultiPlayer.RequestHostSessionMessage) {}
     public func handle(message: MultiPlayer.UpdateSessionMessage) {}
     public func handle(message: MultiPlayer.NewGameMessage) {
-        deb("Table.handle(newGameMessage)")
+        DEB("Table.handle(newGameMessage)")
         self.startNewGame(seed: message.seed);
     }
     public func handle(message: MultiPlayer.SetFoundMessage) {}
@@ -699,12 +699,12 @@ private extension Table {
     }
 
     public func handle(message: GameCenter.PingMessage) {
-        deb("Table.handle(Ping)> \(message)");
+        DEB("Table.handle(Ping)> \(message)");
     }
 
     /*
     public func handle(message: GameCenter.PlayerReadyMessage) {
-        deb("Table.handle(PlayerReady)> \(message)");
+        DEB("Table.handle(PlayerReady)> \(message)");
         if let session = self.multiPlayer {
             session.handle(message: message);
         }
@@ -712,15 +712,15 @@ private extension Table {
     */
 
     public func handle(message: GameCenter.NewGameMessage) {
-        deb("Table.handle(NewGame)> \(message) seed: \(message.seed)");
+        DEB("Table.handle(NewGame)> \(message) seed: \(message.seed)");
         self.startNewGame(seed: message.seed);
     }
 
     @MainActor
     public func handle(message: GameCenter.FoundSetMessage) {
-        deb("Table.handle(FoundSet)> \(message)");
+        DEB("Table.handle(FoundSet)> \(message)");
         if let session = self.multiPlayerHost {
-            deb("handling found-set message as host | cards: \(message.cards)");
+            DEB("handling found-set message as host | cards: \(message.cards)");
             //
             // Hard part maybe: Could get another FoundSetMessage immediately or
             // virtually concurrent to this one, with the same SET or with a SET
@@ -737,9 +737,9 @@ private extension Table {
                 for card in cards { card.foundSet = true; }
             }
             if message.cards.isSet(), let cards: [TableCard] = self.cards.findCards(message.cards) {
-                deb("handling found-set message as host | cards: \(cards)");
+                DEB("handling found-set message as host | cards: \(cards)");
                 if (!cardsPartOfFoundSet(cards)) {
-                    deb("handling found-set message as host: sending confirmed set message");
+                    DEB("handling found-set message as host: sending confirmed set message");
                     noteCardsPartOfFoundSet(cards);
                     session.send(message: GameCenter.ConfirmedSetMessage(
                         player: session.player,
@@ -747,7 +747,7 @@ private extension Table {
                     ));
                 }
                 else {
-                    deb("already found at least one of these cards as part of a set: \(cards)")
+                    DEB("already found at least one of these cards as part of a set: \(cards)")
                     session.send(message: GameCenter.FoundSetTooLateMessage(
                         player: message.player,
                         cards: message.cards
@@ -756,22 +756,22 @@ private extension Table {
             }
         }
         else {
-            deb("handling found-set message as non-host client (or no session)");
+            DEB("handling found-set message as non-host client (or no session)");
         }
     }
 
     public func handle(message: GameCenter.FoundSetTooLateMessage) {
-        deb("Table.handle(FoundSetTooLate)> \(message)");
+        DEB("Table.handle(FoundSetTooLate)> \(message)");
         self.state.resolving = false;
         self.state.receivedExpectedFoundSetResponseMessage = true;
     }
 
     public func handle(message: GameCenter.ConfirmedSetMessage) {
-        deb("Table.handle(ConfirmedSet) message: \(message)");
+        DEB("Table.handle(ConfirmedSet) message: \(message)");
         if let session = self.multiPlayer {
-            deb("Table.handle(ConfirmedSet) multi-player");
+            DEB("Table.handle(ConfirmedSet) multi-player");
             if let cards: [TableCard] = self.cards.findCards(message.cards, strict: true) {
-                deb("Table.handle(ConfirmedSet): multi-player cards: \(cards)");
+                DEB("Table.handle(ConfirmedSet): multi-player cards: \(cards)");
                 self.unselectCards();
                 cards.select();
                 CardGridCallbacks.onSet(cards: cards, resolve: { self.resolveSet(self.effects.onCardsMoved) });

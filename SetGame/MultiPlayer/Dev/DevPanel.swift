@@ -1,6 +1,6 @@
 import SwiftUI
 
-let log: DevFileLogger = DevFileLogger(prefix: aid, file: "/tmp/app_\(aid.lowercased()).log");
+let log: DevFileLogger = DevFileLogger(prefix: DevFileLogger.ID, file: "/tmp/app_\(DevFileLogger.ID.lowercased()).log");
 
 private struct Const {
     fileprivate static let background: Color = Color(hex: 0x77BBAA);
@@ -198,8 +198,8 @@ public extension MultiPlayer.Dev {
         private var transport: MultiPlayer.Transport { MultiPlayer.HttpSession.instance.transport as! MultiPlayer.HttpTransport }
 
         public init(table: Table, settings: Settings, margin: Int = 0) {
-            log.log("DevPanel.init!!!")
-            deb("DevPanel.init!!! \(log.path)")
+            LOG("DevPanel.init!!!")
+            DEB("DevPanel.init!!! \(log.path)")
             self.table = table;
             self.settings = settings;
             self.margin = margin;
@@ -319,7 +319,7 @@ public extension MultiPlayer.Dev {
                                 // TODO: Do something if join-session fails?
                                 //
                                 let x = 1;
-                                deb("join-failed: \(sessionState.sessions.selected)")
+                                DEB("join-failed: \(sessionState.sessions.selected)")
                             }
                         }
                     }
@@ -332,7 +332,7 @@ public extension MultiPlayer.Dev {
                             //
                             // TODO: Do something if request-host fails?
                             //
-                            deb("host-failed")
+                            DEB("host-failed")
                         }
                     }
                 }
@@ -349,7 +349,7 @@ public extension MultiPlayer.Dev {
                             //
                             // TODO: Do something if leave-session fails?
                             //
-                            deb("leave-failed")
+                            DEB("leave-failed")
                         }
                     }
                 }
@@ -433,10 +433,10 @@ public extension MultiPlayer.Dev {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .foregroundColor(player == self.host ? Const.highlightColor : Color.primary)
                                 SmallButton(icon: "target", size: 17) {
-                                    log.log("sending ping to: \(player)")
+                                    LOG("sending ping to: \(player)")
                                     let xxx = await self.session.ping(player: player, timeout: 5000);
-                                    log.log("back from await for sending ping to: \(player)")
-                                    log.log(xxx ? "ping result true" : "ping result false")
+                                    LOG("back from await for sending ping to: \(player)")
+                                    LOG(xxx ? "ping result true" : "ping result false")
                                 }
                             }
                             Text(self.noplayers ? Const.emptySetChar : "\(sent[player] ?? 0)")

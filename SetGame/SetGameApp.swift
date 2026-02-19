@@ -1,8 +1,5 @@
 import SwiftUI
 
-public let  aid: String = String(ID(size: 3).value);
-public func deb(_ message: String) { NSLog("XDEBUG-\(aid)> " + message) }
-
 @main
 struct SetGameApp: App {
 

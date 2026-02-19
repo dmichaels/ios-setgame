@@ -103,7 +103,7 @@ public extension MultiPlayer {
         // Sends the given message to the given player for the session.
         //
         public func send(message: Message, player: String, session: String? = nil) async -> Bool {
-            deb("HttpTransport.send(\(message.type)> player: \(player) session: \(session)")
+            DEB("HttpTransport.send(\(message.type)> player: \(player) session: \(session)")
             return await self.postMessage(path: "/send/\(player)", message: message, session: session);
         }
 
@@ -142,7 +142,7 @@ public extension MultiPlayer {
                 let player: String = player ?? self.player;
                 if let data: Data = await self.url.get(session, "/receive", player, key: self.key) {
                     if let messages: [Message] = MessageConversion.toMessages(data: data) {
-                        if messages.count > 0 { for message in messages { deb("MESSAGE RECEIVED: \(message.type)") } }
+                        if messages.count > 0 { for message in messages { DEB("MESSAGE RECEIVED: \(message.type)") } }
                         return messages; 
                     }
                 }
