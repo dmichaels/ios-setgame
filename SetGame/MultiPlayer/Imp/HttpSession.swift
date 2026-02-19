@@ -91,7 +91,6 @@ public extension MultiPlayer {
                 return true;
             }
         }
-        //// xyzzy
         public func send(message: Message) async -> Bool {
             if (self.hosting) {
                 //
@@ -115,7 +114,6 @@ public extension MultiPlayer {
                 return await self.transport.sendHost(message: message, session: self.session);
             }
         }
-        //// xyzzy
 
         // Sends the given message to the given player for the session.
         //
@@ -202,9 +200,6 @@ public extension MultiPlayer {
             // implementor of Session) to send messages (via Session.send).
             //
             handler.session = self;
-
-            let xyzzy: Table? = handler as? Table;
-            let xyzzy2 = 1
 
             // N.B. Do not initialize the players list with ourselves,
             // because we are not actually connected session on construction;
