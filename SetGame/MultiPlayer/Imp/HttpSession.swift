@@ -256,12 +256,40 @@ public extension MultiPlayer {
             }
         }
 
+        private var pingContinuations: [String: CheckedContinuation<Void, Error>] = [:];
+		public func ping(player: String, timeout: Int = 5000) async -> Bool {
+		    let message = PingMessage(from: self.player);
+		    do {
+		        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+		            self.pingContinuations[message.id] = continuation;
+		            Task {
+		                await self.send(message: message, to: player);
+		            }
+		            Task {
+		                try? await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000));
+		                if let continuation = self.pingContinuations[message.id] {
+		                    self.pingContinuations.removeValue(forKey: message.id);
+		                    continuation.resume(throwing: TimeoutError());
+		                }
+		            }
+		        }
+		        return true;
+		
+		    }
+            catch {
+		        return false;
+		    }
+		}
+
         private func handle(message: PingMessage) {
             self.handler.handle(message: message);
         }
 
         private func handle(message: PingAcknowledgeMessage) {
-            self.handler.handle(message: message);
+            if let continuation = self.pingContinuations[message.id] {
+                self.pingContinuations.removeValue(forKey: message.id)
+                continuation.resume(returning: ())
+            }
         }
 
         private func handle(message: JoinSessionMessage) {
