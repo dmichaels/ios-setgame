@@ -24,7 +24,7 @@
 		9811914B25ED5ACF0083606B /* CardShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811914125ED5ACF0083606B /* CardShape.swift */; };
 		9826D1882F46BB140023A271 /* PingAcknowledgeMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1872F46BB140023A271 /* PingAcknowledgeMessage.swift */; };
 		9826D18A2F4753280023A271 /* Dev.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1892F4753280023A271 /* Dev.swift */; };
-		9826D18C2F4753870023A271 /* DevLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D18B2F4753870023A271 /* DevLogger.swift */; };
+		9826D1902F47791E0023A271 /* DevLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D18F2F47791E0023A271 /* DevLogger.swift */; };
 		9867E12F2F1E573000CB221F /* Delay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E12D2F1E573000CB221F /* Delay.swift */; };
 		9867E1332F1E86FE00CB221F /* CardGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1322F1E86FE00CB221F /* CardGridView.swift */; };
 		9867E1392F1FC98E00CB221F /* TableDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1382F1FC98E00CB221F /* TableDemo.swift */; };
@@ -120,7 +120,7 @@
 		981B00492F113ABF00875920 /* SetGame.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SetGame.entitlements; sourceTree = "<group>"; };
 		9826D1872F46BB140023A271 /* PingAcknowledgeMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingAcknowledgeMessage.swift; sourceTree = "<group>"; };
 		9826D1892F4753280023A271 /* Dev.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dev.swift; sourceTree = "<group>"; };
-		9826D18B2F4753870023A271 /* DevLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevLogger.swift; sourceTree = "<group>"; };
+		9826D18F2F47791E0023A271 /* DevLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevLogger.swift; sourceTree = "<group>"; };
 		9867E12D2F1E573000CB221F /* Delay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delay.swift; sourceTree = "<group>"; };
 		9867E1322F1E86FE00CB221F /* CardGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardGridView.swift; sourceTree = "<group>"; };
 		9867E1382F1FC98E00CB221F /* TableDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableDemo.swift; sourceTree = "<group>"; };
@@ -395,7 +395,6 @@
 			isa = PBXGroup;
 			children = (
 				9826D1892F4753280023A271 /* Dev.swift */,
-				9826D18B2F4753870023A271 /* DevLogger.swift */,
 				98E1F2E72F3FDDC500F6DAA3 /* DevPanel.swift */,
 			);
 			path = Dev;
@@ -404,6 +403,7 @@
 		98EF7E192F1D070500A45F63 /* Dev */ = {
 			isa = PBXGroup;
 			children = (
+				9826D18F2F47791E0023A271 /* DevLogger.swift */,
 				9867E1442F2182AB00CB221F /* DevCardViewDebug.swift */,
 			);
 			path = Dev;
@@ -564,7 +564,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				989FF8FB25EF3708002AE44A /* CardArray.swift in Sources */,
-				9826D18C2F4753870023A271 /* DevLogger.swift in Sources */,
 				98A5C7422EFED67E009E708D /* VersionInfo.swift in Sources */,
 				9811914225ED5ACF0083606B /* Deck.swift in Sources */,
 				981190F225ED59CC0083606B /* ContentView.swift in Sources */,
@@ -604,6 +603,7 @@
 				989D93712EF43A8500BE461B /* DeckView.swift in Sources */,
 				98E1F2E92F3FDDC500F6DAA3 /* DevPanel.swift in Sources */,
 				98E1F2C42F3FAA9200F6DAA3 /* LeaveSessionMessage.swift in Sources */,
+				9826D1902F47791E0023A271 /* DevLogger.swift in Sources */,
 				98E1F2C52F3FAA9200F6DAA3 /* MessageType.swift in Sources */,
 				98E1F2C62F3FAA9200F6DAA3 /* PingMessage.swift in Sources */,
 				98E1F2C72F3FAA9200F6DAA3 /* JoinSessionMessage.swift in Sources */,

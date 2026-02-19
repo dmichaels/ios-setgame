@@ -1,6 +1,6 @@
 import SwiftUI
 
-let log: MultiPlayer.Dev.FileLogger = MultiPlayer.Dev.FileLogger(prefix: aid, file: "/tmp/app_\(aid.lowercased()).log");
+let log: DevFileLogger = DevFileLogger(prefix: aid, file: "/tmp/app_\(aid.lowercased()).log");
 
 private struct Const {
     fileprivate static let background: Color = Color(hex: 0x77BBAA);
