@@ -17,7 +17,7 @@ public struct ContentView: View {
         NavigationView {
             ZStack {
                 background.ignoresSafeArea()
-                SetTableView(table: self.table, settings: self.settings, feedback: self.feedback)
+                SetTableView(table: self.table, settings: self.settings, feedback: self.feedback, dev: $settings.devMode)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .principal) {
@@ -47,6 +47,9 @@ public struct ContentView: View {
                                 Button { self.showSettingsView = true } label: {
                                     Label("Settings ...", systemImage: "gearshape")
                                 }.disabled(self.table.disabled)
+                                Button { self.settings.devMode.toggle()} label: {
+                                    Label("Dev Panel", systemImage: self.settings.devMode ? "gearshape.2.fill" : "gearshape.2")
+                                }
                             } label: {
                                 Image(systemName: "gearshape.fill")
                                     .foregroundColor(Color(UIColor.darkGray))
@@ -105,9 +108,10 @@ public struct ContentView: View {
         @ObservedObject var table: Table;
         @ObservedObject var settings: Settings;
         @ObservedObject var feedback: Feedback;
+        @Binding var dev: Bool;
         @State private var startedNewGame: Bool = false;
         public var body: some View {
-            TableView(table: self.table, settings: self.settings, feedback: self.feedback)
+            TableView(table: self.table, settings: self.settings, feedback: self.feedback, dev: $dev)
                 .onAppear {
                     if (!self.startedNewGame) {
                         // self.table.startNewGame();

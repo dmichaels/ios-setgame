@@ -163,8 +163,6 @@ public extension MultiPlayer {
 
         public init(handler: SessionHandler, url: String? = nil, transport: HttpTransport.Factory? = nil) {
 
-            DEB("HttpSession.init!!!")
-
             class MessageHandler: MultiPlayer.MessageHandler {
                 var session: HttpSession?;
                 func handle(message: PingMessage)                 { session?.handle(message: message) }

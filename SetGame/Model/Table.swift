@@ -5,18 +5,13 @@ import SwiftUI
 /// table cards which are on display; and sundry other data points.
 /// Is this class technically, effectively acting as a "model-view"?
 ///
-public class Table: ObservableObject, /* GameCenter.SessionHandler */ MultiPlayer.SessionHandler {
+public class Table: ObservableObject, MultiPlayer.SessionHandler {
 
+    // SessionHandler protocol implementation.
+    //
     public var session: MultiPlayer.Session?
 
     private var settings: Settings;
-
-    // public var sender: GameCenter.MessageSender?;
-
-    // SessionManagerHandler protocol implementation;
-    // and see Table extension at the end of this file.
-
-    //// public var session: GameCenter.Session?;
 
     // Table implementation.
 
@@ -74,21 +69,6 @@ public class Table: ObservableObject, /* GameCenter.SessionHandler */ MultiPlaye
         return nil;
     }
 
-////    private var multiPlayer: GameCenter.Session? {
-////        return self.settings.multiPlayer.enabled ? self.session : nil;
-////    }
-
-////    private var multiPlayerHost: GameCenter.Session? {
-////        if (self.settings.multiPlayer.enabled) {
-////            if let session = self.session {
-////                if (session.hosting) {
-////                    return session;
-////                }
-////            }
-////        }
-////        return nil;
-////    }
-
     private var rng: RNG? {
         return self.session?.rng
     }
@@ -112,8 +92,7 @@ public class Table: ObservableObject, /* GameCenter.SessionHandler */ MultiPlaye
                 // gotten an explicit request (e.g. from menu-item)
                 // to start a new game; just sound out a NewGameMessage.
                 //
-                //// session.send(message: GameCenter.NewGameMessage());
-                session.send(message: MultiPlayer.NewGameMessage()); // TODO
+                session.send(message: MultiPlayer.NewGameMessage());
                 return;
             }
             DEB("startNewGame: seed: \(seed) rng.seed: \(self.rng?.seed)")
@@ -281,8 +260,7 @@ public class Table: ObservableObject, /* GameCenter.SessionHandler */ MultiPlaye
 
         if let session = self.multiPlayer, selectedCards.isSet() {
             self.state.receivedExpectedFoundSetResponseMessage = false;
-            //// session.send(message: GameCenter.FoundSetMessage(
-            session.send(message: MultiPlayer.SetFoundMessage( // TODO
+            session.send(message: MultiPlayer.SetFoundMessage(
                 player: session.player,
                 cards: selectedCards
             ));
@@ -674,19 +652,73 @@ public class Table: ObservableObject, /* GameCenter.SessionHandler */ MultiPlaye
 // NEW: Here are all of the SessionHandler implementation functionss for Table.
 //
 public extension Table {
-    public func handle(message: MultiPlayer.PingMessage) {}
-    public func handle(message: MultiPlayer.JoinSessionMessage) {}
-    public func handle(message: MultiPlayer.JoinSessionConfirmedMessage) {}
-    public func handle(message: MultiPlayer.LeaveSessionMessage) {}
-    public func handle(message: MultiPlayer.RequestHostSessionMessage) {}
-    public func handle(message: MultiPlayer.UpdateSessionMessage) {}
+
     public func handle(message: MultiPlayer.NewGameMessage) {
-        DEB("Table.handle(newGameMessage)")
         self.startNewGame(seed: message.seed);
     }
-    public func handle(message: MultiPlayer.SetFoundMessage) {}
-    public func handle(message: MultiPlayer.SetConfirmedMessage) {}
-    public func handle(message: MultiPlayer.SetMissedMessage) {}
+
+    public func handle(message: MultiPlayer.SetFoundMessage) {
+        DEB("Table.handle(SetFoundMessage)> \(message)");
+        if let session = self.multiPlayerHost {
+            DEB("handling found-set message as host | cards: \(message.cards)");
+            //
+            // Hard part maybe: Could get another FoundSetMessage immediately or
+            // virtually concurrent to this one, with the same SET or with a SET
+            // that overlaps this SET. If so, then it must be rejected/ignored --
+            // maybe later will send a FoundSetTooLateMessage to the specific player
+            // who sent the subsequent FoundSetMessage for the same or overlaping SET.
+            // Also will need @MainActor (or equivalent) to prevent race conditions,
+            // between checking for SET and removing (and replacing) the cards.
+            //
+            func cardsPartOfFoundSet(_ cards: [TableCard]) -> Bool {
+                for card in cards { if (card.foundSet) { return true; } } ; return false;
+            }
+            func noteCardsPartOfFoundSet(_ cards: [TableCard]) {
+                for card in cards { card.foundSet = true; }
+            }
+            if message.cards.isSet(), let cards: [TableCard] = self.cards.findCards(message.cards) {
+                DEB("handling found-set message as host | cards: \(cards)");
+                if (!cardsPartOfFoundSet(cards)) {
+                    DEB("handling found-set message as host: sending confirmed set message");
+                    noteCardsPartOfFoundSet(cards);
+                    session.send(message: MultiPlayer.SetConfirmedMessage(
+                        player: session.player,
+                        cards: message.cards
+                    ));
+                }
+                else {
+                    DEB("already found at least one of these cards as part of a set: \(cards)")
+                    session.send(message: MultiPlayer.SetMissedMessage(
+                        player: message.player,
+                        cards: message.cards
+                    ));
+                }
+            }
+        }
+        else {
+            DEB("handling found-set message as non-host client (or no session)");
+        }
+    }
+
+    public func handle(message: MultiPlayer.SetConfirmedMessage) {
+        DEB("Table.handle(SetConfirmedMessage)> message: \(message)");
+        if let session = self.multiPlayer {
+            DEB("Table.handle(ConfirmedSet) multi-player");
+            if let cards: [TableCard] = self.cards.findCards(message.cards, strict: true) {
+                DEB("Table.handle(SetConfirmedMessage)> multi-player cards: \(cards)");
+                self.unselectCards();
+                cards.select();
+                CardGridCallbacks.onSet(cards: cards, resolve: { self.resolveSet(self.effects.onCardsMoved) });
+            }
+        }
+        self.state.receivedExpectedFoundSetResponseMessage = true;
+    }
+
+    public func handle(message: MultiPlayer.SetMissedMessage) {
+        DEB("Table.handle(SetMissedMessage)> \(message)");
+        self.state.resolving = false;
+        self.state.receivedExpectedFoundSetResponseMessage = true;
+    }
 }
 
 /*
