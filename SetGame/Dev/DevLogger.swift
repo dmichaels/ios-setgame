@@ -3,6 +3,7 @@ import Foundation
 public let  LOGGER: DevFileLogger = DevFileLogger(prefix: DevFileLogger.ID, file: "/tmp/APP_\(DevFileLogger.ID).LOG");
 public func LOG(_ message: String) { LOGGER.log(message) }
 public func DEB(_ message: String) { NSLog("XDEBUG-\(DevFileLogger.ID)> " + message) }
+public func LOGD(_ message: String) { LOG(message) ; DEB(message) }
 
 public final class DevFileLogger {
 

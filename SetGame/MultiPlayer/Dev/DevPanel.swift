@@ -1,7 +1,5 @@
 import SwiftUI
 
-let log: DevFileLogger = DevFileLogger(prefix: DevFileLogger.ID, file: "/tmp/app_\(DevFileLogger.ID.lowercased()).log");
-
 private struct Const {
     fileprivate static let background: Color = Color(hex: 0x77BBAA);
     fileprivate static let foreground: Color = Color(hex: 0x226655);
@@ -198,8 +196,7 @@ public extension MultiPlayer.Dev {
         private var transport: MultiPlayer.Transport { MultiPlayer.HttpSession.instance.transport as! MultiPlayer.HttpTransport }
 
         public init(table: Table, settings: Settings, margin: Int = 0) {
-            LOG("DevPanel.init!!!")
-            DEB("DevPanel.init!!! \(log.path)")
+            LOGD("DevPanel.init!!!")
             self.table = table;
             self.settings = settings;
             self.margin = margin;
@@ -433,10 +430,10 @@ public extension MultiPlayer.Dev {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .foregroundColor(player == self.host ? Const.highlightColor : Color.primary)
                                 SmallButton(icon: "target", size: 17) {
-                                    LOG("sending ping to: \(player)")
+                                    LOGD("sending ping to: \(player)")
                                     let xxx = await self.session.ping(player: player, timeout: 5000);
-                                    LOG("back from await for sending ping to: \(player)")
-                                    LOG(xxx ? "ping result true" : "ping result false")
+                                    LOGD("back from await for sending ping to: \(player)")
+                                    LOGD(xxx ? "ping result true" : "ping result false")
                                 }
                             }
                             Text(self.noplayers ? Const.emptySetChar : "\(sent[player] ?? 0)")

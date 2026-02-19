@@ -118,7 +118,7 @@ public extension MultiPlayer {
         // Sends the given message to the given player for the session.
         //
         public func send(message: Message, to player: String) async -> Bool {
-            LOG("HttpSession.send> player: (\(player) message: \(message)")
+            LOGD("HttpSession.send> player: (\(player) message: \(message)")
             return await self.transport.send(message: message, player: player, session: self.session);
         }
 
@@ -260,48 +260,48 @@ public extension MultiPlayer {
         private var pingContinuations: [String: CheckedContinuation<Void, Error>] = [:];
 		public func ping(player: String, timeout: Int = 5000) async -> Bool {
 		    let message = PingMessage(from: self.player);
-            LOG("HttpSession.ping> (\(player)")
+            LOGD("HttpSession.ping> (\(player)")
 		    do {
 		        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
 		            self.pingContinuations[message.id] = continuation;
 		            Task {
-                        LOG("HttpSession.ping> (\(player) awaiting send")
+                        LOGD("HttpSession.ping> (\(player) awaiting send")
 		                await self.send(message: message, to: player);
-                        LOG("HttpSession.ping> (\(player) back from awaiting send")
+                        LOGD("HttpSession.ping> (\(player) back from awaiting send")
 		            }
 		            Task {
-                        LOG("HttpSession.ping> (\(player) sleeping before checking continuation")
+                        LOGD("HttpSession.ping> (\(player) sleeping before checking continuation")
 		                try? await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000));
-                        LOG("HttpSession.ping> (\(player) after sleeping before checking continuation")
+                        LOGD("HttpSession.ping> (\(player) after sleeping before checking continuation")
 		                if let continuation = self.pingContinuations[message.id] {
-                            LOG("HttpSession.ping> (\(player) got continuation after sleeping")
+                            LOGD("HttpSession.ping> (\(player) got continuation after sleeping")
 		                    self.pingContinuations.removeValue(forKey: message.id);
-                            LOG("HttpSession.ping> (\(player) after remove-value for continuation after sleeping - resuming")
+                            LOGD("HttpSession.ping> (\(player) after remove-value for continuation after sleeping - resuming")
 		                    continuation.resume(throwing: TimeoutError());
-                            LOG("HttpSession.ping> (\(player) after resuming for continuation")
+                            LOGD("HttpSession.ping> (\(player) after resuming for continuation")
 		                }
-                        LOG("HttpSession.ping> (\(player) after continuation block")
+                        LOGD("HttpSession.ping> (\(player) after continuation block")
 		            }
 		        }
-                LOG("HttpSession.ping> (\(player) returning true")
+                LOGD("HttpSession.ping> (\(player) returning true")
 		        return true;
 		
 		    }
             catch {
-                LOG("HttpSession.ping> (\(player) returning false from catch")
+                LOGD("HttpSession.ping> (\(player) returning false from catch")
 		        return false;
 		    }
-            LOG("HttpSession.ping> (\(player) fall-thru")
+            LOGD("HttpSession.ping> (\(player) fall-thru")
 		}
 
         private func handle(message: PingMessage) {
-            LOG("handling ping message from [\(message.from)]")
+            LOGD("handling ping message from [\(message.from)]")
             // self.handler.handle(message: message);
             let ack = PingAcknowledgeMessage(from: self.player, id: message.id)
             Task {
                 await self.send(message: ack, to: message.from)
             }
-            LOG("handling ping message done from [\(message.from)]")
+            LOGD("handling ping message done from [\(message.from)]")
         }
 
         private func handle(message: PingAcknowledgeMessage) {
