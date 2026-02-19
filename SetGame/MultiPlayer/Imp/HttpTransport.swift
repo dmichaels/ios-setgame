@@ -118,15 +118,22 @@ public extension MultiPlayer {
 
         private let handler: MessageHandler;
         private var url: URL;
+        private let urlProduction: URL;
+        private let urlDevelopment: URL;
         private let key: String;
         private var session: String?;
         private var pollSession: String?;
         private var pollTask: Task<Void, Never>? = nil;
         private let pollInterval: UInt64 = 500_000_000;
 
-        public init(handler: MessageHandler, url: String? = nil, key: String? = nil) {
+        public init(handler: MessageHandler, url: String? = nil, urlDevelopment: String? = nil,  key: String? = nil) {
             self.handler = handler;
-            self.url = (url != nil) ? URL.create(url!) : URL.create("https://api.logicard.dmichaels.dev");
+            let urlProduction: URL = (url != nil) ? URL.create(url!) : URL.create("http://127.0.0.1:8001");
+            let urlDevelopment: URL = (urlDevelopment != nil) ? URL.create(urlDevelopment!) : urlProduction;
+            let url: URL = urlProduction;
+            self.urlProduction = urlProduction;
+            self.urlDevelopment = urlDevelopment;
+            self.url = url;
             self.key = key ?? ".0turangalila";
         }
 
@@ -176,9 +183,6 @@ public extension MultiPlayer {
         }
 
         // These are for internal dev/testing/debugging (DevPanel) usage only!
-
-        private static var productionURL: String = "https://api.logicard.dmichaels.dev";
-        private static var developmentURL: String = "http://127.0.0.1:8001";
 
         public func sessions() async -> [String]? {
             if let sessions: [String] = await self.url.get("/sessions", as: [String].self, key: self.key) {
@@ -299,14 +303,14 @@ public extension MultiPlayer {
 
         public var production: Bool {
             get {
-                return self.url.value == HttpTransport.productionURL;
+                return self.url.value == self.urlProduction.value;
             }
             set {
                 if (newValue) {
-                    self.url = URL.create(HttpTransport.productionURL);
+                    self.url = self.urlProduction;
                 }
                 else {
-                    self.url = URL.create(HttpTransport.developmentURL);
+                    self.url = self.urlDevelopment;
                 }
             }
         }

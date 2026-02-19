@@ -31,7 +31,8 @@ struct SetGameApp: App {
             transport: { handler in
                 MultiPlayer.HttpTransport(
                     handler: handler,
-                    url: settings.multiPlayer.server,
+                    url: settings.multiPlayer.urlProduction,
+                    urlDevelopment: settings.multiPlayer.urlDevelopment,
                     key: settings.multiPlayer.apikey
                 )
             }

@@ -59,10 +59,10 @@ public class Defaults {
         public var http: Bool             = true;
         public var host: Bool             = true;
         public var poll: Bool             = true;
-        public let productionURL: String  = "https://api.logicard.dmichaels.dev"
-        public let developmentURL: String = "http://127.0.0.1:8001"
-        public let server: String         = "http://127.0.0.1:8001"
+        public let urlProduction: String  = "https://api.logicard.dmichaels.dev"
+        public let urlDevelopment: String = "http://127.0.0.1:8001"
         public let apikey: String         = ".0turangalila";
+        public let server: String         = "http://127.0.0.1:8001" // obsolete
     }
 
     public static let multiPlayer: MultiPlayer = MultiPlayer();

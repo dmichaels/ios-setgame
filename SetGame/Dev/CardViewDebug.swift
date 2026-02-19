@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct CardViewDebug: View {
+public struct DevCardViewDebug: View {
 
     @ObservedObject var settings: Settings;
     @StateObject var table: Table;
