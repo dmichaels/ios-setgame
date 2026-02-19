@@ -10,6 +10,7 @@ private struct Const {
     fileprivate static let xmarkChar: String = "✗";
     fileprivate static let leftArrowChar: String = "◀ ";
     fileprivate static let highlightColor: Color = Color(hex: 0x882211);
+    fileprivate static let iconColor: Color = Color(hex: 0x0044BB);
 }
 
 private struct SessionState {
@@ -77,13 +78,14 @@ private struct SessionState {
     }
 
     fileprivate mutating func update(from session: MultiPlayer.Session,
-                                info: Json?,
-                                sessions: [String]?,
-                                pingable: Bool,
-                                production: Bool,
-                                debug: Bool) {
+                                     info: Json?,
+                                     sessions: [String]?,
+                                     pingable: Bool,
+                                     production: Bool,
+                                     debug: Bool) {
         self.update(from: session);
         self.pingable = pingable;
+        self.production = production;
         self.debug = debug;
         self.pollCount = self.poller.count;
         if let info: Json = info {
@@ -150,8 +152,12 @@ private struct SessionState {
         }
 
         fileprivate mutating func update(_ sessions: [String]) {
+            let changed: Bool = (sessions == self.sessions);
             self.sessions = sessions;
             (self.sessionsShort, self.shortLength) = SessionList.shortenValues(sessions);
+            if (self.selectedShort.isEmpty || changed) {
+                self.selectedShort = self.sessionsShort.first ?? "";
+            }
         }
 
         fileprivate func shorten(_ session: String?, fallback: String = "") -> String {
@@ -375,6 +381,7 @@ public extension MultiPlayer.Dev {
         fileprivate var body: some View {
             AnyDevPanel(table: table, margin: margin) {
                 PlayersView(session: self.session,
+                            sessionState: self.sessionState,
                             players: self.sessionState.players,
                             player: self.sessionState.player,
                             host: self.sessionState.host ?? "",
@@ -385,6 +392,7 @@ public extension MultiPlayer.Dev {
         private struct PlayersView: View {
 
             private let session: MultiPlayer.Session;
+            private let sessionState: SessionState;
             private let players: [String];
             private let player: String;
             private let host: String;
@@ -394,8 +402,11 @@ public extension MultiPlayer.Dev {
             private var queued: [String: Int] = [:];
             private let size: Int;
 
-            fileprivate init(session: MultiPlayer.Session, players: [String], player: String, host: String, info: Json, size: Int = Const.fontSize) {
+            fileprivate init(session: MultiPlayer.Session, sessionState: SessionState,
+                             players: [String], player: String,
+                             host: String, info: Json, size: Int = Const.fontSize) {
                 self.session = session;
+                self.sessionState = sessionState;
                 self.noplayers = (players.count == 0);
                 self.player = player;
                 self.players = (players.count == 0) ? [player] : players;
@@ -429,7 +440,7 @@ public extension MultiPlayer.Dev {
                             Text(player + (player == self.player ? " ◀" : ""))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .foregroundColor(player == self.host ? Const.highlightColor : Color.primary)
-                                SmallButton(icon: "target", size: 17) {
+                                SmallButton(icon: "target", size: 17, disabled: !self.sessionState.connected) {
                                     LOGD("sending ping to: \(player)")
                                     let xxx = await self.session.ping(player: player, timeout: 5000);
                                     LOGD("back from await for sending ping to: \(player)")
@@ -447,7 +458,7 @@ public extension MultiPlayer.Dev {
                         .padding(.vertical, 2)
                         if index < players.count - 1 {
                             Rectangle()
-                                . fill(Color.black)
+                                .fill(Color.black)
                                 .frame(height: 2 / UIScreen.main.scale)
                                 .offset(y: 0.5)
                         }
@@ -574,7 +585,7 @@ public extension MultiPlayer.Dev {
                                     self.verbose.toggle();
                                 }
                             }
-                            SmallButton(icon: verbose ? "clock" : "clock", color: self.byTimestamp ? .red : .primary , size: 16) {
+                            SmallButton(icon: verbose ? "clock" : "clock", color: self.byTimestamp ? .red : Const.iconColor , size: 16) {
                                 if (self.byTimestamp) {
                                     self.byTimestamp = false;
                                     self.verbose = self.verboseSave;
@@ -665,6 +676,17 @@ public extension MultiPlayer.Dev {
             self.margin = margin;
         }
 
+        private var pollCountChar: String {
+            let m: Int = self.sessionState.pollCount % 6;
+            if      (m == 0) { return "―";  }
+            else if (m == 1) { return "\\"; }
+            else if (m == 2) { return "|"; }
+            else if (m == 3) { return "/"; }
+            else if (m == 4) { return "o"; }
+            else if (m == 5) { return "+"; }
+            else             { return "x"; }
+        }
+
         fileprivate var body: some View {
             AnyDevPanel(table: table, vertical: 2, margin: margin) {
                 HStack {
@@ -674,9 +696,9 @@ public extension MultiPlayer.Dev {
                                     size: 12, bold: true, leading: -4)
                             RegularText(self.sessionState.pingable ? Const.checkChar : Const.xmarkChar,
                                         color: self.sessionState.pingable ? .primary : Const.highlightColor,
-                                        size: 13, bold: true, leading: 2)
+                                        size: 12, semibold: true, leading: 2)
                     Spacer()
-                    RegularText("(\(self.sessionState.pollCount))", size: 12)
+                    RegularText(self.pollCountChar, size: 11)
                     SmallButton(icon: self.sessionState.polling ? "pause.circle" : "play.circle", size: 17) {
                         self.sessionState.poll(enable: !self.sessionState.polling);
                     }
@@ -829,7 +851,7 @@ public extension MultiPlayer.Dev {
                             action: @escaping () async -> Void) {
             self.text = text;
             self.icon = icon;
-            self.color = color ?? ((icon != nil) ? .black : .yellow);
+            self.color = color ?? ((icon != nil) ? Const.iconColor : .yellow);
             self.background = background ?? Const.foreground;
             self.size = size ?? ((icon != nil) ? 20 : Const.fontSize);
             self.disabled = disabled;
@@ -847,18 +869,18 @@ public extension MultiPlayer.Dev {
                         .foregroundColor(color)
                         .font(.system(size: CGFloat(self.size)))
                         .fontWeight(.semibold)
-                        .disabled(disabled)
+                        .disabled(self.disabled)
                 }
                 else if let text: String = text {
                     Text(text)
                         .font(.system(size: CGFloat(self.size), weight: .semibold))
-                        .foregroundColor(self.color)
-                        .padding(.horizontal, horizontalPadding)
-                        .padding(.vertical, verticalPadding)
+                        .foregroundColor(self.disabled ? .gray : self.color)
+                        .padding(.horizontal, self.horizontalPadding)
+                        .padding(.vertical, self.verticalPadding)
                         .background(
-                            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous).fill(background)
+                            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous).fill(self.background)
                         )
-                        .disabled(disabled)
+                        .disabled(self.disabled)
                 }
             }
             .buttonStyle(.plain)

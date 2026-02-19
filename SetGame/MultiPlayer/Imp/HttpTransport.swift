@@ -130,7 +130,7 @@ public extension MultiPlayer {
             self.handler = handler;
             let urlProduction: URL = (url != nil) ? URL.create(url!) : URL.create("http://127.0.0.1:8001");
             let urlDevelopment: URL = (urlDevelopment != nil) ? URL.create(urlDevelopment!) : urlProduction;
-            let url: URL = urlProduction;
+            let url: URL = urlDevelopment;
             self.urlProduction = urlProduction;
             self.urlDevelopment = urlDevelopment;
             self.url = url;
