@@ -232,27 +232,6 @@ public extension MultiPlayer {
             }
         }
 
-        /*
-        private func joinAsyncAndWait(session: String?) async -> Bool {
-            guard let session: String = session, !self.hosting else {
-                return false
-            }
-            do {
-                let success: Bool = try await withTimeout(seconds: 5) {
-                    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-                        self.joinSessionContinuation = continuation
-                        Task { await self.joinAsync(session: session) }
-                    }
-                    return true;
-                }
-                return success;
-            }
-            catch {
-                return false;
-            }
-        }
-        */
-
         private func joinAsyncAndWait(session: String?, timeout: Int = 5000) async -> Bool {
             //
             // This is mostly courtesy of ChatGPT; should understand more.
