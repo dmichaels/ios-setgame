@@ -431,38 +431,38 @@ public extension MultiPlayer.Dev {
                         }
                     }
                     else {
-                    ForEach(self.players, id: \.self) { player in
-                        if let received: [MultiPlayer.HttpTransport.MessageReceived] = self.messages[player] {
-                            LazyVGrid(columns: MessagesView.columns, alignment: .leading, spacing: 4) {
-                                Text(player + (player == self.player ? " \(Defaults.leftArrowChar)" : ""))
-                                     .font(.system(size: 13, weight: .semibold))
+                        ForEach(self.players, id: \.self) { player in
+                            if let received: [MultiPlayer.HttpTransport.MessageReceived] = self.messages[player] {
+                                LazyVGrid(columns: MessagesView.columns, alignment: .leading, spacing: 4) {
+                                    Text(player + (player == self.player ? " \(Defaults.leftArrowChar)" : ""))
+                                         .font(.system(size: 13, weight: .semibold))
+                                        .frame(maxHeight: .infinity, alignment: .topLeading)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        ForEach(received, id: \.id) { message in
+                                            Text("\(MessagesView.messageType(message.message))")
+                                                .font(.system(size: 13, weight: .regular))
+                                                .lineLimit(1)
+                                        }
+                                    }
                                     .frame(maxHeight: .infinity, alignment: .topLeading)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    ForEach(received, id: \.id) { message in
-                                        Text("\(MessagesView.messageType(message.message))")
-                                            .font(.system(size: 13, weight: .regular))
-                                            .lineLimit(1)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        ForEach(received, id: \.id) { message in
+                                            Text("\(message.host)")
+                                                .font(.system(size: 13, weight: .regular))
+                                        }
                                     }
-                                }
-                                .frame(maxHeight: .infinity, alignment: .topLeading)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    ForEach(received, id: \.id) { message in
-                                        Text("\(message.host)")
-                                            .font(.system(size: 13, weight: .regular))
+                                    .frame(maxHeight: .infinity, alignment: .topLeading)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        ForEach(received, id: \.id) { message in
+                                            Text("\(message.timestamp)")
+                                                .font(.system(size: 13, weight: .regular))
+                                        }
                                     }
+                                    .frame(maxHeight: .infinity, alignment: .topLeading)
                                 }
-                                .frame(maxHeight: .infinity, alignment: .topLeading)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    ForEach(received, id: \.id) { message in
-                                        Text("\(message.timestamp)")
-                                            .font(.system(size: 13, weight: .regular))
-                                    }
-                                }
-                                .frame(maxHeight: .infinity, alignment: .topLeading)
+                                Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale)
                             }
-                            Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale)
                         }
-                    }
                     }
                 }
                 .font(.system(size: CGFloat(self.size), weight: .semibold))
@@ -504,7 +504,6 @@ public extension MultiPlayer.Dev {
             AnyDevPanel(table: table, vertical: 2, margin: margin) {
                 HStack {
                     RegularText("server: ", size: 13)
-                        // RegularText(transport.server,
                         RegularText(self.sessionState.server,
                                     color: self.sessionState.pingable ? .primary : Defaults.highlightColor,
                                     size: 12, bold: true, leading: -4)
