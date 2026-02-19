@@ -23,8 +23,11 @@
 		9811914A25ED5ACF0083606B /* TableCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811914025ED5ACF0083606B /* TableCard.swift */; };
 		9811914B25ED5ACF0083606B /* CardShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811914125ED5ACF0083606B /* CardShape.swift */; };
 		9826D1882F46BB140023A271 /* PingAcknowledgeMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1872F46BB140023A271 /* PingAcknowledgeMessage.swift */; };
-		9826D18A2F4753280023A271 /* Dev.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1892F4753280023A271 /* Dev.swift */; };
 		9826D1902F47791E0023A271 /* DevLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D18F2F47791E0023A271 /* DevLogger.swift */; };
+		9826D1922F47B55E0023A271 /* DevSessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1912F47B55E0023A271 /* DevSessionState.swift */; };
+		9826D1942F47B8530023A271 /* DevPanelControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1932F47B8530023A271 /* DevPanelControls.swift */; };
+		9826D1962F47BAB90023A271 /* DevPanelDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1952F47BAB90023A271 /* DevPanelDefaults.swift */; };
+		9826D1982F47BB2C0023A271 /* MultiPlayerDev.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1972F47BB2C0023A271 /* MultiPlayerDev.swift */; };
 		9867E12F2F1E573000CB221F /* Delay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E12D2F1E573000CB221F /* Delay.swift */; };
 		9867E1332F1E86FE00CB221F /* CardGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1322F1E86FE00CB221F /* CardGridView.swift */; };
 		9867E1392F1FC98E00CB221F /* TableDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1382F1FC98E00CB221F /* TableDemo.swift */; };
@@ -119,8 +122,11 @@
 		9811914125ED5ACF0083606B /* CardShape.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardShape.swift; sourceTree = "<group>"; };
 		981B00492F113ABF00875920 /* SetGame.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SetGame.entitlements; sourceTree = "<group>"; };
 		9826D1872F46BB140023A271 /* PingAcknowledgeMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingAcknowledgeMessage.swift; sourceTree = "<group>"; };
-		9826D1892F4753280023A271 /* Dev.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dev.swift; sourceTree = "<group>"; };
 		9826D18F2F47791E0023A271 /* DevLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevLogger.swift; sourceTree = "<group>"; };
+		9826D1912F47B55E0023A271 /* DevSessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevSessionState.swift; sourceTree = "<group>"; };
+		9826D1932F47B8530023A271 /* DevPanelControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevPanelControls.swift; sourceTree = "<group>"; };
+		9826D1952F47BAB90023A271 /* DevPanelDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevPanelDefaults.swift; sourceTree = "<group>"; };
+		9826D1972F47BB2C0023A271 /* MultiPlayerDev.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiPlayerDev.swift; sourceTree = "<group>"; };
 		9867E12D2F1E573000CB221F /* Delay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delay.swift; sourceTree = "<group>"; };
 		9867E1322F1E86FE00CB221F /* CardGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardGridView.swift; sourceTree = "<group>"; };
 		9867E1382F1FC98E00CB221F /* TableDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableDemo.swift; sourceTree = "<group>"; };
@@ -394,8 +400,11 @@
 		98E1F2E82F3FDDC500F6DAA3 /* Dev */ = {
 			isa = PBXGroup;
 			children = (
-				9826D1892F4753280023A271 /* Dev.swift */,
 				98E1F2E72F3FDDC500F6DAA3 /* DevPanel.swift */,
+				9826D1932F47B8530023A271 /* DevPanelControls.swift */,
+				9826D1952F47BAB90023A271 /* DevPanelDefaults.swift */,
+				9826D1912F47B55E0023A271 /* DevSessionState.swift */,
+				9826D1972F47BB2C0023A271 /* MultiPlayerDev.swift */,
 			);
 			path = Dev;
 			sourceTree = "<group>";
@@ -577,21 +586,23 @@
 				9867E1452F2182AB00CB221F /* DevCardViewDebug.swift in Sources */,
 				9811914825ED5ACF0083606B /* CardNumber.swift in Sources */,
 				9826D1882F46BB140023A271 /* PingAcknowledgeMessage.swift in Sources */,
+				9826D1962F47BAB90023A271 /* DevPanelDefaults.swift in Sources */,
 				98EF7E152F1AFE7A00A45F63 /* TableDeck.swift in Sources */,
 				989D936B2EEDABC600BE461B /* FoundSetsView.swift in Sources */,
 				98E1F3092F4527B600F6DAA3 /* NewGameMessage.swift in Sources */,
-				9826D18A2F4753280023A271 /* Dev.swift in Sources */,
 				9867E1392F1FC98E00CB221F /* TableDemo.swift in Sources */,
 				9811914525ED5ACF0083606B /* CardFilling.swift in Sources */,
 				98C2CA8225F3C1E40050ACDC /* StatsView.swift in Sources */,
 				9867E1332F1E86FE00CB221F /* CardGridView.swift in Sources */,
 				989FF92B25F11872002AE44A /* StatusBarView.swift in Sources */,
+				9826D1942F47B8530023A271 /* DevPanelControls.swift in Sources */,
 				981190F025ED59CC0083606B /* SetGameApp.swift in Sources */,
 				989FF92625F10F08002AE44A /* SettingsView.swift in Sources */,
 				98EF7E132F1ACBD400A45F63 /* Space.swift in Sources */,
 				9811914325ED5ACF0083606B /* CardColor.swift in Sources */,
 				98EF7E112F19661F00A45F63 /* ID.swift in Sources */,
 				9867E12F2F1E573000CB221F /* Delay.swift in Sources */,
+				9826D1982F47BB2C0023A271 /* MultiPlayerDev.swift in Sources */,
 				98C9D21B2F2D080C0094E251 /* URL.swift in Sources */,
 				98E1F3072F45269800F6DAA3 /* SetMissedMessage.swift in Sources */,
 				9811914725ED5ACF0083606B /* Table.swift in Sources */,
@@ -615,6 +626,7 @@
 				98E1F2CE2F3FAA9200F6DAA3 /* JoinSessionConfirmedMessage.swift in Sources */,
 				98E1F2CF2F3FAA9200F6DAA3 /* SessionHandler.swift in Sources */,
 				98E1F2D02F3FAA9200F6DAA3 /* RequestHostSessionMessage.swift in Sources */,
+				9826D1922F47B55E0023A271 /* DevSessionState.swift in Sources */,
 				98E1F2D12F3FAA9200F6DAA3 /* UpdateSessionMessage.swift in Sources */,
 				98E1F2D22F3FAA9200F6DAA3 /* Message.swift in Sources */,
 				98E1F2E62F3FABF000F6DAA3 /* Timeout.swift in Sources */,
