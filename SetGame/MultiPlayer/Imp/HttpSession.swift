@@ -169,6 +169,7 @@ public extension MultiPlayer {
             class MessageHandler: MultiPlayer.MessageHandler {
                 var session: HttpSession?;
                 func handle(message: PingMessage)                 { session?.handle(message: message) }
+                func handle(message: PingAcknowledgeMessage)      { session?.handle(message: message) }
                 func handle(message: JoinSessionMessage)          { session?.handle(message: message) }
                 func handle(message: JoinSessionConfirmedMessage) { session?.handle(message: message) }
                 func handle(message: LeaveSessionMessage)         { session?.handle(message: message) }
@@ -282,6 +283,10 @@ public extension MultiPlayer {
         }
 
         private func handle(message: PingMessage) {
+            self.handler.handle(message: message);
+        }
+
+        private func handle(message: PingAcknowledgeMessage) {
             self.handler.handle(message: message);
         }
 

@@ -9,6 +9,7 @@ public extension MultiPlayer {
                 for message: Message in messages {
                     MessageConveyance.dispatch(message: message,
                                                ping: handler.handle,
+                                               pingAcknowledge: handler.handle,
                                                joinSession: handler.handle,
                                                joinSessionConfirmed: handler.handle,
                                                leaveSession: handler.handle,
@@ -24,6 +25,7 @@ public extension MultiPlayer {
     
         private static func dispatch(message: Message?,
                                     ping: ((PingMessage) -> Void)? = nil,
+                                    pingAcknowledge: ((PingAcknowledgeMessage) -> Void)? = nil,
                                     joinSession: ((JoinSessionMessage) -> Void)? = nil,
                                     joinSessionConfirmed: ((JoinSessionConfirmedMessage) -> Void)? = nil,
                                     leaveSession: ((LeaveSessionMessage) -> Void)? = nil,
@@ -36,6 +38,7 @@ public extension MultiPlayer {
             if let message: Message = message {
                 switch message {
                     case let message as PingMessage: ping?(message);
+                    case let message as PingAcknowledgeMessage: pingAcknowledge?(message);
                     case let message as JoinSessionMessage: joinSession?(message);
                     case let message as JoinSessionConfirmedMessage: joinSessionConfirmed?(message);
                     case let message as LeaveSessionMessage: leaveSession?(message);

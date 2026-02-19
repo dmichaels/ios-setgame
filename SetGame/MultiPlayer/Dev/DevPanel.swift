@@ -521,6 +521,7 @@ public extension MultiPlayer {
             private static func messageType(_ message: Message) -> String {
                 switch message.type {
                     case .ping:                 return "ping";
+                    case .pingAcknowledge:      return "ping-ack";
                     case .joinSession:          return "join";
                     case .joinSessionConfirmed: return "joined";
                     case .leaveSession:         return "leave";

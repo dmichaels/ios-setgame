@@ -2,6 +2,7 @@ public extension MultiPlayer {
 
     public enum MessageType: String, Codable {
         case ping;                 // host or non-host
+        case pingAcknowledge;      // host or non-host
         case joinSession;          // non-host to host only
         case joinSessionConfirmed; // server (in response to join) to non-host only
         case leaveSession;         // non-host to host only
@@ -22,6 +23,7 @@ public extension MultiPlayer.SessionHandler {
     // these are instead handled directly by the HttpSession implementation.
     //
     func handle(message: MultiPlayer.PingMessage) {}
+    func handle(message: MultiPlayer.PingAcknowledgeMessage) {}
     func handle(message: MultiPlayer.JoinSessionMessage) {}
     func handle(message: MultiPlayer.JoinSessionConfirmedMessage) {}
     func handle(message: MultiPlayer.LeaveSessionMessage) {}
