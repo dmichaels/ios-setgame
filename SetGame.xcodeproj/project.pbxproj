@@ -28,7 +28,9 @@
 		9826D1942F47B8530023A271 /* DevPanelControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1932F47B8530023A271 /* DevPanelControls.swift */; };
 		9826D1962F47BAB90023A271 /* DevPanelDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1952F47BAB90023A271 /* DevPanelDefaults.swift */; };
 		9826D1982F47BB2C0023A271 /* MultiPlayerDev.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1972F47BB2C0023A271 /* MultiPlayerDev.swift */; };
-		9826D19A2F48E0A00023A271 /* TextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1992F48E0A00023A271 /* TextMessage.swift */; };
+		9826D19A2F48E0A00023A271 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1992F48E0A00023A271 /* ChatMessage.swift */; };
+		9826D19D2F48E89B0023A271 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D19C2F48E89B0023A271 /* ChatView.swift */; };
+		9826D19E2F48E89B0023A271 /* ChatBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D19B2F48E89B0023A271 /* ChatBubbleView.swift */; };
 		9867E12F2F1E573000CB221F /* Delay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E12D2F1E573000CB221F /* Delay.swift */; };
 		9867E1332F1E86FE00CB221F /* CardGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1322F1E86FE00CB221F /* CardGridView.swift */; };
 		9867E1392F1FC98E00CB221F /* TableDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1382F1FC98E00CB221F /* TableDemo.swift */; };
@@ -128,7 +130,9 @@
 		9826D1932F47B8530023A271 /* DevPanelControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevPanelControls.swift; sourceTree = "<group>"; };
 		9826D1952F47BAB90023A271 /* DevPanelDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevPanelDefaults.swift; sourceTree = "<group>"; };
 		9826D1972F47BB2C0023A271 /* MultiPlayerDev.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiPlayerDev.swift; sourceTree = "<group>"; };
-		9826D1992F48E0A00023A271 /* TextMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessage.swift; sourceTree = "<group>"; };
+		9826D1992F48E0A00023A271 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		9826D19B2F48E89B0023A271 /* ChatBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBubbleView.swift; sourceTree = "<group>"; };
+		9826D19C2F48E89B0023A271 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		9867E12D2F1E573000CB221F /* Delay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delay.swift; sourceTree = "<group>"; };
 		9867E1322F1E86FE00CB221F /* CardGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardGridView.swift; sourceTree = "<group>"; };
 		9867E1382F1FC98E00CB221F /* TableDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableDemo.swift; sourceTree = "<group>"; };
@@ -382,7 +386,7 @@
 				98E1F3042F4524E800F6DAA3 /* SetConfirmedMessage.swift */,
 				98E1F3022F4508EE00F6DAA3 /* SetFoundMessage.swift */,
 				98E1F3062F45269800F6DAA3 /* SetMissedMessage.swift */,
-				9826D1992F48E0A00023A271 /* TextMessage.swift */,
+				9826D1992F48E0A00023A271 /* ChatMessage.swift */,
 				98E1F2BE2F3FAA9200F6DAA3 /* UpdateSessionMessage.swift */,
 			);
 			path = Messages;
@@ -403,6 +407,8 @@
 		98E1F2E82F3FDDC500F6DAA3 /* Dev */ = {
 			isa = PBXGroup;
 			children = (
+				9826D19B2F48E89B0023A271 /* ChatBubbleView.swift */,
+				9826D19C2F48E89B0023A271 /* ChatView.swift */,
 				98E1F2E72F3FDDC500F6DAA3 /* DevPanelView.swift */,
 				9826D1932F47B8530023A271 /* DevPanelControls.swift */,
 				9826D1952F47BAB90023A271 /* DevPanelDefaults.swift */,
@@ -629,7 +635,9 @@
 				98E1F2CE2F3FAA9200F6DAA3 /* JoinSessionConfirmedMessage.swift in Sources */,
 				98E1F2CF2F3FAA9200F6DAA3 /* SessionHandler.swift in Sources */,
 				98E1F2D02F3FAA9200F6DAA3 /* RequestHostSessionMessage.swift in Sources */,
-				9826D19A2F48E0A00023A271 /* TextMessage.swift in Sources */,
+				9826D19D2F48E89B0023A271 /* ChatView.swift in Sources */,
+				9826D19E2F48E89B0023A271 /* ChatBubbleView.swift in Sources */,
+				9826D19A2F48E0A00023A271 /* ChatMessage.swift in Sources */,
 				9826D1922F47B55E0023A271 /* DevSessionState.swift in Sources */,
 				98E1F2D12F3FAA9200F6DAA3 /* UpdateSessionMessage.swift in Sources */,
 				98E1F2D22F3FAA9200F6DAA3 /* Message.swift in Sources */,

@@ -2,12 +2,12 @@ import Foundation
 
 public extension MultiPlayer {
 
-    public struct TextMessage: Message {
+    public struct ChatMessage: Message {
         public let type: MessageType;
         public let from: String;
         public let text: String;
-        public init(text: String) {
-            self.type = .text;
+        public init(_ text: String) {
+            self.type = .chat;
             self.from = "";
             self.text = text;
         }

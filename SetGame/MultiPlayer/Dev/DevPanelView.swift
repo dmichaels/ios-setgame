@@ -262,6 +262,12 @@ public extension MultiPlayer.Dev {
                                     LOGD("back from await for sending ping to: \(player)")
                                     LOGD(xxx ? "ping result true" : "ping result false")
                                 }
+                                SmallButton(icon: "ellipsis.message", disabled: !self.sessionState.connected) {
+                                    LOGD("sending text to: \(player)")
+                                    let xxx = await self.session.send(message: MultiPlayer.ChatMessage("Hello, world!"), to: self.player);
+                                    LOGD("back from await for text send to: \(player)")
+                                    LOGD(xxx ? "text send result true" : "text send result false")
+                                }
                                 Spacer()
                             }
                             Text(self.noplayers ? Defaults.emptySetChar : "\(sent[player] ?? 0)")
@@ -380,7 +386,7 @@ public extension MultiPlayer.Dev {
                     case .setFound:             return "set-found";
                     case .setConfirmed:         return "set-confirm";
                     case .setMissed:            return "set-missed";
-                    case .text:                 return "text";
+                    case .chat:                 return "chat";
                 }
             }
 

@@ -715,6 +715,10 @@ public extension Table {
         self.state.resolving = false;
         self.state.receivedExpectedFoundSetResponseMessage = true;
     }
+
+    public func handle(message: MultiPlayer.ChatMessage) {
+        DEB("Table.handle(ChatMessage)> \(message)");
+    }
 }
 
 /*

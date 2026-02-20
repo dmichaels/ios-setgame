@@ -38,7 +38,7 @@ public extension MultiPlayer {
                     case .setFound:             return try? JSONDecoder().decode(SetFoundMessage.self, from: data);
                     case .setConfirmed:         return try? JSONDecoder().decode(SetConfirmedMessage.self, from: data);
                     case .setMissed:            return try? JSONDecoder().decode(SetMissedMessage.self, from: data);
-                    case .text:                 return try? JSONDecoder().decode(TextMessage.self, from: data);
+                    case .chat:                 return try? JSONDecoder().decode(ChatMessage.self, from: data);
                 }
             }
             return nil;

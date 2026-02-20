@@ -176,7 +176,7 @@ public extension MultiPlayer {
                 func handle(message: SetFoundMessage)             { session?.handler.handle(message: message) }
                 func handle(message: SetConfirmedMessage)         { session?.handler.handle(message: message) }
                 func handle(message: SetMissedMessage)            { session?.handler.handle(message: message) }
-                func handle(message: TextMessage)                 { session?.handler.handle(message: message) }
+                func handle(message: ChatMessage)                 { session?.handler.handle(message: message) }
             }
 
             // Bind ourselves to the given SessionHandler (which in our case is Table);
