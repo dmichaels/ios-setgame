@@ -48,15 +48,6 @@ def with_session(func):
         return func(found_session, *args, **kwargs)
     return wrapper
 
-def old_with_session(func):
-    @wraps(func)
-    def wrapper(session, *args, **kwargs):
-        global sessions
-        if not (found_session := sessions.get(session)):
-            return _nosession_response()
-        return func(found_session, *args, **kwargs)
-    return wrapper
-
 @app.before_request
 def _check_api_key():
     global hits ; hits += 1
@@ -71,15 +62,22 @@ def _create_session():
     global sessions
     session = str(uuid.uuid4()).replace('-', '').upper()
     if session not in sessions:
-        sessions[session] = {
-            'session':        session,
-            'host':           None,
-            'players':        [],
-            'inbox':          {},
-            'received_count': {},
-            'queued_count':   {}
-        }
+        sessions[session] = {'session': session,
+                             'host':    None,
+                             'players': [],
+                             'inbox':   {}}
     return session
+
+def _create_sent_count(received_messages: dict) -> dict:
+    counts = {}
+    if isinstance(received_messages, list):
+        for message_entry in received_messages:
+            for recipient_data in message_entry.values():
+                for message in recipient_data.get('messages', []):
+                    sender = message.get('from')
+                    if sender:
+                        counts[sender] = counts.get(sender, 0) + 1
+    return counts
 
 # These functions to "send" specific messages to (i.e. place in the inbox of)
 # players are the only situation where we coordinate closely with the iOS app;
@@ -164,47 +162,17 @@ def get_sessions_endpoint():
 @with_session
 def get_session_endpoint(session):
     global debug
-    response = {'session':        session['session'],
-                'host':           session['host'],
-                'players':        session['players'],
-                'inbox':          session['inbox'],
-                'received_count': session['received_count'],
-                'queued_count':   {user: len(messages) for user, messages in session['inbox'].items()}}
+    response = {'session': session['session'],
+                'host':    session['host'],
+                'players': session['players'],
+                'inbox':   session['inbox']}
     if debug:
-        response.update({'debug': True, 'received_messages': session.get('received_messages')})
+        response.update({'debug': True,
+                         'queued_count':      {user: len(messages) for user, messages in session['inbox'].items()},
+                         'sent_count':        _create_sent_count(session.get('received_messages')),
+                         'received_count':    session.get('received_count', {}),
+                         'received_messages': session.get('received_messages', [])})
     return jsonify(response), 200
-
-def old_get_session_endpoint(session):
-    global debug
-    if debug:
-        return jsonify({'session':           session['session'],
-                        'host':              session['host'],
-                        'players':           session['players'],
-                        'inbox':             session['inbox'],
-                        'received_count':    session['received_count'],
-                        'queued_count':      {user: len(messages) for user, messages in session['inbox'].items()},
-                        'debug':             True,
-                        'received_messages': session.get('received_messages')
-           }), 200
-    return jsonify({'session':  session['session'],
-                    'host':     session['host'],
-                    'players':  session['players'],
-                    'inbox':    session['inbox'],
-                    'received_count': session['received_count'],
-                    'queued_count':      {user: len(messages) for user, messages in session['inbox'].items()},
-           }), 200
-
-# Resets ALL data for the given session.
-# Example Request:  POST /DEADBEEF/reset
-# Example Response: {"status": "OK"}
-#
-@app.route('/sessions/<session>/reset', methods=['POST'])
-@with_session
-def reset_session_endpoint(session):
-    session['host'] = None
-    session['players'].clear()
-    session['inbox'].clear()
-    return _okay_response(201)
 
 @app.route('/sessions/<session>/destroy', methods=['POST'])
 @with_session
@@ -375,17 +343,15 @@ def send_host_message_endpoint(session):
 @app.route('/<session>/receive/<player>', methods=['GET'])
 @with_session
 def receive_messages_endpoint(session, player):
+    global debug
     if player not in session['players']:
         return _noplayer_response()
     messages = session['inbox'].pop(player, [])
-    if len(messages) > 0:
-        session['received_count'].setdefault(player, 0) ; session['received_count'][player] += len(messages);
-    global debug
     if debug:
         if len(messages) > 0:
-            if 'received_messages' not in session:
-                session['received_messages'] = []
-            # session['received_messages'].append({player: messages})
+            session.setdefault('received_count', {}).setdefault(player, 0)
+            session['received_count'][player] += len(messages)
+            session.setdefault('received_messages', [])
             session['received_messages'].append({
                 player: {
 		            'timestamp': datetime.now(timezone.utc).isoformat(),
@@ -410,22 +376,6 @@ def peek_messages_endpoint(session, player):
     messages = session['inbox'].get(player, [])
     return jsonify(messages), 200
 
-# Clears out all message data for the given player, for the given session.
-# Returns a simple status.
-# Example Request:  POST /DEADBEEF/clear/ada
-# Example Response: {"status": "OK"}
-#
-@app.route('/<session>/clear/<player>', methods=['POST'])
-@with_session
-def clear_player_messages_endpoint(session, player):
-    if player not in session['players']:
-        return _noplayer_response()
-    if player in session['inbox']:
-        del session['inbox'][player]
-        del session['received_count'][player]
-        del session['queued_count'][player]
-    return _okay_response()
-
 # Clears out all message data for ALL of the players, for the given session.
 # Example Request:  POST /DEADBEEF/clear
 # Example Response: {"status": "OK"}
@@ -433,9 +383,13 @@ def clear_player_messages_endpoint(session, player):
 @app.route('/<session>/clear', methods=['POST'])
 @with_session
 def clear_session_messages_endpoint(session):
+    global debug
     session['inbox'].clear()
-    session['received_count'].clear()
-    session['queued_count'].clear()
+    if debug:
+        session.get('queued_count', {}).clear()
+        session.get('sent_count', {}).clear()
+        session.get('received_count', {}).clear()
+        session.get('received_messages', []).clear()
     return _okay_response()
 
 # Resets ALL data for ALL sessions.
@@ -463,10 +417,13 @@ def set_debug_endpoint():
 @app.route('/nodebug', methods=['POST'])
 def set_nodebug_endpoint():
     global debug, sessions
-    for session in sessions:
-        if 'received_messages' in session:
-            session['received_messages'].clear()
-    debug = False
+    if debug:
+        for session in sessions:
+            session.get('queued_count', {}).clear()
+            session.get('sent_count', {}).clear()
+            session.get('received_count', {}).clear()
+            session.get('received_messages', []).clear()
+        debug = False
     return _okay_response()
 
 # Simple ping endpoint.
