@@ -10,9 +10,10 @@ public extension MultiPlayer.Dev {
         public static let emptySetChar: String = "∅";
         public static let checkChar: String = "✓";
         public static let xmarkChar: String = "✗";
-        public static let leftArrowChar: String = "◀ ";
-        public static let highlightColor: Color = Color(hex: 0x882211);
-        public static let iconColor: Color = Color(hex: 0x0044BB);
+        public static let leftArrowChar: String = "◀";
+        public static let starChar: String = "★";
+        public static let highlightColor: Color = Color(hex: 0x882211); // dark red
+        public static let iconColor: Color = Color(hex: 0x0044BB);      // dark blue
         public static let iconSize: Int = 16;
     }
 }

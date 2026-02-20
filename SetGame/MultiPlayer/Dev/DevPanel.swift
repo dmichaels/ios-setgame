@@ -309,13 +309,15 @@ public extension MultiPlayer.Dev {
 
         private struct MessagesView: View {
 
-            @Binding fileprivate  var sessionState: SessionState;
-                     private let size: Int = Defaults.fontSize;
+            @Binding fileprivate var sessionState: SessionState;
+                         private let size: Int = Defaults.fontSize;
 
             @State private var verbose: Bool = false;
             @State private var verboseSave: Bool = false;
             @State private var byTimestamp: Bool = false;
             @State private var byTimestampReversed: Bool = false;
+
+            private static let includeHostColumn: Bool = false;
 
             fileprivate init(sessionState: Binding<SessionState>) {
                 self._sessionState = sessionState;
@@ -326,7 +328,11 @@ public extension MultiPlayer.Dev {
             }
 
             private var players: [String] {
-                return sessionState.players;
+                func reorderFirst(_ list: [String], first: String) -> [String] {
+                    guard list.contains(first) else { return list };
+                    return [first] + list.filter { $0 != first };
+                }
+                return reorderFirst(sessionState.players, first: self.player);
             }
 
             private var messages: [String: [MultiPlayer.HttpTransport.MessageReceived]] {
@@ -369,10 +375,18 @@ public extension MultiPlayer.Dev {
                 }
             }
 
-            private static let columns: [GridItem] = [
-                GridItem(.fixed(90), alignment: .leading),  // player
+            private static let columns: [GridItem] = MessagesView.includeHostColumn ?
+            [
+                GridItem(.fixed(90), alignment: .leading),  // to
+                GridItem(.fixed(70), alignment: .leading),  // from
                 GridItem(.flexible(), alignment: .leading), // received
                 GridItem(.fixed(70), alignment: .leading),  // host
+                GridItem(.fixed(95), alignment: .leading)   // time
+            ] :
+            [
+                GridItem(.fixed(90), alignment: .leading),  // to
+                GridItem(.fixed(70), alignment: .leading),  // from
+                GridItem(.flexible(), alignment: .leading), // received
                 GridItem(.fixed(95), alignment: .leading)   // time
             ];
 
@@ -388,8 +402,15 @@ public extension MultiPlayer.Dev {
             fileprivate var body: some View {
                 VStack(spacing: 4) {
                     LazyVGrid(columns: MessagesView.columns, alignment: .leading, spacing: 4) {
+                        Text("to").bold()
+                        Text("from").bold()
+                        Text("type").bold()
+                        if (MessagesView.includeHostColumn) {
+                            Text("host").bold()
+                        }
                         HStack {
-                            Text("to").bold()
+                            Text("time").bold()
+                            Spacer()
                             SmallButton(icon: self.expandButtonDownArrow() ? "arrow.down.square" : "arrow.up.square" , size: Defaults.iconSize) {
                                 if (self.byTimestamp) {
                                     self.byTimestampReversed.toggle();
@@ -398,7 +419,9 @@ public extension MultiPlayer.Dev {
                                     self.verbose.toggle();
                                 }
                             }
-                            SmallButton(icon: verbose ? "clock" : "clock", color: self.byTimestamp ? .red : Defaults.iconColor , size: Defaults.iconSize) {
+                            SmallButton(icon: verbose ? "clock" : "clock",
+                                        color: self.byTimestamp ? Defaults.highlightColor : Defaults.iconColor,
+                                        size: Defaults.iconSize) {
                                 if (self.byTimestamp) {
                                     self.byTimestamp = false;
                                     self.verbose = self.verboseSave;
@@ -409,22 +432,26 @@ public extension MultiPlayer.Dev {
                                 }
                             }
                         }
-                        Text("type").bold()
-                        Text("host").bold()
-                        Text("time").bold()
                     }
                     Rectangle().fill(Color.black).frame(height: 2 / UIScreen.main.scale)
                     if (self.byTimestamp) {
                         ForEach(self.messagesByTimestamp) { message in
                             LazyVGrid(columns: MessagesView.columns, alignment: .leading, spacing: 4) {
-                                Text(message.to + (message.to == self.player ? " \(Defaults.leftArrowChar)" : ""))
-                                     .font(.system(size: 13, weight: .semibold))
+                                Text(message.to + (message.to == message.host ? " \(Defaults.starChar)" : ""))
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(message.to == self.player ? Defaults.highlightColor : .primary)
                                     .frame(maxHeight: .infinity, alignment: .topLeading)
+                                Text("\(message.message.from + (message.message.from == message.host ? " \(Defaults.starChar)" : ""))")
+                                    .font(.system(size: 13, weight: .regular))
+                                    .foregroundColor(message.message.from == self.player ? Defaults.highlightColor : .primary)
+                                    .lineLimit(1)
                                 Text("\(MessagesView.messageType(message.message))")
                                     .font(.system(size: 13, weight: .regular))
                                     .lineLimit(1)
-                                Text("\(message.host)")
-                                    .font(.system(size: 13, weight: .regular))
+                                if (MessagesView.includeHostColumn) {
+                                    Text("\(message.host)")
+                                        .font(.system(size: 13, weight: .regular))
+                                }
                                 Text("\(message.timestamp)")
                                     .font(.system(size: 13, weight: .regular))
                             }
@@ -434,9 +461,16 @@ public extension MultiPlayer.Dev {
                         ForEach(self.players, id: \.self) { player in
                             if let received: [MultiPlayer.HttpTransport.MessageReceived] = self.messages[player] {
                                 LazyVGrid(columns: MessagesView.columns, alignment: .leading, spacing: 4) {
-                                    Text(player + (player == self.player ? " \(Defaults.leftArrowChar)" : ""))
+                                    Text(player + (player == self.player ? " \(Defaults.starChar)" : ""))
                                          .font(.system(size: 13, weight: .semibold))
                                         .frame(maxHeight: .infinity, alignment: .topLeading)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        ForEach(received, id: \.id) { message in
+                                            Text("\(message.message.from)")
+                                                .font(.system(size: 13, weight: .regular))
+                                                .lineLimit(1)
+                                        }
+                                    }
                                     VStack(alignment: .leading, spacing: 2) {
                                         ForEach(received, id: \.id) { message in
                                             Text("\(MessagesView.messageType(message.message))")
@@ -445,13 +479,15 @@ public extension MultiPlayer.Dev {
                                         }
                                     }
                                     .frame(maxHeight: .infinity, alignment: .topLeading)
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        ForEach(received, id: \.id) { message in
-                                            Text("\(message.host)")
-                                                .font(.system(size: 13, weight: .regular))
+                                    if (MessagesView.includeHostColumn) {
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            ForEach(received, id: \.id) { message in
+                                                Text("\(message.host)")
+                                                    .font(.system(size: 13, weight: .regular))
+                                            }
                                         }
+                                        .frame(maxHeight: .infinity, alignment: .topLeading)
                                     }
-                                    .frame(maxHeight: .infinity, alignment: .topLeading)
                                     VStack(alignment: .leading, spacing: 2) {
                                         ForEach(received, id: \.id) { message in
                                             Text("\(message.timestamp)")
