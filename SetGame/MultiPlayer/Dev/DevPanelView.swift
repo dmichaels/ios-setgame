@@ -14,6 +14,12 @@ public extension MultiPlayer.Dev {
         private var session: MultiPlayer.Session { MultiPlayer.HttpSession.instance }
         private var transport: MultiPlayer.Transport { MultiPlayer.HttpSession.instance.transport as! MultiPlayer.HttpTransport }
 
+        let chats: [MultiPlayer.ChatMessage] = [
+            MultiPlayer.ChatMessage("Hello, world!"),
+            MultiPlayer.ChatMessage("Sup"),
+            MultiPlayer.ChatMessage("EOF")
+        ]
+
         public init(table: Table, settings: Settings, margin: Int = 0) {
             LOGD("DevPanelView.init!!!")
             self.table = table;
@@ -30,6 +36,14 @@ public extension MultiPlayer.Dev {
                 DevPanelPlayers(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
                 DevPanelMessages(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
                 DevPanelServer(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
+                // ChatMessagesView(player: self.session.player, messages: self.chats)
+                ChatView(player: self.session.player,
+                         messages: self.chats,
+                         recipient: "TODO",
+                         background: Defaults.background,
+                         backgroundInput: Defaults.background) { text, recipient in
+                    LOGD("ChatView.callback> text: [\(text)] recipient: [\(recipient)]")
+                }
             }
             .onAppear { self.sessionState.poll({
                 self.sessionState.update(from: self.session,

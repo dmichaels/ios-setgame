@@ -4,11 +4,11 @@ public extension MultiPlayer.Dev {
 
     public struct ChatBubbleView: View {
 
+        let player: String
         let message: MultiPlayer.ChatMessage
-        let currentPlayer: String
 
         private var isMe: Bool {
-            message.from == currentPlayer
+            message.from == player
         }
 
         public var body: some View {
