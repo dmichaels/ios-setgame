@@ -68,7 +68,7 @@ def _create_session():
                              'inbox':   {}}
     return session
 
-def _create_sent_count(received_messages: dict) -> dict:
+def _create_sent_counts(received_messages: dict) -> dict:
     counts = {}
     if isinstance(received_messages, list):
         for message_entry in received_messages:
@@ -168,9 +168,9 @@ def get_session_endpoint(session):
                 'inbox':   session['inbox']}
     if debug:
         response.update({'debug': True,
-                         'queued_count':      {user: len(messages) for user, messages in session['inbox'].items()},
-                         'sent_count':        _create_sent_count(session.get('received_messages')),
-                         'received_count':    session.get('received_count', {}),
+                         'queued_counts':     {user: len(messages) for user, messages in session['inbox'].items()},
+                         'sent_counts':       _create_sent_counts(session.get('received_messages')),
+                         'received_counts':   session.get('received_counts', {}),
                          'received_messages': session.get('received_messages', [])})
     return jsonify(response), 200
 
@@ -349,8 +349,8 @@ def receive_messages_endpoint(session, player):
     messages = session['inbox'].pop(player, [])
     if debug:
         if len(messages) > 0:
-            session.setdefault('received_count', {}).setdefault(player, 0)
-            session['received_count'][player] += len(messages)
+            session.setdefault('received_counts', {}).setdefault(player, 0)
+            session['received_counts'][player] += len(messages)
             session.setdefault('received_messages', [])
             session['received_messages'].append({
                 player: {
@@ -386,9 +386,9 @@ def clear_session_messages_endpoint(session):
     global debug
     session['inbox'].clear()
     if debug:
-        session.get('queued_count', {}).clear()
-        session.get('sent_count', {}).clear()
-        session.get('received_count', {}).clear()
+        session.get('queued_counts', {}).clear()
+        session.get('sent_counts', {}).clear()
+        session.get('received_counts', {}).clear()
         session.get('received_messages', []).clear()
     return _okay_response()
 
@@ -418,10 +418,10 @@ def set_debug_endpoint():
 def set_nodebug_endpoint():
     global debug, sessions
     if debug:
-        for session in sessions:
-            session.get('queued_count', {}).clear()
-            session.get('sent_count', {}).clear()
-            session.get('received_count', {}).clear()
+        for session in sessions.values():
+            session.get('queued_counts', {}).clear()
+            session.get('sent_counts', {}).clear()
+            session.get('received_counts', {}).clear()
             session.get('received_messages', []).clear()
         debug = False
     return _okay_response()
