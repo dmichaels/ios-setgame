@@ -72,11 +72,15 @@ public extension MultiPlayer.Dev {
         fileprivate var body: some View {
             AnyDevPanel(table: table, margin: margin) {
                 RegularText("me:")
-                    CopyableText(sessionState.player,
-                                 color: self.session.hosting ? Defaults.highlightColor : .primary, semibold: true, leading: 3)
-                RegularText("host:", leading: 10)
-                    CopyableText("\(self.sessionState.host ?? Defaults.emptySetChar)",
-                                 color: self.session.hosting ? Defaults.highlightColor : .primary, semibold: true, leading: 3)
+                 // CopyableText(sessionState.player,
+                 //              color: self.session.hosting ? Defaults.highlightColor : .primary, semibold: true, leading: 3)
+                    CopyableText(sessionState.player + (sessionState.player == sessionState.host ? " \(Defaults.starChar)" : ""), semibold: true, leading: 3)
+                if (sessionState.player != sessionState.host) {
+                    RegularText("host:", leading: 10)
+                        CopyableText("\(self.sessionState.host ?? Defaults.emptySetChar)",
+                                     color: self.session.hosting ? Defaults.highlightColor : .primary,
+                                     semibold: true, leading: 3)
+                }
                 RegularText("players:", leading: 10)
                     RegularText("\(self.sessionState.players.count == 0 ? Defaults.emptySetChar : "\(self.sessionState.players.count)")", leading: 3)
                 Spacer()
@@ -327,9 +331,9 @@ public extension MultiPlayer.Dev {
                 return sessionState.player;
             }
 
-            private var host: String {
-                return sessionState.host ?? "";
-            }
+            // private var host: String {
+                // return sessionState.host ?? "";
+            // }
 
             private var players: [String] {
                 func reorderFirst(_ list: [String], first: String) -> [String] {
@@ -465,14 +469,12 @@ public extension MultiPlayer.Dev {
                         ForEach(self.players, id: \.self) { player in
                             if let received: [MultiPlayer.HttpTransport.MessageReceived] = self.messages[player] {
                                 LazyVGrid(columns: MessagesView.columns, alignment: .leading, spacing: 4) {
-                                 // Text(player + (player == self.player ? " \(Defaults.starChar)" : ""))
-                                    Text(player + (player == self.host ? " \(Defaults.starChar)" : ""))
+                                    Text(player + (player == self.sessionState.host ? " \(Defaults.starChar)" : ""))
                                         .font(.system(size: 13, weight: .semibold))
                                         .foregroundColor(player == self.player ? Defaults.highlightColor : .primary)
                                         .frame(maxHeight: .infinity, alignment: .topLeading)
                                     VStack(alignment: .leading, spacing: 2) {
                                         ForEach(received, id: \.id) { message in
-                                         // Text("\(message.message.from)")
                                             Text("\(message.message.from + (message.message.from == message.host ? " \(Defaults.starChar)" : ""))")
                                                 .font(.system(size: 13, weight: .regular))
                                                 .foregroundColor(message.message.from == self.player ? Defaults.highlightColor : .primary)
