@@ -7,6 +7,8 @@ import Foundation
 ///
 public struct ID: ExpressibleByStringLiteral, CustomStringConvertible, Equatable, Hashable {
 
+    public static var generate: String { ID().value }
+
     public let value: String;
 
     public init(size: Int? = nil) {

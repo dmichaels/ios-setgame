@@ -6,9 +6,9 @@ public extension MultiPlayer {
         public let type: MessageType;
         public let from: String;
         public let id: String;
-        public init(from: String, id: String = ID().value) {
+        public init(id: String = ID.generate) {
             self.type = .ping;
-            self.from = from;
+            self.from = "";
             self.id = id;
         }
     }

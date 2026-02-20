@@ -104,14 +104,14 @@ public extension MultiPlayer {
         //
         public func send(message: Message, player: String, session: String? = nil) async -> Bool {
             DEB("HttpTransport.send(\(message.type)> player: \(player) session: \(session)")
-            return await self.postMessage(path: "/send/\(player)", message: message, session: session);
+            return await self.postMessage(path: "/send/\(player)", message: message, session: session, send: true);
         }
 
         // Sends the given message to the HOST for the session via POST /<session>/send;
         // in contrast to sending a message to ANY player via POST /<session>/send/player.
         //
         public func sendHost(message: Message, session: String? = nil) async -> Bool {
-            return await self.postMessage(path: "/send", message: message, session: session);
+            return await self.postMessage(path: "/send", message: message, session: session, send: true);
         }
 
         // HttpTransport class implementation.
@@ -152,8 +152,9 @@ public extension MultiPlayer {
 
         // Sends (POSTs) the given message to the given path for the given or our bound session.
         //
-        private func postMessage(path: String, message: Message, session: String? = nil) async -> Bool {
-            if let message: Json = message.json, let session: String = session ?? self.session {
+        private func postMessage(path: String, message: Message, session: String? = nil, send: Bool = false) async -> Bool {
+            if var message: Json = message.json, let session: String = session ?? self.session {
+                if (send) { message["from"] = self.player; }
                 if let response: Json = await self.url.post(session, path, data: message, as: Json.self, key: self.key) {
                     if let status: String = response["status"] as? String, status == "OK" {
                         return true;
@@ -167,8 +168,9 @@ public extension MultiPlayer {
         // This is a NON-async version of the above for possible convenience;
         // since it is just a send and we do not really need to get/check the result.
         //
-        private func postMessage(path: String, message: Message, session: String? = nil) -> Bool {
-            if let message: Json = message.json, let session: String = session ?? self.session {
+        private func postMessage(path: String, message: Message, session: String? = nil, send: Bool = false) -> Bool {
+            if var message: Json = message.json, let session: String = session ?? self.session {
+                if (send) { message["from"] = self.player; }
                 if (self.url.post(session, path, data: message, key: self.key)) {
                     return true;
                 }

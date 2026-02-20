@@ -4,12 +4,14 @@ public extension MultiPlayer {
 
     public struct SetMissedMessage: Message {
         public  let type: MessageType;
+        public let from: String;
         public  let player: String;
         private let codes: [String];
         public  var cards: [TableCard] { MessageConversion.toCards(self.codes) }
         public init(player: String, cards: [Card]) {
-            self.type      = .setMissed;
-            self.player    = player;
+            self.type = .setMissed;
+            self.from = "";
+            self.player = player;
             self.codes = cards.map { $0.code };
         }
     }

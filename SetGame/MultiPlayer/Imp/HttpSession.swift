@@ -257,7 +257,7 @@ public extension MultiPlayer {
 
         private var pingContinuations: [String: CheckedContinuation<Void, Error>] = [:];
 		public func ping(player: String, timeout: Int = 5000) async -> Bool {
-		    let message = PingMessage(from: self.player);
+		    let message = PingMessage();
             LOGD("HttpSession.ping> (\(player)")
 		    do {
 		        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
@@ -295,7 +295,7 @@ public extension MultiPlayer {
         private func handle(message: PingMessage) {
             LOGD("handling ping message from [\(message.from)]")
             // self.handler.handle(message: message);
-            let ack = PingAcknowledgeMessage(from: self.player, id: message.id)
+            let ack = PingAcknowledgeMessage(id: message.id)
             Task {
                 await self.send(message: ack, to: message.from)
             }

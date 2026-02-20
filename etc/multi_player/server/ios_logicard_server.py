@@ -81,23 +81,40 @@ def _create_session():
         }
     return session
 
+# These functions to "send" specific messages to (i.e. place in the inbox of)
+# players are the only situation where we coordinate closely with the iOS app;
+# only comes into place for endpoints with the "_and_notify" suffix; and only
+# for the (iOS) messages JoinSessionConfirmed and UpdateSession messages;
+# the point being to avoid an extra roundtrip from device to server.
+
 def _create_join_session_confirmed_message(session):
     return {'type': 'joinSessionConfirmed',
+            'from': str(session['host']),
             'session': str(session['session']),
             'host': str(session['host']),
             'players': list(session['players'])}
 
 def _create_update_session_message(session):
     return {'type': 'updateSession',
+            'from': str(session['host']),
             'host': str(session['host']),
             'players': list(session['players'])}
 
 def _send_join_session_confirmed_message(session, player):
+    # Note that only the host may send this JoinSessionConfirmed message; this is enforced
+    # explicitly in the JoinSessionMessage message handler in the iOS app, which calls
+    # the /register_and_notify endpoint (which calls this function) ONLY if we are the host.
     join_session_confirmed_message = _create_join_session_confirmed_message(session)
     session['inbox'].setdefault(player, []).append(join_session_confirmed_message)
     session['sent_count'].setdefault(player, 0) ; session['sent_count'][player] += 1
 
 def _send_update_session_messages(session, excluding = []):
+    # Note that only the host may send this UpdateSession message; this is enforced
+    # explicitly in the JoinSessionMessage message handler in the iOS app, which
+    # calls the /[un]register_and_notify endpoints (which calls this function)
+    # ONLY if we are the host; also enforced by the /host_and_notify endpoint,
+    # corresponding to the HostSession message in the iOS app, which calls
+    # this function only if we are the (newly assigned) host.
     update_session_message = _create_update_session_message(session)
     for player in session['players']:
         if player not in excluding:
@@ -260,7 +277,7 @@ def unregister_player_endpoint(session, player):
         session['host'] = None
     return _okay_response(201)
 
-# Same as POST /<session>/unregister/<player>  but also "sends" (puts
+# Same as POST /<session>/unregister/<player> but also "sends" (puts
 # in the inbox of) any other (non-host) players an updateSession message.
 # Example Request:  POST /DEADBEEF/unregister_and_notify/ada
 # Example Response: {"status": "OK"}
@@ -274,8 +291,6 @@ def unregister_player_and_notify_endpoint(session, player):
         return _nohost_response(409) # not allowed to unregister host
     session['players'].remove(player)
     session['inbox'].pop(player, None)
-    if session['host'] == player:
-        session['host'] = None
     _send_update_session_messages(session, excluding=[session['host'], player])
     return _okay_response(201)
 

@@ -253,7 +253,7 @@ public extension MultiPlayer.Dev {
                             Text(player + (player == self.player ? " ◀" : ""))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .foregroundColor(player == self.host ? Defaults.highlightColor : Color.primary)
-                                SmallButton(icon: "target", size: 17, disabled: !self.sessionState.connected) {
+                                SmallButton(icon: "target", disabled: !self.sessionState.connected) {
                                     LOGD("sending ping to: \(player)")
                                     let xxx = await self.session.ping(player: player, timeout: 5000);
                                     LOGD("back from await for sending ping to: \(player)")

@@ -142,7 +142,7 @@ public extension MultiPlayer.Dev {
             self.icon = icon;
             self.color = color ?? ((icon != nil) ? Defaults.iconColor : .yellow);
             self.background = background ?? Defaults.foreground;
-            self.size = size ?? ((icon != nil) ? 20 : Defaults.fontSize);
+            self.size = size ?? ((icon != nil) ? Defaults.iconSize : Defaults.fontSize);
             self.disabled = disabled;
             self.action = action;
             self.leading = leading ?? padding ?? 0;
