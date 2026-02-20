@@ -76,8 +76,8 @@ def _create_session():
             'host':           None,
             'players':        [],
             'inbox':          {},
-            'sent_count':     {},
-            'received_count': {}
+            'received_count': {},
+            'queued_count':   {}
         }
     return session
 
@@ -106,7 +106,6 @@ def _send_join_session_confirmed_message(session, player):
     # the /register_and_notify endpoint (which calls this function) ONLY if we are the host.
     join_session_confirmed_message = _create_join_session_confirmed_message(session)
     session['inbox'].setdefault(player, []).append(join_session_confirmed_message)
-    session['sent_count'].setdefault(player, 0) ; session['sent_count'][player] += 1
 
 def _send_update_session_messages(session, excluding = []):
     # Note that only the host may send this UpdateSession message; this is enforced
@@ -119,7 +118,6 @@ def _send_update_session_messages(session, excluding = []):
     for player in session['players']:
         if player not in excluding:
             session['inbox'].setdefault(player, []).append(update_session_message)
-            session['sent_count'].setdefault(player, 0) ; session['sent_count'][player] += 1
 
 def _okay_response(status = 200):
     return jsonify({'status': 'OK'}), status
@@ -170,7 +168,6 @@ def get_session_endpoint(session):
                 'host':           session['host'],
                 'players':        session['players'],
                 'inbox':          session['inbox'],
-                'sent_count':     session['sent_count'],
                 'received_count': session['received_count'],
                 'queued_count':   {user: len(messages) for user, messages in session['inbox'].items()}}
     if debug:
@@ -184,7 +181,6 @@ def old_get_session_endpoint(session):
                         'host':              session['host'],
                         'players':           session['players'],
                         'inbox':             session['inbox'],
-                        'sent_count':        session['sent_count'],
                         'received_count':    session['received_count'],
                         'queued_count':      {user: len(messages) for user, messages in session['inbox'].items()},
                         'debug':             True,
@@ -194,7 +190,6 @@ def old_get_session_endpoint(session):
                     'host':     session['host'],
                     'players':  session['players'],
                     'inbox':    session['inbox'],
-                    'sent_count':     session['sent_count'],
                     'received_count': session['received_count'],
                     'queued_count':      {user: len(messages) for user, messages in session['inbox'].items()},
            }), 200
@@ -356,7 +351,6 @@ def send_message_endpoint(session, player):
         return _noplayer_response()
     message = request.get_json()
     session['inbox'].setdefault(player, []).append(message)
-    session['sent_count'].setdefault(player, 0) ; session['sent_count'][player] += 1;
     return _okay_response()
 
 # Sends the given message (in the POST data) to the host player,
@@ -371,7 +365,6 @@ def send_host_message_endpoint(session):
         return _nohost_response()
     message = request.get_json()
     session['inbox'].setdefault(host, []).append(message)
-    session['sent_count'].setdefault(host, 0) ; session['sent_count'][host] += 1;
     return _okay_response()
 
 # Removes and returns any/all of the messages available
@@ -429,8 +422,8 @@ def clear_player_messages_endpoint(session, player):
         return _noplayer_response()
     if player in session['inbox']:
         del session['inbox'][player]
-        del session['sent_count'][player]
         del session['received_count'][player]
+        del session['queued_count'][player]
     return _okay_response()
 
 # Clears out all message data for ALL of the players, for the given session.
@@ -441,8 +434,8 @@ def clear_player_messages_endpoint(session, player):
 @with_session
 def clear_session_messages_endpoint(session):
     session['inbox'].clear()
-    session['sent_count'].clear()
     session['received_count'].clear()
+    session['queued_count'].clear()
     return _okay_response()
 
 # Resets ALL data for ALL sessions.

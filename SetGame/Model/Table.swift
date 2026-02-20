@@ -55,16 +55,12 @@ public class Table: ObservableObject, MultiPlayer.SessionHandler {
     }
 
     private var multiPlayer: MultiPlayer.Session? {
-        return self.settings.multiPlayer.enabled ? self.session : nil;
+        return self.settings.multiPlayer.enabled && (self.session?.connected ?? false) ? self.session : nil;
     }
 
     private var multiPlayerHost: MultiPlayer.Session? {
-        if (self.settings.multiPlayer.enabled) {
-            if let session = self.session {
-                if (session.hosting) {
-                    return session;
-                }
-            }
+        if let session = self.multiPlayer, session.hosting {
+            return session;
         }
         return nil;
     }

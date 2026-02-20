@@ -204,9 +204,9 @@ public extension MultiPlayer {
 
         public static func messageCounts(info: Json, player: String) -> (sent: Int, queued: Int, received: Int) {
             var sent: Int = 0; var queued: Int = 0; var received: Int = 0;
-            if let count: Json = info["sent_count"] as? Json, let count = count[player] as? Int {
-                sent = count;
-            }
+         // if let count: Json = info["sent_count"] as? Json, let count = count[player] as? Int {
+         //     sent = count;
+         // }
             if let count: Json = info["queued_count"] as? Json, let count = count[player] as? Int {
                 queued = count;
             }
