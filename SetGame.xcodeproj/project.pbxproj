@@ -28,6 +28,7 @@
 		9826D1942F47B8530023A271 /* DevPanelControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1932F47B8530023A271 /* DevPanelControls.swift */; };
 		9826D1962F47BAB90023A271 /* DevPanelDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1952F47BAB90023A271 /* DevPanelDefaults.swift */; };
 		9826D1982F47BB2C0023A271 /* MultiPlayerDev.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1972F47BB2C0023A271 /* MultiPlayerDev.swift */; };
+		9826D19A2F48E0A00023A271 /* TextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9826D1992F48E0A00023A271 /* TextMessage.swift */; };
 		9867E12F2F1E573000CB221F /* Delay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E12D2F1E573000CB221F /* Delay.swift */; };
 		9867E1332F1E86FE00CB221F /* CardGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1322F1E86FE00CB221F /* CardGridView.swift */; };
 		9867E1392F1FC98E00CB221F /* TableDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9867E1382F1FC98E00CB221F /* TableDemo.swift */; };
@@ -127,6 +128,7 @@
 		9826D1932F47B8530023A271 /* DevPanelControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevPanelControls.swift; sourceTree = "<group>"; };
 		9826D1952F47BAB90023A271 /* DevPanelDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevPanelDefaults.swift; sourceTree = "<group>"; };
 		9826D1972F47BB2C0023A271 /* MultiPlayerDev.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiPlayerDev.swift; sourceTree = "<group>"; };
+		9826D1992F48E0A00023A271 /* TextMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessage.swift; sourceTree = "<group>"; };
 		9867E12D2F1E573000CB221F /* Delay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delay.swift; sourceTree = "<group>"; };
 		9867E1322F1E86FE00CB221F /* CardGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardGridView.swift; sourceTree = "<group>"; };
 		9867E1382F1FC98E00CB221F /* TableDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableDemo.swift; sourceTree = "<group>"; };
@@ -367,19 +369,20 @@
 		98E1F2BF2F3FAA9200F6DAA3 /* Messages */ = {
 			isa = PBXGroup;
 			children = (
-				9826D1872F46BB140023A271 /* PingAcknowledgeMessage.swift */,
-				98E1F3082F4527B600F6DAA3 /* NewGameMessage.swift */,
-				98E1F3062F45269800F6DAA3 /* SetMissedMessage.swift */,
-				98E1F3042F4524E800F6DAA3 /* SetConfirmedMessage.swift */,
-				98E1F3022F4508EE00F6DAA3 /* SetFoundMessage.swift */,
 				98E1F2B62F3FAA9200F6DAA3 /* JoinSessionConfirmedMessage.swift */,
 				98E1F2B72F3FAA9200F6DAA3 /* JoinSessionMessage.swift */,
 				98E1F2B82F3FAA9200F6DAA3 /* LeaveSessionMessage.swift */,
 				98E1F2B92F3FAA9200F6DAA3 /* MessageConversion.swift */,
 				98E1F2BA2F3FAA9200F6DAA3 /* MessageConveyance.swift */,
 				98E1F2BB2F3FAA9200F6DAA3 /* MessageType.swift */,
+				98E1F3082F4527B600F6DAA3 /* NewGameMessage.swift */,
 				98E1F2BC2F3FAA9200F6DAA3 /* PingMessage.swift */,
+				9826D1872F46BB140023A271 /* PingAcknowledgeMessage.swift */,
 				98E1F2BD2F3FAA9200F6DAA3 /* RequestHostSessionMessage.swift */,
+				98E1F3042F4524E800F6DAA3 /* SetConfirmedMessage.swift */,
+				98E1F3022F4508EE00F6DAA3 /* SetFoundMessage.swift */,
+				98E1F3062F45269800F6DAA3 /* SetMissedMessage.swift */,
+				9826D1992F48E0A00023A271 /* TextMessage.swift */,
 				98E1F2BE2F3FAA9200F6DAA3 /* UpdateSessionMessage.swift */,
 			);
 			path = Messages;
@@ -626,6 +629,7 @@
 				98E1F2CE2F3FAA9200F6DAA3 /* JoinSessionConfirmedMessage.swift in Sources */,
 				98E1F2CF2F3FAA9200F6DAA3 /* SessionHandler.swift in Sources */,
 				98E1F2D02F3FAA9200F6DAA3 /* RequestHostSessionMessage.swift in Sources */,
+				9826D19A2F48E0A00023A271 /* TextMessage.swift in Sources */,
 				9826D1922F47B55E0023A271 /* DevSessionState.swift in Sources */,
 				98E1F2D12F3FAA9200F6DAA3 /* UpdateSessionMessage.swift in Sources */,
 				98E1F2D22F3FAA9200F6DAA3 /* Message.swift in Sources */,

@@ -12,6 +12,7 @@ public extension MultiPlayer {
         case setFound;             // host or non-host
         case setConfirmed;         // from host only
         case setMissed;           // from host only
+        case text;                 // host or non-host
     }
 }
 
@@ -33,4 +34,5 @@ public extension MultiPlayer.SessionHandler {
     func handle(message: MultiPlayer.SetFoundMessage) {}
     func handle(message: MultiPlayer.SetConfirmedMessage) {}
     func handle(message: MultiPlayer.SetMissedMessage) {}
+    func handle(message: MultiPlayer.TextMessage) {}
 }

@@ -18,7 +18,8 @@ public extension MultiPlayer {
                                                newGame: handler.handle,
                                                setFound: handler.handle,
                                                setConfirmed: handler.handle,
-                                               setMissed: handler.handle);
+                                               setMissed: handler.handle,
+                                               text: handler.handle);
                 }
             }
         }
@@ -34,7 +35,8 @@ public extension MultiPlayer {
                                     newGame: ((NewGameMessage) -> Void)? = nil,
                                     setFound: ((SetFoundMessage) -> Void)? = nil,
                                     setConfirmed: ((SetConfirmedMessage) -> Void)? = nil,
-                                    setMissed: ((SetMissedMessage) -> Void)? = nil) {
+                                    setMissed: ((SetMissedMessage) -> Void)? = nil,
+                                    text: ((TextMessage) -> Void)? = nil) {
             if let message: Message = message {
                 switch message {
                     case let message as PingMessage: ping?(message);
@@ -48,6 +50,7 @@ public extension MultiPlayer {
                     case let message as SetFoundMessage: setFound?(message);
                     case let message as SetConfirmedMessage: setConfirmed?(message);
                     case let message as SetMissedMessage: setMissed?(message);
+                    case let message as TextMessage: text?(message);
                     default: break;
                 }
             }

@@ -380,6 +380,7 @@ public extension MultiPlayer.Dev {
                     case .setFound:             return "set-found";
                     case .setConfirmed:         return "set-confirm";
                     case .setMissed:            return "set-missed";
+                    case .text:                 return "text";
                 }
             }
 
