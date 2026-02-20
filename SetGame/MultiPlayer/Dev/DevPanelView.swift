@@ -471,9 +471,9 @@ public extension MultiPlayer.Dev {
                                     .font(.system(size: 13, weight: .semibold))
                                     .foregroundColor(message.to == self.player ? Defaults.highlightColor : .primary)
                                     .frame(maxHeight: .infinity, alignment: .topLeading)
-                                Text("\(message.message.from + (message.message.from == message.host ? " \(Defaults.starChar)" : ""))")
+                                Text("\(message.message.sender + (message.message.sender == message.host ? " \(Defaults.starChar)" : ""))")
                                     .font(.system(size: 13, weight: .regular))
-                                    .foregroundColor(message.message.from == self.player ? Defaults.highlightColor : .primary)
+                                    .foregroundColor(message.message.sender == self.player ? Defaults.highlightColor : .primary)
                                     .lineLimit(1)
                                 Text("\(MessagesView.messageType(message.message))")
                                     .font(.system(size: 13, weight: .regular))
@@ -497,9 +497,9 @@ public extension MultiPlayer.Dev {
                                         .frame(maxHeight: .infinity, alignment: .topLeading)
                                     VStack(alignment: .leading, spacing: 2) {
                                         ForEach(received, id: \.id) { message in
-                                            Text("\(message.message.from + (message.message.from == message.host ? " \(Defaults.starChar)" : ""))")
+                                            Text("\(message.message.sender + (message.message.sender == message.host ? " \(Defaults.starChar)" : ""))")
                                                 .font(.system(size: 13, weight: .regular))
-                                                .foregroundColor(message.message.from == self.player ? Defaults.highlightColor : .primary)
+                                                .foregroundColor(message.message.sender == self.player ? Defaults.highlightColor : .primary)
                                                 .lineLimit(1)
                                         }
                                     }

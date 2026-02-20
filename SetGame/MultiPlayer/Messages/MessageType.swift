@@ -11,7 +11,7 @@ public extension MultiPlayer {
         case newGame;              // host or non-host
         case setFound;             // host or non-host
         case setConfirmed;         // from host only
-        case setMissed;           // from host only
+        case setMissed;            // from host only
         case chat;                 // host or non-host
     }
 }

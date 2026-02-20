@@ -4,7 +4,7 @@ public extension MultiPlayer {
 
     public struct SetFoundMessage: Message {
         public  let type: MessageType;
-        public let from: String;
+        public  let sender: String;
         //
         // For SetFoundMessage the player is the player who found the set.
         //
@@ -13,7 +13,7 @@ public extension MultiPlayer {
         public  var cards: [TableCard] { MessageConversion.toCards(self.codes) }
         public init(player: String, cards: [Card]) {
             self.type = .setFound;
-            self.from = "";
+            self.sender = "";
             self.player = player;
             self.codes = cards.map { $0.code };
         }

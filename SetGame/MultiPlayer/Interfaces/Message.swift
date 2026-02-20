@@ -4,7 +4,7 @@ public extension MultiPlayer {
 
     public protocol Message: Codable {
         var type: MessageType { get }
-        var from: String { get }
+        var sender: String { get }
         var json: [String: Any]? { get };
     }
 }

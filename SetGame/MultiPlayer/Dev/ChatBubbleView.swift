@@ -8,7 +8,7 @@ public extension MultiPlayer.Dev {
         let message: MultiPlayer.ChatMessage
 
         private var isMe: Bool {
-            message.from == player
+            message.sender == player
         }
 
         public var body: some View {

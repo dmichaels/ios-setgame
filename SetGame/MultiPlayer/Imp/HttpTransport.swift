@@ -154,7 +154,7 @@ public extension MultiPlayer {
         //
         private func postMessage(path: String, message: Message, session: String? = nil, send: Bool = false) async -> Bool {
             if var message: Json = message.json, let session: String = session ?? self.session {
-                if (send) { message["from"] = self.player; }
+                if (send) { message["sender"] = self.player; }
                 if let response: Json = await self.url.post(session, path, data: message, as: Json.self, key: self.key) {
                     if let status: String = response["status"] as? String, status == "OK" {
                         return true;
@@ -170,7 +170,7 @@ public extension MultiPlayer {
         //
         private func postMessage(path: String, message: Message, session: String? = nil, send: Bool = false) -> Bool {
             if var message: Json = message.json, let session: String = session ?? self.session {
-                if (send) { message["from"] = self.player; }
+                if (send) { message["sender"] = self.player; }
                 if (self.url.post(session, path, data: message, key: self.key)) {
                     return true;
                 }

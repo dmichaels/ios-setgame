@@ -294,13 +294,13 @@ public extension MultiPlayer {
 		}
 
         private func handle(message: PingMessage) {
-            LOGD("handling ping message from [\(message.from)]")
+            LOGD("handling ping message from [\(message.sender)]")
             // self.handler.handle(message: message);
             let ack = PingAcknowledgeMessage(id: message.id)
             Task {
-                await self.send(message: ack, to: message.from)
+                await self.send(message: ack, to: message.sender)
             }
-            LOGD("handling ping message done from [\(message.from)]")
+            LOGD("handling ping message done from [\(message.sender)]")
         }
 
         private func handle(message: PingAcknowledgeMessage) {

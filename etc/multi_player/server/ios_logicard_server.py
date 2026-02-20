@@ -74,7 +74,7 @@ def _create_sent_counts(received_messages: dict) -> dict:
         for message_entry in received_messages:
             for recipient_data in message_entry.values():
                 for message in recipient_data.get('messages', []):
-                    sender = message.get('from')
+                    sender = message.get('sender')
                     if sender:
                         counts[sender] = counts.get(sender, 0) + 1
     return counts
@@ -87,14 +87,14 @@ def _create_sent_counts(received_messages: dict) -> dict:
 
 def _create_join_session_confirmed_message(session):
     return {'type': 'joinSessionConfirmed',
-            'from': str(session['host']),
+            'sender': str(session['host']),
             'session': str(session['session']),
             'host': str(session['host']),
             'players': list(session['players'])}
 
 def _create_update_session_message(session):
     return {'type': 'updateSession',
-            'from': str(session['host']),
+            'sender': str(session['host']),
             'host': str(session['host']),
             'players': list(session['players'])}
 
@@ -120,7 +120,7 @@ def _send_update_session_messages(session, excluding = []):
 # Chat stuff.
 
 def _store_chat_message(session, player, message):
-    if (message['type'] != 'chat') or not (sender := message.get('from')):
+    if (message['type'] != 'chat') or not (sender := message.get('sender')):
         return
     recipient = player
     key = tuple(sorted([sender, recipient]))
