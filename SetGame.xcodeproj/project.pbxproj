@@ -68,7 +68,7 @@
 		98E1F2D42F3FAA9200F6DAA3 /* MultiPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2C02F3FAA9200F6DAA3 /* MultiPlayer.swift */; };
 		98E1F2D62F3FAA9200F6DAA3 /* MessageConveyance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2BA2F3FAA9200F6DAA3 /* MessageConveyance.swift */; };
 		98E1F2E62F3FABF000F6DAA3 /* Timeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2E52F3FABF000F6DAA3 /* Timeout.swift */; };
-		98E1F2E92F3FDDC500F6DAA3 /* DevPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2E72F3FDDC500F6DAA3 /* DevPanel.swift */; };
+		98E1F2E92F3FDDC500F6DAA3 /* DevPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F2E72F3FDDC500F6DAA3 /* DevPanelView.swift */; };
 		98E1F3032F4508EE00F6DAA3 /* SetFoundMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F3022F4508EE00F6DAA3 /* SetFoundMessage.swift */; };
 		98E1F3052F4524E800F6DAA3 /* SetConfirmedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F3042F4524E800F6DAA3 /* SetConfirmedMessage.swift */; };
 		98E1F3072F45269800F6DAA3 /* SetMissedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E1F3062F45269800F6DAA3 /* SetMissedMessage.swift */; };
@@ -167,7 +167,7 @@
 		98E1F2BE2F3FAA9200F6DAA3 /* UpdateSessionMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSessionMessage.swift; sourceTree = "<group>"; };
 		98E1F2C02F3FAA9200F6DAA3 /* MultiPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiPlayer.swift; sourceTree = "<group>"; };
 		98E1F2E52F3FABF000F6DAA3 /* Timeout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timeout.swift; sourceTree = "<group>"; };
-		98E1F2E72F3FDDC500F6DAA3 /* DevPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevPanel.swift; sourceTree = "<group>"; };
+		98E1F2E72F3FDDC500F6DAA3 /* DevPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevPanelView.swift; sourceTree = "<group>"; };
 		98E1F3022F4508EE00F6DAA3 /* SetFoundMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetFoundMessage.swift; sourceTree = "<group>"; };
 		98E1F3042F4524E800F6DAA3 /* SetConfirmedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetConfirmedMessage.swift; sourceTree = "<group>"; };
 		98E1F3062F45269800F6DAA3 /* SetMissedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetMissedMessage.swift; sourceTree = "<group>"; };
@@ -400,7 +400,7 @@
 		98E1F2E82F3FDDC500F6DAA3 /* Dev */ = {
 			isa = PBXGroup;
 			children = (
-				98E1F2E72F3FDDC500F6DAA3 /* DevPanel.swift */,
+				98E1F2E72F3FDDC500F6DAA3 /* DevPanelView.swift */,
 				9826D1932F47B8530023A271 /* DevPanelControls.swift */,
 				9826D1952F47BAB90023A271 /* DevPanelDefaults.swift */,
 				9826D1912F47B55E0023A271 /* DevSessionState.swift */,
@@ -612,7 +612,7 @@
 				9811914A25ED5ACF0083606B /* TableCard.swift in Sources */,
 				98A5C74B2F098D02009E708D /* HelpView.swift in Sources */,
 				989D93712EF43A8500BE461B /* DeckView.swift in Sources */,
-				98E1F2E92F3FDDC500F6DAA3 /* DevPanel.swift in Sources */,
+				98E1F2E92F3FDDC500F6DAA3 /* DevPanelView.swift in Sources */,
 				98E1F2C42F3FAA9200F6DAA3 /* LeaveSessionMessage.swift in Sources */,
 				9826D1902F47791E0023A271 /* DevLogger.swift in Sources */,
 				98E1F2C52F3FAA9200F6DAA3 /* MessageType.swift in Sources */,

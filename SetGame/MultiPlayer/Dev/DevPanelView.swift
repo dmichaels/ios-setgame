@@ -2,7 +2,7 @@ import SwiftUI
 
 public extension MultiPlayer.Dev {
 
-    public struct DevPanel: View {
+    public struct DevPanelView: View {
 
         @ObservedObject private var table: Table
         @ObservedObject private var settings: Settings;
@@ -15,7 +15,7 @@ public extension MultiPlayer.Dev {
         private var transport: MultiPlayer.Transport { MultiPlayer.HttpSession.instance.transport as! MultiPlayer.HttpTransport }
 
         public init(table: Table, settings: Settings, margin: Int = 0) {
-            LOGD("DevPanel.init!!!")
+            LOGD("DevPanelView.init!!!")
             self.table = table;
             self.settings = settings;
             self.margin = margin;

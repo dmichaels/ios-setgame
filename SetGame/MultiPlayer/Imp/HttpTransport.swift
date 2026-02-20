@@ -184,7 +184,7 @@ public extension MultiPlayer {
             }
         }
 
-        // These are for internal dev/testing/debugging (DevPanel) usage only!
+        // These are for internal dev/testing/debugging (DevPanelView) usage only!
 
         public func sessions() async -> [String]? {
             if let sessions: [String] = await self.url.get("/sessions", as: [String].self, key: self.key) {
