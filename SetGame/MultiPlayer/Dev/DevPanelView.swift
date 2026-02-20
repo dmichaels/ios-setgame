@@ -14,11 +14,7 @@ public extension MultiPlayer.Dev {
         private var session: MultiPlayer.Session { MultiPlayer.HttpSession.instance }
         private var transport: MultiPlayer.Transport { MultiPlayer.HttpSession.instance.transport as! MultiPlayer.HttpTransport }
 
-        let chats: [MultiPlayer.ChatMessage] = [
-            MultiPlayer.ChatMessage("Hello, world!"),
-            MultiPlayer.ChatMessage("Sup"),
-            MultiPlayer.ChatMessage("EOF")
-        ]
+        var chats: [MultiPlayer.ChatMessage] = [];
 
         public init(table: Table, settings: Settings, margin: Int = 0) {
             LOGD("DevPanelView.init!!!")
@@ -27,6 +23,11 @@ public extension MultiPlayer.Dev {
             self.margin = margin;
             self.sessionState = SessionState(player: MultiPlayer.HttpSession.instance.player,
                                              pollInterval: pollInterval);
+            self.chats.append(contentsOf: [
+                MultiPlayer.ChatMessage(recipient: self.session.player, text: "Hello, world!"),
+                MultiPlayer.ChatMessage(recipient: self.session.player, text: "Sup"),
+                MultiPlayer.ChatMessage(recipient: self.session.player, text: "EOF")
+            ]);
         }
 
         public var body: some View {
@@ -278,7 +279,7 @@ public extension MultiPlayer.Dev {
                                 }
                                 SmallButton(icon: "ellipsis.message", disabled: !self.sessionState.connected) {
                                     LOGD("sending text to: \(player)")
-                                    let xxx = await self.session.send(message: MultiPlayer.ChatMessage("Hello, world!"), to: self.player);
+                                    let xxx = await self.session.send(message: MultiPlayer.ChatMessage(recipient: self.player, text: "Hello, world!"), to: self.player);
                                     LOGD("back from await for text send to: \(player)")
                                     LOGD(xxx ? "text send result true" : "text send result false")
                                 }

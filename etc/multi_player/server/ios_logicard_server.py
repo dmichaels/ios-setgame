@@ -117,6 +117,15 @@ def _send_update_session_messages(session, excluding = []):
         if player not in excluding:
             session['inbox'].setdefault(player, []).append(update_session_message)
 
+# Chat stuff.
+
+def _store_chat_message(session, player, message):
+    if (message['type'] != 'chat') or not (sender := message.get('from')):
+        return
+    recipient = player
+    key = tuple(sorted([sender, recipient]))
+    session.setdefault('chats', {}).setdefault(key, []).append(message)
+
 def _okay_response(status = 200):
     return jsonify({'status': 'OK'}), status
 
@@ -128,6 +137,9 @@ def _noplayer_response():
 
 def _nohost_response(status = 404):
     return jsonify({'status': 'nohost'}), status
+
+def _nochats_response(status = 404):
+    return jsonify({'status': 'nochats'}), status
 
 # The endpoints.
 
@@ -319,6 +331,8 @@ def send_message_endpoint(session, player):
         return _noplayer_response()
     message = request.get_json()
     session['inbox'].setdefault(player, []).append(message)
+    if message.get('type') == 'chat':
+        _store_chat_message(session, player, message)
     return _okay_response()
 
 # Sends the given message (in the POST data) to the host player,
@@ -375,6 +389,14 @@ def peek_messages_endpoint(session, player):
         return _noplayer_response()
     messages = session['inbox'].get(player, [])
     return jsonify(messages), 200
+
+@app.route('/<session>/chats/<recipient>/<sender>', methods=['GET'])
+@with_session
+def retrieve_chats_endpoint(session, recipient, sender):
+    key = tuple(sorted([recipient, sender]))
+    if not (chats := session.get('chats', {}).get(key)):
+        return _nochats_response()
+    return jsonify(chats), 200
 
 # Clears out all message data for ALL of the players, for the given session.
 # Example Request:  POST /DEADBEEF/clear
