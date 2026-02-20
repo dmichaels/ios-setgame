@@ -25,7 +25,6 @@ public extension MultiPlayer.Dev {
                                              pollInterval: pollInterval);
             self.chats.append(contentsOf: [
                 MultiPlayer.ChatMessage(recipient: self.session.player, text: "Hello, world!"),
-                MultiPlayer.ChatMessage(recipient: self.session.player, text: "Sup"),
                 MultiPlayer.ChatMessage(recipient: self.session.player, text: "EOF")
             ]);
         }
