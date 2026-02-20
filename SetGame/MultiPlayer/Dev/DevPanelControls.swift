@@ -124,6 +124,8 @@ public extension MultiPlayer.Dev {
         private let color: Color;
         private let background: Color;
         private let size: Int;
+        private var bold: Bool;
+        private var semibold: Bool;
         private let disabled: Bool;
         private let leading: Int;
         private let trailing: Int;
@@ -135,7 +137,8 @@ public extension MultiPlayer.Dev {
 
         public init( _ text: String? = nil, icon: String? = nil,
                        color: Color? = nil, background: Color? = nil,
-                       size: Int? = nil, disabled: Bool = false,
+                       size: Int? = nil, bold: Bool = false, semibold: Bool = true,
+                       disabled: Bool = false,
                        leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil,
                        action: @escaping () async -> Void) {
             self.text = text;
@@ -143,6 +146,8 @@ public extension MultiPlayer.Dev {
             self.color = color ?? ((icon != nil) ? Defaults.iconColor : .yellow);
             self.background = background ?? Defaults.foreground;
             self.size = size ?? ((icon != nil) ? Defaults.iconSize : Defaults.fontSize);
+            self.bold = bold;
+            self.semibold = semibold;
             self.disabled = disabled;
             self.action = action;
             self.leading = leading ?? padding ?? 0;
@@ -155,14 +160,13 @@ public extension MultiPlayer.Dev {
             } label: {
                 if let icon: String = icon {
                     Image(systemName: icon)
-                        .foregroundColor(color)
-                        .font(.system(size: CGFloat(self.size)))
-                        .fontWeight(.semibold)
+                        .foregroundColor(self.disabled ? .gray : color)
+                        .font(.system(size: CGFloat(self.size), weight: bold ? .bold : (semibold ? .semibold : .regular)))
                         .disabled(self.disabled)
                 }
                 else if let text: String = text {
                     Text(text)
-                        .font(.system(size: CGFloat(self.size), weight: .semibold))
+                        .font(.system(size: CGFloat(self.size), weight: bold ? .bold : (semibold ? .semibold : .regular)))
                         .foregroundColor(self.disabled ? .gray : self.color)
                         .padding(.horizontal, self.horizontalPadding)
                         .padding(.vertical, self.verticalPadding)

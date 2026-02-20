@@ -157,7 +157,7 @@ public extension MultiPlayer.Dev {
                     }
                 }
                 RegularText("", padding: 2)
-                SmallButton(icon: "xmark.rectangle.portrait", disabled: !self.sessionState.leaveable) {
+                SmallButton(icon: "xmark.rectangle.portrait", size: Defaults.iconSize + 4, disabled: !self.sessionState.leaveable) {
                     if let info = await self.transport.session(self.session.session) {
                         let (sent, queued, received) = MultiPlayer.HttpTransport.messageCounts(info: info, player: self.session.player);
                     }
@@ -254,15 +254,15 @@ public extension MultiPlayer.Dev {
                         }
                         HStack {
                             HStack {
-                            Text(player + (player == self.player ? " ◀" : ""))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundColor(player == self.host ? Defaults.highlightColor : Color.primary)
-                                SmallButton(icon: "target", disabled: !self.sessionState.connected) {
+                                Text(player + (player == self.player ? " ◀" : ""))
+                                    .foregroundColor(player == self.host ? Defaults.highlightColor : Color.primary)
+                                SmallButton(icon: "dot.scope", bold: true, disabled: !self.sessionState.connected) {
                                     LOGD("sending ping to: \(player)")
                                     let xxx = await self.session.ping(player: player, timeout: 5000);
                                     LOGD("back from await for sending ping to: \(player)")
                                     LOGD(xxx ? "ping result true" : "ping result false")
                                 }
+                                Spacer()
                             }
                             Text(self.noplayers ? Defaults.emptySetChar : "\(sent[player] ?? 0)")
                                 .frame(width: 40, alignment: .trailing)
