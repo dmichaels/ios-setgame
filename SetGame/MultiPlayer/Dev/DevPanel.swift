@@ -327,6 +327,10 @@ public extension MultiPlayer.Dev {
                 return sessionState.player;
             }
 
+            private var host: String {
+                return sessionState.host ?? "";
+            }
+
             private var players: [String] {
                 func reorderFirst(_ list: [String], first: String) -> [String] {
                     guard list.contains(first) else { return list };
@@ -461,13 +465,17 @@ public extension MultiPlayer.Dev {
                         ForEach(self.players, id: \.self) { player in
                             if let received: [MultiPlayer.HttpTransport.MessageReceived] = self.messages[player] {
                                 LazyVGrid(columns: MessagesView.columns, alignment: .leading, spacing: 4) {
-                                    Text(player + (player == self.player ? " \(Defaults.starChar)" : ""))
-                                         .font(.system(size: 13, weight: .semibold))
+                                 // Text(player + (player == self.player ? " \(Defaults.starChar)" : ""))
+                                    Text(player + (player == self.host ? " \(Defaults.starChar)" : ""))
+                                        .font(.system(size: 13, weight: .semibold))
+                                        .foregroundColor(player == self.player ? Defaults.highlightColor : .primary)
                                         .frame(maxHeight: .infinity, alignment: .topLeading)
                                     VStack(alignment: .leading, spacing: 2) {
                                         ForEach(received, id: \.id) { message in
-                                            Text("\(message.message.from)")
+                                         // Text("\(message.message.from)")
+                                            Text("\(message.message.from + (message.message.from == message.host ? " \(Defaults.starChar)" : ""))")
                                                 .font(.system(size: 13, weight: .regular))
+                                                .foregroundColor(message.message.from == self.player ? Defaults.highlightColor : .primary)
                                                 .lineLimit(1)
                                         }
                                     }
