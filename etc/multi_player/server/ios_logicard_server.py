@@ -68,19 +68,24 @@ def _create_session():
                              'inbox':   {}}
     return session
 
+# Returns a dictionary with a key for each player which has
+# sent one or more messages and where its value is this count.
+# Note that this knows about the structure of the message on
+# the iOS side, WRT specifically to the "sender" property.
+#
 def _create_sent_counts(received_messages: dict) -> dict:
     counts = {}
     if isinstance(received_messages, list):
         for message_entry in received_messages:
-            for recipient_data in message_entry.values():
-                for message in recipient_data.get('messages', []):
+            for recipient_messages in message_entry.values():
+                for message in recipient_messages.get('messages', []):
                     sender = message.get('sender')
                     if sender:
                         counts[sender] = counts.get(sender, 0) + 1
     return counts
 
 # These functions to "send" specific messages to (i.e. place in the inbox of)
-# players are the only situation where we coordinate closely with the iOS app;
+# players are a rare situation where we coordinate closely with the iOS app;
 # only comes into place for endpoints with the "_and_notify" suffix; and only
 # for the (iOS) messages JoinSessionConfirmed and UpdateSession messages;
 # the point being to avoid an extra roundtrip from device to server.
@@ -119,11 +124,15 @@ def _send_update_session_messages(session, excluding = []):
             update_session_message = _create_update_session_message(session, player)
             session['inbox'].setdefault(player, []).append(update_session_message)
 
-# Chat stuff.
+# Returns true iff the given message looks like an iOS ChatMessage.
+#
+def _is_chat_message(message):
+    return (message.get('type') == 'chat') and message.get('sender')
 
+# Stores the given iOS ChatMessage for the given player (the recipient), for this session.
+#
 def _store_chat_message(session, player, message):
-    if (message['type'] != 'chat') or not (sender := message.get('sender')):
-        return
+    sender = message.get('sender')
     recipient = player
     key = tuple(sorted([sender, recipient]))
     session.setdefault('chats', {}).setdefault(key, []).append(message)
@@ -332,9 +341,9 @@ def send_message_endpoint(session, player):
     if player not in session['players']:
         return _noplayer_response()
     message = request.get_json()
-    message['recipient'] = player # NOTE
+    message['recipient'] = player # Note cognizance of iOS message structure
     session['inbox'].setdefault(player, []).append(message)
-    if message.get('type') == 'chat':
+    if _is_chat_message(message):
         _store_chat_message(session, player, message)
     return _okay_response()
 
@@ -349,7 +358,7 @@ def send_host_message_endpoint(session):
     if not (host := session['host']):
         return _nohost_response()
     message = request.get_json()
-    message['recipient'] = host # NOTE
+    message['recipient'] = host # Note cognizance of iOS message structure
     session['inbox'].setdefault(host, []).append(message)
     return _okay_response()
 
@@ -394,6 +403,11 @@ def peek_messages_endpoint(session, player):
     messages = session['inbox'].get(player, [])
     return jsonify(messages), 200
 
+# Returns (without removal) any/all of the chat messages available
+# for the conversion between the given recipient and sender.
+# Example Request:  GET /DEADBEEF/chats/ada/bob
+# Example Response: [{"type": "chat", "sender": "ada", "recipient": "bob", text: "hello"}]
+#
 @app.route('/<session>/chats/<recipient>/<sender>', methods=['GET'])
 @with_session
 def retrieve_chats_endpoint(session, recipient, sender):
