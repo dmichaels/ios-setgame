@@ -341,9 +341,9 @@ public extension MultiPlayer {
             return false;
         }
 
-        public func chats(sender: String, recipient: String) async -> [ChatMessage] {
-            var result: [ChatMessage] = [];
+        public func chats(sender: String, recipient: String) async -> [ChatMessage]? {
             if let session: String = session ?? self.session {
+                var result: [ChatMessage] = [];
                 if let response: [Json] = await self.url.get(session, "/chats", sender, recipient, as: [Json].self, key: self.key) {
                     for chat: Json in response {
                         if let message = MessageConversion.toMessage(json: chat) as? ChatMessage{
@@ -351,8 +351,9 @@ public extension MultiPlayer {
                         }
                     }
                 }
+                return result;
             }
-            return result;
+            return nil;
         }
     }
 }

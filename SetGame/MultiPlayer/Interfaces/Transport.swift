@@ -25,6 +25,6 @@ public extension MultiPlayer {
         var  production: Bool { get set }
         func debug(enable: Bool?) async -> Bool;
         func ping() async -> Bool;
-        func chats(sender: String, recipient: String) async -> [ChatMessage];
+        func chats(sender: String, recipient: String) async -> [ChatMessage]?;
     }
 }

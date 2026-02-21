@@ -14,7 +14,7 @@ public extension MultiPlayer.Dev {
         private var session: MultiPlayer.Session { MultiPlayer.HttpSession.instance }
         private var transport: MultiPlayer.Transport { MultiPlayer.HttpSession.instance.transport as! MultiPlayer.HttpTransport }
 
-        var chats: [MultiPlayer.ChatMessage] = [];
+        // var chats: [MultiPlayer.ChatMessage] = [];
 
         public init(table: Table, settings: Settings, margin: Int = 0) {
             LOGD("DevPanelView.init!!!")
@@ -23,10 +23,12 @@ public extension MultiPlayer.Dev {
             self.margin = margin;
             self.sessionState = SessionState(player: MultiPlayer.HttpSession.instance.player,
                                              pollInterval: pollInterval);
+            /*
             self.chats.append(contentsOf: [
                 MultiPlayer.ChatMessage("Hello, world!"),
                 MultiPlayer.ChatMessage("EOF")
             ]);
+            */
         }
 
         public var body: some View {
@@ -38,7 +40,7 @@ public extension MultiPlayer.Dev {
                 DevPanelServer(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
                 // ChatMessagesView(player: self.session.player, messages: self.chats)
                 ChatView(player: self.session.player,
-                         messages: self.chats,
+                         messages: self.sessionState.chats,
                          recipient: "TODO",
                          background: Defaults.background,
                          backgroundInput: Defaults.background) { text, recipient in
@@ -66,15 +68,14 @@ public extension MultiPlayer.Dev {
         }
 
         private func retrieveChats() async -> [MultiPlayer.ChatMessage] {
-            var result: [MultiPlayer.ChatMessage] = [];
             if let recipient: String = self.sessionState.players.first { $0 != self.sessionState.player } {
-                Task {
-                    let chats = await self.transport.chats(sender: self.sessionState.player, recipient: recipient);
+                if let chats = await self.transport.chats(sender: self.sessionState.player, recipient: recipient) {
                     DEB("retrieved-chats")
                     print(chats)
+                    return chats;
                 }
             }
-            return result;
+            return [];
         }
     }
 
