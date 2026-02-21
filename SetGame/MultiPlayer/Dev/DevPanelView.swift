@@ -24,8 +24,8 @@ public extension MultiPlayer.Dev {
             self.sessionState = SessionState(player: MultiPlayer.HttpSession.instance.player,
                                              pollInterval: pollInterval);
             self.chats.append(contentsOf: [
-                MultiPlayer.ChatMessage(recipient: self.session.player, text: "Hello, world!"),
-                MultiPlayer.ChatMessage(recipient: self.session.player, text: "EOF")
+                MultiPlayer.ChatMessage("Hello, world!"),
+                MultiPlayer.ChatMessage("EOF")
             ]);
         }
 
@@ -278,7 +278,7 @@ public extension MultiPlayer.Dev {
                                 }
                                 SmallButton(icon: "ellipsis.message", disabled: !self.sessionState.connected) {
                                     LOGD("sending text to: \(player)")
-                                    let xxx = await self.session.send(message: MultiPlayer.ChatMessage(recipient: self.player, text: "Hello, world!"), to: self.player);
+                                    let xxx = await self.session.send(message: MultiPlayer.ChatMessage("Hello, world!"), to: self.player);
                                     LOGD("back from await for text send to: \(player)")
                                     LOGD(xxx ? "text send result true" : "text send result false")
                                 }

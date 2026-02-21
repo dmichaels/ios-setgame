@@ -7,10 +7,10 @@ public extension MultiPlayer {
         public let sender: String;
         public let recipient: String;
         public let text: String;
-        public init(recipient: String, text: String) {
+        public init(_ text: String) {
             self.type = .chat;
             self.sender = "";
-            self.recipient = recipient;
+            self.recipient = "";
             self.text = text;
         }
     }

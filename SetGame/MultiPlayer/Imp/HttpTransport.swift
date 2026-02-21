@@ -154,7 +154,10 @@ public extension MultiPlayer {
         //
         private func postMessage(path: String, message: Message, session: String? = nil, send: Bool = false) async -> Bool {
             if var message: Json = message.json, let session: String = session ?? self.session {
-                if (send) { message["sender"] = self.player; }
+                if (send) {
+                    message["sender"] = self.player;
+                    message["recipient"] = self.player;
+                }
                 if let response: Json = await self.url.post(session, path, data: message, as: Json.self, key: self.key) {
                     if let status: String = response["status"] as? String, status == "OK" {
                         return true;

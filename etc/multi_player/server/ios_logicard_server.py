@@ -85,16 +85,18 @@ def _create_sent_counts(received_messages: dict) -> dict:
 # for the (iOS) messages JoinSessionConfirmed and UpdateSession messages;
 # the point being to avoid an extra roundtrip from device to server.
 
-def _create_join_session_confirmed_message(session):
+def _create_join_session_confirmed_message(session, player):
     return {'type': 'joinSessionConfirmed',
             'sender': str(session['host']),
+            'recipient': player,
             'session': str(session['session']),
             'host': str(session['host']),
             'players': list(session['players'])}
 
-def _create_update_session_message(session):
+def _create_update_session_message(session, player):
     return {'type': 'updateSession',
             'sender': str(session['host']),
+            'recipient': player,
             'host': str(session['host']),
             'players': list(session['players'])}
 
@@ -102,7 +104,7 @@ def _send_join_session_confirmed_message(session, player):
     # Note that only the host may send this JoinSessionConfirmed message; this is enforced
     # explicitly in the JoinSessionMessage message handler in the iOS app, which calls
     # the /register_and_notify endpoint (which calls this function) ONLY if we are the host.
-    join_session_confirmed_message = _create_join_session_confirmed_message(session)
+    join_session_confirmed_message = _create_join_session_confirmed_message(session, player)
     session['inbox'].setdefault(player, []).append(join_session_confirmed_message)
 
 def _send_update_session_messages(session, excluding = []):
@@ -112,9 +114,9 @@ def _send_update_session_messages(session, excluding = []):
     # ONLY if we are the host; also enforced by the /host_and_notify endpoint,
     # corresponding to the HostSession message in the iOS app, which calls
     # this function only if we are the (newly assigned) host.
-    update_session_message = _create_update_session_message(session)
     for player in session['players']:
         if player not in excluding:
+            update_session_message = _create_update_session_message(session, player)
             session['inbox'].setdefault(player, []).append(update_session_message)
 
 # Chat stuff.
@@ -212,7 +214,7 @@ def register_player_endpoint(session, player):
                     'players': session['players']}), 201
 
 # Same as POST /<session>/register/<player> but also "sends" (puts in the
-# inbox of) the player just registered a joinSessionConfirmed message and
+# inbox of) the player now registered a joinSessionConfirmed message, and
 # to all of the other players (except the host) an updateSession message;
 # but if the player was already registered then does nothing.
 # Example Request:  POST /DEADBEEF/register_and_notify/ada
