@@ -332,12 +332,13 @@ def send_message_endpoint(session, player):
     if player not in session['players']:
         return _noplayer_response()
     message = request.get_json()
+    message['recipient'] = player # NOTE
     session['inbox'].setdefault(player, []).append(message)
     if message.get('type') == 'chat':
         _store_chat_message(session, player, message)
     return _okay_response()
 
-# Sends the given message (in the POST data) to the host player,
+# Sends the given message (in the POST data) to the HOST player,
 # for the given session; if there is no host then does nothing.
 # Example Request:  POST /DEADBEEF/send
 # Example Response: {"status": "OK"}
@@ -348,6 +349,7 @@ def send_host_message_endpoint(session):
     if not (host := session['host']):
         return _nohost_response()
     message = request.get_json()
+    message['recipient'] = host # NOTE
     session['inbox'].setdefault(host, []).append(message)
     return _okay_response()
 

@@ -18,6 +18,7 @@ public extension MultiPlayer.Dev {
         public              var sessionShort: String { self.sessions.shorten(self.session ?? Defaults.emptySetChar) }
         public private(set) var polling: Bool = false;
         public private(set) var pollCount: Int = 0;
+        public private(set) var chats: [MultiPlayer.ChatMessage] = [];
 
         // Read/write properties (from external POV).
         //
@@ -69,12 +70,14 @@ public extension MultiPlayer.Dev {
                                          pingable: Bool,
                                          production: Bool,
                                          server: String,
-                                         debug: Bool) {
+                                         debug: Bool,
+                                         chats: [MultiPlayer.ChatMessage]) {
             self.update(from: session);
             self.pingable = pingable;
             self.production = production;
             self.server = server;
             self.debug = debug;
+            self.chats = chats;
             self.pollCount = self.poller.count;
             if let info: Json = info {
                 self.info = info;

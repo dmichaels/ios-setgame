@@ -52,7 +52,8 @@ public extension MultiPlayer.Dev {
                                          pingable: await self.transport.ping(),
                                          production: transport.production,
                                          server: transport.server,
-                                         debug: await transport.debug(enable: nil));
+                                         debug: await transport.debug(enable: nil),
+                                         chats: await self.retrieveChats());
                 if let session: String = self.session.session, !self.sessionState.sessions.contains(session) {
                     //
                     // Our connected session seems to have disappeared out from under us;
@@ -62,6 +63,18 @@ public extension MultiPlayer.Dev {
                 }
             })}
             .onDisappear { self.sessionState.poll(enable: false) }
+        }
+
+        private func retrieveChats() async -> [MultiPlayer.ChatMessage] {
+            var result: [MultiPlayer.ChatMessage] = [];
+            if let recipient: String = self.sessionState.players.first { $0 != self.sessionState.player } {
+                Task {
+                    let chats = await self.transport.chats(sender: self.sessionState.player, recipient: recipient);
+                    DEB("retrieved-chats")
+                    print(chats)
+                }
+            }
+            return result;
         }
     }
 
@@ -278,8 +291,10 @@ public extension MultiPlayer.Dev {
                                 }
                                 SmallButton(icon: "ellipsis.message", disabled: !self.sessionState.connected) {
                                     LOGD("sending text to: \(player)")
-                                    for player in self.sessionState.players {
-                                        let xxx = await self.session.send(message: MultiPlayer.ChatMessage("Hello, world!"), to: player);
+                                    if let recipient: String = self.sessionState.players.first { $0 != self.sessionState.player } {
+                                        let message: MultiPlayer.ChatMessage = MultiPlayer.ChatMessage(
+                                            "Hello, world! FROM [\(self.sessionState.player)] to [\(recipient)]");
+                                        let xxx = await self.session.send(message: message, to: recipient);
                                         LOGD("back from await for text send to: \(player)")
                                         LOGD(xxx ? "text send result true" : "text send result false")
                                     }

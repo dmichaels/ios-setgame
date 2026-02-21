@@ -103,7 +103,6 @@ public extension MultiPlayer {
         // Sends the given message to the given player for the session.
         //
         public func send(message: Message, player: String, session: String? = nil) async -> Bool {
-            DEB("HttpTransport.send(\(message.type)> player: \(player) session: \(session)")
             return await self.postMessage(path: "/send/\(player)", message: message, session: session, send: true);
         }
 
@@ -142,7 +141,6 @@ public extension MultiPlayer {
                 let player: String = player ?? self.player;
                 if let data: Data = await self.url.get(session, "/receive", player, key: self.key) {
                     if let messages: [Message] = MessageConversion.toMessages(data: data) {
-                        if messages.count > 0 { for message in messages { DEB("MESSAGE RECEIVED: \(message.type)") } }
                         return messages; 
                     }
                 }
@@ -155,8 +153,10 @@ public extension MultiPlayer {
         private func postMessage(path: String, message: Message, session: String? = nil, send: Bool = false) async -> Bool {
             if var message: Json = message.json, let session: String = session ?? self.session {
                 if (send) {
+                    //
+                    // Note that the recipient field is set explicitly by the /send endpoint!
+                    //
                     message["sender"] = self.player;
-                    message["recipient"] = self.player;
                 }
                 if let response: Json = await self.url.post(session, path, data: message, as: Json.self, key: self.key) {
                     if let status: String = response["status"] as? String, status == "OK" {
@@ -339,6 +339,20 @@ public extension MultiPlayer {
                 }
             }
             return false;
+        }
+
+        public func chats(sender: String, recipient: String) async -> [ChatMessage] {
+            var result: [ChatMessage] = [];
+            if let session: String = session ?? self.session {
+                if let response: [Json] = await self.url.get(session, "/chats", sender, recipient, as: [Json].self, key: self.key) {
+                    for chat: Json in response {
+                        if let message = MessageConversion.toMessage(json: chat) as? ChatMessage{
+                            result.append(message);
+                        }
+                    }
+                }
+            }
+            return result;
         }
     }
 }
