@@ -2,7 +2,7 @@ import SwiftUI
 
 public extension MultiPlayer.Dev {
 
-    public struct DevPanelView: View {
+    public struct DevPanel: View {
 
         @ObservedObject private var table: Table
         @ObservedObject private var settings: Settings;
