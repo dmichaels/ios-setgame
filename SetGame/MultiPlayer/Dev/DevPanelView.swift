@@ -278,9 +278,11 @@ public extension MultiPlayer.Dev {
                                 }
                                 SmallButton(icon: "ellipsis.message", disabled: !self.sessionState.connected) {
                                     LOGD("sending text to: \(player)")
-                                    let xxx = await self.session.send(message: MultiPlayer.ChatMessage("Hello, world!"), to: self.player);
-                                    LOGD("back from await for text send to: \(player)")
-                                    LOGD(xxx ? "text send result true" : "text send result false")
+                                    for player in self.sessionState.players {
+                                        let xxx = await self.session.send(message: MultiPlayer.ChatMessage("Hello, world!"), to: player);
+                                        LOGD("back from await for text send to: \(player)")
+                                        LOGD(xxx ? "text send result true" : "text send result false")
+                                    }
                                 }
                                 Spacer()
                             }
