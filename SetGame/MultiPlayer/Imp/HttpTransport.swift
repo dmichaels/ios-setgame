@@ -155,6 +155,11 @@ public extension MultiPlayer {
                 if (send) {
                     //
                     // Note that the recipient field is set explicitly by the /send endpoint!
+                    // Could set it here, but not (so trivially) for send-to-host (because we
+                    // do not specifically know about the host, which is known by HttpSession),
+                    // which is a specific endpoint (which takes to player/to/recipient argument);
+                    // so for symmetry we set the message recipient, for both the send-to-host
+                    // and the regular send endpoints, directly in the server.
                     //
                     message["sender"] = self.player;
                 }
@@ -173,7 +178,12 @@ public extension MultiPlayer {
         //
         private func postMessage(path: String, message: Message, session: String? = nil, send: Bool = false) -> Bool {
             if var message: Json = message.json, let session: String = session ?? self.session {
-                if (send) { message["sender"] = self.player; }
+                if (send) {
+                    //
+                    // See note in the non-async version of this function above.
+                    //
+                    message["sender"] = self.player;
+                }
                 if (self.url.post(session, path, data: message, key: self.key)) {
                     return true;
                 }
