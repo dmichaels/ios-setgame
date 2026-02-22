@@ -31,8 +31,11 @@ public extension MultiPlayer.Dev {
                 DevPanelMessages(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
                 DevPanelServer(table: table, session: session, transport: transport, sessionState: $sessionState, margin: 12)
                 ChatView(player: self.session.player,
+                         players: sessionState.players,
                          messages: self.sessionState.chats,
-                         recipient: "TODO",
+                         recipients: ["TODO", "TODO2"],
+                         transport: transport,
+                         sessionState: $sessionState,
                          background: Defaults.background,
                          backgroundInput: Defaults.background) { text, recipient in
                     LOGD("ChatView.callback> text: [\(text)] recipient: [\(recipient)]")

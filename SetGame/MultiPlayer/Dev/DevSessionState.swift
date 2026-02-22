@@ -87,29 +87,6 @@ public extension MultiPlayer.Dev {
             }
         }
 
-        private class Poller {
-            private let interval: UInt64;
-            private var task: Task<Void, Never>? = nil;
-            fileprivate private(set) var count: Int = 0;
-            fileprivate init(milliseconds: Int = 1) {
-                self.interval = UInt64(milliseconds * 1_000_000);
-            }
-            fileprivate func start(_ task: @escaping () async -> Void) {
-                guard self.task == nil else { return }
-                self.task = Task {
-                    while (!Task.isCancelled) {
-                        self.count += 1;
-                        await task();
-                        try? await Task.sleep(nanoseconds: self.interval);
-                    }
-                }
-            }
-            fileprivate func stop() {
-                task?.cancel();
-                task = nil;
-            }
-        }
-
         public struct SessionList {
 
             private static      let shortLengthDefault: Int = 4;

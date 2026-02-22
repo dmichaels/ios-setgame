@@ -4,8 +4,8 @@ public extension MultiPlayer.Dev {
 
     public struct ChatMessagesView: View {
 
-        let player: String
-        let messages: [MultiPlayer.ChatMessage]
+        let player: String;
+        let messages: [MultiPlayer.ChatMessage];
 
         public var body: some View {
             ScrollViewReader { proxy in

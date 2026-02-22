@@ -4,17 +4,16 @@ public extension MultiPlayer.Dev {
 
     public struct ChatBubbleView: View {
 
-        let player: String
-        let message: MultiPlayer.ChatMessage
+        let player: String;
+        let message: MultiPlayer.ChatMessage;
 
         private var isMe: Bool {
-            message.sender == player
+            message.sender == player;
         }
 
         public var body: some View {
             HStack {
                 if isMe { Spacer() }
-
                 Text(message.text)
                     .padding(12)
                     .background(
@@ -23,7 +22,6 @@ public extension MultiPlayer.Dev {
                     )
                     .foregroundColor(isMe ? .white : .primary)
                     .frame(maxWidth: 260, alignment: isMe ? .trailing : .leading)
-
                 if !isMe { Spacer() }
             }
             .padding(.horizontal, 8)
