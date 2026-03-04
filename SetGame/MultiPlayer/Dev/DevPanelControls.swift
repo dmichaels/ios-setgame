@@ -51,6 +51,59 @@ public extension MultiPlayer.Dev {
         }
     }
 
+    public struct XJoinControl: View {
+
+        @Binding fileprivate var items: PrefixableList;
+                 fileprivate let size: Int = Defaults.fontSize;
+                 fileprivate let disabled: Bool;
+                 fileprivate let leading: Int;
+                 fileprivate let trailing: Int;
+                 fileprivate let action: () async -> Void;
+
+        private let horizontalPadding: CGFloat = 8;
+        private let verticalPadding: CGFloat = 4;
+        private let cornerRadius: CGFloat = 8;
+        private let color: Color = .yellow;
+        private let background: Color = Defaults.foreground;
+        private let foregroundDisabled: Color = .gray;
+
+        private var selected: String;
+
+        public init(items: Binding<PrefixableList>, disabled: Bool = false,
+                    leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil,
+                    action: @escaping () async -> Void) {
+            self._items = items;
+            self.selected = "";
+            self.disabled = disabled;
+            self.leading = leading ?? padding ?? 0;
+            self.trailing = trailing ?? padding ?? 0;
+            self.action = action;
+        }
+
+        public var body: some View {
+            HStack(spacing: 0) {
+                Menu {
+                    ForEach(self.items.prefixes, id: \.self) { item in
+                        Button(item) { /*selected = item*/ }
+                    }
+                } label: {
+                    Text(selected.isEmpty ? (items.value(at: 0, prefix: true) ?? Defaults.emptySetChar) : selected)
+                        .font(.system(size: CGFloat(self.size - 1)))
+                        .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
+                        .padding(.trailing, self.horizontalPadding)
+                        .padding(.vertical, self.verticalPadding)
+                }
+            }
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(disabled ? self.background.opacity(0.4) : self.background)
+            )
+            .onAppear {
+            }
+            .padding(.leading, CGFloat(self.leading)).padding(.trailing, CGFloat(self.trailing))
+        }
+    }
+
     public struct JoinControl: View {
 
                  fileprivate let items: [String];

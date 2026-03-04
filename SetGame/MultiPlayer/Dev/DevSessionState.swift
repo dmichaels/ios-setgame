@@ -1,31 +1,41 @@
 import Foundation
 
+@MainActor
 public extension MultiPlayer.Dev {
 
-    public struct SessionState {
+    public class SessionState: ObservableObject {
 
+        @Published public var xsessions: PrefixableList = PrefixableList();
         // Readonly properties (from external POV).
         //
-        public private(set) var session: String? = nil;
-        public private(set) var host: String? = nil;
-        public              let player: String;
+        // @Published public private(set) var session: String? = nil;
+        @Published public private(set) var host: String? = nil;
+        public                         let player: String;
         public              var hosting: Bool { self.player == (self.host ?? "") }
-        public private(set) var players: [String] = [];
-        public private(set) var connected: Bool = false;
-        public private(set) var leaveable: Bool = false;
-        public private(set) var pingable: Bool = false;
-        public private(set) var info: Json = [:];
-        public              var sessionShort: String { self.sessions.shorten(self.session ?? Defaults.emptySetChar) }
-        public private(set) var polling: Bool = false;
-        public private(set) var pollCount: Int = 0;
-        public private(set) var chats: [MultiPlayer.ChatMessage] = [];
+        // @Published public private(set) var players: [String] = [];
+        @Published public var players: [String] = [];
+        @Published public private(set) var connected: Bool = false;
+        @Published public private(set) var leaveable: Bool = false;
+        @Published public private(set) var pingable: Bool = false;
+        @Published public private(set) var info: Json = [:];
+        // public              var sessionShort: String { self.sessions.shorten(self.session ?? Defaults.emptySetChar) }
+        @Published public private(set) var sessionShort: String = "";
+        @Published public private(set) var polling: Bool = false;
+        @Published public private(set) var pollCount: Int = 0;
+        @Published public private(set) var chats: [MultiPlayer.ChatMessage] = [];
 
         // Read/write properties (from external POV).
         //
-        public var debug: Bool = false;
-        public var production: Bool = false;
-        public var server: String = "";
-        public var sessions: SessionList = SessionList();
+        @Published public var debug: Bool = false;
+        @Published public var production: Bool = false;
+        @Published public var server: String = "";
+
+        @Published public private(set) var session: String? = nil {
+            didSet { self.sessionShort = self.sessions.shorten(session ?? Defaults.emptySetChar) }
+        }
+        @Published public var sessions: SessionList = SessionList() {
+            didSet { self.sessionShort = self.sessions.shorten(session ?? Defaults.emptySetChar) }
+        }
 
         // Inaccessible properties (from external POV).
         //
@@ -37,7 +47,7 @@ public extension MultiPlayer.Dev {
             poller = Poller(milliseconds: pollInterval);
         }
 
-        public mutating func poll(enable: Bool) {
+        public /*mutating*/ func poll(enable: Bool) {
             if (enable) {
                 if let pollerAction = self.pollerAction {
                     self.polling = true;
@@ -50,28 +60,31 @@ public extension MultiPlayer.Dev {
             }
         }
 
-        public mutating func poll(_ action: (@escaping () async -> Void)) {
+        public /*mutating*/ func poll(_ action: (@escaping () async -> Void)) {
             self.pollerAction = action;
             self.polling = true;
             self.poller.start(action);
         }
 
-        public mutating func update(from session: MultiPlayer.Session) {
+        public /*mutating*/ func update(from session: MultiPlayer.Session, select: Bool = false) {
             self.session = session.session;
             self.host = session.host;
             self.players = session.players;
             self.connected = session.connected;
             self.leaveable = session.leaveable;
+            if (select) {
+                self.sessions.select(self.session);
+            }
         }
 
-        public mutating func update(from session: MultiPlayer.Session,
-                                         info: Json?,
-                                         sessions: [String]?,
-                                         pingable: Bool,
-                                         production: Bool,
-                                         server: String,
-                                         debug: Bool,
-                                         chats: [MultiPlayer.ChatMessage]) {
+        public /*mutating*/ func update(from session: MultiPlayer.Session,
+                                        info: Json?,
+                                        sessions: [String]?,
+                                        pingable: Bool,
+                                        production: Bool,
+                                        server: String,
+                                        debug: Bool,
+                                        chats: [MultiPlayer.ChatMessage]) {
             self.update(from: session);
             self.pingable = pingable;
             self.production = production;
@@ -83,16 +96,21 @@ public extension MultiPlayer.Dev {
                 self.info = info;
             }
             if let sessions: [String] = sessions {
-                self.sessions.update(sessions.reversed());
+                // self.sessions.update(sessions.reversed());
+                var copy = self.sessions;
+                copy.update(sessions.reversed());
+                self.sessions = copy;
             }
+            // self.sessionShort = self.sessions.shorten(self.session ?? Defaults.emptySetChar)
+            self.xsessions = PrefixableList(sessions)
         }
 
         public struct SessionList {
 
             private static      let shortLengthDefault: Int = 4;
-            fileprivate         var sessions: [String] = [];
-            public private(set) var sessionsShort: [String] = [];
-            public              var selected: String? { return self.sessions.first { $0.hasPrefix(self.selectedShort) }; }
+            private             var list: [String] = [];
+            public private(set) var listShort: [String] = [];
+            public              var selected: String? { return self.list.first { $0.hasPrefix(self.selectedShort) }; }
             public              var selectedShort: String = "";
             private             var shortLength: Int = SessionList.shortLengthDefault;
 
@@ -101,13 +119,16 @@ public extension MultiPlayer.Dev {
             }
 
             public func contains(_ session: String?) -> Bool {
-                return (session != nil) && self.sessions.contains(session!) ? true : false;
+                return (session != nil) && self.list.contains(session!) ? true : false;
             }
 
-            public mutating func select(_ session: String?) {
+            fileprivate mutating func select(_ session: String?) {
                 if let session: String = session {
-                    if (!self.sessions.contains(session)) {
-                        self.sessions.append(session);
+                    if (!self.list.contains(session)) {
+                        // self.list.append(session);
+                        var copy = list;
+                        copy.append(session);
+                        self.list = copy;
                     }
                     self.selectedShort = self.shorten(session);
                 }
@@ -117,11 +138,11 @@ public extension MultiPlayer.Dev {
             }
 
             fileprivate mutating func update(_ sessions: [String]) {
-                let changed: Bool = (sessions == self.sessions);
-                self.sessions = sessions;
-                (self.sessionsShort, self.shortLength) = SessionList.shortenValues(sessions);
+                let changed: Bool = (sessions == self.list);
+                self.list = sessions;
+                (self.listShort, self.shortLength) = SessionList.shortenValues(sessions);
                 if (self.selectedShort.isEmpty || changed) {
-                    self.selectedShort = self.sessionsShort.first ?? "";
+                    self.selectedShort = self.listShort.first ?? "";
                 }
             }
 

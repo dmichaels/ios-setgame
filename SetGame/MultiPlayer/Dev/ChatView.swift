@@ -5,12 +5,12 @@ public extension MultiPlayer.Dev {
     public struct ChatView: View {
 
         let player: String;
-        var players: [String];
+        @Binding public var players: [String];
         let messages: [MultiPlayer.ChatMessage];
-        let recipients: [String];
+        // let recipients: [String];
         @State var recipient: String = "todo";
         var transport: MultiPlayer.Transport;
-        @Binding var sessionState: SessionState;
+        @ObservedObject var sessionState: SessionState;
         var background: Color = Color(.systemBackground);
         var backgroundInput: Color = Color(.systemBackground);
         var foreground: Color = .black;
@@ -22,7 +22,7 @@ public extension MultiPlayer.Dev {
 
         public var body: some View {
             VStack(spacing: 0) {
-                ChatRecipientView(recipients: self.players, recipient: $recipient)
+                ChatRecipientView(players: $players, recipient: $recipient)
                 ChatMessagesView(player: player, messages: messages)
                 Divider()
                 HStack {
@@ -65,18 +65,24 @@ public extension MultiPlayer.Dev {
     }
 
     private struct ChatRecipientView: View {
-        public var recipients: [String];
+        @Binding public var players: [String];
         @Binding public var recipient: String;
         public var body: some View {
             HStack(spacing: 0) {
                 Image(systemName: "person")
+                    .onTapGesture {
+                        DEB("XXX: \(self.players)")
+                    }
                 Text("To: ").lineLimit(1).layoutPriority(1)
                 Picker("", selection: $recipient) {
-                    ForEach(self.recipients, id: \.self) { recipient in
+                    ForEach(self.players, id: \.self) { recipient in
                         Text(recipient)
                     }
                 }.pickerStyle(.menu)
                 Spacer()
+            }
+            .onAppear {
+                DEB("ChatRecipientView.onAppear> \(self.players)")
             }
         }
     }
