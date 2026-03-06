@@ -1,16 +1,27 @@
 public struct PrefixableList {
 
-    public         let values: [String];
-    public         let prefixes: [String];
-    public         let prefixLength: Int;
-    private static let prefixLengthMin = 4;
+    public private(set) var values: [String];
+    public private(set) var prefixes: [String];
+    public private(set) var prefixLength: Int;
+    public private(set) var selected: String?;
+    private static      let prefixLengthMin: Int = 4;
 
     public init(_ values: [String]? = [], _ prefixLengthMin: Int? = nil) {
         var values: [String] = values ?? [];
-        let prefixLength: Int = PrefixableList.setup(&values, prefixLengthMin);
+        let prefixLength: Int = PrefixableList.setup(&values, PrefixableList.prefixLengthMin);
         self.values = values;
         self.prefixLength = prefixLength;
         self.prefixes = self.values.map { String($0.prefix(prefixLength)) }
+        self.selected = nil;
+    }
+
+    public mutating func update(_ values: [String]?) {
+        var values: [String] = values ?? [];
+        let prefixLength: Int = PrefixableList.setup(&values, PrefixableList.prefixLengthMin);
+        self.values = values;
+        self.prefixLength = prefixLength;
+        self.prefixes = self.values.map { String($0.prefix(prefixLength)) }
+        self.select(self.selected);
     }
 
     public func contains(_ value: String?) -> Bool {
@@ -22,7 +33,7 @@ public struct PrefixableList {
             return true;
         }
         else {
-            let values: [String] = self.values.filter { $0.hasPrefix(value) };
+            let values: [String] = self.values.filter { $0.hasPrefix(value) }
             return values.count == 1;
         }
     }
@@ -41,7 +52,7 @@ public struct PrefixableList {
             return prefix ? String(value.prefix(self.prefixLength)) : value;
         }
         else {
-            let values: [String] = self.values.filter { $0.hasPrefix(value) };
+            let values: [String] = self.values.filter { $0.hasPrefix(value) }
             return (values.count == 1) ? (prefix ? String(values[0].prefix(self.prefixLength)) : values[0]) : nil;
         }
     }
@@ -50,8 +61,33 @@ public struct PrefixableList {
         return (index >= 0 && index < self.values.count) ? (prefix ? self.prefixes[index] : self.values[index]) : nil;
     }
 
+    public func first(prefix: Bool = false) -> String? {
+        return self.value(at: 0, prefix: prefix);
+    }
+
     public var first: String? {
         return self.value(at: 0);
+    }
+
+    public mutating func select(_ value: String?) {
+        if let value: String = self.find(value) {
+            self.selected = value;
+        }
+    }
+
+    public func selected(prefix: Bool = false) -> String? {
+        if let value: String = self.selected {
+            return prefix
+                   ? ((value.count == self.prefixLength)
+                      ? value
+                      : String(value.prefix(self.prefixLength)))
+                   : value;
+        }
+        return nil;
+    }
+
+    public mutating func unselect() {
+        self.selected = nil;
     }
 
     // Ensures that the values in the given array of strings are unique, removing
