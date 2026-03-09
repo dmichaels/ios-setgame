@@ -92,11 +92,8 @@ public struct PrefixableList {
 
     public func selected(_ value: String?) -> Bool {
         if let value: String = value {
-            if (value == self.selected) {
-                return true;
-            }
-            else if (self.find(value) == self.selected) {
-                return true;
+            if let selected: String = self.selected {
+                return (value == selected) || (value == selected.prefix(self.prefixLength));
             }
         }
         else if (self.selected == nil) {
