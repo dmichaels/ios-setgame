@@ -67,36 +67,56 @@ public extension MultiPlayer.Dev {
         private let background: Color = Defaults.foreground;
         private let foregroundDisabled: Color = .gray;
 
-        private var selected: String;
+        @State private var selected: String?;
 
         public init(items: Binding<PrefixableList>, disabled: Bool = false,
                     leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil,
                     action: @escaping () async -> Void) {
             self._items = items;
-            self.selected = "";
             self.disabled = disabled;
             self.leading = leading ?? padding ?? 0;
             self.trailing = trailing ?? padding ?? 0;
             self.action = action;
+            self.selected = self.items.selected(prefix: true) ?? "";
         }
 
         public var body: some View {
             HStack(spacing: 0) {
+                // Text("FOO:[" + self.selected + "]")
+                    Button {
+                        Task { await action() }
+                    } label: {
+                        Text("join:")
+                            .font(.system(size: CGFloat(self.size), weight: .semibold))
+                            .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
+                    }
+                    .buttonStyle(.plain)
                 Menu {
                     ForEach(self.items.prefixes, id: \.self) { item in
-                        Button(item) { /*selected = item*/ }
+                        // Button(item) { /*selected = item*/ }
+                        Button(item) {
+                            DEB("SELECT: [\(item)] \(items)")
+                            self.items.select(item)
+                            self.selected = self.items.selected(prefix: true) ?? ""
+                            DEB("POST-SELECT: [\(self.items.selected(prefix: true))] [\(self.items.selected)] [\(self.selected)] [\(item)] \(self.items)")
+                        }
                     }
                 } label: {
-                    Text(selected.isEmpty ? (items.value(at: 0, prefix: true) ?? Defaults.emptySetChar) : selected)
-                        .font(.system(size: CGFloat(self.size - 1)))
+                    Text(self.selected ?? self.items.selected(prefix: true) ?? Defaults.emptySetChar)
+                        // .font(.system(size: CGFloat(self.size - 1)))
                         .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
-                        .padding(.trailing, self.horizontalPadding)
-                        .padding(.vertical, self.verticalPadding)
+                        // .frame(height: 30)
+                        //.padding(.vertical, self.verticalPadding)
+                        //.padding(.trailing, self.horizontalPadding)
                 }
             }
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .fill(disabled ? self.background.opacity(0.4) : self.background)
+                    .padding(.vertical, self.verticalPadding * 4)
+                    .padding(.trailing, self.horizontalPadding * 4)
+                    .border(.red)
+                        //.frame(height: 40)
             )
             .onAppear {
             }

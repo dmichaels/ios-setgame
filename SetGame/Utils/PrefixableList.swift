@@ -12,7 +12,7 @@ public struct PrefixableList {
         self.values = values;
         self.prefixLength = prefixLength;
         self.prefixes = self.values.map { String($0.prefix(prefixLength)) }
-        self.selected = nil;
+        self.selected = values.count > 0 ? values[0] : nil;
     }
 
     public mutating func update(_ values: [String]?) {
@@ -21,7 +21,9 @@ public struct PrefixableList {
         self.values = values;
         self.prefixLength = prefixLength;
         self.prefixes = self.values.map { String($0.prefix(prefixLength)) }
-        self.select(self.selected);
+        if (!self.select(self.selected)) {
+            self.selected = values.count > 0 ? values[0] : nil;
+        }
     }
 
     public func contains(_ value: String?) -> Bool {
@@ -69,10 +71,12 @@ public struct PrefixableList {
         return self.value(at: 0);
     }
 
-    public mutating func select(_ value: String?) {
+    public mutating func select(_ value: String?) -> Bool {
         if let value: String = self.find(value) {
             self.selected = value;
+            return true;
         }
+        return false;
     }
 
     public func selected(prefix: Bool = false) -> String? {
@@ -84,6 +88,21 @@ public struct PrefixableList {
                    : value;
         }
         return nil;
+    }
+
+    public func selected(_ value: String?) -> Bool {
+        if let value: String = value {
+            if (value == self.selected) {
+                return true;
+            }
+            else if (self.find(value) == self.selected) {
+                return true;
+            }
+        }
+        else if (self.selected == nil) {
+            return true;
+        }
+        return false;
     }
 
     public mutating func unselect() {
