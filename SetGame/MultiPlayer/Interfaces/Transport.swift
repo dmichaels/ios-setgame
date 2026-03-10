@@ -16,7 +16,7 @@ public extension MultiPlayer {
         func send(message: Message, player: String, session: String?) async -> Bool;
         func sendHost(message: Message, session: String?) async -> Bool;
 
-        // These are for internal dev/testing/debugging (DevPanelView) usage only!
+        // These are for internal dev/testing/debugging (i.e. DevPanel) usage only!
 
         func sessions() async -> [String]?;
         func session(_ session: String?) async -> Json?;
