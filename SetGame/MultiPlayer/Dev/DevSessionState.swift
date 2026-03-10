@@ -5,7 +5,7 @@ public extension MultiPlayer.Dev {
 
     public class SessionState: ObservableObject {
 
-        @Published public var xsessions: PrefixableList = PrefixableList();
+        @Published public var xsessions: PrefixableList = PrefixableList(prefixLengthMin: 3);
         // Readonly properties (from external POV).
         //
         // @Published public private(set) var session: String? = nil;

@@ -2,13 +2,15 @@ public struct PrefixableList {
 
     public private(set) var values: [String];
     public private(set) var prefixes: [String];
-    public private(set) var prefixLength: Int;
-    public private(set) var selectedValue: String?;
+    private             var prefixLength: Int;
+    private             var selectedValue: String?;
+    private             let prefixLengthMin: Int;
     private static      let prefixLengthMin: Int = 4;
 
-    public init(_ values: [String]? = [], _ prefixLengthMin: Int? = nil) {
+    public init(_ values: [String]? = [], prefixLengthMin: Int? = nil) {
         var values: [String] = values ?? [];
-        let prefixLength: Int = PrefixableList.setup(&values, PrefixableList.prefixLengthMin);
+        self.prefixLengthMin = prefixLengthMin ?? PrefixableList.prefixLengthMin;
+        let prefixLength: Int = PrefixableList.setup(&values, self.prefixLengthMin);
         self.values = values;
         self.prefixLength = prefixLength;
         self.prefixes = self.values.map { String($0.prefix(prefixLength)) }
@@ -16,7 +18,7 @@ public struct PrefixableList {
 
     public mutating func update(_ values: [String]?) {
         var values: [String] = values ?? [];
-        let prefixLength: Int = PrefixableList.setup(&values, PrefixableList.prefixLengthMin);
+        let prefixLength: Int = PrefixableList.setup(&values, self.prefixLengthMin);
         self.values = values;
         self.prefixLength = prefixLength;
         self.prefixes = self.values.map { String($0.prefix(prefixLength)) }
