@@ -32,8 +32,6 @@ public extension MultiPlayer.Dev {
         public var body: some View {
             VStack {
 
-                XJoinControl(items: $sessionState.xsessions) {}
-
                 DevPanelInfo(table: table, session: session, transport: transport, sessionState: sessionState, margin: margin)
                 DevPanelSession(table: table, session: session, transport: transport, sessionState: sessionState, margin: 12)
                 DevPanelPlayers(table: table, session: session, transport: transport, sessionState: sessionState, margin: 12)
@@ -66,7 +64,8 @@ public extension MultiPlayer.Dev {
                     //
                     self.session.disconnect();
                 }
-                DEB("poll> sessionState.players: \(sessionState.players)")
+                // DEB("poll> sessionState.players: \(sessionState.players)")
+                // DEB("poll> xsessions: \(sessionState.xsessions)")
             })}
             .onDisappear { self.sessionState.poll(enable: false) }
         }
@@ -103,6 +102,26 @@ public extension MultiPlayer.Dev {
 
         fileprivate var body: some View {
             AnyDevPanel(table: table, margin: margin) {
+                XJoinControl(items: $sessionState.xsessions) {
+                    DEB("join-try: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)]")
+                    if (!self.session.connected) {
+                    DEB("join-try2: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)]")
+                        // if let session: String = sessionState.sessions.selected {
+                        if let session: String = sessionState.xsessions.selected {
+                    DEB("join-try3: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)] [\(session)]")
+                            if await self.session.join(session: session) {
+                                self.sessionState.update(from: self.session);
+                            }
+                            else {
+                                //
+                                // TODO: Do something if join-session fails?
+                                //
+                                let x = 1;
+                                DEB("join-failed: \(sessionState.xsessions.selected)")
+                            }
+                        }
+                    }
+                }
                 RegularText("me:")
                  // CopyableText(sessionState.player,
                  //              color: self.session.hosting ? Defaults.highlightColor : .primary, semibold: true, leading: 3)

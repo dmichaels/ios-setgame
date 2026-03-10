@@ -3,7 +3,7 @@ public struct PrefixableList {
     public private(set) var values: [String];
     public private(set) var prefixes: [String];
     public private(set) var prefixLength: Int;
-    public private(set) var selected: String?;
+    public private(set) var selectedValue: String?;
     private static      let prefixLengthMin: Int = 4;
 
     public init(_ values: [String]? = [], _ prefixLengthMin: Int? = nil) {
@@ -12,7 +12,6 @@ public struct PrefixableList {
         self.values = values;
         self.prefixLength = prefixLength;
         self.prefixes = self.values.map { String($0.prefix(prefixLength)) }
-        self.selected = values.count > 0 ? values[0] : nil;
     }
 
     public mutating func update(_ values: [String]?) {
@@ -21,89 +20,62 @@ public struct PrefixableList {
         self.values = values;
         self.prefixLength = prefixLength;
         self.prefixes = self.values.map { String($0.prefix(prefixLength)) }
-        if (!self.select(self.selected)) {
-            self.selected = values.count > 0 ? values[0] : nil;
+        if (!self.contains(self.selectedValue)) {
+            self.selectedValue = nil;
         }
     }
 
     public func contains(_ value: String?) -> Bool {
-        guard let value else { return false }
-        if (value.count == self.prefixLength) {
-            return self.prefixes.contains(value);
-        }
-        else if (self.values.contains(value)) {
-            return true;
-        }
-        else {
-            let values: [String] = self.values.filter { $0.hasPrefix(value) }
-            return values.count == 1;
-        }
+        guard let value, self.values.count > 0 else { return false }
+        let values: [String] = self.values.filter { $0.hasPrefix(value) }
+        return values.count == 1;
     }
 
     public func find(_ value: String?, prefix: Bool = false) -> String? {
-        guard let value else { return nil }
-        if (value.count == self.prefixLength) {
-            if let index: Int = self.prefixes.firstIndex(of: value) {
-                return prefix ? value : self.values[index];
-            }
-            else {
-                return nil;
-            }
-        }
-        else if (self.values.contains(value)) {
-            return prefix ? String(value.prefix(self.prefixLength)) : value;
-        }
-        else {
-            let values: [String] = self.values.filter { $0.hasPrefix(value) }
-            return (values.count == 1) ? (prefix ? String(values[0].prefix(self.prefixLength)) : values[0]) : nil;
-        }
+        guard let value, self.values.count > 0 else { return nil }
+        let values: [String] = self.values.filter { $0.hasPrefix(value) }
+        return (values.count == 1) ? (prefix ? self.prefix(values[0]) : values[0]) : nil;
     }
 
     public func value(at index: Int, prefix: Bool = false) -> String? {
         return (index >= 0 && index < self.values.count) ? (prefix ? self.prefixes[index] : self.values[index]) : nil;
     }
 
-    public func first(prefix: Bool = false) -> String? {
-        return self.value(at: 0, prefix: prefix);
-    }
-
-    public var first: String? {
-        return self.value(at: 0);
-    }
-
     public mutating func select(_ value: String?) -> Bool {
         if let value: String = self.find(value) {
-            self.selected = value;
-            return true;
-        }
-        return false;
-    }
-
-    public func selected(prefix: Bool = false) -> String? {
-        if let value: String = self.selected {
-            return prefix
-                   ? ((value.count == self.prefixLength)
-                      ? value
-                      : String(value.prefix(self.prefixLength)))
-                   : value;
-        }
-        return nil;
-    }
-
-    public func selected(_ value: String?) -> Bool {
-        if let value: String = value {
-            if let selected: String = self.selected {
-                return (value == selected) || (value == selected.prefix(self.prefixLength));
-            }
-        }
-        else if (self.selected == nil) {
+            self.selectedValue = value;
             return true;
         }
         return false;
     }
 
     public mutating func unselect() {
-        self.selected = nil;
+        self.selectedValue = nil;
+    }
+
+    public func selected(_ value: String?) -> Bool {
+        guard let value, let selected = selectedValue, self.values.count > 0 else { return false }
+        return (value == selected) || (value == self.prefix(selected));
+    }
+
+    public func selected(prefix: Bool = false) -> String? {
+        if let value: String = self.selectedValue {
+            return prefix
+                   ? ((value.count == self.prefixLength)
+                      ? value
+                      : self.prefix(value))
+                   : value;
+        }
+        return self.value(at: 0, prefix: prefix);
+    }
+
+    public var selected: String? {
+        get { self.selected() }
+        set { self.select(newValue) }
+    }
+
+    private func prefix(_ value: String) -> String {
+        return String(value.prefix(self.prefixLength));
     }
 
     // Ensures that the values in the given array of strings are unique, removing

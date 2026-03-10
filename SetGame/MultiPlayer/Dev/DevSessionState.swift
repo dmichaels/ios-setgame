@@ -102,7 +102,8 @@ public extension MultiPlayer.Dev {
                 self.sessions = copy;
             }
             // self.sessionShort = self.sessions.shorten(self.session ?? Defaults.emptySetChar)
-            self.xsessions = PrefixableList(sessions?.reversed())
+            // self.xsessions = PrefixableList(sessions?.reversed())
+            self.xsessions.update(sessions?.reversed());
         }
 
         public struct SessionList {

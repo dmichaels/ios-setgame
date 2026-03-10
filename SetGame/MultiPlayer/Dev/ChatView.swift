@@ -47,8 +47,8 @@ public extension MultiPlayer.Dev {
             .onAppear {
                 self.poller.start {
                     let x = await self.transport.chats(sender: "", recipient: "");
-                    DEB("abc: \(self.players)")
-                    DEB("def: \(self.sessionState.players)")
+                    // DEB("abc: \(self.players)")
+                    // DEB("def: \(self.sessionState.players)")
                 }
             }
             .onDisappear {

@@ -60,8 +60,11 @@ public extension MultiPlayer.Dev {
                  fileprivate let trailing: Int;
                  fileprivate let action: () async -> Void;
 
-        private let horizontalPadding: CGFloat = 8;
+        private let horizontalPaddingLeading: CGFloat = 10;
+        private let horizontalPaddingTrailing: CGFloat = 8;
         private let verticalPadding: CGFloat = 4;
+        private let verticalMarginTop: CGFloat = 3;
+        private let verticalMarginBottom: CGFloat = 2;
         private let cornerRadius: CGFloat = 8;
         private let color: Color = .yellow;
         private let background: Color = Defaults.foreground;
@@ -82,45 +85,37 @@ public extension MultiPlayer.Dev {
 
         public var body: some View {
             HStack(spacing: 0) {
-                // Text("FOO:[" + self.selected + "]")
-                    Button {
-                        Task { await action() }
-                    } label: {
-                        Text("join:")
-                            .font(.system(size: CGFloat(self.size), weight: .semibold))
-                            .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
-                    }
-                    .buttonStyle(.plain)
+                Button { Task {
+                    DEB("XJOIN-CLICK: [\(self.items.selected)] \(self.items)")
+                    await action()
+                }} label: {
+                    Text("join: ")
+                        .font(.system(size: CGFloat(self.size), weight: .semibold))
+                        .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
+                }.buttonStyle(.plain)
                 Menu {
                     ForEach(self.items.prefixes, id: \.self) { item in
-                        // Button(item) { /*selected = item*/ }
                         Button(item) {
-                            DEB("SELECT: [\(item)] \(items)")
                             self.items.select(item)
                             self.selected = self.items.selected(prefix: true) ?? ""
-                            DEB("POST-SELECT: [\(self.items.selected(prefix: true))] [\(self.items.selected)] [\(self.selected)] [\(item)] \(self.items)")
+                            DEB("XJOIN-SELECT: [\(item)] [\(self.items.selected(prefix: true))] [\(self.items.selected)] \(self.items)")
                         }
-                    }
-                } label: {
-                    Text(self.selected ?? self.items.selected(prefix: true) ?? Defaults.emptySetChar)
-                        // .font(.system(size: CGFloat(self.size - 1)))
-                        .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
-                        // .frame(height: 30)
-                        //.padding(.vertical, self.verticalPadding)
-                        //.padding(.trailing, self.horizontalPadding)
+                    }} label: {
+                        Text(self.selected ?? self.items.selected(prefix: true) ?? Defaults.emptySetChar)
+                            .font(.system(size: CGFloat(self.size - 1)))
+                            .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
                 }
             }
+            .padding(.vertical, self.verticalPadding)
+            .padding(.leading, self.horizontalPaddingLeading)
+            .padding(.trailing, self.horizontalPaddingTrailing)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .fill(disabled ? self.background.opacity(0.4) : self.background)
-                    .padding(.vertical, self.verticalPadding * 4)
-                    .padding(.trailing, self.horizontalPadding * 4)
-                    .border(.red)
-                        //.frame(height: 40)
             )
-            .onAppear {
-            }
-            .padding(.leading, CGFloat(self.leading)).padding(.trailing, CGFloat(self.trailing))
+            .padding(.top, self.verticalMarginTop)
+            .padding(.bottom, self.verticalMarginBottom)
+            .lineLimit(1)
         }
     }
 
