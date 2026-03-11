@@ -56,16 +56,17 @@ public extension MultiPlayer.Dev {
         @Binding fileprivate var items: PrefixableList;
                  fileprivate let size: Int = Defaults.fontSize;
                  fileprivate let disabled: Bool;
-                 fileprivate let leading: Int;
-                 fileprivate let trailing: Int;
                  fileprivate let action: () async -> Void;
 
-        private let horizontalPaddingLeading: CGFloat = 10;
-        private let horizontalPaddingTrailing: CGFloat = 8;
-        private let verticalPadding: CGFloat = 4;
-        private let verticalMarginTop: CGFloat = 3;
-        private let verticalMarginBottom: CGFloat = 2;
-        private let cornerRadius: CGFloat = 8;
+        private let paddingLeading: CGFloat;
+        private let paddingTrailing: CGFloat;
+        private let paddingTop: CGFloat;
+        private let paddingBottom: CGFloat;
+        private let marginLeading: CGFloat;
+        private let marginTrailing: CGFloat;
+        private let marginTop: CGFloat;
+        private let marginBottom: CGFloat;
+        private let cornerRadius: CGFloat = 4;
         private let color: Color = .yellow;
         private let background: Color = Defaults.foreground;
         private let foregroundDisabled: Color = .gray;
@@ -73,12 +74,21 @@ public extension MultiPlayer.Dev {
         @State private var selected: String?;
 
         public init(items: Binding<PrefixableList>, disabled: Bool = false,
-                    leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil,
+                    horizontal: Int? = nil, leading: Int? = nil, trailing: Int? = nil,
+                    vertical: Int? = nil, top: Int? = nil, bottom: Int? = nil,
+                    marginHorizontal: Int? = nil, marginLeading: Int? = nil, marginTrailing: Int? = nil,
+                    marginVertical: Int? = nil, marginTop: Int? = nil, marginBottom: Int? = nil,
                     action: @escaping () async -> Void) {
             self._items = items;
             self.disabled = disabled;
-            self.leading = leading ?? padding ?? 0;
-            self.trailing = trailing ?? padding ?? 0;
+            self.paddingLeading  = CGFloat(leading        ?? horizontal       ?? 8);
+            self.paddingTrailing = CGFloat(trailing       ?? horizontal       ?? 8);
+            self.paddingTop      = CGFloat(top            ?? vertical         ?? 4);
+            self.paddingBottom   = CGFloat(bottom         ?? vertical         ?? 4);
+            self.marginLeading   = CGFloat(marginLeading  ?? marginHorizontal ?? 4);
+            self.marginTrailing  = CGFloat(marginTrailing ?? marginHorizontal ?? 4);
+            self.marginTop       = CGFloat(marginTop      ?? marginVertical   ?? 4);
+            self.marginBottom    = CGFloat(marginBottom   ?? marginVertical   ?? 3);
             self.action = action;
             self.selected = self.items.selected(prefix: true) ?? "";
         }
@@ -106,15 +116,16 @@ public extension MultiPlayer.Dev {
                             .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
                 }
             }
-            .padding(.vertical, self.verticalPadding)
-            .padding(.leading, self.horizontalPaddingLeading)
-            .padding(.trailing, self.horizontalPaddingTrailing)
+            .padding(.top, self.paddingTop)
+            .padding(.bottom, self.paddingBottom)
+            .padding(.leading, self.paddingLeading)
+            .padding(.trailing, self.paddingTrailing)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .fill(disabled ? self.background.opacity(0.4) : self.background)
             )
-            .padding(.top, self.verticalMarginTop)
-            .padding(.bottom, self.verticalMarginBottom)
+            .padding(.top, self.marginTop)
+            .padding(.bottom, self.marginBottom)
             .lineLimit(1)
         }
     }
