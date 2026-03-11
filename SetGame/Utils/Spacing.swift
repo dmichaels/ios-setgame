@@ -4,16 +4,14 @@ public struct Spacing {
 
     public static let defaults: Spacing = Spacing();
 
-    public init(padding: Padding) {
-        self.padding = padding; self.margin = Margin();
+    public init(margin: Margin, padding: Padding? = nil) {
+        self.padding = padding ?? Padding();
+        self.margin = margin;
     }
 
-    public init(margin: Margin) {
-        self.padding = Padding(); self.margin = margin;
-    }
-
-    public init(padding: Padding, margin: Margin) {
-        self.padding = padding; self.margin = margin;
+    public init(padding: Padding, margin: Margin? = nil) {
+        self.padding = padding;
+        self.margin = margin ?? Margin();
     }
 
     public init(leading:  Int? = nil, trailing:  Int? = nil, 
