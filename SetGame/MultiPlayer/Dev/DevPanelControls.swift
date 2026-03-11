@@ -58,6 +58,7 @@ public extension MultiPlayer.Dev {
                  fileprivate let disabled: Bool;
                  fileprivate let action: () async -> Void;
 
+        private let spacing: Spacing;
         private let paddingLeading: CGFloat;
         private let paddingTrailing: CGFloat;
         private let paddingTop: CGFloat;
@@ -66,7 +67,7 @@ public extension MultiPlayer.Dev {
         private let marginTrailing: CGFloat;
         private let marginTop: CGFloat;
         private let marginBottom: CGFloat;
-        private let cornerRadius: CGFloat = 4;
+        private let cornerRadius: CGFloat = 5;
         private let color: Color = .yellow;
         private let background: Color = Defaults.foreground;
         private let foregroundDisabled: Color = .gray;
@@ -74,6 +75,7 @@ public extension MultiPlayer.Dev {
         @State private var selected: String?;
 
         public init(items: Binding<PrefixableList>, disabled: Bool = false,
+                    spacing: Spacing = Spacing.defaults,
                     horizontal: Int? = nil, leading: Int? = nil, trailing: Int? = nil,
                     vertical: Int? = nil, top: Int? = nil, bottom: Int? = nil,
                     marginHorizontal: Int? = nil, marginLeading: Int? = nil, marginTrailing: Int? = nil,
@@ -81,6 +83,7 @@ public extension MultiPlayer.Dev {
                     action: @escaping () async -> Void) {
             self._items = items;
             self.disabled = disabled;
+            self.spacing = spacing;
             self.paddingLeading  = CGFloat(leading        ?? horizontal       ?? 8);
             self.paddingTrailing = CGFloat(trailing       ?? horizontal       ?? 8);
             self.paddingTop      = CGFloat(top            ?? vertical         ?? 4);
