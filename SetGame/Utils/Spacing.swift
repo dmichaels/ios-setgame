@@ -16,14 +16,14 @@ public struct Spacing {
         self.padding = padding; self.margin = margin;
     }
 
-    public init(leading:   Int? = nil, trailing:   Int? = nil, 
-                top:       Int? = nil, bottom:     Int? = nil, 
-                mleading:  Int? = nil, mtrailing:  Int? = nil, 
-                mtop:      Int? = nil, mbottom:    Int? = nil) {
-        self.padding = Padding(leading:  leading,  trailing: trailing,
-                               top:      top,      bottom:   bottom);
-        self.margin  = Margin (leading:  mleading, trailing: mtrailing,
-                               top:      mtop,     bottom:   mbottom);
+    public init(leading:  Int? = nil, trailing:  Int? = nil, 
+                top:      Int? = nil, bottom:    Int? = nil, 
+                mleading: Int? = nil, mtrailing: Int? = nil, 
+                mtop:     Int? = nil, mbottom:   Int? = nil) {
+        self.padding = Padding(leading: leading,  trailing: trailing,
+                               top:     top,      bottom:   bottom);
+        self.margin  = Margin (leading: mleading, trailing: mtrailing,
+                               top:     mtop,     bottom:   mbottom);
     }
 
     public let padding: Padding;
