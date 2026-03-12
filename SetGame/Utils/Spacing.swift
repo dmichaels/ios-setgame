@@ -6,26 +6,40 @@ public struct Spacing {
 
     public init(margin: Margin, padding: Padding? = nil) {
         self.padding = padding ?? Padding();
-        self.margin = margin;
+        self.margin  = margin;
     }
 
     public init(padding: Padding, margin: Margin? = nil) {
         self.padding = padding;
-        self.margin = margin ?? Margin();
+        self.margin  = margin ?? Margin();
     }
 
-    public init(leading:  Int? = nil, trailing:  Int? = nil, 
-                top:      Int? = nil, bottom:    Int? = nil, 
-                mleading: Int? = nil, mtrailing: Int? = nil, 
-                mtop:     Int? = nil, mbottom:   Int? = nil) {
-        self.padding = Padding(leading: leading,  trailing: trailing,
-                               top:     top,      bottom:   bottom);
-        self.margin  = Margin (leading: mleading, trailing: mtrailing,
-                               top:     mtop,     bottom:   mbottom);
+    public init(leading:       Int? = nil, trailing:       Int? = nil, 
+                top:           Int? = nil, bottom:         Int? = nil, 
+                leadingMargin: Int? = nil, trailingMargin: Int? = nil, 
+                topMargin:     Int? = nil, bottomMargin:   Int? = nil) {
+        self.padding = Padding(leading: leading,       trailing: trailing,
+                               top:     top,           bottom:   bottom);
+        self.margin  = Margin (leading: leadingMargin, trailing: trailingMargin,
+                               top:     topMargin,     bottom:   bottomMargin);
+    }
+
+    public init(horizontal:       Int? = nil, top:       Int? = nil, bottom:       Int? = nil, 
+                horizontalMargin: Int? = nil, topMargin: Int? = nil, bottomMargin: Int? = nil) {
+        self.padding = Padding(leading: horizontal,       trailing: horizontal,
+                               top:     top,              bottom:   bottom);
+        self.margin  = Margin (leading: horizontalMargin, trailing: horizontalMargin,
+                               top:     topMargin,        bottom:   bottomMargin);
+    }
+
+    public init(horizontal:       Int? = nil, vertical:       Int? = nil, 
+                horizontalMargin: Int? = nil, verticalMargin: Int? = nil) {
+        self.padding = Padding(horizontal: horizontal,       vertical: vertical);
+        self.margin  = Margin (horizontal: horizontalMargin, vertical: verticalMargin);
     }
 
     public let padding: Padding;
-    public let margin: Margin;
+    public let margin:  Margin;
 }
 
 public struct Padding {
