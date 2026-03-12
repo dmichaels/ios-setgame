@@ -54,50 +54,39 @@ public extension MultiPlayer.Dev {
     public struct XJoinControl: View {
 
         @Binding fileprivate var items: PrefixableList;
-                 fileprivate let size: Int = Defaults.fontSize;
-                 fileprivate let disabled: Bool;
-                 fileprivate let action: () async -> Void;
-
+        private let size: Int = Defaults.fontSize;
         private let spacing: Spacing;
-        private let cornerRadius: CGFloat = 5;
-        private let color: Color = .yellow;
+        private let disabled: Bool;
+        private let action: () async -> Void;
+        private let foreground: Color = .yellow;
         private let background: Color = Defaults.foreground;
-        private let foregroundDisabled: Color = .gray;
 
-        @State private var selected: String?;
-
-        public init(items: Binding<PrefixableList>, disabled: Bool = false,
-                    spacing: Spacing = Spacing.defaults,
-                    action: @escaping () async -> Void) {
+        public init(items: Binding<PrefixableList>, spacing: Spacing = Spacing.defaults,
+                    disabled: Bool = false, action: @escaping () async -> Void) {
             self._items = items;
-            self.disabled = disabled;
             self.spacing = Spacing(leading:       8, trailing:       8, top:       4, bottom:       4,
                                    leadingMargin: 4, trailingMargin: 4, topMargin: 4, bottomMargin: 3);
+            self.disabled = disabled;
             self.action = action;
-            self.selected = self.items.selected(prefix: true) ?? "";
         }
 
         public var body: some View {
             RoundedBox(background: self.background, spacing: self.spacing) {
                 Button { Task {
-                    DEB("XJOIN-CLICK: [\(self.items.selected)] \(self.items)")
                     await action()
                 }} label: {
-                    Text("join: ")
-                        .font(.system(size: CGFloat(self.size), weight: .semibold))
-                        .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
+                    Text("join: ").font(.system(size: CGFloat(self.size), weight: .semibold))
+                                  .foregroundColor(self.disabled ? self.foreground.opacity(0.4) : self.foreground)
                 }.buttonStyle(.plain)
                 Menu {
                     ForEach(self.items.prefixes, id: \.self) { item in
                         Button(item) {
                             self.items.select(item)
-                            self.selected = self.items.selected(prefix: true) ?? ""
-                            DEB("XJOIN-SELECT: [\(item)] [\(self.items.selected(prefix: true))] [\(self.items.selected)] \(self.items)")
                         }
                     }} label: {
-                        Text(self.selected ?? self.items.selected(prefix: true) ?? Defaults.emptySetChar)
+                        Text(self.items.selected(prefix: true) ?? Defaults.emptySetChar)
                             .font(.system(size: CGFloat(self.size - 1)))
-                            .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
+                            .foregroundColor(self.disabled ? self.foreground.opacity(0.4) : self.foreground)
                 }
             }
         }
@@ -118,7 +107,6 @@ public extension MultiPlayer.Dev {
         private let cornerRadius: CGFloat = 8;
         private let color: Color = .yellow;
         private let background: Color = Defaults.foreground;
-        private let foregroundDisabled: Color = .gray;
 
         public init(items: [String], selected: Binding<String>, disabled: Bool = false,
                     leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil,
