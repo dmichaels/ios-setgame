@@ -32,6 +32,14 @@ public struct Spacing {
                                top:     topMargin,        bottom:   bottomMargin);
     }
 
+    public init(leading:       Int? = nil, trailing:       Int? = nil, vertical:       Int? = nil,
+                leadingMargin: Int? = nil, trailingMargin: Int? = nil, verticalMargin: Int? = nil) {
+        self.padding = Padding(leading: leading,        trailing: trailing,
+                               top:     vertical,       bottom:   vertical);
+        self.margin  = Margin (leading: leadingMargin,  trailing: trailingMargin,
+                               top:     verticalMargin, bottom:   verticalMargin);
+    }
+
     public init(horizontal:       Int? = nil, vertical:       Int? = nil, 
                 horizontalMargin: Int? = nil, verticalMargin: Int? = nil) {
         self.padding = Padding(horizontal: horizontal,       vertical: vertical);
