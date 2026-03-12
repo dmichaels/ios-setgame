@@ -51,109 +51,110 @@ public extension MultiPlayer.Dev {
         }
     }
 
-    public struct XJoinControl: View {
+    public struct JoinControl: View {
 
         @Binding fileprivate var items: PrefixableList;
-        private let size: Int = Defaults.fontSize;
+        private let size: Int;
         private let spacing: Spacing;
+        private let foreground: Color;
+        private let background: Color;
+        private let weight: Font.Weight;
         private let disabled: Bool;
         private let action: () async -> Void;
-        private let foreground: Color = .yellow;
-        private let background: Color = Defaults.foreground;
 
-        public init(items: Binding<PrefixableList>, spacing: Spacing = Spacing.defaults,
+        public init(items: Binding<PrefixableList>,
+                    size: Int? = nil, weight: Font.Weight = .semibold, spacing: Spacing? = nil,
+                    foreground: Color? = nil, background: Color? = nil,
                     disabled: Bool = false, action: @escaping () async -> Void) {
             self._items = items;
-            self.spacing = Spacing(leading:       8, trailing:       8, top:       4, bottom:       4,
-                                   leadingMargin: 4, trailingMargin: 4, topMargin: 4, bottomMargin: 3);
+            self.size = size ?? Defaults.fontSize;
+            self.spacing = spacing ?? Spacing(leading:       8, trailing:       8, top:       4, bottom:       4,
+                                              leadingMargin: 4, trailingMargin: 4, topMargin: 4, bottomMargin: 3);
+            self.foreground = foreground ?? .yellow;
+            self.background = background ?? Defaults.foreground;
+            self.weight = weight;
             self.disabled = disabled;
             self.action = action;
         }
 
         public var body: some View {
             RoundedBox(background: self.background, spacing: self.spacing) {
-                Button { Task {
-                    await action()
-                }} label: {
-                    Text("join: ").font(.system(size: CGFloat(self.size), weight: .semibold))
-                                  .foregroundColor(self.disabled ? self.foreground.opacity(0.4) : self.foreground)
+                Button {
+                    if (!self.disabled) { Task {
+                        await self.action();
+                    } }
+                } label: {
+                    Text("join: ")
+                        .font(.system(size: CGFloat(self.size), weight: .semibold))
+                        .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
                 }.buttonStyle(.plain)
                 Menu {
                     ForEach(self.items.prefixes, id: \.self) { item in
-                        Button(item) {
-                            self.items.select(item)
-                        }
-                    }} label: {
-                        Text(self.items.selected(prefix: true) ?? Defaults.emptySetChar)
-                            .font(.system(size: CGFloat(self.size - 1)))
-                            .foregroundColor(self.disabled ? self.foreground.opacity(0.4) : self.foreground)
+                        Button(item) { self.items.select(item) }
+                    }
                 }
+                label: {
+                    Text(self.items.selected(prefix: true) ?? Defaults.emptySetChar)
+                        .font(.system(size: CGFloat(self.size), weight: .semibold))
+                        .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
+                }
+                .disabled(self.disabled)
             }
         }
     }
 
-    public struct JoinControl: View {
+    public struct SmallButton2: View {
 
-                 fileprivate let items: [String];
-        @Binding fileprivate var selected: String;
-                 fileprivate let size: Int = Defaults.fontSize;
-                 fileprivate let disabled: Bool;
-                 fileprivate let leading: Int;
-                 fileprivate let trailing: Int;
-                 fileprivate let action: () async -> Void;
+        private let text: String?;
+        private let icon: String?;
+        private let foreground: Color;
+        private let background: Color;
+        private let size: Int;
+        private let spacing: Spacing;
+        private var bold: Bool;
+        private var semibold: Bool;
+        private let disabled: Bool;
+        private let action: () async -> Void;
 
-        private let horizontalPadding: CGFloat = 8;
-        private let verticalPadding: CGFloat = 4;
-        private let cornerRadius: CGFloat = 8;
-        private let color: Color = .yellow;
-        private let background: Color = Defaults.foreground;
-
-        public init(items: [String], selected: Binding<String>, disabled: Bool = false,
-                    leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil,
-                    action: @escaping () async -> Void) {
-            self.items = items;
-            self._selected = selected;
+        public init( _ text: String? = nil, icon: String? = nil,
+                       foreground: Color? = nil, background: Color? = nil,
+                       size: Int? = nil, spacing: Spacing? = nil,
+                       bold: Bool = false, semibold: Bool = true,
+                       disabled: Bool = false,
+                       leading: Int? = nil, trailing: Int? = nil,
+                       action: @escaping () async -> Void) {
+            self.text = text;
+            self.icon = icon;
+            self.foreground = foreground ?? ((icon != nil) ? Defaults.iconColor : .yellow);
+            self.background = background ?? Defaults.foreground;
+            self.size = size ?? ((icon != nil) ? Defaults.iconSize : Defaults.fontSize);
+            self.spacing = spacing ?? Spacing.defaults;
+            self.bold = bold;
+            self.semibold = semibold;
             self.disabled = disabled;
-            self.leading = leading ?? padding ?? 0;
-            self.trailing = trailing ?? padding ?? 0;
             self.action = action;
         }
 
         public var body: some View {
-            HStack(spacing: 0) {
-                Button {
-                    Task { await action() }
-                } label: {
-                    Text("join:")
-                        .font(.system(size: CGFloat(self.size), weight: .semibold))
-                        .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
-                        .padding(.leading, self.horizontalPadding)
-                        .padding(.vertical, self.verticalPadding)
+            Button {
+                Task { await action() }
+            } label: {
+                if let icon: String = icon {
+                    Image(systemName: icon)
+                        .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
+                        .font(.system(size: CGFloat(self.size), weight: bold ? .bold : (semibold ? .semibold : .regular)))
+                        .disabled(self.disabled)
                 }
-                .buttonStyle(.plain)
-                Rectangle().fill(self.color.opacity(0.4)).frame(width: 3, height: 1)
-                Menu {
-                    ForEach(items, id: \.self) { item in
-                        Button(item) { selected = item }
-                    }
-                } label: {
-                    Text(selected.isEmpty ? (items.first ?? Defaults.emptySetChar) : selected)
-                        .font(.system(size: CGFloat(self.size - 1)))
-                        .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
-                        .padding(.trailing, self.horizontalPadding)
-                        .padding(.vertical, self.verticalPadding)
+                else if let text: String = text {
+                    Text(text)
+                        .font(.system(size: CGFloat(self.size), weight: bold ? .bold : (semibold ? .semibold : .regular)))
+                        .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
+                        .padding(self.spacing)
+                        .rounded(background: self.background, disabled: self.disabled)
                 }
             }
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(disabled ? self.background.opacity(0.4) : self.background)
-            )
-            .onAppear {
-                if selected.isEmpty, let first = items.first {
-                    selected = first;
-                }
-            }
-            .padding(.leading, CGFloat(self.leading)).padding(.trailing, CGFloat(self.trailing))
+            .buttonStyle(.plain)
+            .margin(spacing)
         }
     }
 

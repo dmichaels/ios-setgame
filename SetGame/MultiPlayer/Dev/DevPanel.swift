@@ -102,26 +102,6 @@ public extension MultiPlayer.Dev {
 
         fileprivate var body: some View {
             AnyDevPanel(table: table, margin: margin) {
-                XJoinControl(items: $sessionState.xsessions, disabled: self.sessionState.connected) {
-                    DEB("join-try: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)]")
-                    if (!self.session.connected) {
-                    DEB("join-try2: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)]")
-                        // if let session: String = sessionState.sessions.selected {
-                        if let session: String = sessionState.xsessions.selected {
-                    DEB("join-try3: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)] [\(session)]")
-                            if await self.session.join(session: session) {
-                                self.sessionState.update(from: self.session);
-                            }
-                            else {
-                                //
-                                // TODO: Do something if join-session fails?
-                                //
-                                let x = 1;
-                                DEB("join-failed: \(sessionState.xsessions.selected)")
-                            }
-                        }
-                    }
-                }
                 RegularText("me:")
                  // CopyableText(sessionState.player,
                  //              color: self.session.hosting ? Defaults.highlightColor : .primary, semibold: true, leading: 3)
@@ -170,7 +150,8 @@ public extension MultiPlayer.Dev {
             AnyDevPanel(table: table, vertical: 8, margin: margin) {
                 RegularText("session:")
                     CopyableText(sessionState.sessionShort, copy: sessionState.session, bold: true, leading: 3)
-                SmallButton("create", disabled: self.sessionState.connected, leading: 8) {
+                // SmallButton("create", disabled: self.sessionState.connected, leading: 8) {
+                SmallButton2("create", spacing: Spacing(horizontal: 7, vertical: 4), disabled: self.sessionState.connected, leading: 8) {
                     if (!self.session.connected) {
                         if await self.session.create() {
                             self.sessionState.update(from: self.session, select: true);
@@ -178,11 +159,12 @@ public extension MultiPlayer.Dev {
                         }
                     }
                 }
-                JoinControl(items: sessionState.sessions.listShort,
-                            selected: $sessionState.sessions.selectedShort,
-                            disabled: self.sessionState.connected, leading: 8) {
+                JoinControl(items: $sessionState.xsessions, disabled: self.sessionState.connected) {
+                    DEB("join-try: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)]")
                     if (!self.session.connected) {
-                        if let session: String = sessionState.sessions.selected {
+                    DEB("join-try2: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)]")
+                        if let session: String = sessionState.xsessions.selected {
+                    DEB("join-try3: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)] [\(session)]")
                             if await self.session.join(session: session) {
                                 self.sessionState.update(from: self.session);
                             }
@@ -190,8 +172,7 @@ public extension MultiPlayer.Dev {
                                 //
                                 // TODO: Do something if join-session fails?
                                 //
-                                let x = 1;
-                                DEB("join-failed: \(sessionState.sessions.selected)")
+                                DEB("join-failed: \(sessionState.xsessions.selected)")
                             }
                         }
                     }
