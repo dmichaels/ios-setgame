@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 public struct Spacing {
 
@@ -82,3 +83,18 @@ public struct Padding {
 }
 
 public typealias Margin = Padding;
+
+public extension View {
+    public func padding(_ spacing: Spacing) -> some View {
+        self.padding(.leading,  spacing.padding.leading)
+            .padding(.trailing, spacing.padding.trailing)
+            .padding(.top,      spacing.padding.top)
+            .padding(.bottom,   spacing.padding.bottom)
+    }
+    public func margin(_ spacing: Spacing) -> some View {
+        self.padding(.leading,  spacing.margin.leading)
+            .padding(.trailing, spacing.margin.trailing)
+            .padding(.top,      spacing.margin.top)
+            .padding(.bottom,   spacing.margin.bottom)
+    }
+}

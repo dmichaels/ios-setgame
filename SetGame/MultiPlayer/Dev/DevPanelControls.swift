@@ -78,7 +78,7 @@ public extension MultiPlayer.Dev {
         }
 
         public var body: some View {
-            HStack(spacing: 0) {
+            RoundedBox(background: self.background, spacing: self.spacing) {
                 Button { Task {
                     DEB("XJOIN-CLICK: [\(self.items.selected)] \(self.items)")
                     await action()
@@ -100,23 +100,6 @@ public extension MultiPlayer.Dev {
                             .foregroundColor(disabled ? self.color.opacity(0.4) : self.color)
                 }
             }
-            .padding(.leading, self.spacing.padding.leading)
-            .padding(.trailing, self.spacing.padding.trailing)
-            .padding(.top, self.spacing.padding.top)
-            .padding(.bottom, self.spacing.padding.bottom)
-            // .padding(.top, self.paddingTop)
-            // .padding(.bottom, self.paddingBottom)
-            // .padding(.leading, self.paddingLeading)
-            // .padding(.trailing, self.paddingTrailing)
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(disabled ? self.background.opacity(0.4) : self.background)
-            )
-            .padding(.top, self.spacing.margin.top)
-            .padding(.bottom, self.spacing.margin.bottom)
-            // .padding(.top, self.marginTop)
-            // .padding(.bottom, self.marginBottom)
-            .lineLimit(1)
         }
     }
 

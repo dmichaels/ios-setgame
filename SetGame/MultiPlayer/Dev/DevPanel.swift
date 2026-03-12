@@ -102,7 +102,7 @@ public extension MultiPlayer.Dev {
 
         fileprivate var body: some View {
             AnyDevPanel(table: table, margin: margin) {
-                XJoinControl(items: $sessionState.xsessions) {
+                XJoinControl(items: $sessionState.xsessions, disabled: self.sessionState.connected) {
                     DEB("join-try: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)]")
                     if (!self.session.connected) {
                     DEB("join-try2: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)]")
