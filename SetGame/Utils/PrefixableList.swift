@@ -3,8 +3,8 @@ public struct PrefixableList {
     public private(set) var values: [String];
     public private(set) var prefixes: [String];
     private             var prefixLength: Int;
-    private             var selectedValue: String?;
     private             let prefixLengthMin: Int;
+    private             var selectedValue: String?;
     private static      let prefixLengthMin: Int = 4;
 
     public init(_ values: [String]? = [], prefixLengthMin: Int? = nil) {
@@ -106,8 +106,7 @@ public struct PrefixableList {
                 let prefix: Substring = item.prefix(prefixLength);
                 if (!prefixesSeen.insert(prefix).inserted) { collision = true; break; }
             }
-            if (!collision) { return prefixLength; }
-            prefixLength += 1;
+            if (!collision) { return prefixLength; } ; prefixLength += 1;
         }
     }
 }
