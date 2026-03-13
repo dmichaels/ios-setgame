@@ -167,16 +167,16 @@ public extension MultiPlayer.Dev {
 
         public init(_ icon: String,
                        size: Int? = nil, padding: Padding? = nil, margin: Margin? = nil,
-                       weight: Font.Weight?,
+                       weight: Font.Weight? = nil,
                        foreground: Color? = nil, background: Color? = nil,
                        disabled: Bool = false,
                        action: @escaping () async -> Void) {
             self.icon = icon;
-            self.size = size ?? ((icon != nil) ? Defaults.iconSize : Defaults.fontSize);
+            self.size = size ?? Defaults.iconSize;
             self.padding = padding ?? Defaults.padding;
             self.margin = margin ?? Margin.fallback;
             self.weight = weight ?? .semibold;
-            self.foreground = foreground ?? ((icon != nil) ? Defaults.iconColor : .white);
+            self.foreground = foreground ?? Defaults.iconColor;
             self.background = background ?? Defaults.foreground;
             self.disabled = disabled;
             self.action = action;
@@ -184,9 +184,9 @@ public extension MultiPlayer.Dev {
 
         public var body: some View {
             Button {
-                Task { await action() }
+                Task { await self.action() }
             } label: {
-                Image(systemName: icon)
+                Image(systemName: self.icon)
                     .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
                     .font(.system(size: CGFloat(self.size), weight: self.weight))
                     .disabled(self.disabled)

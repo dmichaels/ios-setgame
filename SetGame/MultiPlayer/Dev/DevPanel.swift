@@ -610,7 +610,8 @@ public extension MultiPlayer.Dev {
                     SmallButton(icon: self.sessionState.production ? "checkmark.seal" : "atom", size: Defaults.iconSize) {
                         await self.transport.production = !self.sessionState.production;
                     }
-                    SmallButton(icon: self.sessionState.debug ? "ladybug" : "ladybug.slash", size: Defaults.iconSize) {
+                    // SmallButton(icon: self.sessionState.debug ? "ladybug" : "ladybug.slash", size: Defaults.iconSize) {
+                    IconButton(self.sessionState.debug ? "ladybug" : "ladybug.slash", size: Defaults.iconSize) {
                         await self.transport.debug(enable: !self.sessionState.debug);
                     }
                 }
