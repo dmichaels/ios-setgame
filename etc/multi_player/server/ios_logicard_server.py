@@ -446,12 +446,14 @@ def reset_endpoint():
 @app.route('/debug', methods=['GET'])
 def get_debug_endpoint():
     global debug
+    print(f"DEBUG: GET /debug -> {debug}")
     return {"debug": debug}
 
 @app.route('/debug', methods=['POST'])
 def set_debug_endpoint():
     global debug
     debug = True
+    print(f"DEBUG: POST /debug -> {debug}")
     return _okay_response()
 
 @app.route('/nodebug', methods=['POST'])
@@ -464,6 +466,9 @@ def set_nodebug_endpoint():
             session.get('received_counts', {}).clear()
             session.get('received_messages', []).clear()
         debug = False
+        print(f"DEBUG: POST /nodebug -> {debug}")
+    else:
+        print(f"DEBUG: POST /nodebug -> NOOP")
     return _okay_response()
 
 # Simple ping endpoint.

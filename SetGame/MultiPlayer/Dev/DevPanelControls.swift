@@ -107,46 +107,6 @@ public extension MultiPlayer.Dev {
         }
     }
 
-    public struct TextButton2: View {
-
-        private let text: String;
-        private let size: Int;
-        private let padding: Padding;
-        private let margin: Margin;
-        private let weight: Font.Weight;
-        private let foreground: Color;
-        private let background: Color;
-        private let disabled: Bool;
-        private let action: () async -> Void;
-
-        public init( _ text: String, style: Style? = nil, action: @escaping () async -> Void) {
-            self.text = text;
-            self.size = style?.size ?? Defaults.fontSize;
-            self.padding = style?.padding ?? Defaults.padding;
-            self.margin = style?.margin ?? Margin.fallback;
-            self.weight = style?.weight ?? .semibold;
-            self.foreground = style?.foreground ?? .white;
-            self.background = style?.background ?? Defaults.foreground;
-            self.disabled = style?.disabled ?? false;
-            self.action = action;
-        }
-
-        public var body: some View {
-            Button {
-                if (!self.disabled) { Task {
-                    await self.action();
-                } }
-            } label: {
-                RoundedBox(background: self.background, padding: self.padding, margin: self.margin) {
-                    Text(self.text)
-                        .font(.system(size: CGFloat(self.size), weight: self.weight))
-                        .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
-                }
-            }
-            .buttonStyle(.plain)
-            .margin(self.margin)
-        }
-    }
     public struct TextButton: View {
 
         private let text: String;
