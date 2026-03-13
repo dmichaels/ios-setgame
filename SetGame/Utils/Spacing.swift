@@ -36,6 +36,16 @@ public struct Padding {
 
 public typealias Margin = Padding;
 
+public struct Style {
+    public let size:       Int?         = nil;
+    public let padding:    Padding?     = nil;
+    public let margin:     Margin?      = nil;
+    public let weight:     Font.Weight? = nil;
+    public let foreground: Color?       = nil;
+    public let background: Color?       = nil;
+    public let disabled:   Bool         = false;
+}
+
 public struct Spacing {
 
     public static let fallback: Spacing = Spacing();

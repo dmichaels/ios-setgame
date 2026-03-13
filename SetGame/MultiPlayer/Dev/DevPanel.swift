@@ -151,7 +151,7 @@ public extension MultiPlayer.Dev {
                 RegularText("session:")
                     CopyableText(sessionState.sessionShort, copy: sessionState.session, bold: true, leading: 3)
                 // SmallButton("create", disabled: self.sessionState.connected, leading: 8) {
-                SmallButton2("create", spacing: Spacing(horizontal: 7, vertical: 4), disabled: self.sessionState.connected, leading: 8) {
+                ButtonBox("create", margin: Margin(leading: 6), disabled: self.sessionState.connected, leading: 8) {
                     if (!self.session.connected) {
                         if await self.session.create() {
                             self.sessionState.update(from: self.session, select: true);
@@ -159,7 +159,7 @@ public extension MultiPlayer.Dev {
                         }
                     }
                 }
-                JoinControl(items: $sessionState.xsessions, margin: Margin(leading: 6), disabled: self.sessionState.connected) {
+                JoinControl(items: $sessionState.xsessions, margin: Margin(leading: 6), weight: .bold, disabled: self.sessionState.connected) {
                     DEB("join-try: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)]")
                     if (!self.session.connected) {
                     DEB("join-try2: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)]")

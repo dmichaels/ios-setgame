@@ -55,9 +55,8 @@ public extension MultiPlayer.Dev {
 
         @Binding fileprivate var items: PrefixableList;
         private let size: Int;
-        private let spacing: Spacing;
-        // private let padding: Padding;
-        // private let margin: Margin;
+        private let padding: Padding;
+        private let margin: Margin;
         private let foreground: Color;
         private let background: Color;
         private let weight: Font.Weight;
@@ -66,34 +65,16 @@ public extension MultiPlayer.Dev {
 
         private static let padding: Padding = Padding(leading: 8, trailing: 8, top: 4, bottom: 4);
 
-        private static func spacing(_ spacing: Spacing?, _ padding: Padding?, _ margin: Margin?) -> Spacing {
-            return Spacing(Spacing(padding: Padding(padding, Padding(leading: 8, trailing: 8, top: 4, bottom: 4)),
-                                   margin:  Margin (margin,  Margin.fallback)),
-                           spacing);
-        }
-
         public init(items: Binding<PrefixableList>,
-                    size: Int? = nil, weight: Font.Weight = .semibold,
-                    spacing: Spacing? = nil, padding: Padding? = nil, margin: Margin? = nil,
+                    size: Int? = nil, padding: Padding? = nil, margin: Margin? = nil,
                     foreground: Color? = nil, background: Color? = nil,
+                    weight: Font.Weight = .semibold,
                     disabled: Bool = false, action: @escaping () async -> Void) {
             self._items = items;
             self.size = size ?? Defaults.fontSize;
-            // let padding: Padding = Padding(padding, Padding(leading: 8, trailing: 8, top: 4, bottom: 4));
-            // let margin: Margin? = margin; // Margin(margin, Margin.fallback);
-            // self.spacing = Spacing(spacing, Spacing(padding: padding, margin: margin));
-            // self.spacing = Spacing(spacing, Spacing(padding: Padding(padding, Padding(leading: 8, trailing: 8, top: 4, bottom: 4)),
-              //                                       margin:  margin));
-            // let padding: Padding = Padding(leading: 8, trailing: 8, top: 4, bottom: 4);
-            /*
-            let padding: Padding = Padding(padding, JoinControl.padding);
-            let margin: Margin   = Margin(margin, Margin.fallback);
-            self.spacing = Spacing(spacing, Spacing(padding: padding, margin: margin));
-            */
-            self.spacing = JoinControl.spacing(spacing, padding, margin);
-            // self.spacing = Spacing(spacing, Spacing(padding: padding, margin: margin));
-            // self.spacing = Spacing(spacing, Spacing(padding: Padding(padding, JoinControl.padding), margin: margin));
-            self.foreground = foreground ?? .yellow;
+            self.padding = padding ?? Defaults.padding;
+            self.margin = margin ?? Margin.fallback;
+            self.foreground = foreground ?? .white;
             self.background = background ?? Defaults.foreground;
             self.weight = weight;
             self.disabled = disabled;
@@ -101,14 +82,14 @@ public extension MultiPlayer.Dev {
         }
 
         public var body: some View {
-            RoundedBox(background: self.background, spacing: self.spacing) {
+            RoundedBox(background: self.background, padding: self.padding, margin: self.margin) {
                 Button {
                     if (!self.disabled) { Task {
                         await self.action();
                     } }
                 } label: {
                     Text("join: ")
-                        .font(.system(size: CGFloat(self.size), weight: .semibold))
+                        .font(.system(size: CGFloat(self.size), weight: self.weight))
                         .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
                 }.buttonStyle(.plain)
                 Menu {
@@ -118,7 +99,7 @@ public extension MultiPlayer.Dev {
                 }
                 label: {
                     Text(self.items.selected(prefix: true) ?? Defaults.emptySetChar)
-                        .font(.system(size: CGFloat(self.size), weight: .semibold))
+                        .font(.system(size: CGFloat(self.size), weight: self.weight))
                         .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
                 }
                 .disabled(self.disabled)
@@ -126,32 +107,34 @@ public extension MultiPlayer.Dev {
         }
     }
 
-    public struct SmallButton2: View {
+    public struct ButtonBox: View {
 
         private let text: String?;
         private let icon: String?;
+        private let size: Int;
+        private let padding: Padding;
+        private let margin: Margin;
         private let foreground: Color;
         private let background: Color;
-        private let size: Int;
-        private let spacing: Spacing;
         private var bold: Bool;
         private var semibold: Bool;
         private let disabled: Bool;
         private let action: () async -> Void;
 
         public init( _ text: String? = nil, icon: String? = nil,
+                       size: Int? = nil, padding: Padding? = nil, margin: Margin? = nil,
                        foreground: Color? = nil, background: Color? = nil,
-                       size: Int? = nil, spacing: Spacing? = nil,
                        bold: Bool = false, semibold: Bool = true,
                        disabled: Bool = false,
                        leading: Int? = nil, trailing: Int? = nil,
                        action: @escaping () async -> Void) {
             self.text = text;
             self.icon = icon;
-            self.foreground = foreground ?? ((icon != nil) ? Defaults.iconColor : .yellow);
+            self.foreground = foreground ?? ((icon != nil) ? Defaults.iconColor : .white);
             self.background = background ?? Defaults.foreground;
             self.size = size ?? ((icon != nil) ? Defaults.iconSize : Defaults.fontSize);
-            self.spacing = spacing ?? Spacing.fallback;
+            self.padding = padding ?? Defaults.padding;
+            self.margin = margin ?? Margin.fallback;
             self.bold = bold;
             self.semibold = semibold;
             self.disabled = disabled;
@@ -172,12 +155,12 @@ public extension MultiPlayer.Dev {
                     Text(text)
                         .font(.system(size: CGFloat(self.size), weight: bold ? .bold : (semibold ? .semibold : .regular)))
                         .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
-                        .padding(self.spacing)
+                        .padding(self.padding)
                         .rounded(background: self.background, disabled: self.disabled)
                 }
             }
             .buttonStyle(.plain)
-            .margin(spacing)
+            .margin(self.margin)
         }
     }
 
