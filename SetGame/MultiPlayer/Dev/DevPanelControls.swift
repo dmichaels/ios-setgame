@@ -56,20 +56,43 @@ public extension MultiPlayer.Dev {
         @Binding fileprivate var items: PrefixableList;
         private let size: Int;
         private let spacing: Spacing;
+        // private let padding: Padding;
+        // private let margin: Margin;
         private let foreground: Color;
         private let background: Color;
         private let weight: Font.Weight;
         private let disabled: Bool;
         private let action: () async -> Void;
 
+        private static let padding: Padding = Padding(leading: 8, trailing: 8, top: 4, bottom: 4);
+
+        private static func spacing(_ spacing: Spacing?, _ padding: Padding?, _ margin: Margin?) -> Spacing {
+            return Spacing(Spacing(padding: Padding(padding, Padding(leading: 8, trailing: 8, top: 4, bottom: 4)),
+                                   margin:  Margin (margin,  Margin.fallback)),
+                           spacing);
+        }
+
         public init(items: Binding<PrefixableList>,
-                    size: Int? = nil, weight: Font.Weight = .semibold, spacing: Spacing? = nil,
+                    size: Int? = nil, weight: Font.Weight = .semibold,
+                    spacing: Spacing? = nil, padding: Padding? = nil, margin: Margin? = nil,
                     foreground: Color? = nil, background: Color? = nil,
                     disabled: Bool = false, action: @escaping () async -> Void) {
             self._items = items;
             self.size = size ?? Defaults.fontSize;
-            self.spacing = spacing ?? Spacing(leading:       8, trailing:       8, top:       4, bottom:       4,
-                                              leadingMargin: 4, trailingMargin: 4, topMargin: 4, bottomMargin: 3);
+            // let padding: Padding = Padding(padding, Padding(leading: 8, trailing: 8, top: 4, bottom: 4));
+            // let margin: Margin? = margin; // Margin(margin, Margin.fallback);
+            // self.spacing = Spacing(spacing, Spacing(padding: padding, margin: margin));
+            // self.spacing = Spacing(spacing, Spacing(padding: Padding(padding, Padding(leading: 8, trailing: 8, top: 4, bottom: 4)),
+              //                                       margin:  margin));
+            // let padding: Padding = Padding(leading: 8, trailing: 8, top: 4, bottom: 4);
+            /*
+            let padding: Padding = Padding(padding, JoinControl.padding);
+            let margin: Margin   = Margin(margin, Margin.fallback);
+            self.spacing = Spacing(spacing, Spacing(padding: padding, margin: margin));
+            */
+            self.spacing = JoinControl.spacing(spacing, padding, margin);
+            // self.spacing = Spacing(spacing, Spacing(padding: padding, margin: margin));
+            // self.spacing = Spacing(spacing, Spacing(padding: Padding(padding, JoinControl.padding), margin: margin));
             self.foreground = foreground ?? .yellow;
             self.background = background ?? Defaults.foreground;
             self.weight = weight;
@@ -128,7 +151,7 @@ public extension MultiPlayer.Dev {
             self.foreground = foreground ?? ((icon != nil) ? Defaults.iconColor : .yellow);
             self.background = background ?? Defaults.foreground;
             self.size = size ?? ((icon != nil) ? Defaults.iconSize : Defaults.fontSize);
-            self.spacing = spacing ?? Spacing.defaults;
+            self.spacing = spacing ?? Spacing.fallback;
             self.bold = bold;
             self.semibold = semibold;
             self.disabled = disabled;

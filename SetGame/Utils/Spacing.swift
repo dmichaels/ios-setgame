@@ -1,9 +1,44 @@
 import Foundation
 import SwiftUI
 
+public struct Padding {
+
+    public static let fallback: Padding = Padding();
+
+    public var leading:  CGFloat { CGFloat(self._leading  ?? 0) }
+    public var trailing: CGFloat { CGFloat(self._trailing ?? 0) }
+    public var top:      CGFloat { CGFloat(self._top      ?? 0) }
+    public var bottom:   CGFloat { CGFloat(self._bottom   ?? 0) }
+
+    private let _leading:  Int?;
+    private let _trailing: Int?;
+    private let _top:      Int?;
+    private let _bottom:   Int?;
+
+    public init(leading: Int? = nil, trailing: Int? = nil, top: Int? = nil, bottom: Int? = nil) {
+        self._leading  = leading;
+        self._trailing = trailing;
+        self._top      = top;
+        self._bottom   = bottom;
+    }
+
+    public init(_ value: Padding?, _ fallback: Padding?) {
+        self._leading  = value?._leading  ?? fallback?._leading;
+        self._trailing = value?._trailing ?? fallback?._trailing;
+        self._top      = value?._top      ?? fallback?._top;
+        self._bottom   = value?._bottom   ?? fallback?._bottom;
+    }
+
+    public init(horizontal: Int? = nil, vertical: Int?) {
+        self.init(leading: horizontal, trailing: horizontal, top: vertical, bottom: vertical);
+    }
+}
+
+public typealias Margin = Padding;
+
 public struct Spacing {
 
-    public static let defaults: Spacing = Spacing();
+    public static let fallback: Spacing = Spacing();
 
     public init(margin: Margin, padding: Padding? = nil) {
         self.padding = padding ?? Padding();
@@ -47,50 +82,38 @@ public struct Spacing {
         self.margin  = Margin (horizontal: horizontalMargin, vertical: verticalMargin);
     }
 
+    public init(_ value: Spacing?, _ fallback: Spacing?) {
+        self.padding = Padding(value?.padding, fallback?.padding);
+        self.margin  = Margin(value?.margin,   fallback?.margin);
+    }
+
     public let padding: Padding;
     public let margin:  Margin;
 }
 
-public struct Padding {
-
-    public var leading:  CGFloat { CGFloat(self._leading  ?? 0) }
-    public var trailing: CGFloat { CGFloat(self._trailing ?? 0) }
-    public var top:      CGFloat { CGFloat(self._top      ?? 0) }
-    public var bottom:   CGFloat { CGFloat(self._bottom   ?? 0) }
-
-    private let _leading:  Int?;
-    private let _trailing: Int?;
-    private let _top:      Int?;
-    private let _bottom:   Int?;
-
-    public init(leading: Int? = nil, trailing: Int? = nil, top: Int? = nil, bottom: Int? = nil) {
-        self._leading  = leading;
-        self._trailing = trailing;
-        self._top      = top;
-        self._bottom   = bottom;
-    }
-
-    public init(_ value: Padding, _ defaults: Padding) {
-        self._leading  = value._leading  ?? defaults._leading;
-        self._trailing = value._trailing ?? defaults._trailing;
-        self._top      = value._top      ?? defaults._top;
-        self._bottom   = value._bottom   ?? defaults._bottom;
-    }
-
-    public init(horizontal: Int? = nil, vertical: Int?) {
-        self.init(leading: horizontal, trailing: horizontal, top: vertical, bottom: vertical);
-    }
-}
-
-public typealias Margin = Padding;
-
 public extension View {
+
+    public func padding(_ padding: Padding) -> some View {
+        self.padding(.leading,  padding.leading)
+            .padding(.trailing, padding.trailing)
+            .padding(.top,      padding.top)
+            .padding(.bottom,   padding.bottom)
+    }
+
+    public func margin(_ margin: Margin) -> some View {
+        self.padding(.leading,  margin.leading)
+            .padding(.trailing, margin.trailing)
+            .padding(.top,      margin.top)
+            .padding(.bottom,   margin.bottom)
+    }
+
     public func padding(_ spacing: Spacing) -> some View {
         self.padding(.leading,  spacing.padding.leading)
             .padding(.trailing, spacing.padding.trailing)
             .padding(.top,      spacing.padding.top)
             .padding(.bottom,   spacing.padding.bottom)
     }
+
     public func margin(_ spacing: Spacing) -> some View {
         self.padding(.leading,  spacing.margin.leading)
             .padding(.trailing, spacing.margin.trailing)

@@ -159,7 +159,7 @@ public extension MultiPlayer.Dev {
                         }
                     }
                 }
-                JoinControl(items: $sessionState.xsessions, disabled: self.sessionState.connected) {
+                JoinControl(items: $sessionState.xsessions, margin: Margin(leading: 6), disabled: self.sessionState.connected) {
                     DEB("join-try: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)]")
                     if (!self.session.connected) {
                     DEB("join-try2: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)]")
