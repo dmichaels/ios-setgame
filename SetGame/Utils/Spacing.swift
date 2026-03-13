@@ -37,13 +37,23 @@ public struct Padding {
 public typealias Margin = Padding;
 
 public struct Style {
-    public let size:       Int?         = nil;
-    public let padding:    Padding?     = nil;
-    public let margin:     Margin?      = nil;
-    public let weight:     Font.Weight? = nil;
-    public let foreground: Color?       = nil;
-    public let background: Color?       = nil;
-    public let disabled:   Bool         = false;
+    public let size:       Int?;
+    public let padding:    Padding?;
+    public let margin:     Margin?;
+    public let weight:     Font.Weight?;
+    public let foreground: Color?;
+    public let background: Color?;
+    public let disabled:   Bool;
+    public init(size: Int? = nil, padding: Padding? = nil, margin: Margin? = nil, weight: Font.Weight? = nil,
+                foreground: Color? = nil, background: Color? = nil, disabled: Bool = false) {
+        self.size = size;
+        self.padding = padding;
+        self.margin = margin;
+        self.weight = weight;
+        self.foreground = foreground;
+        self.background = background;
+        self.disabled = disabled;
+    }
 }
 
 public struct Spacing {

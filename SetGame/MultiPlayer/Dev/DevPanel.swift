@@ -151,7 +151,8 @@ public extension MultiPlayer.Dev {
                 RegularText("session:")
                     CopyableText(sessionState.sessionShort, copy: sessionState.session, bold: true, leading: 3)
                 // SmallButton("create", disabled: self.sessionState.connected, leading: 8) {
-                ButtonBox("create", margin: Margin(leading: 6), disabled: self.sessionState.connected, leading: 8) {
+                TextButton2("create", style: Style(margin: Margin(leading: 6), disabled: self.sessionState.connected)) {
+                // TextButton("create", margin: Margin(leading: 6), disabled: self.sessionState.connected) {
                     if (!self.session.connected) {
                         if await self.session.create() {
                             self.sessionState.update(from: self.session, select: true);

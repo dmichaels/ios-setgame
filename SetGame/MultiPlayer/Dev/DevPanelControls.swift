@@ -107,36 +107,117 @@ public extension MultiPlayer.Dev {
         }
     }
 
-    public struct ButtonBox: View {
+    public struct TextButton2: View {
 
-        private let text: String?;
-        private let icon: String?;
+        private let text: String;
         private let size: Int;
         private let padding: Padding;
         private let margin: Margin;
+        private let weight: Font.Weight;
         private let foreground: Color;
         private let background: Color;
-        private var bold: Bool;
-        private var semibold: Bool;
         private let disabled: Bool;
         private let action: () async -> Void;
 
-        public init( _ text: String? = nil, icon: String? = nil,
+        public init( _ text: String, style: Style? = nil, action: @escaping () async -> Void) {
+            self.text = text;
+            self.size = style?.size ?? Defaults.fontSize;
+            self.padding = style?.padding ?? Defaults.padding;
+            self.margin = style?.margin ?? Margin.fallback;
+            self.weight = style?.weight ?? .semibold;
+            self.foreground = style?.foreground ?? .white;
+            self.background = style?.background ?? Defaults.foreground;
+            self.disabled = style?.disabled ?? false;
+            self.action = action;
+        }
+
+        public var body: some View {
+            Button {
+                if (!self.disabled) { Task {
+                    await self.action();
+                } }
+            } label: {
+                RoundedBox(background: self.background, padding: self.padding, margin: self.margin) {
+                    Text(self.text)
+                        .font(.system(size: CGFloat(self.size), weight: self.weight))
+                        .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
+                }
+            }
+            .buttonStyle(.plain)
+            .margin(self.margin)
+        }
+    }
+    public struct TextButton: View {
+
+        private let text: String;
+        private let size: Int;
+        private let padding: Padding;
+        private let margin: Margin;
+        private let weight: Font.Weight;
+        private let foreground: Color;
+        private let background: Color;
+        private let disabled: Bool;
+        private let action: () async -> Void;
+
+        public init( _ text: String,
                        size: Int? = nil, padding: Padding? = nil, margin: Margin? = nil,
+                       weight: Font.Weight? = nil,
                        foreground: Color? = nil, background: Color? = nil,
-                       bold: Bool = false, semibold: Bool = true,
                        disabled: Bool = false,
-                       leading: Int? = nil, trailing: Int? = nil,
                        action: @escaping () async -> Void) {
             self.text = text;
-            self.icon = icon;
-            self.foreground = foreground ?? ((icon != nil) ? Defaults.iconColor : .white);
+            self.size = size ?? Defaults.fontSize;
+            self.padding = padding ?? Defaults.padding;
+            self.margin = margin ?? Margin.fallback;
+            self.weight = weight ?? .semibold;
+            self.foreground = foreground ?? .white;
             self.background = background ?? Defaults.foreground;
+            self.disabled = disabled;
+            self.action = action;
+        }
+
+        public var body: some View {
+            Button {
+                if (!self.disabled) { Task {
+                    await self.action();
+                } }
+            } label: {
+                RoundedBox(background: self.background, padding: self.padding, margin: self.margin) {
+                    Text(self.text)
+                        .font(.system(size: CGFloat(self.size), weight: self.weight))
+                        .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
+                }
+            }
+            .buttonStyle(.plain)
+            .margin(self.margin)
+        }
+    }
+
+    public struct IconButton: View {
+
+        private let icon: String;
+        private let size: Int;
+        private let padding: Padding;
+        private let margin: Margin;
+        private let weight: Font.Weight;
+        private let foreground: Color;
+        private let background: Color;
+        private let disabled: Bool;
+        private let action: () async -> Void;
+
+        public init(_ icon: String,
+                       size: Int? = nil, padding: Padding? = nil, margin: Margin? = nil,
+                       weight: Font.Weight?,
+                       foreground: Color? = nil, background: Color? = nil,
+                       disabled: Bool = false,
+                       action: @escaping () async -> Void) {
+            self.icon = icon;
             self.size = size ?? ((icon != nil) ? Defaults.iconSize : Defaults.fontSize);
             self.padding = padding ?? Defaults.padding;
             self.margin = margin ?? Margin.fallback;
-            self.bold = bold;
-            self.semibold = semibold;
+            self.weight = weight ?? .semibold;
+            self.foreground = foreground ?? ((icon != nil) ? Defaults.iconColor : .white);
+            self.background = background ?? Defaults.foreground;
             self.disabled = disabled;
             self.action = action;
         }
@@ -145,19 +226,10 @@ public extension MultiPlayer.Dev {
             Button {
                 Task { await action() }
             } label: {
-                if let icon: String = icon {
-                    Image(systemName: icon)
-                        .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
-                        .font(.system(size: CGFloat(self.size), weight: bold ? .bold : (semibold ? .semibold : .regular)))
-                        .disabled(self.disabled)
-                }
-                else if let text: String = text {
-                    Text(text)
-                        .font(.system(size: CGFloat(self.size), weight: bold ? .bold : (semibold ? .semibold : .regular)))
-                        .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
-                        .padding(self.padding)
-                        .rounded(background: self.background, disabled: self.disabled)
-                }
+                Image(systemName: icon)
+                    .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
+                    .font(.system(size: CGFloat(self.size), weight: self.weight))
+                    .disabled(self.disabled)
             }
             .buttonStyle(.plain)
             .margin(self.margin)
