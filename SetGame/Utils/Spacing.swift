@@ -56,61 +56,6 @@ public struct Style {
     }
 }
 
-public struct Spacing {
-
-    public static let fallback: Spacing = Spacing();
-
-    public init(margin: Margin, padding: Padding? = nil) {
-        self.padding = padding ?? Padding();
-        self.margin  = margin;
-    }
-
-    public init(padding: Padding, margin: Margin? = nil) {
-        self.padding = padding;
-        self.margin  = margin ?? Margin();
-    }
-
-    public init(leading:       Int? = nil, trailing:       Int? = nil, 
-                top:           Int? = nil, bottom:         Int? = nil, 
-                leadingMargin: Int? = nil, trailingMargin: Int? = nil, 
-                topMargin:     Int? = nil, bottomMargin:   Int? = nil) {
-        self.padding = Padding(leading: leading,       trailing: trailing,
-                               top:     top,           bottom:   bottom);
-        self.margin  = Margin (leading: leadingMargin, trailing: trailingMargin,
-                               top:     topMargin,     bottom:   bottomMargin);
-    }
-
-    public init(horizontal:       Int? = nil, top:       Int? = nil, bottom:       Int? = nil, 
-                horizontalMargin: Int? = nil, topMargin: Int? = nil, bottomMargin: Int? = nil) {
-        self.padding = Padding(leading: horizontal,       trailing: horizontal,
-                               top:     top,              bottom:   bottom);
-        self.margin  = Margin (leading: horizontalMargin, trailing: horizontalMargin,
-                               top:     topMargin,        bottom:   bottomMargin);
-    }
-
-    public init(leading:       Int? = nil, trailing:       Int? = nil, vertical:       Int? = nil,
-                leadingMargin: Int? = nil, trailingMargin: Int? = nil, verticalMargin: Int? = nil) {
-        self.padding = Padding(leading: leading,        trailing: trailing,
-                               top:     vertical,       bottom:   vertical);
-        self.margin  = Margin (leading: leadingMargin,  trailing: trailingMargin,
-                               top:     verticalMargin, bottom:   verticalMargin);
-    }
-
-    public init(horizontal:       Int? = nil, vertical:       Int? = nil, 
-                horizontalMargin: Int? = nil, verticalMargin: Int? = nil) {
-        self.padding = Padding(horizontal: horizontal,       vertical: vertical);
-        self.margin  = Margin (horizontal: horizontalMargin, vertical: verticalMargin);
-    }
-
-    public init(_ value: Spacing?, _ fallback: Spacing?) {
-        self.padding = Padding(value?.padding, fallback?.padding);
-        self.margin  = Margin(value?.margin,   fallback?.margin);
-    }
-
-    public let padding: Padding;
-    public let margin:  Margin;
-}
-
 public extension View {
 
     public func padding(_ padding: Padding) -> some View {
@@ -125,19 +70,5 @@ public extension View {
             .padding(.trailing, margin.trailing)
             .padding(.top,      margin.top)
             .padding(.bottom,   margin.bottom)
-    }
-
-    public func padding(_ spacing: Spacing) -> some View {
-        self.padding(.leading,  spacing.padding.leading)
-            .padding(.trailing, spacing.padding.trailing)
-            .padding(.top,      spacing.padding.top)
-            .padding(.bottom,   spacing.padding.bottom)
-    }
-
-    public func margin(_ spacing: Spacing) -> some View {
-        self.padding(.leading,  spacing.margin.leading)
-            .padding(.trailing, spacing.margin.trailing)
-            .padding(.top,      spacing.margin.top)
-            .padding(.bottom,   spacing.margin.bottom)
     }
 }
