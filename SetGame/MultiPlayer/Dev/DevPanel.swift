@@ -31,10 +31,10 @@ public extension MultiPlayer.Dev {
 
         public var body: some View {
             VStack(alignment: .leading) {
-                RoundedBox(background: Defaults.background, padding: Padding(leading: 10, trailing: 10),
-                                                            margin: Margin(leading: 10, trailing: 10), radius: 8.0,
-                                                            span: true) {
-                    Text("somebutton")
+                RoundedBox(background: Defaults.background, padding: Padding(leading: 10, trailing: 10, vertical: 12),
+                                                            margin: Margins(leading: 10, trailing: 10), radius: 8.0,
+                                                            span: true, shadow: true) {
+                    TextButton("somebutton", size: 20){}
                 }
                 AnyDevPanel(table: table, margin: margin) {
                     Text("somebutton")
@@ -112,8 +112,8 @@ public extension MultiPlayer.Dev {
         fileprivate var body: some View {
             // AnyDevPanel(table: table, margin: margin) {
             RoundedBox(background: Defaults.background, padding: Padding(leading: 10, trailing: 10),
-                                                        margin: Margin(leading: 10, trailing: 10), radius: 8.0) {
-                TextButton("button", size: 28, margin: Margin(vertical: 4)) {}
+                                                        margin: Margins(leading: 10, trailing: 10), radius: 8.0) {
+                TextButton("button", size: 28, margin: Margins(vertical: 4)) {}
                 RegularText("me:")
                  // CopyableText(sessionState.player,
                  //              color: self.session.hosting ? Defaults.highlightColor : .primary, semibold: true, leading: 3)
@@ -164,7 +164,7 @@ public extension MultiPlayer.Dev {
             AnyDevPanel(table: table, vertical: 8, margin: margin) {
                 RegularText("session:")
                     CopyableText(sessionState.sessionShort, copy: sessionState.session, bold: true, leading: 3)
-                TextButton("create", margin: Margin(leading: 6), disabled: self.sessionState.connected) {
+                TextButton("create", margin: Margins(leading: 6), disabled: self.sessionState.connected) {
                     if (!self.session.connected) {
                         if await self.session.create() {
                             self.sessionState.update(from: self.session, select: true);
@@ -172,7 +172,7 @@ public extension MultiPlayer.Dev {
                         }
                     }
                 }
-                JoinControl(items: $sessionState.xsessions, margin: Margin(leading: 6), weight: .bold, disabled: self.sessionState.connected) {
+                JoinControl(items: $sessionState.xsessions, margin: Margins(leading: 6), weight: .bold, disabled: self.sessionState.connected) {
                     DEB("join-try: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)]")
                     if (!self.session.connected) {
                     DEB("join-try2: [\(sessionState.xsessions.selected)] \(sessionState.xsessions) [\(self.session.connected)]")

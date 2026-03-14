@@ -15,46 +15,34 @@ public struct Padding {
     private let _top:      Int?;
     private let _bottom:   Int?;
 
-    public init(leading: Int? = nil, trailing: Int? = nil, top: Int? = nil, bottom: Int? = nil) {
-        self._leading  = leading;
-        self._trailing = trailing;
-        self._top      = top;
-        self._bottom   = bottom;
+    public init(horizontal: Int? = nil, leading: Int? = nil, trailing: Int? = nil,
+                vertical:   Int? = nil, top:     Int? = nil, bottom:   Int? = nil) {
+        self._leading  = leading  ?? horizontal;
+        self._trailing = trailing ?? horizontal;
+        self._top      = top      ?? vertical;
+        self._bottom   = bottom   ?? vertical;
     }
 
-    public init(_ value: Padding?, _ fallback: Padding?) {
+    public init(_ value: Int? = nil) {
+        self._leading  = value;
+        self._trailing = value;
+        self._top      = value;
+        self._bottom   = value;
+    }
+
+    public init(_ value: Padding?, fallback: Padding?) {
         self._leading  = value?._leading  ?? fallback?._leading;
         self._trailing = value?._trailing ?? fallback?._trailing;
         self._top      = value?._top      ?? fallback?._top;
         self._bottom   = value?._bottom   ?? fallback?._bottom;
     }
 
-    public init(horizontal: Int? = nil, vertical: Int?) {
-        self.init(leading: horizontal, trailing: horizontal, top: vertical, bottom: vertical);
+    public init(_ value: Padding) {
+        self = value;
     }
 }
 
-public typealias Margin = Padding;
-
-public struct Style {
-    public let size:       Int?;
-    public let padding:    Padding?;
-    public let margin:     Margin?;
-    public let weight:     Font.Weight?;
-    public let foreground: Color?;
-    public let background: Color?;
-    public let disabled:   Bool;
-    public init(size: Int? = nil, padding: Padding? = nil, margin: Margin? = nil, weight: Font.Weight? = nil,
-                foreground: Color? = nil, background: Color? = nil, disabled: Bool = false) {
-        self.size = size;
-        self.padding = padding;
-        self.margin = margin;
-        self.weight = weight;
-        self.foreground = foreground;
-        self.background = background;
-        self.disabled = disabled;
-    }
-}
+public typealias Margins = Padding;
 
 public extension View {
 
@@ -65,7 +53,7 @@ public extension View {
             .padding(.bottom,   padding.bottom)
     }
 
-    public func margin(_ margin: Margin) -> some View {
+    public func margin(_ margin: Margins) -> some View {
         self.padding(.leading,  margin.leading)
             .padding(.trailing, margin.trailing)
             .padding(.top,      margin.top)

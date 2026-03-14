@@ -67,7 +67,7 @@ public extension MultiPlayer.Dev {
         @Binding fileprivate var items: PrefixableList;
         private let size: Int;
         private let padding: Padding;
-        private let margin: Margin;
+        private let margin: Margins;
         private let foreground: Color;
         private let background: Color;
         private let weight: Font.Weight;
@@ -77,14 +77,14 @@ public extension MultiPlayer.Dev {
         private static let padding: Padding = Padding(leading: 8, trailing: 8, top: 4, bottom: 4);
 
         public init(items: Binding<PrefixableList>,
-                    size: Int? = nil, padding: Padding? = nil, margin: Margin? = nil,
+                    size: Int? = nil, padding: Padding? = nil, margin: Margins? = nil,
                     foreground: Color? = nil, background: Color? = nil,
                     weight: Font.Weight = .semibold,
                     disabled: Bool = false, action: @escaping () async -> Void) {
             self._items = items;
             self.size = size ?? Defaults.fontSize;
             self.padding = padding ?? Defaults.padding;
-            self.margin = margin ?? Margin.fallback;
+            self.margin = margin ?? Margins.fallback;
             self.foreground = foreground ?? .white;
             self.background = background ?? Defaults.foreground;
             self.weight = weight;
@@ -123,7 +123,7 @@ public extension MultiPlayer.Dev {
         private let text: String;
         private let size: Int;
         private let padding: Padding;
-        private let margin: Margin;
+        private let margin: Margins;
         private let weight: Font.Weight;
         private let foreground: Color;
         private let background: Color;
@@ -131,7 +131,7 @@ public extension MultiPlayer.Dev {
         private let action: () async -> Void;
 
         public init( _ text: String,
-                       size: Int? = nil, padding: Padding? = nil, margin: Margin? = nil,
+                       size: Int? = nil, padding: Padding? = nil, margin: Margins? = nil,
                        weight: Font.Weight? = nil,
                        foreground: Color? = nil, background: Color? = nil,
                        disabled: Bool = false,
@@ -139,7 +139,7 @@ public extension MultiPlayer.Dev {
             self.text = text;
             self.size = size ?? Defaults.fontSize;
             self.padding = padding ?? Defaults.padding;
-            self.margin = margin ?? Margin.fallback;
+            self.margin = margin ?? Margins.fallback;
             self.weight = weight ?? .semibold;
             self.foreground = foreground ?? .white;
             self.background = background ?? Defaults.foreground;
@@ -169,7 +169,7 @@ public extension MultiPlayer.Dev {
         private let icon: String;
         private let size: Int;
         private let padding: Padding;
-        private let margin: Margin;
+        private let margin: Margins;
         private let weight: Font.Weight;
         private let foreground: Color;
         private let background: Color;
@@ -177,7 +177,7 @@ public extension MultiPlayer.Dev {
         private let action: () async -> Void;
 
         public init(_ icon: String,
-                       size: Int? = nil, padding: Padding? = nil, margin: Margin? = nil,
+                       size: Int? = nil, padding: Padding? = nil, margin: Margins? = nil,
                        weight: Font.Weight? = nil,
                        foreground: Color? = nil, background: Color? = nil,
                        disabled: Bool = false,
@@ -185,7 +185,7 @@ public extension MultiPlayer.Dev {
             self.icon = icon;
             self.size = size ?? Defaults.iconSize;
             self.padding = padding ?? Defaults.padding;
-            self.margin = margin ?? Margin.fallback;
+            self.margin = margin ?? Margins.fallback;
             self.weight = weight ?? .semibold;
             self.foreground = foreground ?? Defaults.iconColor;
             self.background = background ?? Defaults.foreground;
