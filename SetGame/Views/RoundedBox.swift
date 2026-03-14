@@ -10,6 +10,7 @@ public struct RoundedBox<Content: View>: View {
     private let shadow: Bool;
     private let border: Color?;
     private let borderThickness: Int?;
+    private let span: Bool;
     private let content: Content;
 
     public init(background: Color,
@@ -19,6 +20,7 @@ public struct RoundedBox<Content: View>: View {
                 shadow: Bool = false,
                 border: Color? = nil,
                 borderThickness: Int? = nil,
+                span: Bool = false,
                 @ViewBuilder content: () -> Content) {
         self.background = background;
         self.padding = padding;
@@ -27,12 +29,14 @@ public struct RoundedBox<Content: View>: View {
         self.shadow = shadow;
         self.border = border;
         self.borderThickness = borderThickness;
+        self.span = span;
         self.content = content();
     }
 
     public var body: some View {
         HStack(spacing: 0) {
             self.content
+            if (self.span) { Spacer() }
         }
         .rounded(background: self.background,
                  padding: self.padding, margin: self.margin,

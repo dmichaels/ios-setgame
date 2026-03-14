@@ -31,6 +31,14 @@ public extension MultiPlayer.Dev {
 
         public var body: some View {
             VStack(alignment: .leading) {
+                RoundedBox(background: Defaults.background, padding: Padding(leading: 10, trailing: 10),
+                                                            margin: Margin(leading: 10, trailing: 10), radius: 8.0,
+                                                            span: true) {
+                    Text("somebutton")
+                }
+                AnyDevPanel(table: table, margin: margin) {
+                    Text("somebutton")
+                }
                 DevPanelInfo(table: table, session: session, transport: transport, sessionState: sessionState, margin: margin)
                 // Text("Session:").frame(alignment: .leading).padding(.leading, 10).padding(.bottom, 0).offset(y: 10)
                 DevPanelSession(table: table, session: session, transport: transport, sessionState: sessionState, margin: 12)
