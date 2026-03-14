@@ -30,10 +30,11 @@ public extension MultiPlayer.Dev {
         }
 
         public var body: some View {
-            VStack {
-
+            VStack(alignment: .leading) {
                 DevPanelInfo(table: table, session: session, transport: transport, sessionState: sessionState, margin: margin)
+                // Text("Session:").frame(alignment: .leading).padding(.leading, 10).padding(.bottom, 0).offset(y: 10)
                 DevPanelSession(table: table, session: session, transport: transport, sessionState: sessionState, margin: 12)
+                // Text("Players:").frame(alignment: .leading).padding(.leading, 10).padding(.bottom, 0).offset(y: 10)
                 DevPanelPlayers(table: table, session: session, transport: transport, sessionState: sessionState, margin: 12)
                 DevPanelMessages(table: table, session: session, transport: transport, sessionState: sessionState, margin: 12)
                 DevPanelServer(table: table, session: session, transport: transport, sessionState: sessionState, margin: 12)
@@ -101,7 +102,10 @@ public extension MultiPlayer.Dev {
         }
 
         fileprivate var body: some View {
-            AnyDevPanel(table: table, margin: margin) {
+            // AnyDevPanel(table: table, margin: margin) {
+            RoundedBox(background: Defaults.background, padding: Padding(leading: 10, trailing: 10),
+                                                        margin: Margin(leading: 10, trailing: 10), radius: 8.0) {
+                TextButton("button", size: 28, margin: Margin(vertical: 4)) {}
                 RegularText("me:")
                  // CopyableText(sessionState.player,
                  //              color: self.session.hosting ? Defaults.highlightColor : .primary, semibold: true, leading: 3)
@@ -115,7 +119,9 @@ public extension MultiPlayer.Dev {
                 RegularText("players:", leading: 10)
                     RegularText("\(self.sessionState.players.count == 0 ? Defaults.emptySetChar : "\(self.sessionState.players.count)")", leading: 3)
                 Spacer()
-                SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
+                // SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
+                Text("FOO")
+                IconButton(self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
                     if (self.transport.engaged) {
                         self.transport.disengage();
                     }
@@ -177,7 +183,7 @@ public extension MultiPlayer.Dev {
                     }
                 }
                 Spacer()
-                SmallButton("host", disabled: !self.sessionState.connected || self.sessionState.hosting) {
+                TextButton("host", disabled: !self.sessionState.connected || self.sessionState.hosting) {
                     if (self.session.connected) {
                         if await self.session.requestHost() {
                             self.sessionState.update(from: self.session);

@@ -27,15 +27,23 @@ public extension MultiPlayer.Dev {
         }
 
         public var body: some View {
-            if (self.topMargin > 0) { Spacer().frame(height: CGFloat(self.topMargin)) }
+            /*
+            Text("Session:")
+                .padding(.leading, 10)
+                .padding(.bottom, 0).offset(y: 10)
+                .font(.system(size: 14, weight: .bold))
+                */
+            // if (self.topMargin > 0) { Spacer().frame(height: CGFloat(self.topMargin)) } -- .padding(.top, CGFloat(self.topMargin)) at end of this/below HStack instead
             HStack(spacing: CGFloat(self.horizontalMargin)) {
-                Spacer()
+                // Spacer() -- .padding(.leading, 10) at end of this/above HStack instead
                 HStack(alignment: .firstTextBaseline) {
                     VStack() {
-                        Spacer().frame(height: CGFloat(self.verticalPadding))
+                        // Spacer().frame(height: CGFloat(self.verticalPadding)) -- .padding(.top, CGFloat(self.verticalPadding)) at and of this/above VStack instead
                         HStack(spacing: 0) {
                             content
-                        }.padding(.leading, CGFloat(self.leadingPadding))
+                        }
+                        .padding(.leading, CGFloat(self.leadingPadding))
+                        .padding(.top, CGFloat(self.verticalPadding))
                         Spacer().frame(height: CGFloat(self.verticalPadding - 1))
                     }
                     Spacer()
@@ -46,8 +54,11 @@ public extension MultiPlayer.Dev {
                         .opacity(0.8)
                         .shadow(color: .black.opacity(0.3), radius: 8, x: 3, y: 6)
                 )
-                Spacer()
+                // Spacer() -- .padding(.trailing, 10) at end of this/above HStack instead
             }
+            .padding(.leading, 10)
+            .padding(.trailing, 10)
+            .padding(.top, CGFloat(self.topMargin))
         }
     }
 
