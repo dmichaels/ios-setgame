@@ -15,12 +15,14 @@ public struct Padding {
     private let _top:      Int?;
     private let _bottom:   Int?;
 
-    public init(horizontal: Int? = nil, leading: Int? = nil, trailing: Int? = nil,
-                vertical:   Int? = nil, top:     Int? = nil, bottom:   Int? = nil) {
-        self._leading  = leading  ?? horizontal;
-        self._trailing = trailing ?? horizontal;
-        self._top      = top      ?? vertical;
-        self._bottom   = bottom   ?? vertical;
+    public init(_ padding:    Padding? = nil,
+                  horizontal: Int?     = nil, leading: Int? = nil, trailing: Int? = nil,
+                  vertical:   Int?     = nil, top:     Int? = nil, bottom:   Int? = nil,
+                  fallback:   Padding? = nil) {
+        self._leading  = leading  ?? horizontal ?? padding?._leading  ?? fallback?._leading;
+        self._trailing = trailing ?? horizontal ?? padding?._trailing ?? fallback?._trailing;
+        self._top      = top      ?? vertical   ?? padding?._top      ?? fallback?._top;
+        self._bottom   = bottom   ?? vertical   ?? padding?._bottom   ?? fallback?._bottom;
     }
 
     public init(_ value: Int? = nil) {
@@ -28,17 +30,6 @@ public struct Padding {
         self._trailing = value;
         self._top      = value;
         self._bottom   = value;
-    }
-
-    public init(_ value: Padding?, fallback: Padding?) {
-        self._leading  = value?._leading  ?? fallback?._leading;
-        self._trailing = value?._trailing ?? fallback?._trailing;
-        self._top      = value?._top      ?? fallback?._top;
-        self._bottom   = value?._bottom   ?? fallback?._bottom;
-    }
-
-    public init(_ value: Padding) {
-        self = value;
     }
 }
 
