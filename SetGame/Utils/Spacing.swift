@@ -53,10 +53,10 @@ public extension View {
             .padding(.bottom,   padding.bottom)
     }
 
-    public func margin(_ margin: Margins) -> some View {
-        self.padding(.leading,  margin.leading)
-            .padding(.trailing, margin.trailing)
-            .padding(.top,      margin.top)
-            .padding(.bottom,   margin.bottom)
+    public func margins(_ margins: Margins) -> some View {
+        self.padding(.leading,  margins.leading)
+            .padding(.trailing, margins.trailing)
+            .padding(.top,      margins.top)
+            .padding(.bottom,   margins.bottom)
     }
 }

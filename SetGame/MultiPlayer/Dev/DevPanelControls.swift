@@ -15,13 +15,13 @@ public extension MultiPlayer.Dev {
         public init(table: Table, background: Color = Defaults.background,
                     leading: Int = 8,
                     vertical: Int = 3,
-                    margin: Int = 0,
+                    margins: Int = 0,
                     hmargin: Int = 4, @ViewBuilder content: () -> Content) {
             self.table = table;
             self.background = background;
             self.leadingPadding = leading;
             self.verticalPadding = vertical;
-            self.topMargin = margin;
+            self.topMargin = margins;
             self.horizontalMargin = hmargin;
             self.content = content();
         }
@@ -67,7 +67,7 @@ public extension MultiPlayer.Dev {
         @Binding fileprivate var items: PrefixableList;
         private let size: Int;
         private let padding: Padding;
-        private let margin: Margins;
+        private let margins: Margins;
         private let foreground: Color;
         private let background: Color;
         private let weight: Font.Weight;
@@ -77,14 +77,14 @@ public extension MultiPlayer.Dev {
         private static let padding: Padding = Padding(leading: 8, trailing: 8, top: 4, bottom: 4);
 
         public init(items: Binding<PrefixableList>,
-                    size: Int? = nil, padding: Padding? = nil, margin: Margins? = nil,
+                    size: Int? = nil, padding: Padding? = nil, margins: Margins? = nil,
                     foreground: Color? = nil, background: Color? = nil,
                     weight: Font.Weight = .semibold,
                     disabled: Bool = false, action: @escaping () async -> Void) {
             self._items = items;
             self.size = size ?? Defaults.fontSize;
             self.padding = padding ?? Defaults.padding;
-            self.margin = margin ?? Margins.fallback;
+            self.margins = margins ?? Margins.fallback;
             self.foreground = foreground ?? .white;
             self.background = background ?? Defaults.foreground;
             self.weight = weight;
@@ -93,7 +93,7 @@ public extension MultiPlayer.Dev {
         }
 
         public var body: some View {
-            RoundedBox(background: self.background, padding: self.padding, margin: self.margin) {
+            RoundedBox(background: self.background, padding: self.padding, margins: self.margins) {
                 Button {
                     if (!self.disabled) { Task {
                         await self.action();
@@ -123,7 +123,7 @@ public extension MultiPlayer.Dev {
         private let text: String;
         private let size: Int;
         private let padding: Padding;
-        private let margin: Margins;
+        private let margins: Margins;
         private let weight: Font.Weight;
         private let foreground: Color;
         private let background: Color;
@@ -131,7 +131,7 @@ public extension MultiPlayer.Dev {
         private let action: () async -> Void;
 
         public init( _ text: String,
-                       size: Int? = nil, padding: Padding? = nil, margin: Margins? = nil,
+                       size: Int? = nil, padding: Padding? = nil, margins: Margins? = nil,
                        weight: Font.Weight? = nil,
                        foreground: Color? = nil, background: Color? = nil,
                        disabled: Bool = false,
@@ -139,7 +139,7 @@ public extension MultiPlayer.Dev {
             self.text = text;
             self.size = size ?? Defaults.fontSize;
             self.padding = padding ?? Defaults.padding;
-            self.margin = margin ?? Margins.fallback;
+            self.margins = margins ?? Margins.fallback;
             self.weight = weight ?? .semibold;
             self.foreground = foreground ?? .white;
             self.background = background ?? Defaults.foreground;
@@ -153,14 +153,14 @@ public extension MultiPlayer.Dev {
                     await self.action();
                 } }
             } label: {
-                RoundedBox(background: self.background, padding: self.padding, margin: self.margin) {
+                RoundedBox(background: self.background, padding: self.padding, margins: self.margins) {
                     Text(self.text)
                         .font(.system(size: CGFloat(self.size), weight: self.weight))
                         .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
                 }
             }
             .buttonStyle(.plain)
-            .margin(self.margin)
+            .margins(self.margins)
         }
     }
 
@@ -169,7 +169,7 @@ public extension MultiPlayer.Dev {
         private let icon: String;
         private let size: Int;
         private let padding: Padding;
-        private let margin: Margins;
+        private let margins: Margins;
         private let weight: Font.Weight;
         private let foreground: Color;
         private let background: Color;
@@ -177,7 +177,7 @@ public extension MultiPlayer.Dev {
         private let action: () async -> Void;
 
         public init(_ icon: String,
-                       size: Int? = nil, padding: Padding? = nil, margin: Margins? = nil,
+                       size: Int? = nil, padding: Padding? = nil, margins: Margins? = nil,
                        weight: Font.Weight? = nil,
                        foreground: Color? = nil, background: Color? = nil,
                        disabled: Bool = false,
@@ -185,7 +185,7 @@ public extension MultiPlayer.Dev {
             self.icon = icon;
             self.size = size ?? Defaults.iconSize;
             self.padding = padding ?? Defaults.padding;
-            self.margin = margin ?? Margins.fallback;
+            self.margins = margins ?? Margins.fallback;
             self.weight = weight ?? .semibold;
             self.foreground = foreground ?? Defaults.iconColor;
             self.background = background ?? Defaults.foreground;
@@ -203,7 +203,7 @@ public extension MultiPlayer.Dev {
                     .disabled(self.disabled)
             }
             .buttonStyle(.plain)
-            .margin(self.margin)
+            .margins(self.margins)
         }
     }
 

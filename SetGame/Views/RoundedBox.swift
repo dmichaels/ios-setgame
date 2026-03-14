@@ -5,7 +5,7 @@ public struct RoundedBox<Content: View>: View {
 
     private let background: Color;
     private let padding: Padding?;
-    private let margin: Margins?;
+    private let margins: Margins?;
     private let radius: CGFloat;
     private let span: Bool;
     private let shadow: Bool;
@@ -15,7 +15,7 @@ public struct RoundedBox<Content: View>: View {
 
     public init(background: Color,
                 padding: Padding? = nil,
-                margin: Margins? = nil,
+                margins: Margins? = nil,
                 radius: CGFloat = 5.0,
                 span: Bool = false,
                 shadow: Bool = false,
@@ -24,7 +24,7 @@ public struct RoundedBox<Content: View>: View {
                 @ViewBuilder content: () -> Content) {
         self.background = background;
         self.padding = padding;
-        self.margin = margin;
+        self.margins = margins;
         self.radius = radius;
         self.span = span;
         self.shadow = shadow;
@@ -39,7 +39,7 @@ public struct RoundedBox<Content: View>: View {
             if (self.span) { Spacer() }
         }
         .rounded(background: self.background,
-                 padding: self.padding, margin: self.margin,
+                 padding: self.padding, margins: self.margins,
                  radius: self.radius, shadow: self.shadow,
                  border: self.border, borderThickness: self.borderThickness)
     }
@@ -49,7 +49,7 @@ public extension View {
 
     public func rounded(background: Color,
                         padding: Padding? = nil,
-                        margin: Margins? = nil,
+                        margins: Margins? = nil,
                         radius: CGFloat = 5.0,
                         shadow: Bool = true,
                         wrap: Bool = false,
@@ -61,7 +61,7 @@ public extension View {
                         .fill(disabled ? background.opacity(0.65) : background))
             .overlay(RoundedRectangle(cornerRadius: radius, style: .circular)
                      .stroke(border ?? .clear, lineWidth: CGFloat(borderThickness ?? 0)))
-            .margin(margin ?? Margins.fallback)
+            .margins(margins ?? Margins.fallback)
             .shadow(color: shadow ? .black.opacity(0.3) : .clear,
                     radius: shadow ? 8 : 0, x: shadow ? 3 : 0, y: shadow ? 6 : 0)
             .lineLimit(wrap ? nil : 1)
