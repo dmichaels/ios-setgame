@@ -6,7 +6,7 @@ public extension MultiPlayer.Dev {
 
         @ObservedObject private var table: Table
         @ObservedObject private var settings: Settings;
-                        private var margins: Int = 10;
+                        private var margins: Margins;
 
                  @StateObject private var sessionState: SessionState;
                         private static let pollInterval: Int = 500;
@@ -14,11 +14,11 @@ public extension MultiPlayer.Dev {
         private var session: MultiPlayer.Session { MultiPlayer.HttpSession.instance }
         private var transport: MultiPlayer.Transport { MultiPlayer.HttpSession.instance.transport as! MultiPlayer.HttpTransport }
 
-        public init(table: Table, settings: Settings, margins: Int = 0) {
+        public init(table: Table, settings: Settings, margins: Margins? = nil) {
             LOGD("DevPanelView.init!!!")
             self.table = table;
             self.settings = settings;
-            self.margins = margins;
+            self.margins = margins ?? Margins.fallback;
             /*
             self.sessionState = SessionState(player: MultiPlayer.HttpSession.instance.player,
                                              pollInterval: pollInterval);
@@ -31,30 +31,13 @@ public extension MultiPlayer.Dev {
 
         public var body: some View {
             VStack(alignment: .leading) {
-                RoundedBox(background: Defaults.background, padding: Padding(leading: 10, trailing: 10, vertical: 12),
-                                                            margins: Margins(leading: 10, trailing: 10), radius: 8.0,
-                                                            span: true, shadow: true) {
-                    TextButton("somebutton", size: 20){}
-                }
-                RoundedBox(background: Defaults.background, padding: Padding(horizontal: 8, vertical: 3),
-                                                            margins: Margins(leading: 10, trailing: 10), radius: 5.0, span: true, shadow: true) {
-                    Text("somebutton")
-                }
-                AnyDevPanel(table: table) {
-                    Text("xomebutton")
-                }
-                oldAnyDevPanel(table: table) {
-                    Text("yomebutton")
-                }
-                Spacer()
-                Spacer()
                 DevPanelInfo(table: table, session: session, transport: transport, sessionState: sessionState, margins: margins)
                 // Text("Session:").frame(alignment: .leading).padding(.leading, 10).padding(.bottom, 0).offset(y: 10)
-                DevPanelSession(table: table, session: session, transport: transport, sessionState: sessionState, margins: 12)
+                DevPanelSession(table: table, session: session, transport: transport, sessionState: sessionState, margins: Margins(top: 10))
                 // Text("Players:").frame(alignment: .leading).padding(.leading, 10).padding(.bottom, 0).offset(y: 10)
-                DevPanelPlayers(table: table, session: session, transport: transport, sessionState: sessionState, margins: 12)
-                DevPanelMessages(table: table, session: session, transport: transport, sessionState: sessionState, margins: 12)
-                DevPanelServer(table: table, session: session, transport: transport, sessionState: sessionState, margins: 12)
+                DevPanelPlayers(table: table, session: session, transport: transport, sessionState: sessionState, margins: Margins(top: 10))
+                DevPanelMessages(table: table, session: session, transport: transport, sessionState: sessionState, margins: Margins(top: 10))
+                DevPanelServer(table: table, session: session, transport: transport, sessionState: sessionState, margins: Margins(top: 10))
                 ChatView(player: self.session.player,
                          players: $sessionState.players,
                          messages: self.sessionState.chats,
@@ -106,22 +89,20 @@ public extension MultiPlayer.Dev {
                         private let session: MultiPlayer.Session;
                         private let transport: MultiPlayer.Transport;
                @ObservedObject private var sessionState: SessionState;
-                        private let margins: Int;
+                        private let margins: Margins;
 
         fileprivate init(table: Table,
                          session: MultiPlayer.Session, transport: MultiPlayer.Transport,
-                         sessionState: SessionState, /*sessionState: Binding<SessionState>,*/ margins: Int = 10) {
+                         sessionState: SessionState, /*sessionState: Binding<SessionState>,*/ margins: Margins? = nil) {
             self.table = table;
             self.session = session;
             self.transport = transport;
             self.sessionState = sessionState;
-            self.margins = margins;
+            self.margins = margins ?? Margins.fallback;
         }
 
         fileprivate var body: some View {
-            // AnyDevPanel(table: table, margins: margins) {
-            RoundedBox(background: Defaults.background, padding: Padding(leading: 10, trailing: 10),
-                                                        margins: Margins(leading: 10, trailing: 10), radius: 8.0) {
+            AnyDevPanel(table: table, margins: margins) {
                 TextButton("button", size: 28, margins: Margins(vertical: 4)) {}
                 RegularText("me:")
                  // CopyableText(sessionState.player,
@@ -157,20 +138,20 @@ public extension MultiPlayer.Dev {
                         private let transport: MultiPlayer.Transport;
                // @Binding private var sessionState: SessionState;
                @ObservedObject private var sessionState: SessionState;
-                        private let margins: Int;
+                        private let margins: Margins;
 
         fileprivate init(table: Table,
                          session: MultiPlayer.Session, transport: MultiPlayer.Transport,
-                         sessionState: SessionState, margins: Int = 10) {
+                         sessionState: SessionState, margins: Margins? = nil) {
             self.table = table;
             self.session = session;
             self.transport = transport;
             self.sessionState = sessionState;
-            self.margins = margins;
+            self.margins = margins ?? Margins.fallback;
         }
 
         fileprivate var body: some View {
-            AnyDevPanel(table: table, vertical: 8, margins: margins) {
+            AnyDevPanel(table: table, margins: margins) {
                 RegularText("session:")
                     CopyableText(sessionState.sessionShort, copy: sessionState.session, bold: true, leading: 3)
                 TextButton("create", margins: Margins(leading: 6), disabled: self.sessionState.connected) {
@@ -238,16 +219,16 @@ public extension MultiPlayer.Dev {
                         private let session: MultiPlayer.Session;
                         private let transport: MultiPlayer.Transport;
                @ObservedObject private var sessionState: SessionState;
-                        private let margins: Int;
+                        private let margins: Margins;
 
         fileprivate init(table: Table,
                          session: MultiPlayer.Session, transport: MultiPlayer.Transport,
-                         sessionState: SessionState, margins: Int = 10) {
+                         sessionState: SessionState, margins: Margins? = nil) {
             self.table = table;
             self.session = session;
             self.transport = transport;
             self.sessionState = sessionState;
-            self.margins = margins;
+            self.margins = margins ?? Margins.fallback;
         }
 
         fileprivate var body: some View {
@@ -358,20 +339,20 @@ public extension MultiPlayer.Dev {
                         private let session: MultiPlayer.Session;
                         private let transport: MultiPlayer.Transport;
                @ObservedObject private var sessionState: SessionState;
-                        private let margins: Int;
+                        private let margins: Margins;
 
         fileprivate init(table: Table,
                          session: MultiPlayer.Session, transport: MultiPlayer.Transport,
-                         sessionState: SessionState, margins: Int = 10) {
+                         sessionState: SessionState, margins: Margins? = nil) {
             self.table = table;
             self.session = session;
             self.transport = transport;
             self.sessionState = sessionState;
-            self.margins = margins;
+            self.margins = margins ?? Margins.fallback;
         }
 
         fileprivate var body: some View {
-            AnyDevPanel(table: table, vertical: 5, margins: margins) {
+            AnyDevPanel(table: table, margins: margins) {
                 MessagesView(sessionState: sessionState)
             }
         }
@@ -585,16 +566,16 @@ public extension MultiPlayer.Dev {
                         private let session: MultiPlayer.Session;
                         private let transport: MultiPlayer.Transport;
                @ObservedObject private var sessionState: SessionState;
-                        private let margins: Int;
+                        private let margins: Margins;
 
         fileprivate init(table: Table,
                          session: MultiPlayer.Session, transport: MultiPlayer.Transport,
-                         sessionState: SessionState, margins: Int = 10) {
+                         sessionState: SessionState, margins: Margins? = nil) {
             self.table = table;
             self.session = session;
             self.transport = transport;
             self.sessionState = sessionState;
-            self.margins = margins;
+            self.margins = margins ?? Margins.fallback;
         }
 
         private var pollCountChar: String {
@@ -609,7 +590,7 @@ public extension MultiPlayer.Dev {
         }
 
         fileprivate var body: some View {
-            AnyDevPanel(table: table, vertical: 2, margins: margins) {
+            AnyDevPanel(table: table, margins: margins) {
                 HStack {
                     RegularText("server: ", size: 13)
                         RegularText(self.sessionState.server,

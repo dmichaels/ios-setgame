@@ -24,7 +24,7 @@ public struct TableView: View {
             Space(size: 18)
             StatusBar(marginx: marginx)
             if (dev) {
-                MultiPlayer.Dev.DevPanel(table: table, settings: settings, margins: 24)
+                MultiPlayer.Dev.DevPanel(table: table, settings: settings, margins: Margins(top: 24))
             }
             Space(size: 12)
             FoundSets(table: table, settings: settings, marginx: marginx)

@@ -6,75 +6,17 @@ public extension MultiPlayer.Dev {
         private let padding: Padding;
         private let margins: Margins;
         private let content: Content;
-        public init(table: Table, vertical: Int = 3, margins: Int = 0, @ViewBuilder content: () -> Content) {
-            self.padding = Padding(horizontal: 8, vertical: vertical);
-            self.margins = Margins(horizontal: 10, top: margins);
+        public init(table: Table, margins: Margins? = nil, @ViewBuilder content: () -> Content) {
+            self.padding = Padding(horizontal: 8, vertical: 3);
+            self.margins = Margins(margins, horizontal: 10);
             self.content = content();
         }
         public var body: some View {
-            RoundedBox(background: Defaults.background, padding: self.padding, margins: self.margins, radius: 5.0, span: true, shadow: true) {
+            RoundedBox(background: Defaults.background,
+                       padding: self.padding, margins: self.margins,
+                       radius: 5.0, span: true, shadow: true) {
                 self.content
             }
-        }
-    }
-
-    public struct oldAnyDevPanel<Content: View>: View {
-
-        @ObservedObject private var table: Table;
-                        private let background: Color;
-                        private let leadingPadding: Int;
-                        private let verticalPadding: Int;
-                        private let topMargin: Int;
-                        private let horizontalMargin: Int;
-                        private let content: Content;
-
-        public init(table: Table, background: Color = Defaults.background,
-                    leading: Int = 8,
-                    vertical: Int = 3,
-                    margins: Int = 0,
-                    hmargin: Int = 4, @ViewBuilder content: () -> Content) {
-            self.table = table;
-            self.background = background;
-            self.leadingPadding = leading;
-            self.verticalPadding = vertical;
-            self.topMargin = margins;
-            self.horizontalMargin = hmargin;
-            self.content = content();
-        }
-
-        public var body: some View {
-            /*
-            Text("Session:")
-                .padding(.leading, 10)
-                .padding(.bottom, 0).offset(y: 10)
-                .font(.system(size: 14, weight: .bold))
-                */
-            // if (self.topMargin > 0) { Spacer().frame(height: CGFloat(self.topMargin)) } -- .padding(.top, CGFloat(self.topMargin)) at end of this/below HStack instead
-            HStack(spacing: CGFloat(self.horizontalMargin)) {
-                // Spacer() -- .padding(.leading, 10) at end of this/above HStack instead
-                HStack(alignment: .firstTextBaseline) {
-                    VStack() {
-                        // Spacer().frame(height: CGFloat(self.verticalPadding)) -- .padding(.top, CGFloat(self.verticalPadding)) at and of this/above VStack instead
-                        HStack(spacing: 0) {
-                            content
-                        }
-                        .padding(.leading, CGFloat(self.leadingPadding))
-                        .padding(.top, CGFloat(self.verticalPadding))
-                        Spacer().frame(height: CGFloat(self.verticalPadding - 1))
-                    }
-                    Spacer()
-                }
-                .background(
-                    RoundedRectangle(cornerRadius: 4, style: .continuous)
-                        .fill(background)
-                        .opacity(0.8)
-                        .shadow(color: .black.opacity(0.3), radius: 8, x: 3, y: 6)
-                )
-                // Spacer() -- .padding(.trailing, 10) at end of this/above HStack instead
-            }
-            .padding(.leading, 10)
-            .padding(.trailing, 10)
-            .padding(.top, CGFloat(self.topMargin))
         }
     }
 
