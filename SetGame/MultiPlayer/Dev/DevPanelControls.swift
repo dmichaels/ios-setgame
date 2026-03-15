@@ -6,6 +6,7 @@ public extension MultiPlayer.Dev {
 
         private let padding: Padding;
         private let margins: Margins;
+        private let title:   String?;
         private let content: Content;
 
         private let radius:          CGFloat = 8;
@@ -14,13 +15,24 @@ public extension MultiPlayer.Dev {
         private let border:          Color?  = Defaults.foreground;
         private let borderThickness: Int     = 2;
 
-        public init(table: Table, margins: Margins? = nil, @ViewBuilder content: () -> Content) {
-            self.padding = Padding(horizontal: 8, vertical: 8);
+        public init(table: Table, padding: Padding? = nil, margins: Margins? = nil,
+                    title: String? = nil, @ViewBuilder content: () -> Content) {
+            self.padding = Padding(padding, horizontal: 8, vertical: 8);
             self.margins = Margins(margins, horizontal: 10);
+            self.title   = title;
             self.content = content();
         }
 
         public var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+            if let title: String = title {
+                Text(title)
+                    .font(.system(size: 18, weight: .bold))
+                    .frame(alignment: .leading)
+                    .frame(alignment: .bottom)
+                    .padding(.leading, self.margins.leading + 2)
+                    .offset(y: 20)
+            }
             RoundedBox(background:      self.background,
                        padding:         self.padding,
                        margins:         self.margins,
@@ -30,6 +42,7 @@ public extension MultiPlayer.Dev {
                        border:          self.border,
                        borderThickness: self.borderThickness) {
                 self.content
+            }
             }
         }
     }

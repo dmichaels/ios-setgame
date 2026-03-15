@@ -30,7 +30,18 @@ public extension MultiPlayer.Dev {
         }
 
         public var body: some View {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 0) {
+
+                Spacer()
+                AnyDevPanel(table: table, margins: margins, title: "Sometext") {
+                    Text("sometext")
+                        .font(.system(size: 24, weight: .bold))
+                }
+                AnyDevPanel(table: table, margins: margins, title: "Somemoretext") {
+                    Text("somemoretext")
+                }
+                Spacer()
+
                 DevPanelInfo(table: table, session: session, transport: transport, sessionState: sessionState, margins: margins)
                 // Text("Session:").frame(alignment: .leading).padding(.leading, 10).padding(.bottom, 0).offset(y: 10)
                 DevPanelSession(table: table, session: session, transport: transport, sessionState: sessionState, margins: Margins(top: 10))
