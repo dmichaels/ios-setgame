@@ -34,7 +34,11 @@ public extension MultiPlayer.Dev {
 
                 Spacer()
                         RoundedBox(padding: Padding(10), margins: Margins(10), span: true, border: .blue) {
-                            Text("somemoretext")
+                            RoundedBox(padding: Padding(horizontal: 15, vertical: 10)) {
+                                Text("etc text")
+                            }
+                            .frame(alignment: .topLeading)
+                            RoundedBox(padding: Padding(horizontal: 15, vertical: 10), margins: Margins(leading: 10), border: .blue, borderThickness: 2) { Text("somemoretext") }
                         }
                 Spacer()
 
