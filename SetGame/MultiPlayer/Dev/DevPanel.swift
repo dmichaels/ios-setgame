@@ -40,8 +40,11 @@ public extension MultiPlayer.Dev {
                                                             margins: Margins(leading: 10, trailing: 10), radius: 5.0, span: true, shadow: true) {
                     Text("somebutton")
                 }
-                AnyDevPanel(table: table, margins: margins) {
-                    Text("somebutton")
+                AnyDevPanel(table: table) {
+                    Text("xomebutton")
+                }
+                oldAnyDevPanel(table: table) {
+                    Text("yomebutton")
                 }
                 Spacer()
                 Spacer()
