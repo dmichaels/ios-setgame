@@ -103,7 +103,7 @@ public extension MultiPlayer.Dev {
 
         fileprivate var body: some View {
             AnyDevPanel(table: table, margins: margins) {
-                TextButton("button", size: 28, margins: Margins(vertical: 4)) {}
+                TextButton("button", size: 28, margins: Margins(trailing: 8)) {}
                 RegularText("me:")
                  // CopyableText(sessionState.player,
                  //              color: self.session.hosting ? Defaults.highlightColor : .primary, semibold: true, leading: 3)
@@ -118,7 +118,6 @@ public extension MultiPlayer.Dev {
                     RegularText("\(self.sessionState.players.count == 0 ? Defaults.emptySetChar : "\(self.sessionState.players.count)")", leading: 3)
                 Spacer()
                 // SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
-                Text("FOO")
                 IconButton(self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
                     if (self.transport.engaged) {
                         self.transport.disengage();

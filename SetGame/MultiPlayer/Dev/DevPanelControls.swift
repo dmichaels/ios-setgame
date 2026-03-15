@@ -7,7 +7,7 @@ public extension MultiPlayer.Dev {
         private let margins: Margins;
         private let content: Content;
         public init(table: Table, margins: Margins? = nil, @ViewBuilder content: () -> Content) {
-            self.padding = Padding(horizontal: 8, vertical: 3);
+            self.padding = Padding(horizontal: 8, vertical: 8);
             self.margins = Margins(margins, horizontal: 10);
             self.content = content();
         }
