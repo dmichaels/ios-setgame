@@ -36,9 +36,15 @@ public extension MultiPlayer.Dev {
                                                             span: true, shadow: true) {
                     TextButton("somebutton", size: 20){}
                 }
+                RoundedBox(background: Defaults.background, padding: Padding(horizontal: 8, vertical: 3),
+                                                            margins: Margins(leading: 10, trailing: 10), radius: 5.0, span: true, shadow: true) {
+                    Text("somebutton")
+                }
                 AnyDevPanel(table: table, margins: margins) {
                     Text("somebutton")
                 }
+                Spacer()
+                Spacer()
                 DevPanelInfo(table: table, session: session, transport: transport, sessionState: sessionState, margins: margins)
                 // Text("Session:").frame(alignment: .leading).padding(.leading, 10).padding(.bottom, 0).offset(y: 10)
                 DevPanelSession(table: table, session: session, transport: transport, sessionState: sessionState, margins: 12)
