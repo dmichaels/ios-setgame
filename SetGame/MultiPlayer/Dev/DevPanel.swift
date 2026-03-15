@@ -33,14 +33,9 @@ public extension MultiPlayer.Dev {
             VStack(alignment: .leading, spacing: 0) {
 
                 Spacer()
-                    // VStack(alignment: .leading, spacing: 0) {
-                            Text("sometext")
-                                .font(.system(size: 14, weight: .bold))
-                                .padding(.leading, 10)
-                        RoundedBox(background: .clear, padding: Padding(horizontal: 0), margins: Margins(horizontal: 10), border: .blue) {
+                        RoundedBox(padding: Padding(10), margins: Margins(10), span: true, border: .blue) {
                             Text("somemoretext")
                         }
-                    // }
                 Spacer()
 
                 DevPanelInfo(table: table, session: session, transport: transport, sessionState: sessionState, margins: margins)

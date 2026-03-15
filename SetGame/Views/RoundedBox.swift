@@ -16,7 +16,7 @@ public struct RoundedBox<Content: View>: View {
     private let titleWeight:     Font.Weight;
     private let content:         Content;
 
-    public init(background: Color,
+    public init(background:      Color       = .clear,
                 padding:         Padding?    = nil,
                 margins:         Margins?    = nil,
                 radius:          CGFloat     = 5.0,
@@ -28,6 +28,7 @@ public struct RoundedBox<Content: View>: View {
                 titleSize:       CGFloat     = 18,
                 titleWeight:     Font.Weight = .bold,
                 @ViewBuilder content: () -> Content) {
+
         self.background      = background;
         self.padding         = padding;
         self.margins         = margins;
