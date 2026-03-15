@@ -3,18 +3,32 @@ import SwiftUI
 public extension MultiPlayer.Dev {
 
     public struct AnyDevPanel<Content: View>: View {
+
         private let padding: Padding;
         private let margins: Margins;
         private let content: Content;
+
+        private let radius:          CGFloat = 8;
+        private let shadow:          Bool    = false;
+        private let background:      Color   = Defaults.background;
+        private let border:          Color?  = Defaults.foreground;
+        private let borderThickness: Int     = 2;
+
         public init(table: Table, margins: Margins? = nil, @ViewBuilder content: () -> Content) {
             self.padding = Padding(horizontal: 8, vertical: 8);
             self.margins = Margins(margins, horizontal: 10);
             self.content = content();
         }
+
         public var body: some View {
-            RoundedBox(background: Defaults.background,
-                       padding: self.padding, margins: self.margins,
-                       radius: 5.0, span: true, shadow: true) {
+            RoundedBox(background:      self.background,
+                       padding:         self.padding,
+                       margins:         self.margins,
+                       radius:          self.radius,
+                       span:            true,
+                       shadow:          self.shadow,
+                       border:          self.border,
+                       borderThickness: self.borderThickness) {
                 self.content
             }
         }
