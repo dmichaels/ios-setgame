@@ -24,26 +24,52 @@ public extension MultiPlayer.Dev {
         }
 
         public var body: some View {
-            VStack(alignment: .leading, spacing: 0) {
+                RoundedBox(background:      self.background,
+                           padding:         self.padding,
+                           margins:         self.margins,
+                           radius:          self.radius,
+                           span:            true,
+                           shadow:          self.shadow,
+                           border:          self.border,
+                           borderThickness: self.borderThickness,
+                           title:           self.title) {
+                    self.content
+                }
+            /*
             if let title: String = title {
-                Text(title)
-                    .font(.system(size: 18, weight: .bold))
-                    .frame(alignment: .leading)
-                    .frame(alignment: .bottom)
-                    .padding(.leading, self.margins.leading + 2)
-                    .offset(y: 20)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(title)
+                        .font(.system(size: 18, weight: .bold))
+                        .frame(alignment: .leading)
+                        .frame(alignment: .bottom)
+                        .padding(.leading, self.margins.leading + 2)
+                        .padding(.top, self.margins.top)
+                        // .offset(y: 20)
+                    RoundedBox(background:      self.background,
+                            padding:         self.padding,
+                            margins:         Margins(self.margins, top: 0),
+                            radius:          self.radius,
+                            span:            true,
+                            shadow:          self.shadow,
+                            border:          self.border,
+                            borderThickness: self.borderThickness) {
+                        self.content
+                    }
+                }
             }
-            RoundedBox(background:      self.background,
-                       padding:         self.padding,
-                       margins:         self.margins,
-                       radius:          self.radius,
-                       span:            true,
-                       shadow:          self.shadow,
-                       border:          self.border,
-                       borderThickness: self.borderThickness) {
-                self.content
+            else {
+                RoundedBox(background:      self.background,
+                           padding:         self.padding,
+                           margins:         self.margins,
+                           radius:          self.radius,
+                           span:            true,
+                           shadow:          self.shadow,
+                           border:          self.border,
+                           borderThickness: self.borderThickness) {
+                    self.content
+                }
             }
-            }
+            */
         }
     }
 

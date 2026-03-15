@@ -33,18 +33,19 @@ public extension MultiPlayer.Dev {
             VStack(alignment: .leading, spacing: 0) {
 
                 Spacer()
-                AnyDevPanel(table: table, margins: margins, title: "Sometext") {
-                    Text("sometext")
-                        .font(.system(size: 24, weight: .bold))
-                }
-                AnyDevPanel(table: table, margins: margins, title: "Somemoretext") {
-                    Text("somemoretext")
-                }
+                    // VStack(alignment: .leading, spacing: 0) {
+                            Text("sometext")
+                                .font(.system(size: 14, weight: .bold))
+                                .padding(.leading, 10)
+                        RoundedBox(background: .clear, padding: Padding(horizontal: 0), margins: Margins(horizontal: 10), border: .blue) {
+                            Text("somemoretext")
+                        }
+                    // }
                 Spacer()
 
                 DevPanelInfo(table: table, session: session, transport: transport, sessionState: sessionState, margins: margins)
-                // Text("Session:").frame(alignment: .leading).padding(.leading, 10).padding(.bottom, 0).offset(y: 10)
-                DevPanelSession(table: table, session: session, transport: transport, sessionState: sessionState, margins: Margins(top: 10))
+                // Text("Session:").frame(alignment: .leading).padding(.leading, 10).padding(.bottom, 0) // .offset(y: 10)
+                DevPanelSession(table: table, title: "Sessions", session: session, transport: transport, sessionState: sessionState, margins: Margins(top: 10))
                 // Text("Players:").frame(alignment: .leading).padding(.leading, 10).padding(.bottom, 0).offset(y: 10)
                 DevPanelPlayers(table: table, session: session, transport: transport, sessionState: sessionState, margins: Margins(top: 10))
                 DevPanelMessages(table: table, session: session, transport: transport, sessionState: sessionState, margins: Margins(top: 10))
@@ -144,6 +145,7 @@ public extension MultiPlayer.Dev {
     private struct DevPanelSession: View {
 
         @ObservedObject private var table: Table
+                        private let title: String?;
                         private let session: MultiPlayer.Session;
                         private let transport: MultiPlayer.Transport;
                // @Binding private var sessionState: SessionState;
@@ -151,9 +153,11 @@ public extension MultiPlayer.Dev {
                         private let margins: Margins;
 
         fileprivate init(table: Table,
+                         title: String? = nil,
                          session: MultiPlayer.Session, transport: MultiPlayer.Transport,
                          sessionState: SessionState, margins: Margins? = nil) {
             self.table = table;
+            self.title = title;
             self.session = session;
             self.transport = transport;
             self.sessionState = sessionState;
@@ -161,7 +165,7 @@ public extension MultiPlayer.Dev {
         }
 
         fileprivate var body: some View {
-            AnyDevPanel(table: table, margins: margins) {
+            AnyDevPanel(table: table, margins: margins, title: title) {
                 RegularText("session:")
                     CopyableText(sessionState.sessionShort, copy: sessionState.session, bold: true, leading: 3)
                 TextButton("create", margins: Margins(leading: 6), disabled: self.sessionState.connected) {
