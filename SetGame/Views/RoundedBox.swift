@@ -9,6 +9,8 @@ public struct RoundedBox<Content: View>: View {
     private let radius:          CGFloat;
     private let span:            Bool;
     private let shadow:          Bool;
+    private let shadowColor:     Color;
+    private let shadowStrength:  CGFloat;
     private let border:          Color?;
     private let borderThickness: Int;
     private let title:           String?;
@@ -19,9 +21,11 @@ public struct RoundedBox<Content: View>: View {
     public init(background:      Color       = .clear,
                 padding:         Padding?    = nil,
                 margins:         Margins?    = nil,
-                radius:          CGFloat     = 5.0,
+                radius:          CGFloat     = 9.0,
                 span:            Bool        = false,
                 shadow:          Bool        = false,
+                shadowColor:     Color       = .black,
+                shadowStrength:  CGFloat     = 0.4,
                 border:          Color?      = nil,
                 borderThickness: Int         = 1,
                 title:           String?     = nil,
@@ -35,6 +39,8 @@ public struct RoundedBox<Content: View>: View {
         self.radius          = radius;
         self.span            = span;
         self.shadow          = shadow;
+        self.shadowColor     = shadowColor;
+        self.shadowStrength  = shadowStrength;
         self.border          = border;
         self.borderThickness = borderThickness;
         self.title           = title;
@@ -57,6 +63,8 @@ public struct RoundedBox<Content: View>: View {
                            radius:          self.radius,
                            span:            true,
                            shadow:          self.shadow,
+                           shadowColor:     self.shadowColor,
+                           shadowStrength:  self.shadowStrength,
                            border:          self.border,
                            borderThickness: self.borderThickness,
                            title:           nil) {
@@ -73,6 +81,8 @@ public struct RoundedBox<Content: View>: View {
                      margins:         self.margins,
                      radius:          self.radius,
                      shadow:          self.shadow,
+                     shadowColor:     self.shadowColor,
+                     shadowStrength:  self.shadowStrength,
                      border:          self.border,
                      borderThickness: self.borderThickness)
         }
@@ -81,15 +91,17 @@ public struct RoundedBox<Content: View>: View {
 
 public extension View {
 
-    public func rounded(background: Color,
-                        padding: Padding? = nil,
-                        margins: Margins? = nil,
-                        radius: CGFloat = 5.0,
-                        shadow: Bool = true,
-                        wrap: Bool = false,
-                        border: Color? = nil,
-                        borderThickness: Int? = nil,
-                        disabled: Bool = false) -> some View {
+    public func rounded(background:      Color,
+                        padding:         Padding? = nil,
+                        margins:         Margins? = nil,
+                        radius:          CGFloat  = 5.0,
+                        shadow:          Bool     = true,
+                        shadowColor:     Color    = .black,
+                        shadowStrength:  CGFloat  = 0.4,
+                        wrap:            Bool     = false,
+                        border:          Color?   = nil,
+                        borderThickness: Int?     = nil,
+                        disabled:        Bool     = false) -> some View {
         self.padding(padding ?? Padding.fallback)
             .background(RoundedRectangle(cornerRadius: radius, style: .circular)
                         .fill(disabled ? background.opacity(0.65) : background))
@@ -97,9 +109,10 @@ public extension View {
                      .stroke(border ?? .clear, lineWidth: CGFloat(borderThickness ?? 0)))
             .margins(margins ?? Margins.fallback)
             //
-            // N.B. The shadow does not current (2026-03-15) work when background is: .clear
+            // N.B. The shadow does not currently (2026-03-16) work when the
+            // background is Color.clear; which actually kind of makes sense.
             //
-            .shadow(color: shadow ? .black.opacity(0.3) : .clear,
+            .shadow(color: shadow ? shadowColor.opacity(shadowStrength) : .clear,
                     radius: shadow ? 8 : 0, x: shadow ? 3 : 0, y: shadow ? 6 : 0)
             .lineLimit(wrap ? nil : 1)
     }
