@@ -18,7 +18,7 @@ public extension MultiPlayer.Dev {
             LOGD("DevPanelView.init!!!")
             self.table = table;
             self.settings = settings;
-            self.margins = margins ?? Margins.fallback;
+            self.margins = margins ?? Margins.empty;
             /*
             self.sessionState = SessionState(player: MultiPlayer.HttpSession.instance.player,
                                              pollInterval: pollInterval);
@@ -34,11 +34,11 @@ public extension MultiPlayer.Dev {
 
                 Spacer()
                 RoundedBox(background: Defaults.backgroundParent, padding: Padding(18), margins: Margins(horizontal: 10, top: 30), span: true, shadow: true) {
-                    RoundedBox(padding: Padding(horizontal: 15, vertical: 8), shadow: true, border: .red) {
+                    RoundedBox(background: .clear, padding: Padding(horizontal: 15, vertical: 8),span: true, border: .red, shadow: true) {
                         Text("some text")
                     }
                     /*
-                    RoundedBox(background: .yellow, padding: Padding(horizontal: 15, vertical: 8), margins: Margins(leading: 10), border: .blue, borderThickness: 2) {
+                    RoundedBox(background: .yellow, padding: Padding(horizontal: 15, vertical: 8), margins: Margins(leading: 10), border: .blue, borderSize: 2) {
                         Text("somemoretext")
                    }
                    */
@@ -112,7 +112,7 @@ public extension MultiPlayer.Dev {
             self.session = session;
             self.transport = transport;
             self.sessionState = sessionState;
-            self.margins = margins ?? Margins.fallback;
+            self.margins = margins ?? Margins.empty;
         }
 
         fileprivate var body: some View {
@@ -163,7 +163,7 @@ public extension MultiPlayer.Dev {
             self.session = session;
             self.transport = transport;
             self.sessionState = sessionState;
-            self.margins = margins ?? Margins.fallback;
+            self.margins = margins ?? Margins.empty;
         }
 
         fileprivate var body: some View {
@@ -244,7 +244,7 @@ public extension MultiPlayer.Dev {
             self.session = session;
             self.transport = transport;
             self.sessionState = sessionState;
-            self.margins = margins ?? Margins.fallback;
+            self.margins = margins ?? Margins.empty;
         }
 
         fileprivate var body: some View {
@@ -364,7 +364,7 @@ public extension MultiPlayer.Dev {
             self.session = session;
             self.transport = transport;
             self.sessionState = sessionState;
-            self.margins = margins ?? Margins.fallback;
+            self.margins = margins ?? Margins.empty;
         }
 
         fileprivate var body: some View {
@@ -591,7 +591,7 @@ public extension MultiPlayer.Dev {
             self.session = session;
             self.transport = transport;
             self.sessionState = sessionState;
-            self.margins = margins ?? Margins.fallback;
+            self.margins = margins ?? Margins.empty;
         }
 
         private var pollCountChar: String {

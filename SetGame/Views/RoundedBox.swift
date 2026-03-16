@@ -1,76 +1,96 @@
 import Foundation
 import SwiftUI
 
+private struct defaults {
+    fileprivate static let background:     Color       = .clear;
+    fileprivate static let radius:         CGFloat     = 7.0;
+    fileprivate static let padding:        Padding     = Padding.empty;
+    fileprivate static let margins:        Margins     = Margins.empty;
+    fileprivate static let span:           Bool        = false;
+    fileprivate static let wrap:           Bool        = false;
+    fileprivate static let border:         Color       = Color.clear;
+    fileprivate static let borderSize:     Int         = 1;
+    fileprivate static let shadow:         Bool        = false;
+    fileprivate static let shadowColor:    Color       = .black;
+    fileprivate static let shadowStrength: CGFloat     = 0.5;
+    fileprivate static let title:          String?     = nil;
+    fileprivate static let titleSize:      Int         = 18;
+    fileprivate static let titleWeight:    Font.Weight = .bold;
+}
+
 public struct RoundedBox<Content: View>: View {
 
-    private let background:      Color;
-    private let padding:         Padding?;
-    private let margins:         Margins?;
-    private let radius:          CGFloat;
-    private let span:            Bool;
-    private let shadow:          Bool;
-    private let shadowColor:     Color;
-    private let shadowStrength:  CGFloat;
-    private let border:          Color?;
-    private let borderThickness: Int;
-    private let title:           String?;
-    private let titleSize:       CGFloat;
-    private let titleWeight:     Font.Weight;
-    private let disabled:        Bool;
-    private let content:         Content;
+    private let background:     Color;
+    private let radius:         CGFloat;
+    private let padding:        Padding;
+    private let margins:        Margins;
+    private let span:           Bool;
+    private let wrap:           Bool;
+    private let border:         Color;
+    private let borderSize:     Int;
+    private let shadow:         Bool;
+    private let shadowColor:    Color;
+    private let shadowStrength: CGFloat;
+    private let title:          String?;
+    private let titleSize:      Int;
+    private let titleWeight:    Font.Weight;
+    private let disabled:       Bool;
+    private let content:        Content;
 
-    public init(background:      Color       = .clear,
-                padding:         Padding?    = nil,
-                margins:         Margins?    = nil,
-                radius:          CGFloat     = 7.0,
-                span:            Bool        = false,
-                shadow:          Bool        = false,
-                shadowColor:     Color       = .black,
-                shadowStrength:  CGFloat     = 0.5,
-                border:          Color?      = nil,
-                borderThickness: Int         = 1,
-                title:           String?     = nil,
-                titleSize:       CGFloat     = 18,
-                titleWeight:     Font.Weight = .bold,
-                disabled:        Bool        = false,
+    public init(background:     Color?       = nil,
+                radius:         CGFloat?     = nil,
+                padding:        Padding?     = nil,
+                margins:        Margins?     = nil,
+                span:           Bool?        = nil,
+                wrap:           Bool?        = nil,
+                border:         Color?       = nil,
+                borderSize:     Int?         = nil,
+                shadow:         Bool?        = nil,
+                shadowColor:    Color?       = nil,
+                shadowStrength: CGFloat?     = nil,
+                title:          String?      = nil,
+                titleSize:      Int?         = nil,
+                titleWeight:    Font.Weight? = nil,
+                disabled:       Bool         = false,
                 @ViewBuilder content: () -> Content) {
 
-        self.background      = background;
-        self.padding         = padding;
-        self.margins         = margins;
-        self.radius          = radius;
-        self.span            = span;
-        self.shadow          = shadow;
-        self.shadowColor     = shadowColor;
-        self.shadowStrength  = shadowStrength;
-        self.border          = border;
-        self.borderThickness = borderThickness;
-        self.title           = title;
-        self.titleSize       = titleSize;
-        self.titleWeight     = titleWeight;
-        self.disabled        = disabled;
-        self.content         = content();
+        self.background     = background     ?? defaults.background;
+        self.radius         = radius         ?? defaults.radius;
+        self.padding        = padding        ?? defaults.padding;
+        self.margins        = margins        ?? defaults.margins;
+        self.span           = span           ?? defaults.span;
+        self.wrap           = wrap           ?? defaults.wrap;
+        self.border         = border         ?? defaults.border;
+        self.borderSize     = borderSize     ?? defaults.borderSize;
+        self.shadow         = shadow         ?? defaults.shadow;
+        self.shadowColor    = shadowColor    ?? defaults.shadowColor;
+        self.shadowStrength = shadowStrength ?? defaults.shadowStrength;
+        self.title          = title          ?? defaults.title;
+        self.titleSize      = titleSize      ?? defaults.titleSize;
+        self.titleWeight    = titleWeight    ?? defaults.titleWeight;
+        self.disabled       = disabled;
+        self.content        = content();
     }
 
     public var body: some View {
-        if let title: String = title {
+        if let title: String = self.title {
             VStack(alignment: .leading, spacing: 0) {
                 Text(title)
-                    .font(.system(size: self.titleSize, weight: self.titleWeight))
-                    .padding(.leading, (self.margins?.leading ?? 0) + 1)
-                    .padding(.top, self.margins?.top)
+                    .font(.system(size: CGFloat(self.titleSize), weight: self.titleWeight))
+                    .padding(.leading, self.margins.leading + 1)
+                    .padding(.top, self.margins.top)
                     .padding(.bottom, 1)
-                RoundedBox(background:      self.background,
-                           padding:         self.padding,
-                           margins:         Margins(self.margins, top: 0),
-                           radius:          self.radius,
-                           span:            true,
-                           shadow:          self.shadow,
-                           shadowColor:     self.shadowColor,
-                           shadowStrength:  self.shadowStrength,
-                           border:          self.border,
-                           borderThickness: self.borderThickness,
-                           title:           nil) {
+                RoundedBox(background:     self.background,
+                           radius:         self.radius,
+                           padding:        self.padding,
+                           margins:        Margins(self.margins, top: 0),
+                           span:           true,
+                           border:         self.border,
+                           borderSize:     self.borderSize,
+                           shadow:         self.shadow,
+                           shadowColor:    self.shadowColor,
+                           shadowStrength: self.shadowStrength,
+                           title:          nil) {
                     self.content
                 }
             }
@@ -79,36 +99,53 @@ public struct RoundedBox<Content: View>: View {
             HStack(spacing: 0) {
                 self.content ; if (self.span) { Spacer() }
             }
-            .rounded(background:      self.background,
-                     padding:         self.padding,
-                     margins:         self.margins,
-                     radius:          self.radius,
-                     shadow:          self.shadow,
-                     shadowColor:     self.shadowColor,
-                     shadowStrength:  self.shadowStrength,
-                     border:          self.border,
-                     borderThickness: self.borderThickness,
-                     disabled:        self.disabled)
+            .rounded(background:     self.background,
+                     radius:         self.radius,
+                     padding:        self.padding,
+                     margins:        self.margins,
+                     wrap:           self.wrap,
+                     border:         self.border,
+                     borderSize:     self.borderSize,
+                     shadow:         self.shadow,
+                     shadowColor:    self.shadowColor,
+                     shadowStrength: self.shadowStrength,
+                     disabled:       self.disabled)
         }
     }
 }
 
 public extension View {
 
-    public func rounded(background:      Color,
-                        padding:         Padding? = nil,
-                        margins:         Margins? = nil,
-                        radius:          CGFloat  = 7.0,
-                        wrap:            Bool     = false,
-                        shadow:          Bool     = false,
-                        shadowColor:     Color    = .blue,
-                        shadowStrength:  CGFloat  = 0.5,
-                        border:          Color?   = nil,
-                        borderThickness: Int      = 1,
-                        disabled:        Bool     = false) -> some View {
-        self.padding(padding ?? Padding.fallback)
+    public func rounded(background:     Color?   = nil,
+                        radius:         CGFloat? = nil,
+                        padding:        Padding? = nil,
+                        margins:        Margins? = nil,
+                        wrap:           Bool?    = nil,
+                        border:         Color?   = nil,
+                        borderSize:     Int?     = nil,
+                        shadow:         Bool?    = nil,
+                        shadowColor:    Color?   = nil,
+                        shadowStrength: CGFloat? = nil,
+                        disabled:       Bool     = false) -> some View {
+
+        let background:     Color   = background     ?? defaults.background;
+        let radius:         CGFloat = radius         ?? defaults.radius;
+        let padding:        Padding = padding        ?? defaults.padding;
+        let margins:        Margins = margins        ?? defaults.margins;
+        let wrap:           Bool    = wrap           ?? defaults.wrap;
+        let border:         Color   = border         ?? defaults.border;
+        let borderSize:     Int     = borderSize     ?? defaults.borderSize;
+        let shadow:         Bool    = shadow         ?? defaults.shadow;
+        let shadowColor:    Color   = shadowColor    ?? defaults.shadowColor;
+        let shadowStrength: CGFloat = shadowStrength ?? defaults.shadowStrength;
+
+        return self.padding(padding)
             .background(
                 RoundedRectangle(cornerRadius: radius, style: .circular)
+                    //
+                    // N.B. The shadow does not (2026-03-16)
+                    // work when the background is Color.clear.
+                    //
                     .fill(disabled ? background.opacity(0.65) : background)
                     .shadow(color:  shadow ? shadowColor.opacity(shadowStrength) : .clear,
                             radius: shadow ? 8 : 0,
@@ -117,9 +154,9 @@ public extension View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: radius, style: .circular)
-                    .stroke(border ?? .clear, lineWidth: CGFloat(borderThickness))
+                    .stroke(border, lineWidth: CGFloat(borderSize))
             )
-            .margins(margins ?? Margins.fallback)
+            .margins(margins)
             .lineLimit(wrap ? nil : 1)
     }
 }

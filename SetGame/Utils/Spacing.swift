@@ -3,7 +3,7 @@ import SwiftUI
 
 public struct Padding {
 
-    public static let fallback: Padding = Padding();
+    public static let empty: Padding = Padding();
 
     public var leading:  CGFloat { CGFloat(self._leading  ?? 0) }
     public var trailing: CGFloat { CGFloat(self._trailing ?? 0) }

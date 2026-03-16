@@ -9,11 +9,11 @@ public extension MultiPlayer.Dev {
         private let title:   String?;
         private let content: Content;
 
-        private let radius:          CGFloat = 8;
-        private let shadow:          Bool    = false;
-        private let background:      Color   = Defaults.background;
-        private let border:          Color?  = Defaults.foreground;
-        private let borderThickness: Int     = 2;
+        private let background: Color   = Defaults.background;
+        private let radius:     CGFloat = 8;
+        private let border:     Color?  = Defaults.foreground;
+        private let borderSize: Int     = 2;
+        private let shadow:     Bool    = false;
 
         public init(table: Table, padding: Padding? = nil, margins: Margins? = nil,
                     title: String? = nil, @ViewBuilder content: () -> Content) {
@@ -24,15 +24,15 @@ public extension MultiPlayer.Dev {
         }
 
         public var body: some View {
-                RoundedBox(background:      self.background,
-                           padding:         self.padding,
-                           margins:         self.margins,
-                           radius:          self.radius,
-                           span:            true,
-                           shadow:          self.shadow,
-                           border:          self.border,
-                           borderThickness: self.borderThickness,
-                           title:           self.title) {
+                RoundedBox(background: self.background,
+                           radius:     self.radius,
+                           padding:    self.padding,
+                           margins:    self.margins,
+                           span:       true,
+                           border:     self.border,
+                           borderSize: self.borderSize,
+                           shadow:     self.shadow,
+                           title:      self.title) {
                     self.content
                 }
             /*
@@ -52,7 +52,7 @@ public extension MultiPlayer.Dev {
                             span:            true,
                             shadow:          self.shadow,
                             border:          self.border,
-                            borderThickness: self.borderThickness) {
+                            borderSize: self.borderSize) {
                         self.content
                     }
                 }
@@ -65,7 +65,7 @@ public extension MultiPlayer.Dev {
                            span:            true,
                            shadow:          self.shadow,
                            border:          self.border,
-                           borderThickness: self.borderThickness) {
+                           borderSize: self.borderSize) {
                     self.content
                 }
             }
@@ -95,7 +95,7 @@ public extension MultiPlayer.Dev {
             self._items = items;
             self.size = size ?? Defaults.fontSize;
             self.padding = padding ?? Defaults.padding;
-            self.margins = margins ?? Margins.fallback;
+            self.margins = margins ?? Margins.empty;
             self.foreground = foreground ?? .white;
             self.background = background ?? Defaults.foreground;
             self.weight = weight;
@@ -150,7 +150,7 @@ public extension MultiPlayer.Dev {
             self.text = text;
             self.size = size ?? Defaults.fontSize;
             self.padding = padding ?? Defaults.padding;
-            self.margins = margins ?? Margins.fallback;
+            self.margins = margins ?? Margins.empty;
             self.weight = weight ?? .semibold;
             self.foreground = foreground ?? .white;
             self.background = background ?? Defaults.foreground;
@@ -196,7 +196,7 @@ public extension MultiPlayer.Dev {
             self.icon = icon;
             self.size = size ?? Defaults.iconSize;
             self.padding = padding ?? Defaults.padding;
-            self.margins = margins ?? Margins.fallback;
+            self.margins = margins ?? Margins.empty;
             self.weight = weight ?? .semibold;
             self.foreground = foreground ?? Defaults.iconColor;
             self.background = background ?? Defaults.foreground;
