@@ -16,6 +16,7 @@ public struct RoundedBox<Content: View>: View {
     private let title:           String?;
     private let titleSize:       CGFloat;
     private let titleWeight:     Font.Weight;
+    private let disabled:        Bool;
     private let content:         Content;
 
     public init(background:      Color       = .clear,
@@ -31,6 +32,7 @@ public struct RoundedBox<Content: View>: View {
                 title:           String?     = nil,
                 titleSize:       CGFloat     = 18,
                 titleWeight:     Font.Weight = .bold,
+                disabled:        Bool        = false,
                 @ViewBuilder content: () -> Content) {
 
         self.background      = background;
@@ -46,7 +48,8 @@ public struct RoundedBox<Content: View>: View {
         self.title           = title;
         self.titleSize       = titleSize;
         self.titleWeight     = titleWeight;
-        self.content          = content();
+        self.disabled        = disabled;
+        self.content         = content();
     }
 
     public var body: some View {
@@ -84,7 +87,8 @@ public struct RoundedBox<Content: View>: View {
                      shadowColor:     self.shadowColor,
                      shadowStrength:  self.shadowStrength,
                      border:          self.border,
-                     borderThickness: self.borderThickness)
+                     borderThickness: self.borderThickness,
+                     disabled:        self.disabled)
         }
     }
 }
@@ -95,8 +99,8 @@ public extension View {
                         padding:         Padding? = nil,
                         margins:         Margins? = nil,
                         radius:          CGFloat  = 7.0,
-                        shadow:          Bool     = true,
-                        shadowColor:     Color    = .black,
+                        shadow:          Bool     = false,
+                        shadowColor:     Color    = .blue,
                         shadowStrength:  CGFloat  = 0.5,
                         wrap:            Bool     = false,
                         border:          Color?   = nil,
