@@ -2,20 +2,21 @@ import Foundation
 import SwiftUI
 
 private struct defaults {
-    fileprivate static let background:     Color       = .clear;
-    fileprivate static let radius:         CGFloat     = 7.0;
-    fileprivate static let padding:        Padding     = Padding.empty;
-    fileprivate static let margins:        Margins     = Margins.empty;
-    fileprivate static let span:           Bool        = false;
-    fileprivate static let wrap:           Bool        = false;
-    fileprivate static let border:         Color       = Color.clear;
-    fileprivate static let borderSize:     Int         = 1;
-    fileprivate static let shadow:         Bool        = false;
-    fileprivate static let shadowColor:    Color       = .black;
-    fileprivate static let shadowStrength: CGFloat     = 0.5;
-    fileprivate static let title:          String?     = nil;
-    fileprivate static let titleSize:      Int         = 18;
-    fileprivate static let titleWeight:    Font.Weight = .bold;
+    fileprivate static let background:      Color       = .clear;
+    fileprivate static let radius:          CGFloat     = 7.0;
+    fileprivate static let padding:         Padding     = Padding.empty;
+    fileprivate static let margins:         Margins     = Margins.empty;
+    fileprivate static let span:            Bool        = false;
+    fileprivate static let wrap:            Bool        = false;
+    fileprivate static let border:          Color       = Color.clear;
+    fileprivate static let borderSize:      Int         = 1;
+    fileprivate static let shadow:          Bool        = false;
+    fileprivate static let shadowColor:     Color       = .black;
+    fileprivate static let shadowStrength:  CGFloat     = 0.5;
+    fileprivate static let title:           String?     = nil;
+    fileprivate static let titleSize:       Int         = 18;
+    fileprivate static let titleWeight:     Font.Weight = .bold;
+    fileprivate static let disabledOpacity: CGFloat     = 0.6;
 }
 
 public struct RoundedBox<Content: View>: View {
@@ -146,7 +147,7 @@ public extension View {
                     // N.B. The shadow does not (2026-03-16)
                     // work when the background is Color.clear.
                     //
-                    .fill(disabled ? background.opacity(0.65) : background)
+                    .fill(disabled ? background.opacity(defaults.disabledOpacity) : background)
                     .shadow(color:  shadow ? shadowColor.opacity(shadowStrength) : .clear,
                             radius: shadow ? 8 : 0,
                             x:      shadow ? 3 : 0,

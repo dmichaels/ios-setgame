@@ -24,52 +24,17 @@ public extension MultiPlayer.Dev {
         }
 
         public var body: some View {
-                RoundedBox(background: self.background,
-                           radius:     self.radius,
-                           padding:    self.padding,
-                           margins:    self.margins,
-                           span:       true,
-                           border:     self.border,
-                           borderSize: self.borderSize,
-                           shadow:     self.shadow,
-                           title:      self.title) {
-                    self.content
-                }
-            /*
-            if let title: String = title {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(title)
-                        .font(.system(size: 18, weight: .bold))
-                        .frame(alignment: .leading)
-                        .frame(alignment: .bottom)
-                        .padding(.leading, self.margins.leading + 2)
-                        .padding(.top, self.margins.top)
-                        // .offset(y: 20)
-                    RoundedBox(background:      self.background,
-                            padding:         self.padding,
-                            margins:         Margins(self.margins, top: 0),
-                            radius:          self.radius,
-                            span:            true,
-                            shadow:          self.shadow,
-                            border:          self.border,
-                            borderSize: self.borderSize) {
-                        self.content
-                    }
-                }
+            RoundedBox(background: self.background,
+                       radius:     self.radius,
+                       padding:    self.padding,
+                       margins:    self.margins,
+                       span:       true,
+                       border:     self.border,
+                       borderSize: self.borderSize,
+                       shadow:     self.shadow,
+                       title:      self.title) {
+                self.content
             }
-            else {
-                RoundedBox(background:      self.background,
-                           padding:         self.padding,
-                           margins:         self.margins,
-                           radius:          self.radius,
-                           span:            true,
-                           shadow:          self.shadow,
-                           border:          self.border,
-                           borderSize: self.borderSize) {
-                    self.content
-                }
-            }
-            */
         }
     }
 
@@ -126,52 +91,6 @@ public extension MultiPlayer.Dev {
                 }
                 .disabled(self.disabled)
             }
-        }
-    }
-
-    public struct TextButton: View {
-
-        private let text: String;
-        private let size: Int;
-        private let padding: Padding;
-        private let margins: Margins;
-        private let weight: Font.Weight;
-        private let foreground: Color;
-        private let background: Color;
-        private let disabled: Bool;
-        private let action: () async -> Void;
-
-        public init( _ text: String,
-                       size: Int? = nil, padding: Padding? = nil, margins: Margins? = nil,
-                       weight: Font.Weight? = nil,
-                       foreground: Color? = nil, background: Color? = nil,
-                       disabled: Bool = false,
-                       action: @escaping () async -> Void) {
-            self.text = text;
-            self.size = size ?? Defaults.fontSize;
-            self.padding = padding ?? Defaults.padding;
-            self.margins = margins ?? Margins.empty;
-            self.weight = weight ?? .semibold;
-            self.foreground = foreground ?? .white;
-            self.background = background ?? Defaults.foreground;
-            self.disabled = disabled;
-            self.action = action;
-        }
-
-        public var body: some View {
-            Button {
-                if (!self.disabled) { Task {
-                    await self.action();
-                } }
-            } label: {
-                RoundedBox(background: self.background, padding: self.padding, margins: self.margins) {
-                    Text(self.text)
-                        .font(.system(size: CGFloat(self.size), weight: self.weight))
-                        .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
-                }
-            }
-            .buttonStyle(.plain)
-            .margins(self.margins)
         }
     }
 
