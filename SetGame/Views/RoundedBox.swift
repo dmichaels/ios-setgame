@@ -99,25 +99,27 @@ public extension View {
                         padding:         Padding? = nil,
                         margins:         Margins? = nil,
                         radius:          CGFloat  = 7.0,
+                        wrap:            Bool     = false,
                         shadow:          Bool     = false,
                         shadowColor:     Color    = .blue,
                         shadowStrength:  CGFloat  = 0.5,
-                        wrap:            Bool     = false,
                         border:          Color?   = nil,
                         borderThickness: Int      = 1,
                         disabled:        Bool     = false) -> some View {
         self.padding(padding ?? Padding.fallback)
-            .background(RoundedRectangle(cornerRadius: radius, style: .circular)
-                        .fill(disabled ? background.opacity(0.65) : background))
-            .overlay(RoundedRectangle(cornerRadius: radius, style: .circular)
-                     .stroke(border ?? .clear, lineWidth: CGFloat(borderThickness)))
+            .background(
+                RoundedRectangle(cornerRadius: radius, style: .circular)
+                    .fill(disabled ? background.opacity(0.65) : background)
+                    .shadow(color:  shadow ? shadowColor.opacity(shadowStrength) : .clear,
+                            radius: shadow ? 8 : 0,
+                            x:      shadow ? 3 : 0,
+                            y:      shadow ? 6 : 0)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: radius, style: .circular)
+                    .stroke(border ?? .clear, lineWidth: CGFloat(borderThickness))
+            )
             .margins(margins ?? Margins.fallback)
-            //
-            // N.B. The shadow does not currently (2026-03-16) work when the
-            // background is Color.clear; which actually kind of makes sense.
-            //
-            .shadow(color: shadow ? shadowColor.opacity(shadowStrength) : .clear,
-                    radius: shadow ? 8 : 0, x: shadow ? 3 : 0, y: shadow ? 6 : 0)
             .lineLimit(wrap ? nil : 1)
     }
 }
