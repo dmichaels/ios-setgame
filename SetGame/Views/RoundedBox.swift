@@ -96,6 +96,9 @@ public extension View {
             .overlay(RoundedRectangle(cornerRadius: radius, style: .circular)
                      .stroke(border ?? .clear, lineWidth: CGFloat(borderThickness ?? 0)))
             .margins(margins ?? Margins.fallback)
+            //
+            // N.B. The shadow does not current (2026-03-15) work when background is: .clear
+            //
             .shadow(color: shadow ? .black.opacity(0.3) : .clear,
                     radius: shadow ? 8 : 0, x: shadow ? 3 : 0, y: shadow ? 6 : 0)
             .lineLimit(wrap ? nil : 1)
