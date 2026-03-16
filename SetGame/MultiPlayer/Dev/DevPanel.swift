@@ -33,12 +33,12 @@ public extension MultiPlayer.Dev {
             VStack(alignment: .leading, spacing: 0) {
 
                 Spacer()
-                RoundedBox(background: Defaults.backgroundParent, padding: Padding(10), margins: Margins(horizontal: 10, top: 30), span: true, shadow: true, border: .black) {
-                    RoundedBox(padding: Padding(horizontal: 15, vertical: 10)) {
+                RoundedBox(background: Defaults.backgroundParent, padding: Padding(8), margins: Margins(horizontal: 10, top: 30), span: true, shadow: true, border: .black) {
+                    RoundedBox(padding: Padding(horizontal: 15, vertical: 8)) {
                         Text("etc text")
                     }
                     .frame(alignment: .topLeading)
-                    RoundedBox(padding: Padding(horizontal: 15, vertical: 10), margins: Margins(leading: 10), border: .blue, borderThickness: 2) { Text("somemoretext") }
+                    RoundedBox(padding: Padding(horizontal: 15, vertical: 8), margins: Margins(leading: 10), border: .blue, borderThickness: 2) { Text("somemoretext") }
                 }
                 Spacer()
 

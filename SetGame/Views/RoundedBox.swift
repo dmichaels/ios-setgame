@@ -21,11 +21,11 @@ public struct RoundedBox<Content: View>: View {
     public init(background:      Color       = .clear,
                 padding:         Padding?    = nil,
                 margins:         Margins?    = nil,
-                radius:          CGFloat     = 9.0,
+                radius:          CGFloat     = 7.0,
                 span:            Bool        = false,
                 shadow:          Bool        = false,
                 shadowColor:     Color       = .black,
-                shadowStrength:  CGFloat     = 0.4,
+                shadowStrength:  CGFloat     = 0.5,
                 border:          Color?      = nil,
                 borderThickness: Int         = 1,
                 title:           String?     = nil,
@@ -94,19 +94,19 @@ public extension View {
     public func rounded(background:      Color,
                         padding:         Padding? = nil,
                         margins:         Margins? = nil,
-                        radius:          CGFloat  = 5.0,
+                        radius:          CGFloat  = 7.0,
                         shadow:          Bool     = true,
                         shadowColor:     Color    = .black,
-                        shadowStrength:  CGFloat  = 0.4,
+                        shadowStrength:  CGFloat  = 0.5,
                         wrap:            Bool     = false,
                         border:          Color?   = nil,
-                        borderThickness: Int?     = nil,
+                        borderThickness: Int      = 1,
                         disabled:        Bool     = false) -> some View {
         self.padding(padding ?? Padding.fallback)
             .background(RoundedRectangle(cornerRadius: radius, style: .circular)
                         .fill(disabled ? background.opacity(0.65) : background))
             .overlay(RoundedRectangle(cornerRadius: radius, style: .circular)
-                     .stroke(border ?? .clear, lineWidth: CGFloat(borderThickness ?? 0)))
+                     .stroke(border ?? .clear, lineWidth: CGFloat(borderThickness)))
             .margins(margins ?? Margins.fallback)
             //
             // N.B. The shadow does not currently (2026-03-16) work when the
