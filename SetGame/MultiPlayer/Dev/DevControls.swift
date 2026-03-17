@@ -40,29 +40,29 @@ public extension MultiPlayer.Dev {
         private let foreground: Color;
         private let background: Color;
         private let size:       Int;
+        private let weight:     Font.Weight;
         private let padding:    Padding;
         private let margins:    Margins;
-        private let weight:     Font.Weight;
         private let disabled:   Bool;
         private let action:     () async -> Void;
 
         public init( _ text:       String,
-                       size:       Int?         = nil,
-                       padding:    Padding?     = nil,
-                       margins:    Margins?     = nil,
-                       weight:     Font.Weight? = nil,
                        foreground: Color?       = nil,
                        background: Color?       = nil,
+                       size:       Int?         = nil,
+                       weight:     Font.Weight? = nil,
+                       padding:    Padding?     = nil,
+                       margins:    Margins?     = nil,
                        disabled:   Bool         = false,
                        action: @escaping () async -> Void) {
 
             self.text       = text;
-            self.size       = size       ?? Defaults.fontSize;
-            self.padding    = padding    ?? Defaults.padding;
-            self.margins    = margins    ?? Margins.empty;
-            self.weight     = weight     ?? Font.Weight.semibold;
             self.foreground = foreground ?? Color.white;
             self.background = background ?? Defaults.foreground;
+            self.size       = size       ?? Defaults.fontSize;
+            self.weight     = weight     ?? Font.Weight.semibold;
+            self.padding    = padding    ?? Defaults.padding;
+            self.margins    = margins    ?? Margins.empty;
             self.disabled   = disabled;
             self.action     = action;
         }

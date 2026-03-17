@@ -96,44 +96,54 @@ public extension MultiPlayer.Dev {
 
     public struct IconButton: View {
 
-        private let icon: String;
-        private let size: Int;
-        private let padding: Padding;
-        private let margins: Margins;
-        private let weight: Font.Weight;
+        private let icon:       String;
         private let foreground: Color;
         private let background: Color;
-        private let disabled: Bool;
+        private let size:       Int;
+        private let weight:     Font.Weight;
+        private let padding:    Padding;
+        private let margins:    Margins;
+        private let yoffset:    Int;
+        private let disabled:   Bool;
         private let action: () async -> Void;
 
-        public init(_ icon: String,
-                       size: Int? = nil, padding: Padding? = nil, margins: Margins? = nil,
-                       weight: Font.Weight? = nil,
-                       foreground: Color? = nil, background: Color? = nil,
-                       disabled: Bool = false,
-                       action: @escaping () async -> Void) {
-            self.icon = icon;
-            self.size = size ?? Defaults.iconSize;
-            self.padding = padding ?? Defaults.padding;
-            self.margins = margins ?? Margins.empty;
-            self.weight = weight ?? .semibold;
+        public init(_ icon:       String,
+                      foreground: Color?       = nil,
+                      background: Color?       = nil,
+                      size:       Int?         = nil,
+                      weight:     Font.Weight? = nil,
+                      padding:    Padding?     = nil,
+                      margins:    Margins?     = nil,
+                      yoffset:    Int?         = nil,
+                      disabled:   Bool         = false,
+                      action: @escaping () async -> Void) {
+            self.icon       = icon;
             self.foreground = foreground ?? Defaults.iconColor;
-            self.background = background ?? Defaults.foreground;
-            self.disabled = disabled;
-            self.action = action;
+            self.background = background ?? .clear;
+            self.size       = size       ?? Defaults.iconSize;
+            self.weight     = weight     ?? .semibold;
+            self.padding    = padding    ?? Defaults.padding;
+            self.margins    = margins    ?? Margins.empty;
+            self.yoffset    = yoffset    ?? 0;
+            self.disabled   = disabled;
+            self.action     = action;
         }
 
         public var body: some View {
             Button {
                 Task { await self.action() }
             } label: {
+                RoundedBox(background: self.background, padding: sefl.padding, margins: self.margins, border: .red, disabled: self.disabled) {
                 Image(systemName: self.icon)
                     .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
                     .font(.system(size: CGFloat(self.size), weight: self.weight))
+                    .frame(width: CGFloat(self.size + 6), height: CGFloat(self.size + 6))
                     .disabled(self.disabled)
+                    .offset(y: CGFloat(self.yoffset))
+                }
             }
             .buttonStyle(.plain)
-            .margins(self.margins)
+            .padding(self.padding)
         }
     }
 
