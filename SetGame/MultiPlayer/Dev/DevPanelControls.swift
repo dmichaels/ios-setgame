@@ -131,15 +131,17 @@ public extension MultiPlayer.Dev {
 
         public var body: some View {
             Button {
-                Task { await self.action() }
+                if (!self.disabled) { Task {
+                    await self.action();
+                } }
             } label: {
                 RoundedBox(background: self.background, padding: self.padding, margins: self.margins, border: .red, disabled: self.disabled) {
-                Image(systemName: self.icon)
-                    .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
-                    .font(.system(size: CGFloat(self.size), weight: self.weight))
-                    .frame(width: CGFloat(self.size + 6), height: CGFloat(self.size + 6))
-                    .disabled(self.disabled)
-                    .offset(y: CGFloat(self.yoffset))
+                    Image(systemName: self.icon)
+                        .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
+                        .font(.system(size: CGFloat(self.size), weight: self.weight))
+                        .frame(width: CGFloat(self.size + 6), height: CGFloat(self.size + 6))
+                        .disabled(self.disabled)
+                        .offset(y: CGFloat(self.yoffset))
                 }
             }
             .buttonStyle(.plain)
