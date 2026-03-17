@@ -133,7 +133,7 @@ public extension MultiPlayer.Dev {
             Button {
                 Task { await self.action() }
             } label: {
-                RoundedBox(background: self.background, padding: sefl.padding, margins: self.margins, border: .red, disabled: self.disabled) {
+                RoundedBox(background: self.background, padding: self.padding, margins: self.margins, border: .red, disabled: self.disabled) {
                 Image(systemName: self.icon)
                     .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
                     .font(.system(size: CGFloat(self.size), weight: self.weight))
