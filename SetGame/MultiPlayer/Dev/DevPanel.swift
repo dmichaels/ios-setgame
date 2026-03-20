@@ -35,9 +35,9 @@ public extension MultiPlayer.Dev {
                 Spacer()
                 RoundedBox(background: Defaults.background, padding: Padding(18), margins: Margins(horizontal: 10, top: 40), span: true, shadow: true) {
                     // TextButton("some text", background: Defaults.foreground, padding: Padding(horizontal: 8, vertical: 4), margins: Margins(leading: 0), border: .red) {}
-                    TextButton("SOME TEXT", background: Defaults.foreground, padding: Padding(horizontal: 8, vertical: 5), margins: Margins(leading: 3), border: .red, shadow: true) {}
-                    TextButton("SOME TEXT", icon: "ladybug" /*"personalhotspot"*/, background: Defaults.foreground, padding: Padding(horizontal: 8, vertical: 5), margins: Margins(leading: 3), border: .red) {}
-                    TextButton(icon: "ladybug.slash", background: Defaults.foreground, padding: Padding(horizontal: 8, vertical: 5), margins: Margins(leading: 3), border: .red, shadow: false) {}
+                    TextButton("Abc", background: Defaults.foreground, /*padding: Padding(horizontal: 8, vertical: 5),*/ margins: Margins(leading: 3), border: .red, shadow: true) {}
+                    TextButton("Abc", icon: "ladybug.slash" /*"personalhotspot"*/, background: Defaults.foreground, /*padding: Padding(horizontal: 8, vertical: 5),*/ margins: Margins(leading: 3), border: .red) {}
+                    TextButton(icon: "ladybug.slash", background: Defaults.foreground, /*padding: Padding(horizontal: 8, vertical: 5),*/ margins: Margins(leading: 3), border: .red, shadow: false) {}
                     /*
                     RoundedBox(background: .clear, padding: Padding(horizontal: 15, vertical: 8),span: true, border: .red, shadow: true) {
                         Text("some text")
