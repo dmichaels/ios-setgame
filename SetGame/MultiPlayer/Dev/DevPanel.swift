@@ -34,10 +34,10 @@ public extension MultiPlayer.Dev {
 
                 Spacer()
                 RoundedBox(background: Defaults.background, padding: Padding(18), margins: Margins(horizontal: 10, top: 40), span: true, shadow: true) {
-                    // TextButton("some text", background: Defaults.foreground, padding: Padding(horizontal: 8, vertical: 4), margins: Margins(leading: 0), border: .red) {}
-                    TextButton("Abc", background: Defaults.foreground, /*padding: Padding(horizontal: 8, vertical: 5),*/ margins: Margins(leading: 3), border: .red, shadow: true) {}
-                    TextButton("Abc", icon: "ladybug.slash" /*"personalhotspot"*/, background: Defaults.foreground, /*padding: Padding(horizontal: 8, vertical: 5),*/ margins: Margins(leading: 3), border: .red) {}
-                    TextButton(icon: "ladybug.slash", background: Defaults.foreground, /*padding: Padding(horizontal: 8, vertical: 5),*/ margins: Margins(leading: 3), border: .red, shadow: false) {}
+                    // ButtonBox("some text", background: Defaults.foreground, padding: Padding(horizontal: 8, vertical: 4), margins: Margins(leading: 0), border: .red) {}
+                    ButtonBox("Abc", background: Defaults.foreground, /*padding: Padding(horizontal: 8, vertical: 5),*/ margins: Margins(leading: 3), border: .red, shadow: true) {}
+                    ButtonBox("Abc", icon: "ladybug.slash" /*"personalhotspot"*/, background: Defaults.foreground, /*padding: Padding(horizontal: 8, vertical: 5),*/ margins: Margins(leading: 3), border: .red) {}
+                    ButtonBox(icon: "ladybug.slash", background: Defaults.foreground, /*padding: Padding(horizontal: 8, vertical: 5),*/ margins: Margins(leading: 3), border: .red, shadow: false) {}
                     /*
                     RoundedBox(background: .clear, padding: Padding(horizontal: 15, vertical: 8),span: true, border: .red, shadow: true) {
                         Text("some text")
@@ -126,7 +126,7 @@ public extension MultiPlayer.Dev {
 
         fileprivate var body: some View {
             AnyDevPanel(table: table, margins: margins) {
-                TextButton("button", size: 28, margins: Margins(trailing: 8)) {}
+                ButtonBox("button", size: 28, margins: Margins(trailing: 8)) {}
                 RegularText("me:")
                  // CopyableText(sessionState.player,
                  //              color: self.session.hosting ? Defaults.highlightColor : .primary, semibold: true, leading: 3)
@@ -179,7 +179,7 @@ public extension MultiPlayer.Dev {
             AnyDevPanel(table: table, margins: margins, title: title) {
                 RegularText("session:")
                     CopyableText(sessionState.sessionShort, copy: sessionState.session, bold: true, leading: 3)
-                TextButton("create", margins: Margins(leading: 6), disabled: self.sessionState.connected) {
+                ButtonBox("create", margins: Margins(leading: 6), disabled: self.sessionState.connected) {
                     if (!self.session.connected) {
                         if await self.session.create() {
                             self.sessionState.update(from: self.session, select: true);
@@ -206,7 +206,7 @@ public extension MultiPlayer.Dev {
                     }
                 }
                 Spacer()
-                TextButton("host", disabled: !self.sessionState.connected || self.sessionState.hosting) {
+                ButtonBox("host", disabled: !self.sessionState.connected || self.sessionState.hosting) {
                     if (self.session.connected) {
                         if await self.session.requestHost() {
                             self.sessionState.update(from: self.session);
