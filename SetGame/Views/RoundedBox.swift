@@ -4,11 +4,11 @@ import SwiftUI
 private struct defaults {
     fileprivate static let background:      Color       = .clear;
     fileprivate static let radius:          CGFloat     = 7.0;
-    fileprivate static let padding:         Padding     = Padding.empty;
-    fileprivate static let margins:         Margins     = Margins.empty;
+    fileprivate static let padding:         Padding     = .empty;
+    fileprivate static let margins:         Margins     = .empty;
     fileprivate static let span:            Bool        = false;
     fileprivate static let wrap:            Bool        = false;
-    fileprivate static let border:          Color       = Color.clear;
+    fileprivate static let border:          Color       = .clear;
     fileprivate static let borderSize:      Int         = 1;
     fileprivate static let shadow:          Bool        = false;
     fileprivate static let shadowColor:     Color       = .black;
@@ -32,6 +32,7 @@ public struct RoundedBox<Content: View>: View {
     private let shadow:         Bool;
     private let shadowColor:    Color;
     private let shadowStrength: CGFloat;
+    private let height:         CGFloat?;
     private let title:          String?;
     private let titleSize:      Int;
     private let titleWeight:    Font.Weight;
@@ -49,6 +50,7 @@ public struct RoundedBox<Content: View>: View {
                 shadow:         Bool?        = nil,
                 shadowColor:    Color?       = nil,
                 shadowStrength: CGFloat?     = nil,
+                height:         CGFloat?     = nil,
                 title:          String?      = nil,
                 titleSize:      Int?         = nil,
                 titleWeight:    Font.Weight? = nil,
@@ -66,6 +68,7 @@ public struct RoundedBox<Content: View>: View {
         self.shadow         = shadow         ?? defaults.shadow;
         self.shadowColor    = shadowColor    ?? defaults.shadowColor;
         self.shadowStrength = shadowStrength ?? defaults.shadowStrength;
+        self.height         = height;
         self.title          = title          ?? defaults.title;
         self.titleSize      = titleSize      ?? defaults.titleSize;
         self.titleWeight    = titleWeight    ?? defaults.titleWeight;
@@ -100,6 +103,7 @@ public struct RoundedBox<Content: View>: View {
             HStack(spacing: 0) {
                 self.content ; if (self.span) { Spacer() }
             }
+            .frame(height: self.height)
             .rounded(background:     self.background,
                      radius:         self.radius,
                      padding:        self.padding,
