@@ -125,9 +125,13 @@ public extension MultiPlayer.Dev {
         }
 
         fileprivate var body: some View {
-            AnyDevPanel(table: table, margins: margins) {
-                ButtonBox("button", size: 28, margins: Margins(trailing: 8)) {}
-                RegularText("me:")
+            AnyDevPanel(table: table, margins: margins, title: "Player") {
+                TextBox(sessionState.player, foreground: .black,
+                                             background: Defaults.background,
+                                             size: 15,
+                                             padding: Padding(horizontal: 4, vertical: 4),
+                                             margins: Margins(trailing: 8),
+                                             border: .black)
                  // CopyableText(sessionState.player,
                  //              color: self.session.hosting ? Defaults.highlightColor : .primary, semibold: true, leading: 3)
                     CopyableText(sessionState.player + (sessionState.player == sessionState.host ? " \(Defaults.starChar)" : ""), semibold: true, leading: 3)

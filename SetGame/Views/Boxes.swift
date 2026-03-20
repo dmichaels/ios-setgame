@@ -33,9 +33,9 @@ public struct TextBox: View {
         self.icon       = icon;
         self.foreground = foreground ?? .white;
         self.background = background ?? .blue;
-        self.size       = size       ?? 18;
+        self.size       = size       ?? 17;
         self.weight     = weight     ?? .semibold;
-        self.padding    = padding    ?? Padding(horizontal: 8, vertical: 8);
+        self.padding    = padding    ?? Padding(horizontal: 6, vertical: 6);
         self.margins    = margins    ?? Margins.empty;
         self.border     = border     ?? .clear;
         self.borderSize = borderSize ?? 1;
@@ -76,8 +76,8 @@ public struct TextBox: View {
                 Text(text)
                     .font(.system(size: CGFloat(self.size), weight: self.weight))
                     .foregroundColor(self.disabled ? self.foreground.opacity(0.6) : self.foreground)
-                    .padding(.leading, icon != nil ? 8 : 0)
-                    .padding(.trailing, icon != nil ? 2 : nil)
+                    .padding(.leading, self.icon != nil ? 8 : 0)
+                    .padding(.trailing, self.icon != nil ? 3 : 1)
             }
         }
     }
@@ -234,7 +234,7 @@ public struct RoundedBox<Content: View>: View {
                     .font(.system(size: CGFloat(self.titleSize), weight: self.titleWeight))
                     .padding(.leading, self.margins.leading + 1)
                     .padding(.top, self.margins.top)
-                    .padding(.bottom, 1)
+                    .padding(.bottom, 2)
                 RoundedBox(background:     self.background,
                            radius:         self.radius,
                            padding:        self.padding,
