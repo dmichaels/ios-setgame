@@ -32,6 +32,16 @@ public extension MultiPlayer.Dev {
         public var body: some View {
             VStack(alignment: .leading, spacing: 0) {
 
+ZStack {
+                RoundedBox(background: Defaults.background, padding: Padding(18), margins: Margins(horizontal: 10, top: 40), span: true, border: .red, shadow: true) {
+                    Text("Abcdefhi")
+                        .frame(width: 200, height: 100)
+                        .background(.blue)
+.offset(y: -50)
+.zIndex(999)
+                }
+}
+
                 Spacer()
                 RoundedBox(background: Defaults.background, padding: Padding(18), margins: Margins(horizontal: 10, top: 40), span: true, shadow: true) {
                     // ButtonBox("some text", background: Defaults.foreground, padding: Padding(horizontal: 8, vertical: 4), margins: Margins(leading: 0), border: .red) {}
@@ -131,10 +141,11 @@ public extension MultiPlayer.Dev {
                                              size: 15,
                                              padding: Padding(horizontal: 4, vertical: 4),
                                              margins: Margins(trailing: 8),
-                                             border: .black)
+                                             border: .black,
+                                             copy: true)
                  // CopyableText(sessionState.player,
                  //              color: self.session.hosting ? Defaults.highlightColor : .primary, semibold: true, leading: 3)
-                    CopyableText(sessionState.player + (sessionState.player == sessionState.host ? " \(Defaults.starChar)" : ""), semibold: true, leading: 3)
+                    // CopyableText(sessionState.player + (sessionState.player == sessionState.host ? " \(Defaults.starChar)" : ""), semibold: true, leading: 3)
                 if (sessionState.player != sessionState.host) {
                     RegularText("host:", leading: 10)
                         CopyableText("\(self.sessionState.host ?? Defaults.emptySetChar)",

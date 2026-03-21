@@ -15,6 +15,9 @@ public struct TextBox: View {
     private let borderSize: Int;
     private let shadow:     Bool;
     private let disabled:   Bool;
+    private let copy:       Bool;
+
+    @State private var copied: Bool = false;
 
     public init(_ text:       String?      = nil,
                   icon:       String?      = nil,
@@ -27,7 +30,8 @@ public struct TextBox: View {
                   border:     Color?       = nil,
                   borderSize: Int?         = nil,
                   shadow:     Bool?        = nil,
-                  disabled:   Bool         = false) {
+                  disabled:   Bool         = false,
+                  copy:       Bool         = false) {
 
         self.text       = text;
         self.icon       = icon;
@@ -41,6 +45,7 @@ public struct TextBox: View {
         self.borderSize = borderSize ?? 1;
         self.shadow     = shadow     ?? false;
         self.disabled   = disabled;
+        self.copy       = copy;
     }
 
     private static func iconSize(_ size: Int, _ weight: Font.Weight) -> CGFloat {
@@ -80,6 +85,39 @@ public struct TextBox: View {
                     .padding(.trailing, self.icon != nil ? 3 : 1)
             }
         }
+.if(self.copy) { view in
+    view.onTapGesture {
+        UIPasteboard.general.string = self.text
+        self.copied = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            self.copied = false
+        }
+    }
+}
+        /*
+        .onTapGesture {
+            if (self.copy) {
+                UIPasteboard.general.string = self.text;
+                self.copied = true;
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { self.copied = false }
+            }
+        }
+        */
+        .overlay(
+            self.copied ?
+                Text(" Copied ")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(.blue)
+                    .frame(width: 100, height: 50)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color(.systemBackground))
+                    )
+                    .shadow(radius: 6)
+                    .offset(y: -20)
+                    .zIndex(100)
+                    : nil
+        )
     }
 }
 
@@ -314,5 +352,18 @@ public extension View {
             )
             .margins(margins)
             .lineLimit(wrap ? nil : 1)
+    }
+}
+public extension View {
+    @ViewBuilder
+    func `if`<Content: View>(
+        _ condition: Bool,
+        transform: (Self) -> Content
+    ) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
     }
 }
