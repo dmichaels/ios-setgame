@@ -18,8 +18,7 @@ public struct TextBox: View {
     private let copy:       Bool;
     private let zindex:     Int;
 
-    @State private var copied: Bool = false;
-    @State private var blink = false;
+    @State private var copying = false;
 
     public init(_ text:       String?      = nil,
                   icon:       String?      = nil,
@@ -88,25 +87,21 @@ public struct TextBox: View {
                     .padding(.trailing, self.icon != nil ? 3 : 1)
             }
         }
-        .if(blink) { view in
+        .if (copying) { view in
             view.colorInvert()
         }
-        .if(self.copy) { view in
+        .if (self.copy) { view in
             view.onTapGesture {
                 guard let text = self.text else { return }
                 UIPasteboard.general.string = text;
                 Task {
-                    for _ in 0..<8 {
+                    for _ in 0..<7 {
                         await MainActor.run {
-                            withAnimation(.easeInOut(duration: 0.1)) {
-                                blink.toggle();
-                            }
+                            self.copying.toggle(); // withAnimation(.easeInOut(duration: 0.120))
                         }
-                        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 sec
+                        try? await Task.sleep(nanoseconds: 120_000_000) // 120ms
                     }
-                    await MainActor.run {
-                        blink = false;
-                    }
+                    await MainActor.run { self.copying = false; }
                 }
             }
         }
