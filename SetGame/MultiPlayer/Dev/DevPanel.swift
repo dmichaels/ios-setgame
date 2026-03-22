@@ -31,18 +31,6 @@ public extension MultiPlayer.Dev {
 
         public var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-
-ZStack {
-                RoundedBox(background: Defaults.background, padding: Padding(18), margins: Margins(horizontal: 10, top: 40), span: true, border: .red, shadow: true) {
-                    Text("Abcdefhi")
-                        .frame(width: 200, height: 100)
-                        .background(.blue)
-.offset(x: 50, y: -50)
-.zIndex(999)
-Text("Foobar")
-                }
-}
-
                 Spacer()
                 RoundedBox(background: Defaults.background, padding: Padding(18), margins: Margins(horizontal: 10, top: 40), span: true, shadow: true) {
                     // ButtonBox("some text", background: Defaults.foreground, padding: Padding(horizontal: 8, vertical: 4), margins: Margins(leading: 0), border: .red) {}
@@ -144,14 +132,17 @@ Text("Foobar")
                                              margins: Margins(trailing: 8),
                                              border: .black,
                                              copy: true)
+                TextBox("Abc:", background: .yellow, border: .red, copy: true)
+                    // .zIndex(-1) // this is it
                  // CopyableText(sessionState.player,
                  //              color: self.session.hosting ? Defaults.highlightColor : .primary, semibold: true, leading: 3)
                     // CopyableText(sessionState.player + (sessionState.player == sessionState.host ? " \(Defaults.starChar)" : ""), semibold: true, leading: 3)
                 if (sessionState.player != sessionState.host) {
 // Text("hasdfasdf")
 // .zIndex(-99)
-                    TextBox("host:" /*, leading: 10 */ )
-.zIndex(-999)
+                    // XTextBox()
+                    TextBox("host:" /*, leading: 10 */ , border: .red)
+                        // .zIndex(-999) // THIS IS IT
                     // RegularText("host:", leading: 10)
                         CopyableText("\(self.sessionState.host ?? Defaults.emptySetChar)",
                                      color: self.session.hosting ? Defaults.highlightColor : .primary,

@@ -16,8 +16,10 @@ public struct TextBox: View {
     private let shadow:     Bool;
     private let disabled:   Bool;
     private let copy:       Bool;
+    private let zindex:     Int;
 
     @State private var copied: Bool = false;
+    @State private var blink = false;
 
     public init(_ text:       String?      = nil,
                   icon:       String?      = nil,
@@ -46,6 +48,7 @@ public struct TextBox: View {
         self.shadow     = shadow     ?? false;
         self.disabled   = disabled;
         self.copy       = copy;
+        self.zindex     = copy ? 0 : -1;
     }
 
     private static func iconSize(_ size: Int, _ weight: Font.Weight) -> CGFloat {
@@ -85,39 +88,28 @@ public struct TextBox: View {
                     .padding(.trailing, self.icon != nil ? 3 : 1)
             }
         }
-.if(self.copy) { view in
-    view.onTapGesture {
-        UIPasteboard.general.string = self.text
-        self.copied = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            self.copied = false
+        .if(blink) { view in
+            view.colorInvert()
         }
-    }
-}
-        /*
-        .onTapGesture {
-            if (self.copy) {
-                UIPasteboard.general.string = self.text;
-                self.copied = true;
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { self.copied = false }
+        .if(self.copy) { view in
+            view.onTapGesture {
+                guard let text = self.text else { return }
+                UIPasteboard.general.string = text;
+                Task {
+                    for _ in 0..<8 {
+                        await MainActor.run {
+                            withAnimation(.easeInOut(duration: 0.1)) {
+                                blink.toggle();
+                            }
+                        }
+                        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 sec
+                    }
+                    await MainActor.run {
+                        blink = false;
+                    }
+                }
             }
         }
-        */
-        .overlay(
-            self.copied ?
-                Text(" Copied ")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(.blue)
-                    .frame(width: 100, height: 50)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(.systemBackground))
-                    )
-                    .shadow(radius: 6)
-                    .offset(y: -20)
-                    .zIndex(999)
-                    : nil
-        )
     }
 }
 
@@ -334,28 +326,20 @@ public extension View {
         let shadowStrength: CGFloat = shadowStrength ?? defaults.shadowStrength;
 
         return self.padding(padding)
-    .background(
-        ZStack {
-            // Fill
-            RoundedRectangle(cornerRadius: radius, style: .continuous)
-                .fill(disabled ? background.opacity(defaults.disabledOpacity) : background)
-.zIndex(-100)
-
-            // Border (moved INSIDE background)
-            RoundedRectangle(cornerRadius: radius, style: .continuous)
-                .stroke(border, lineWidth: CGFloat(borderSize))
-.zIndex(-100)
-        }
-        .shadow(
-            color:  shadow ? shadowColor.opacity(shadowStrength) : .clear,
-            radius: shadow ? 8 : 0,
-            x:      shadow ? 3 : 0,
-            y:      shadow ? 6 : 0
-        )
-.zIndex(-100)
-    )
-            .margins(margins)
-            .lineLimit(wrap ? nil : 1)
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: radius, style: .continuous)
+                        .fill(disabled ? background.opacity(defaults.disabledOpacity) : background)
+                    RoundedRectangle(cornerRadius: radius, style: .continuous)
+                        .stroke(border, lineWidth: CGFloat(borderSize))
+                }
+                .shadow(
+                    color:  shadow ? shadowColor.opacity(shadowStrength) : .clear,
+                    radius: shadow ? 8 : 0,
+                    x:      shadow ? 3 : 0,
+                    y:      shadow ? 6 : 0
+                )
+            )
 /*
             .background(
                 RoundedRectangle(cornerRadius: radius, style: .circular)
@@ -373,12 +357,13 @@ public extension View {
                 RoundedRectangle(cornerRadius: radius, style: .circular)
                     .stroke(border, lineWidth: CGFloat(borderSize))
             )
+*/
             .margins(margins)
             .lineLimit(wrap ? nil : 1)
-*/
     }
 }
-public extension View {
+
+private extension View {
     @ViewBuilder
     func `if`<Content: View>(
         _ condition: Bool,
