@@ -87,8 +87,8 @@ public struct TextBox: View {
                     .padding(.trailing, self.icon != nil ? 3 : 1)
             }
         }
-        .if (copying) { view in
-            view.colorInvert()
+        .if (self.copying) { view in
+            view.colorInvert();
         }
         .if (self.copy) { view in
             view.onTapGesture {
@@ -328,6 +328,10 @@ public extension View {
                     RoundedRectangle(cornerRadius: radius, style: .continuous)
                         .stroke(border, lineWidth: CGFloat(borderSize))
                 }
+                //
+                // N.B. The shadow does not (2026-03-16)
+                // work when the background is Color.clear.
+                //
                 .shadow(
                     color:  shadow ? shadowColor.opacity(shadowStrength) : .clear,
                     radius: shadow ? 8 : 0,
@@ -335,24 +339,6 @@ public extension View {
                     y:      shadow ? 6 : 0
                 )
             )
-/*
-            .background(
-                RoundedRectangle(cornerRadius: radius, style: .circular)
-                    //
-                    // N.B. The shadow does not (2026-03-16)
-                    // work when the background is Color.clear.
-                    //
-                    .fill(disabled ? background.opacity(defaults.disabledOpacity) : background)
-                    .shadow(color:  shadow ? shadowColor.opacity(shadowStrength) : .clear,
-                            radius: shadow ? 8 : 0,
-                            x:      shadow ? 3 : 0,
-                            y:      shadow ? 6 : 0)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: radius, style: .circular)
-                    .stroke(border, lineWidth: CGFloat(borderSize))
-            )
-*/
             .margins(margins)
             .lineLimit(wrap ? nil : 1)
     }
