@@ -152,7 +152,8 @@ public extension MultiPlayer.Dev {
                     RegularText("\(self.sessionState.players.count == 0 ? Defaults.emptySetChar : "\(self.sessionState.players.count)")", leading: 3)
                 Spacer()
                 // SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
-                IconButton(self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
+                ButtonBox(icon: self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
+                // IconButton(self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
                     if (self.transport.engaged) {
                         self.transport.disengage();
                     }
@@ -651,10 +652,12 @@ public extension MultiPlayer.Dev {
                         await self.transport.production = !self.sessionState.production;
                     }
                     // SmallButton(icon: self.sessionState.debug ? "ladybug" : "ladybug.slash", size: Defaults.iconSize) {
-                    IconButton(self.sessionState.debug ? "ladybug" : "ladybug.slash",
-                               background: .yellow, size: Defaults.iconSize, yoffset: self.sessionState.debug ? 0 : 1) {
+                    // IconButton(self.sessionState.debug ? "ladybug" : "ladybug.slash",
+                    //         background: .yellow, size: Defaults.iconSize, yoffset: self.sessionState.debug ? 0 : 1) {
+                    ButtonBox(icon: self.sessionState.debug ? "ladybug" : "ladybug.slash", foreground: .black, background: .clear, size: Defaults.iconSize, border: .black) {
                         await self.transport.debug(enable: !self.sessionState.debug);
                     }
+                    TextBox("Debug", foreground: .black, background: .clear, size: Defaults.iconSize, border: .black)
                 }
             }
         }
