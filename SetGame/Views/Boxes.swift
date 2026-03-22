@@ -52,6 +52,7 @@ public struct TextBox: View {
 
     private static func iconSize(_ size: Int, _ weight: Font.Weight) -> CGFloat {
         switch weight {
+/*
             case .ultraLight, .thin: return CGFloat(size) * 1.00;
             case .light:             return CGFloat(size) * 0.97;
             case .regular:           return CGFloat(size) * 0.92;
@@ -59,6 +60,14 @@ public struct TextBox: View {
             case .semibold:          return CGFloat(size) * 0.87;
             case .bold, .heavy:      return CGFloat(size) * 0.84;
             default:                 return CGFloat(size) * 0.94;
+*/
+            case .ultraLight, .thin: return CGFloat(size) * 1.00;
+            case .light:             return CGFloat(size) * 1.00;
+            case .regular:           return CGFloat(size) * 0.97;
+            case .medium:            return CGFloat(size) * 0.95;
+            case .semibold:          return CGFloat(size) * 0.92;
+            case .bold, .heavy:      return CGFloat(size) * 0.89;
+            default:                 return CGFloat(size) * 0.99;
         }
     }
 
@@ -83,7 +92,7 @@ public struct TextBox: View {
                 Text(text)
                     .font(.system(size: CGFloat(self.size), weight: self.weight))
                     .foregroundColor(self.disabled ? self.foreground.opacity(0.6) : self.foreground)
-                    .padding(.leading, self.icon != nil ? 8 : 0)
+                    .padding(.leading, self.icon != nil ? 6 : 0)
                     .padding(.trailing, self.icon != nil ? 3 : 1)
             }
         }

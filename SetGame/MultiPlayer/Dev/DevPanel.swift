@@ -654,10 +654,10 @@ public extension MultiPlayer.Dev {
                     // SmallButton(icon: self.sessionState.debug ? "ladybug" : "ladybug.slash", size: Defaults.iconSize) {
                     // IconButton(self.sessionState.debug ? "ladybug" : "ladybug.slash",
                     //         background: .yellow, size: Defaults.iconSize, yoffset: self.sessionState.debug ? 0 : 1) {
-                    ButtonBox(icon: self.sessionState.debug ? "ladybug" : "ladybug.slash", foreground: .black, background: .clear, size: Defaults.iconSize, border: .black) {
+                    ButtonBox("Debug", icon: self.sessionState.debug ? "ladybug" : "ladybug.slash", foreground: .black, background: .clear, size: Defaults.iconSize - 3, weight: .bold, border: .black) {
                         await self.transport.debug(enable: !self.sessionState.debug);
                     }
-                    TextBox("Debug", foreground: .black, background: .clear, size: Defaults.iconSize, border: .black)
+                    // TextBox("Debug", foreground: .black, background: .clear, size: Defaults.iconSize, border: .black)
                 }
             }
         }
