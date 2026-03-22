@@ -115,7 +115,7 @@ public struct TextBox: View {
                     )
                     .shadow(radius: 6)
                     .offset(y: -20)
-                    .zIndex(100)
+                    .zIndex(999)
                     : nil
         )
     }
@@ -334,6 +334,29 @@ public extension View {
         let shadowStrength: CGFloat = shadowStrength ?? defaults.shadowStrength;
 
         return self.padding(padding)
+    .background(
+        ZStack {
+            // Fill
+            RoundedRectangle(cornerRadius: radius, style: .continuous)
+                .fill(disabled ? background.opacity(defaults.disabledOpacity) : background)
+.zIndex(-100)
+
+            // Border (moved INSIDE background)
+            RoundedRectangle(cornerRadius: radius, style: .continuous)
+                .stroke(border, lineWidth: CGFloat(borderSize))
+.zIndex(-100)
+        }
+        .shadow(
+            color:  shadow ? shadowColor.opacity(shadowStrength) : .clear,
+            radius: shadow ? 8 : 0,
+            x:      shadow ? 3 : 0,
+            y:      shadow ? 6 : 0
+        )
+.zIndex(-100)
+    )
+            .margins(margins)
+            .lineLimit(wrap ? nil : 1)
+/*
             .background(
                 RoundedRectangle(cornerRadius: radius, style: .circular)
                     //
@@ -352,6 +375,7 @@ public extension View {
             )
             .margins(margins)
             .lineLimit(wrap ? nil : 1)
+*/
     }
 }
 public extension View {

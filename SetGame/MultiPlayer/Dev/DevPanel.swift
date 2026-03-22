@@ -37,8 +37,9 @@ ZStack {
                     Text("Abcdefhi")
                         .frame(width: 200, height: 100)
                         .background(.blue)
-.offset(y: -50)
+.offset(x: 50, y: -50)
 .zIndex(999)
+Text("Foobar")
                 }
 }
 
@@ -147,7 +148,11 @@ ZStack {
                  //              color: self.session.hosting ? Defaults.highlightColor : .primary, semibold: true, leading: 3)
                     // CopyableText(sessionState.player + (sessionState.player == sessionState.host ? " \(Defaults.starChar)" : ""), semibold: true, leading: 3)
                 if (sessionState.player != sessionState.host) {
-                    RegularText("host:", leading: 10)
+// Text("hasdfasdf")
+// .zIndex(-99)
+                    TextBox("host:" /*, leading: 10 */ )
+.zIndex(-999)
+                    // RegularText("host:", leading: 10)
                         CopyableText("\(self.sessionState.host ?? Defaults.emptySetChar)",
                                      color: self.session.hosting ? Defaults.highlightColor : .primary,
                                      semibold: true, leading: 3)
