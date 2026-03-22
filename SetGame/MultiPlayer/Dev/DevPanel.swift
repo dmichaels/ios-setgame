@@ -124,7 +124,7 @@ public extension MultiPlayer.Dev {
         }
 
         fileprivate var body: some View {
-            AnyDevPanel(table: table, margins: margins, title: "Player") {
+            DevPanelView(table: table, margins: margins, title: "Player") {
                 TextBox(sessionState.player, foreground: .black,
                                              background: Defaults.background,
                                              size: 15,
@@ -187,7 +187,7 @@ public extension MultiPlayer.Dev {
         }
 
         fileprivate var body: some View {
-            AnyDevPanel(table: table, margins: margins, title: title) {
+            DevPanelView(table: table, margins: margins, title: title) {
                 RegularText("session:")
                     CopyableText(sessionState.sessionShort, copy: sessionState.session, bold: true, leading: 3)
                 ButtonBox("create", margins: Margins(leading: 6), disabled: self.sessionState.connected) {
@@ -268,7 +268,7 @@ public extension MultiPlayer.Dev {
         }
 
         fileprivate var body: some View {
-            AnyDevPanel(table: table, margins: margins) {
+            DevPanelView(table: table, margins: margins) {
                 PlayersView(session: self.session,
                             sessionState: self.sessionState,
                             players: self.sessionState.players,
@@ -388,7 +388,7 @@ public extension MultiPlayer.Dev {
         }
 
         fileprivate var body: some View {
-            AnyDevPanel(table: table, margins: margins) {
+            DevPanelView(table: table, margins: margins) {
                 MessagesView(sessionState: sessionState)
             }
         }
@@ -626,7 +626,7 @@ public extension MultiPlayer.Dev {
         }
 
         fileprivate var body: some View {
-            AnyDevPanel(table: table, margins: margins) {
+            DevPanelView(table: table, margins: margins) {
                 HStack {
                     RegularText("server: ", size: 13)
                         RegularText(self.sessionState.server,

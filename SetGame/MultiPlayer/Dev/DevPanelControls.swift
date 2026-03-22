@@ -2,7 +2,7 @@ import SwiftUI
 
 public extension MultiPlayer.Dev {
 
-    public struct AnyDevPanel<Content: View>: View {
+    public struct DevPanelView<Content: View>: View {
 
         private let padding: Padding;
         private let margins: Margins;
