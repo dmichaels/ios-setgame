@@ -155,9 +155,8 @@ public extension MultiPlayer.Dev {
 
         fileprivate var body: some View {
             DevPanelView(table: table, margins: margins, title: title) {
-                RegularText("session:")
-                    CopyableText(sessionState.sessionShort, copy: sessionState.session, bold: true, leading: 3)
-                ButtonBox("create", margins: Margins(leading: 6), disabled: self.sessionState.connected) {
+                TextBox(sessionState.sessionShort, foreground: Defaults.foreground, background: Defaults.background, border: .black, copy: true)
+                ButtonBox("create", foreground: Defaults.foreground, background: Defaults.background, margins: Margins(leading: 6), border: .black, disabled: self.sessionState.connected) {
                     if (!self.session.connected) {
                         if await self.session.create() {
                             self.sessionState.update(from: self.session, select: true);
@@ -183,8 +182,8 @@ public extension MultiPlayer.Dev {
                         }
                     }
                 }
-                Spacer()
-                ButtonBox("host", disabled: !self.sessionState.connected || self.sessionState.hosting) {
+                // Spacer()
+                ButtonBox("host", foreground: Defaults.foreground, background: Defaults.background, margins: Margins(leading: 6), border: .black, disabled: !self.sessionState.connected || self.sessionState.hosting) {
                     if (self.session.connected) {
                         if await self.session.requestHost() {
                             self.sessionState.update(from: self.session);
@@ -196,7 +195,7 @@ public extension MultiPlayer.Dev {
                     }
                 }
                 RegularText("", padding: 2)
-                SmallButton(icon: "xmark.rectangle.portrait", size: Defaults.iconSize + 4, disabled: !self.sessionState.leaveable) {
+                IconButton("xmark.rectangle.portrait", /*size: Defaults.iconSize + 4,*/ disabled: !self.sessionState.leaveable) {
                     if let info = await self.transport.session(self.session.session) {
                         let (sent, queued, received) = MultiPlayer.HttpTransport.messageCounts(info: info, player: self.session.player);
                     }
@@ -295,13 +294,13 @@ public extension MultiPlayer.Dev {
                             HStack {
                                 Text(player + (player == self.player ? " ◀" : "") + (player == self.host ? " (H)" : ""))
                                     .foregroundColor(player == self.host ? Defaults.highlightColor : Color.primary)
-                                SmallButton(icon: "dot.scope", bold: true, disabled: !self.sessionState.connected) {
+                                IconButton("dot.scope", bold: true, disabled: !self.sessionState.connected) {
                                     LOGD("sending ping to: \(player)")
                                     let xxx = await self.session.ping(player: player, timeout: 5000);
                                     LOGD("back from await for sending ping to: \(player)")
                                     LOGD(xxx ? "ping result true" : "ping result false")
                                 }
-                                SmallButton(icon: "ellipsis.message", disabled: !self.sessionState.connected) {
+                                IconButton("ellipsis.message", disabled: !self.sessionState.connected) {
                                     LOGD("sending text to: \(player)")
                                     if let recipient: String = self.sessionState.players.first { $0 != self.sessionState.player } {
                                         let message: MultiPlayer.ChatMessage = MultiPlayer.ChatMessage(
@@ -465,7 +464,7 @@ public extension MultiPlayer.Dev {
                         HStack {
                             Text("time").bold()
                             Spacer()
-                            SmallButton(icon: self.expandButtonDownArrow() ? "arrow.down.square" : "arrow.up.square" , size: Defaults.iconSize) {
+                            IconButton(self.expandButtonDownArrow() ? "arrow.down.square" : "arrow.up.square" , size: Defaults.iconSize) {
                                 if (self.byTimestamp) {
                                     self.byTimestampReversed.toggle();
                                 }
@@ -473,7 +472,7 @@ public extension MultiPlayer.Dev {
                                     self.verbose.toggle();
                                 }
                             }
-                            SmallButton(icon: verbose ? "clock" : "clock",
+                            IconButton(verbose ? "clock" : "clock",
                                         color: self.byTimestamp ? Defaults.highlightColor : Defaults.iconColor,
                                         size: Defaults.iconSize) {
                                 if (self.byTimestamp) {
@@ -618,12 +617,9 @@ public extension MultiPlayer.Dev {
                         }
                     }
                     .onTapGesture { self.sessionState.poll(enable: !self.sessionState.polling); }
-                    SmallButton(icon: self.sessionState.production ? "checkmark.seal" : "atom") {
+                    IconButton(self.sessionState.production ? "checkmark.seal" : "atom") {
                         await self.transport.production = !self.sessionState.production;
                     }
-                    // SmallButton(icon: self.sessionState.debug ? "ladybug" : "ladybug.slash", size: Defaults.iconSize) {
-                    // IconButton(self.sessionState.debug ? "ladybug" : "ladybug.slash",
-                    //         background: .yellow, size: Defaults.iconSize, yoffset: self.sessionState.debug ? 0 : 1) {
                     ButtonBox("Debug", icon: self.sessionState.debug ? "ladybug" : "ladybug.slash", foreground: .black, background: .clear, size: Defaults.iconSize - 3, weight: .bold, border: .black) {
                         await self.transport.debug(enable: !self.sessionState.debug);
                     }

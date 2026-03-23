@@ -61,23 +61,26 @@ public extension MultiPlayer.Dev {
             self.size = size ?? Defaults.fontSize;
             self.padding = padding ?? Defaults.padding;
             self.margins = margins ?? Margins.empty;
-            self.foreground = foreground ?? .white;
-            self.background = background ?? Defaults.foreground;
+            self.foreground = foreground ?? Defaults.foregroundButton;
+            self.background = background ?? Defaults.backgroundButton;
             self.weight = weight;
             self.disabled = disabled;
             self.action = action;
         }
 
         public var body: some View {
-            RoundedBox(background: self.background, padding: self.padding, margins: self.margins) {
+            RoundedBox(background: self.background, padding: Padding(6), /*padding: self.padding,*/ margins: self.margins, border: .black) {
                 Button {
                     if (!self.disabled) { Task {
                         await self.action();
                     } }
                 } label: {
+                    TextBox("join: ", foreground: self.foreground, background: self.background, padding: Padding.empty)
+                    /*
                     Text("join: ")
-                        .font(.system(size: CGFloat(self.size), weight: self.weight))
+                        // .font(.system(size: CGFloat(self.size), weight: self.weight))
                         .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
+                        */
                 }.buttonStyle(.plain)
                 Menu {
                     ForEach(self.items.prefixes, id: \.self) { item in
@@ -85,9 +88,12 @@ public extension MultiPlayer.Dev {
                     }
                 }
                 label: {
+                    TextBox(self.items.selected(prefix: true) ?? Defaults.emptySetChar, foreground: self.foreground, background: self.background, padding: Padding.empty)
+                    /*
                     Text(self.items.selected(prefix: true) ?? Defaults.emptySetChar)
                         .font(.system(size: CGFloat(self.size), weight: self.weight))
                         .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
+                        */
                 }
                 .disabled(self.disabled)
             }
@@ -95,77 +101,21 @@ public extension MultiPlayer.Dev {
     }
 
     public struct IconButton: View {
-
-        private let icon:       String;
-        private let foreground: Color;
-        private let background: Color;
-        private let size:       Int;
-        private let weight:     Font.Weight;
-        private let padding:    Padding;
-        private let margins:    Margins;
-        private let yoffset:    Int;
-        private let disabled:   Bool;
-        private let action: () async -> Void;
-
-        public init(_ icon:       String,
-                      foreground: Color?       = nil,
-                      background: Color?       = nil,
-                      size:       Int?         = nil,
-                      weight:     Font.Weight? = nil,
-                      padding:    Padding?     = nil,
-                      margins:    Margins?     = nil,
-                      yoffset:    Int?         = nil,
-                      disabled:   Bool         = false,
-                      action: @escaping () async -> Void) {
-            self.icon       = icon;
-            self.foreground = foreground ?? Defaults.iconColor;
-            self.background = background ?? .clear;
-            self.size       = size       ?? Defaults.iconSize;
-            self.weight     = weight     ?? .semibold;
-            self.padding    = padding    ?? Defaults.padding;
-            self.margins    = margins    ?? Margins.empty;
-            self.yoffset    = yoffset    ?? 0;
-            self.disabled   = disabled;
-            self.action     = action;
-        }
-
-        public var body: some View {
-            Button {
-                if (!self.disabled) { Task {
-                    await self.action();
-                } }
-            } label: {
-                RoundedBox(background: self.background, padding: self.padding, margins: self.margins, border: .red, disabled: self.disabled) {
-                    Image(systemName: self.icon)
-                        .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
-                        .font(.system(size: CGFloat(self.size), weight: self.weight))
-                        .frame(width: CGFloat(self.size + 6), height: CGFloat(self.size + 6))
-                        .disabled(self.disabled)
-                        .offset(y: CGFloat(self.yoffset))
-                }
-            }
-            .buttonStyle(.plain)
-            .padding(self.padding)
-        }
-    }
-
-    public struct SmallButton: View {
-        private let icon: String?;
+        private let icon: String;
         private let color: Color;
         private let size: Int;
         private var bold: Bool;
         private let disabled: Bool;
         private let action: () async -> Void;
-        public init(icon: String? = nil,
+        public init(_ icon: String,
                     color: Color? = nil,
                     size: Int? = nil,
                     bold: Bool = false,
                     disabled: Bool = false,
                     action: @escaping () async -> Void) {
             self.icon = icon;
-            // self.color = color ?? ((icon != nil) ? Defaults.iconColor : .yellow);
             self.color = color ?? Defaults.foreground;
-            self.size = size ?? ((icon != nil) ? Defaults.iconSize : Defaults.fontSize);
+            self.size = size ?? Defaults.iconSize;
             self.bold = bold;
             self.disabled = disabled;
             self.action = action;

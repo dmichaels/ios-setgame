@@ -3,9 +3,11 @@ import SwiftUI
 public extension MultiPlayer.Dev {
 
     public struct Defaults {
-        public static let background: Color = Color(hex: 0x77BBAA);
-        public static let backgroundParent: Color = Color(hex: 0xDCEEE4);
         public static let foreground: Color = .black; // Color(hex: 0x226655);
+        public static let background: Color = Color(hex: 0x77BBAA);
+        public static let backgroundButton: Color = Color(hex: 0x226655)
+        public static let foregroundButton: Color = .white; // Color(hex: 0x77BBAA)
+        public static let backgroundParent: Color = Color(hex: 0xDCEEE4);
         public static let fontSize: Int = 16;
         public static let separator: String = "|" // "\u{2756}";
         public static let emptySetChar: String = "∅";
