@@ -31,28 +31,6 @@ public extension MultiPlayer.Dev {
 
         public var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                Spacer()
-                RoundedBox(background: Defaults.background, padding: Padding(18), margins: Margins(horizontal: 10, top: 40), span: true, shadow: true) {
-                    // ButtonBox("some text", background: Defaults.foreground, padding: Padding(horizontal: 8, vertical: 4), margins: Margins(leading: 0), border: .red) {}
-                    ButtonBox("Abc", background: Defaults.foreground, /*padding: Padding(horizontal: 8, vertical: 5),*/ margins: Margins(leading: 3), border: .red, shadow: true) {}
-                    ButtonBox("Abc", icon: "ladybug.slash" /*"personalhotspot"*/, background: Defaults.foreground, /*padding: Padding(horizontal: 8, vertical: 5),*/ margins: Margins(leading: 3), border: .red) {}
-                    ButtonBox(icon: "ladybug.slash", background: Defaults.foreground, /*padding: Padding(horizontal: 8, vertical: 5),*/ margins: Margins(leading: 3), border: .red, shadow: false) {}
-                    /*
-                    RoundedBox(background: .clear, padding: Padding(horizontal: 15, vertical: 8),span: true, border: .red, shadow: true) {
-                        Text("some text")
-                    }
-                    RoundedBox(background: .clear, padding: Padding(horizontal: 15, vertical: 8),span: true, border: .red, shadow: true) {
-                        Text("SOME TEXT")
-                    }
-                    */
-                    /*
-                    RoundedBox(background: .yellow, padding: Padding(horizontal: 15, vertical: 8), margins: Margins(leading: 10), border: .blue, borderSize: 2) {
-                        Text("somemoretext")
-                   }
-                   */
-                }
-                Spacer()
-
                 DevPanelInfo(table: table, session: session, transport: transport, sessionState: sessionState, margins: margins)
                 // Text("Session:").frame(alignment: .leading).padding(.leading, 10).padding(.bottom, 0) // .offset(y: 10)
                 DevPanelSession(table: table, title: "Sessions", session: session, transport: transport, sessionState: sessionState, margins: Margins(top: 10))
@@ -132,18 +110,8 @@ public extension MultiPlayer.Dev {
                                              margins: Margins(trailing: 8),
                                              border: .black,
                                              copy: true)
-                TextBox("Abc:", background: .yellow, border: .red, copy: true)
-                    // .zIndex(-1) // this is it
-                 // CopyableText(sessionState.player,
-                 //              color: self.session.hosting ? Defaults.highlightColor : .primary, semibold: true, leading: 3)
-                    // CopyableText(sessionState.player + (sessionState.player == sessionState.host ? " \(Defaults.starChar)" : ""), semibold: true, leading: 3)
                 if (sessionState.player != sessionState.host) {
-// Text("hasdfasdf")
-// .zIndex(-99)
-                    // XTextBox()
                     TextBox("host:" /*, leading: 10 */ , border: .red)
-                        // .zIndex(-999) // THIS IS IT
-                    // RegularText("host:", leading: 10)
                         CopyableText("\(self.sessionState.host ?? Defaults.emptySetChar)",
                                      color: self.session.hosting ? Defaults.highlightColor : .primary,
                                      semibold: true, leading: 3)
@@ -151,9 +119,7 @@ public extension MultiPlayer.Dev {
                 RegularText("players:", leading: 10)
                     RegularText("\(self.sessionState.players.count == 0 ? Defaults.emptySetChar : "\(self.sessionState.players.count)")", leading: 3)
                 Spacer()
-                // SmallButton(icon: self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
                 ButtonBox(icon: self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
-                // IconButton(self.transport.engaged ? "pause.circle" : "play.circle", disabled: !self.sessionState.connected) {
                     if (self.transport.engaged) {
                         self.transport.disengage();
                     }
@@ -327,7 +293,7 @@ public extension MultiPlayer.Dev {
                         }
                         HStack {
                             HStack {
-                                Text(player + (player == self.player ? " ◀" : ""))
+                                Text(player + (player == self.player ? " ◀" : "") + (player == self.host ? " (H)" : ""))
                                     .foregroundColor(player == self.host ? Defaults.highlightColor : Color.primary)
                                 SmallButton(icon: "dot.scope", bold: true, disabled: !self.sessionState.connected) {
                                     LOGD("sending ping to: \(player)")
@@ -639,16 +605,20 @@ public extension MultiPlayer.Dev {
                     Spacer()
                     HStack {
                         if (self.sessionState.polling) {
-                            PollSpinner(count: self.sessionState.pollCount, size: Defaults.iconSize)
+                            PollSpinner(count: self.sessionState.pollCount /*, size: Defaults.iconSize */ )
+                            .offset(y: 0.8)
                         }
                         else {
+                            TextBox(icon: "play.circle", foreground: .black, background: Defaults.background, padding: Padding.empty /*, weight: .bold */ )
+                            /*
                             Image(systemName: "play.circle")
                                 .font(.system(size: CGFloat(Defaults.iconSize)))
                                 .foregroundColor(Defaults.iconColor)
+                                */
                         }
                     }
                     .onTapGesture { self.sessionState.poll(enable: !self.sessionState.polling); }
-                    SmallButton(icon: self.sessionState.production ? "checkmark.seal" : "atom", size: Defaults.iconSize) {
+                    SmallButton(icon: self.sessionState.production ? "checkmark.seal" : "atom") {
                         await self.transport.production = !self.sessionState.production;
                     }
                     // SmallButton(icon: self.sessionState.debug ? "ladybug" : "ladybug.slash", size: Defaults.iconSize) {

@@ -150,67 +150,36 @@ public extension MultiPlayer.Dev {
     }
 
     public struct SmallButton: View {
-
-        private let text: String?;
         private let icon: String?;
         private let color: Color;
-        private let background: Color;
         private let size: Int;
         private var bold: Bool;
-        private var semibold: Bool;
         private let disabled: Bool;
-        private let leading: Int;
-        private let trailing: Int;
         private let action: () async -> Void;
-
-        private let horizontalPadding: CGFloat = 7;
-        private let verticalPadding: CGFloat = 4;
-        private let cornerRadius: CGFloat = 8
-
-        public init( _ text: String? = nil, icon: String? = nil,
-                       color: Color? = nil, background: Color? = nil,
-                       size: Int? = nil, bold: Bool = false, semibold: Bool = true,
-                       disabled: Bool = false,
-                       leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil,
-                       action: @escaping () async -> Void) {
-            self.text = text;
+        public init(icon: String? = nil,
+                    color: Color? = nil,
+                    size: Int? = nil,
+                    bold: Bool = false,
+                    disabled: Bool = false,
+                    action: @escaping () async -> Void) {
             self.icon = icon;
-            self.color = color ?? ((icon != nil) ? Defaults.iconColor : .yellow);
-            self.background = background ?? Defaults.foreground;
+            // self.color = color ?? ((icon != nil) ? Defaults.iconColor : .yellow);
+            self.color = color ?? Defaults.foreground;
             self.size = size ?? ((icon != nil) ? Defaults.iconSize : Defaults.fontSize);
             self.bold = bold;
-            self.semibold = semibold;
             self.disabled = disabled;
             self.action = action;
-            self.leading = leading ?? padding ?? 0;
-            self.trailing = trailing ?? padding ?? 0;
         }
-
         public var body: some View {
-            Button {
-                Task { await action() }
-            } label: {
-                if let icon: String = icon {
-                    Image(systemName: icon)
-                        .foregroundColor(self.disabled ? .gray : color)
-                        .font(.system(size: CGFloat(self.size), weight: bold ? .bold : (semibold ? .semibold : .regular)))
-                        .disabled(self.disabled)
-                }
-                else if let text: String = text {
-                    Text(text)
-                        .font(.system(size: CGFloat(self.size), weight: bold ? .bold : (semibold ? .semibold : .regular)))
-                        .foregroundColor(self.disabled ? .gray : self.color)
-                        .padding(.horizontal, self.horizontalPadding)
-                        .padding(.vertical, self.verticalPadding)
-                        .background(
-                            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous).fill(self.background)
-                        )
-                        .disabled(self.disabled)
-                }
-            }
-            .buttonStyle(.plain)
-            .disabled(disabled)
-            .padding(.leading, CGFloat(self.leading)).padding(.trailing, CGFloat(self.trailing))
+            ButtonBox(icon: self.icon,
+                      foreground: self.color,
+                      background: Defaults.background,
+                      padding: Padding.empty,
+                      // size: self.size,
+                      // weight: self.bold ? .bold : .regular,
+                      disabled: self.disabled,
+                      action: self.action
+            )
         }
     }
 
@@ -307,6 +276,32 @@ public extension MultiPlayer.Dev {
     }
 
     public struct PollSpinner: View {
+        private let count: Int;
+        private let size: Int;
+        private let color: Color;
+        private let steps: Int = 12;
+        public init(count: Int, size: Int? = nil, color: Color? = nil) {
+            self.count = count;
+            self.size = size ?? Defaults.iconSize;
+            self.color = color ?? Defaults.iconColor;
+        }
+        public var body: some View {
+            let angle = Double(count % steps) * (360.0 / Double(steps))
+            TextBox(icon: "arrow.triangle.2.circlepath", foreground: .black, background: Defaults.background, weight: .bold, padding: Padding.empty)
+                .rotationEffect(.degrees(angle))
+                .animation(nil, value: self.count)
+                .offset(y: 0.2)
+            /*
+            Image(systemName: "arrow.triangle.2.circlepath")
+                .rotationEffect(.degrees(angle))
+                .font(.system(size: CGFloat(self.size - 1), weight: .semibold))
+                .foregroundColor(color)
+                .animation(nil, value: self.count)
+                .offset(y: 0.2)
+                */
+        }
+    }
+    public struct old_PollSpinner: View {
         private let count: Int;
         private let size: Int;
         private let color: Color;
