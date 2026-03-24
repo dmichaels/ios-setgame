@@ -24,13 +24,13 @@ public extension MultiPlayer.Dev {
         }
 
         public var body: some View {
-            RoundedBox(background: self.background,
-                       radius:     self.radius,
+            RoundedBox(radius:     self.radius,
                        padding:    self.padding,
                        margins:    self.margins,
                        span:       true,
                        border:     self.border,
                        borderSize: self.borderSize,
+                       background: self.background,
                        shadow:     self.shadow,
                        title:      self.title) {
                 self.content
@@ -69,13 +69,13 @@ public extension MultiPlayer.Dev {
         }
 
         public var body: some View {
-            RoundedBox(background: self.background, padding: Padding(6), /*padding: self.padding,*/ margins: self.margins, border: .black) {
+            RoundedBox(padding: Padding(6), /*padding: self.padding,*/ margins: self.margins, border: .black, background: self.background) {
                 Button {
                     if (!self.disabled) { Task {
                         await self.action();
                     } }
                 } label: {
-                    TextBox("join: ", foreground: self.foreground, background: self.background, padding: Padding.empty)
+                    TextBox("join: ", padding: Padding.empty, foreground: self.foreground, background: self.background)
                     /*
                     Text("join: ")
                         // .font(.system(size: CGFloat(self.size), weight: self.weight))
@@ -88,7 +88,7 @@ public extension MultiPlayer.Dev {
                     }
                 }
                 label: {
-                    TextBox(self.items.selected(prefix: true) ?? Defaults.emptySetChar, foreground: self.foreground, background: self.background, padding: Padding.empty)
+                    TextBox(self.items.selected(prefix: true) ?? Defaults.emptySetChar, padding: Padding.empty, foreground: self.foreground, background: self.background)
                     /*
                     Text(self.items.selected(prefix: true) ?? Defaults.emptySetChar)
                         .font(.system(size: CGFloat(self.size), weight: self.weight))
@@ -122,11 +122,11 @@ public extension MultiPlayer.Dev {
         }
         public var body: some View {
             ButtonBox(icon: self.icon,
-                      foreground: self.color,
-                      background: Defaults.background,
                       padding: Padding.empty,
                       // size: self.size,
                       // weight: self.bold ? .bold : .regular,
+                      foreground: self.color,
+                      background: Defaults.background,
                       disabled: self.disabled,
                       action: self.action
             )
@@ -135,26 +135,26 @@ public extension MultiPlayer.Dev {
 
     public struct RegularText: View {
         private let text: String;
-        private let color: Color;
         private let size: Int;
         private var bold: Bool = false;
         private var semibold: Bool = false;
         private var strikeout: Bool = false;
         private let leading: Int;
         private let trailing: Int;
-        public init(_ text: String, color: Color = .primary,
+        private let color: Color;
+        public init(_ text: String,
                       size: Int = Defaults.fontSize,
-                      bold: Bool = false, semibold: Bool = false,
-                      strikeout: Bool = false,
-                      leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil) {
+                      bold: Bool = false, semibold: Bool = false, strikeout: Bool = false,
+                      leading: Int? = nil, trailing: Int? = nil, padding: Int? = nil,
+                      color: Color = .primary) {
             self.text = text;
-            self.color = color;
             self.size = size;
             self.bold = bold;
             self.semibold = semibold;
             self.strikeout = strikeout;
             self.leading = leading ?? padding ?? 0;
             self.trailing = trailing ?? padding ?? 0;
+            self.color = color;
         }
         public var body: some View {
             Text(self.text)
@@ -237,7 +237,7 @@ public extension MultiPlayer.Dev {
         }
         public var body: some View {
             let angle = Double(count % steps) * (360.0 / Double(steps))
-            TextBox(icon: "arrow.triangle.2.circlepath", foreground: .black, background: Defaults.background, weight: .bold, padding: Padding.empty)
+            TextBox(icon: "arrow.triangle.2.circlepath", weight: .bold, padding: Padding.empty, foreground: .black, background: Defaults.background)
                 .rotationEffect(.degrees(angle))
                 .animation(nil, value: self.count)
                 .offset(y: 0.2)

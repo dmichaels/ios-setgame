@@ -103,12 +103,12 @@ public extension MultiPlayer.Dev {
 
         fileprivate var body: some View {
             DevPanelView(table: table, margins: margins, title: "Player") {
-                TextBox(sessionState.player, foreground: .black,
-                                             background: Defaults.background,
-                                             size: 15,
+                TextBox(sessionState.player, size: 15,
                                              padding: Padding(horizontal: 4, vertical: 4),
                                              margins: Margins(trailing: 8),
                                              border: .black,
+                                             foreground: .black,
+                                             background: Defaults.background,
                                              copy: true)
                 if (sessionState.player != sessionState.host) {
                     TextBox("host:" /*, leading: 10 */ , border: .red)
@@ -155,8 +155,8 @@ public extension MultiPlayer.Dev {
 
         fileprivate var body: some View {
             DevPanelView(table: table, margins: margins, title: title) {
-                TextBox(sessionState.sessionShort, foreground: Defaults.foreground, background: Defaults.background, border: .black, copy: true)
-                ButtonBox("create", foreground: Defaults.foreground, background: Defaults.background, margins: Margins(leading: 6), border: .black, disabled: self.sessionState.connected) {
+                TextBox(sessionState.sessionShort, border: .black, foreground: Defaults.foreground, background: Defaults.background, copy: true)
+                ButtonBox("create", margins: Margins(leading: 6), border: .black, foreground: Defaults.foreground, background: Defaults.background, disabled: self.sessionState.connected) {
                     if (!self.session.connected) {
                         if await self.session.create() {
                             self.sessionState.update(from: self.session, select: true);
@@ -183,7 +183,7 @@ public extension MultiPlayer.Dev {
                     }
                 }
                 // Spacer()
-                ButtonBox("host", foreground: Defaults.foreground, background: Defaults.background, margins: Margins(leading: 6), border: .black, disabled: !self.sessionState.connected || self.sessionState.hosting) {
+                ButtonBox("host", margins: Margins(leading: 6), border: .black, foreground: Defaults.foreground, background: Defaults.background, disabled: !self.sessionState.connected || self.sessionState.hosting) {
                     if (self.session.connected) {
                         if await self.session.requestHost() {
                             self.sessionState.update(from: self.session);
@@ -596,11 +596,11 @@ public extension MultiPlayer.Dev {
                 HStack {
                     RegularText("server: ", size: 13)
                         RegularText(self.sessionState.server,
-                                    color: self.sessionState.pingable ? .primary : Defaults.highlightColor,
-                                    size: 12, bold: true, leading: -4)
+                                    size: 12, bold: true, leading: -4,
+                                    color: self.sessionState.pingable ? .primary : Defaults.highlightColor)
                             RegularText(self.sessionState.pingable ? Defaults.checkChar : Defaults.xmarkChar,
-                                        color: self.sessionState.pingable ? .primary : Defaults.highlightColor,
-                                        size: 12, semibold: true, leading: 2)
+                                        size: 12, semibold: true, leading: 2,
+                                        color: self.sessionState.pingable ? .primary : Defaults.highlightColor)
                     Spacer()
                     HStack {
                         if (self.sessionState.polling) {
@@ -608,7 +608,7 @@ public extension MultiPlayer.Dev {
                             .offset(y: 0.8)
                         }
                         else {
-                            TextBox(icon: "play.circle", foreground: .black, background: Defaults.background, padding: Padding.empty /*, weight: .bold */ )
+                            TextBox(icon: "play.circle", padding: Padding.empty, foreground: .black, background: Defaults.background /*, weight: .bold */ )
                             /*
                             Image(systemName: "play.circle")
                                 .font(.system(size: CGFloat(Defaults.iconSize)))
@@ -620,7 +620,7 @@ public extension MultiPlayer.Dev {
                     IconButton(self.sessionState.production ? "checkmark.seal" : "atom") {
                         await self.transport.production = !self.sessionState.production;
                     }
-                    ButtonBox("Debug", icon: self.sessionState.debug ? "ladybug" : "ladybug.slash", foreground: .black, background: .clear, size: Defaults.iconSize - 3, weight: .bold, border: .black) {
+                    ButtonBox("Debug", icon: self.sessionState.debug ? "ladybug" : "ladybug.slash", size: Defaults.iconSize - 3, weight: .bold, border: .black, foreground: .black, background: .clear) {
                         await self.transport.debug(enable: !self.sessionState.debug);
                     }
                     // TextBox("Debug", foreground: .black, background: .clear, size: Defaults.iconSize, border: .black)

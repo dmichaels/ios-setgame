@@ -22,28 +22,28 @@ public struct TextBox: View {
 
     public init(_ text:       String?      = nil,
                   icon:       String?      = nil,
-                  foreground: Color?       = nil,
-                  background: Color?       = nil,
                   size:       Int?         = nil,
                   weight:     Font.Weight? = nil,
                   padding:    Padding?     = nil,
                   margins:    Margins?     = nil,
                   border:     Color?       = nil,
                   borderSize: Int?         = nil,
+                  foreground: Color?       = nil,
+                  background: Color?       = nil,
                   shadow:     Bool?        = nil,
                   disabled:   Bool         = false,
                   copy:       Bool         = false) {
 
         self.text       = text;
         self.icon       = icon;
-        self.foreground = foreground ?? .white;
-        self.background = background ?? .blue;
         self.size       = size       ?? 17;
         self.weight     = weight     ?? .semibold;
         self.padding    = padding    ?? Padding(horizontal: 6, vertical: 6);
         self.margins    = margins    ?? Margins.empty;
         self.border     = border     ?? .clear;
         self.borderSize = borderSize ?? 1;
+        self.foreground = foreground ?? .white;
+        self.background = background ?? .blue;
         self.shadow     = shadow     ?? false;
         self.disabled   = disabled;
         self.copy       = copy;
@@ -76,9 +76,9 @@ public struct TextBox: View {
     }
 
     public var body: some View {
-        RoundedBox(background: self.background,
-                   padding: self.padding, margins: self.margins,
+        RoundedBox(padding: self.padding, margins: self.margins,
                    border: self.border, borderSize: self.borderSize,
+                   background: self.background,
                    shadow: self.shadow,
                    height: TextBox.boxHeight(self.size),
                    disabled: self.disabled) {
@@ -135,28 +135,28 @@ public struct ButtonBox: View {
 
     public init( _ text:       String?      = nil,
                    icon:       String?      = nil,
-                   foreground: Color?       = nil,
-                   background: Color?       = nil,
                    size:       Int?         = nil,
                    weight:     Font.Weight? = nil,
                    padding:    Padding?     = nil,
                    margins:    Margins?     = nil,
                    border:     Color?       = nil,
                    borderSize: Int?         = nil,
+                   foreground: Color?       = nil,
+                   background: Color?       = nil,
                    shadow:     Bool?        = nil,
                    disabled:   Bool         = false,
                    action: @escaping () async -> Void) {
 
         self.text       = text;
         self.icon       = icon;
-        self.foreground = foreground;
-        self.background = background;
         self.size       = size;
         self.weight     = weight;
         self.padding    = padding;
         self.margins    = margins;
         self.border     = border;
         self.borderSize = borderSize;
+        self.foreground = foreground;
+        self.background = background;
         self.shadow     = shadow;
         self.disabled   = disabled;
         self.action     = action;
@@ -170,14 +170,14 @@ public struct ButtonBox: View {
         } label: {
             TextBox(text,
                     icon:       self.icon,
-                    foreground: self.foreground,
-                    background: self.background,
                     size:       self.size,
                     weight:     self.weight,
                     padding:    self.padding,
                     margins:    self.margins,
                     border:     self.border,
                     borderSize: self.borderSize,
+                    foreground: self.foreground,
+                    background: self.background,
                     shadow:     self.shadow,
                     disabled:   self.disabled)
         }
@@ -186,7 +186,6 @@ public struct ButtonBox: View {
 }
 
 private struct defaults {
-    fileprivate static let background:      Color       = .clear;
     fileprivate static let radius:          CGFloat     = 7.0;
     fileprivate static let padding:         Padding     = .empty;
     fileprivate static let margins:         Margins     = .empty;
@@ -194,6 +193,7 @@ private struct defaults {
     fileprivate static let wrap:            Bool        = false;
     fileprivate static let border:          Color       = .clear;
     fileprivate static let borderSize:      Int         = 1;
+    fileprivate static let background:      Color       = .clear;
     fileprivate static let shadow:          Bool        = false;
     fileprivate static let shadowColor:     Color       = .black;
     fileprivate static let shadowStrength:  CGFloat     = 0.5;
@@ -206,7 +206,6 @@ private struct defaults {
 
 public struct RoundedBox<Content: View>: View {
 
-    private let background:     Color;
     private let radius:         CGFloat;
     private let padding:        Padding;
     private let margins:        Margins;
@@ -214,6 +213,7 @@ public struct RoundedBox<Content: View>: View {
     private let wrap:           Bool;
     private let border:         Color;
     private let borderSize:     Int;
+    private let background:     Color;
     private let shadow:         Bool;
     private let shadowColor:    Color;
     private let shadowStrength: CGFloat;
@@ -224,14 +224,14 @@ public struct RoundedBox<Content: View>: View {
     private let disabled:       Bool;
     private let content:        Content;
 
-    public init(background:     Color?       = nil,
-                radius:         CGFloat?     = nil,
+    public init(radius:         CGFloat?     = nil,
                 padding:        Padding?     = nil,
                 margins:        Margins?     = nil,
                 span:           Bool?        = nil,
                 wrap:           Bool?        = nil,
                 border:         Color?       = nil,
                 borderSize:     Int?         = nil,
+                background:     Color?       = nil,
                 shadow:         Bool?        = nil,
                 shadowColor:    Color?       = nil,
                 shadowStrength: CGFloat?     = nil,
@@ -242,7 +242,6 @@ public struct RoundedBox<Content: View>: View {
                 disabled:       Bool         = false,
                 @ViewBuilder content: () -> Content) {
 
-        self.background     = background     ?? defaults.background;
         self.radius         = radius         ?? defaults.radius;
         self.padding        = padding        ?? defaults.padding;
         self.margins        = margins        ?? defaults.margins;
@@ -250,6 +249,7 @@ public struct RoundedBox<Content: View>: View {
         self.wrap           = wrap           ?? defaults.wrap;
         self.border         = border         ?? defaults.border;
         self.borderSize     = borderSize     ?? defaults.borderSize;
+        self.background     = background     ?? defaults.background;
         self.shadow         = shadow         ?? defaults.shadow;
         self.shadowColor    = shadowColor    ?? defaults.shadowColor;
         self.shadowStrength = shadowStrength ?? defaults.shadowStrength;
@@ -269,13 +269,13 @@ public struct RoundedBox<Content: View>: View {
                     .padding(.leading, self.margins.leading + 1)
                     .padding(.top, self.margins.top)
                     .padding(.bottom, 2)
-                RoundedBox(background:     self.background,
-                           radius:         self.radius,
+                RoundedBox(radius:         self.radius,
                            padding:        self.padding,
                            margins:        Margins(self.margins, top: 0),
                            span:           true,
                            border:         self.border,
                            borderSize:     self.borderSize,
+                           background:     self.background,
                            shadow:         self.shadow,
                            shadowColor:    self.shadowColor,
                            shadowStrength: self.shadowStrength,
@@ -289,13 +289,13 @@ public struct RoundedBox<Content: View>: View {
                 self.content ; if (self.span) { Spacer() }
             }
             .frame(height: self.height)
-            .rounded(background:     self.background,
-                     radius:         self.radius,
+            .rounded(radius:         self.radius,
                      padding:        self.padding,
                      margins:        self.margins,
                      wrap:           self.wrap,
                      border:         self.border,
                      borderSize:     self.borderSize,
+                     background:     self.background,
                      shadow:         self.shadow,
                      shadowColor:    self.shadowColor,
                      shadowStrength: self.shadowStrength,
@@ -306,25 +306,25 @@ public struct RoundedBox<Content: View>: View {
 
 public extension View {
 
-    public func rounded(background:     Color?   = nil,
-                        radius:         CGFloat? = nil,
+    public func rounded(radius:         CGFloat? = nil,
                         padding:        Padding? = nil,
                         margins:        Margins? = nil,
                         wrap:           Bool?    = nil,
                         border:         Color?   = nil,
                         borderSize:     Int?     = nil,
+                        background:     Color?   = nil,
                         shadow:         Bool?    = nil,
                         shadowColor:    Color?   = nil,
                         shadowStrength: CGFloat? = nil,
                         disabled:       Bool     = false) -> some View {
 
-        let background:     Color   = background     ?? defaults.background;
         let radius:         CGFloat = radius         ?? defaults.radius;
         let padding:        Padding = padding        ?? defaults.padding;
         let margins:        Margins = margins        ?? defaults.margins;
         let wrap:           Bool    = wrap           ?? defaults.wrap;
         let border:         Color   = border         ?? defaults.border;
         let borderSize:     Int     = borderSize     ?? defaults.borderSize;
+        let background:     Color   = background     ?? defaults.background;
         let shadow:         Bool    = shadow         ?? defaults.shadow;
         let shadowColor:    Color   = shadowColor    ?? defaults.shadowColor;
         let shadowStrength: CGFloat = shadowStrength ?? defaults.shadowStrength;
