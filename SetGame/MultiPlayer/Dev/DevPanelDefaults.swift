@@ -19,5 +19,7 @@ public extension MultiPlayer.Dev {
         public static let iconColor: Color = Color(hex: 0x0044BB);      // dark blue
         public static let iconSize: Int = 20;
         public static let padding: Padding = Padding(leading: 8, trailing: 8, top: 4, bottom: 4);
+        public static let paddingButton: Padding = Padding(leading: 8, trailing: 8, top: 4, bottom: 4);
+        public static let marginsButton: Margins = Margins(leading: 4);
     }
 }
