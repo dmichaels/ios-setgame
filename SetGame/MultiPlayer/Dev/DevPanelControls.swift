@@ -71,6 +71,7 @@ public extension MultiPlayer.Dev {
         public var body: some View {
             RoundedBox(padding: Padding(6), /*padding: self.padding,*/ margins: self.margins, border: .black, background: self.background) {
                 Button {
+                    DEB("JOINCONTOL-ACTION> disabled: \(self.disabled)")
                     if (!self.disabled) { Task {
                         await self.action();
                     } }
@@ -84,7 +85,10 @@ public extension MultiPlayer.Dev {
                 }.buttonStyle(.plain)
                 Menu {
                     ForEach(self.items.prefixes, id: \.self) { item in
-                        Button(item) { self.items.select(item) }
+                        Button(item) {
+                            DEB("MENU")
+                            self.items.select(item)
+                        }
                     }
                 }
                 label: {
@@ -95,7 +99,8 @@ public extension MultiPlayer.Dev {
                         .foregroundColor(self.disabled ? self.foreground.opacity(0.65) : self.foreground)
                         */
                 }
-                .disabled(self.disabled)
+                .id(self.items.prefixes) // fix from chatgpt
+                // .disabled(self.disabled)
             }
         }
     }

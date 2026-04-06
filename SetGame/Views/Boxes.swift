@@ -80,7 +80,7 @@ public struct TextBox: View {
                    border: self.border, borderSize: self.borderSize,
                    background: self.background,
                    shadow: self.shadow,
-                   height: TextBox.boxHeight(self.size),
+                   // height: TextBox.boxHeight(self.size),
                    disabled: self.disabled) {
             if let icon: String = self.icon {
                 Image(systemName: icon)
@@ -101,6 +101,7 @@ public struct TextBox: View {
         }
         .if (self.copy) { view in
             view.onTapGesture {
+                DEB("FOOY")
                 guard let text = self.text else { return }
                 UIPasteboard.general.string = text;
                 Task {
@@ -235,7 +236,7 @@ public struct RoundedBox<Content: View>: View {
                 shadow:         Bool?        = nil,
                 shadowColor:    Color?       = nil,
                 shadowStrength: CGFloat?     = nil,
-                height:         CGFloat?     = nil,
+                //height:         CGFloat?     = nil,
                 title:          String?      = nil,
                 titleSize:      Int?         = nil,
                 titleWeight:    Font.Weight? = nil,
@@ -253,7 +254,8 @@ public struct RoundedBox<Content: View>: View {
         self.shadow         = shadow         ?? defaults.shadow;
         self.shadowColor    = shadowColor    ?? defaults.shadowColor;
         self.shadowStrength = shadowStrength ?? defaults.shadowStrength;
-        self.height         = height         ?? defaults.height;
+        //self.height         = height         ?? defaults.height;
+        self.height = nil;
         self.title          = title          ?? defaults.title;
         self.titleSize      = titleSize      ?? defaults.titleSize;
         self.titleWeight    = titleWeight    ?? defaults.titleWeight;
